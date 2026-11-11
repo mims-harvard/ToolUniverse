@@ -970,6 +970,71 @@
                   "string",
                   "null"
                 ]
+              },
+              "cell_tissue": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Cell line or tissue the CLIP dataset came from ('HEK293T', 'HepG2', 'brain'). Enrichment measured in one cell type is not enrichment in another."
+              },
+              "citation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The paper the CLIP dataset comes from, as ENCORI prints it."
+              },
+              "main_accession": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Parent accession of the CLIP dataset -- a GEO series, SRA study or ENCODE accession ('GSE68890', 'SRP239057', 'ENCSR987FTF'). `dataset_id` is ENCORI's internal id for the same dataset."
+              },
+              "motif_matrix": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "URL of the HOMER position-weight matrix for the identified motif, under the dataset's own directory."
+              },
+              "properties": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The sample's own condition line as ENCORI records it ('hippocampus, disease: control, rep3'). Two rows can share rbp, cell_tissue, identified_motif and main_accession and differ only here: the measured scan returned MBNL2 / brain twice, one hippocampus and one frontal cortex."
+              },
+              "pvalue_ln": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "Natural log of the enrichment p-value, as ENCORI reports it. THIS IS THE ONLY USABLE NUMBER FOR THE STRONGEST ROWS: `pvalue` underflows and prints 0 -- it did so on 15 of the 25 rows measured -- while pvalue_ln went on separating them, down to -8551."
+              },
+              "region": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "URL of a gzipped BED file giving the peak regions that contain the motif, for the same dataset and motif rank."
+              },
+              "sub_accession": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Accession of the individual sample within `main_accession` ('GSM1685416', 'ERR039854')."
+              },
+              "target_percentage": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "ENCORI's TargetPercentage(%) column. MEASURED 0 ON ALL 25 ROWS of the 'UGCAUG' scan, in the upstream TSV itself, so for this module it carries no information -- a 0 here does not mean no peaks matched, and `target_peak_num` is the count to read."
               }
             }
           }

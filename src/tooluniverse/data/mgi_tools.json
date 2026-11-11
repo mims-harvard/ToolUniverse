@@ -21,7 +21,7 @@
       ]
     },
     "fields": {
-      "endpoint_type": "search_genes"
+      "endpoint_type": "mgi_search"
     },
     "test_examples": [
       {
@@ -70,6 +70,69 @@
               "null"
             ],
             "description": "Entity category (always 'gene')"
+          },
+          "automated_description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Alliance's generated description of the gene: molecular functions, processes it is involved in, where it is expressed, the diseases it is used to study, and the human ortholog. Several sentences, not a label."
+          },
+          "diseases": {
+            "type": "array",
+            "description": "Disease names Alliance links to this gene -- 88 of them on Trp53, one on Trp53bp1, none on Trp53bp2. Enough to tell two hits apart without a call each.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "gene_synopsis": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Alliance's curated synopsis where a curator wrote one; null on every row measured."
+          },
+          "related_data_counts": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "How much of each kind of evidence Alliance holds for this gene, keyed by its own target field ({'genes': 1003} on Trp53 against {'genes': 16} on Trp53bp2). The keys are Alliance's data, not a fixed set.",
+            "additionalProperties": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records of that kind Alliance holds for this gene."
+            }
+          },
+          "search_score": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Alliance's relevance score, which is the order the hits come back in. 489051.44 for the exact symbol match against 198023.9 for the next hit: the gap between scores carries the meaning, not the value."
+          },
+          "so_term": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Sequence Ontology type of the hit, e.g. 'protein_coding_gene'. A pseudogene or an ncRNA gene is not a protein-coding gene, and the symbol alone does not say which this is."
+          },
+          "species": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Species of the hit as Alliance records it. This search is now filtered to Mus musculus; before the filter the first ten hits for 'insulin' were six Homo sapiens rows (gene_id 'HGNC:6081', ...) and four Rattus norvegicus rows ('RGD:2915', ...) and no mouse gene at all, so this field is what says whether a row is the mouse gene the tool's name promises."
+          },
+          "synonyms": {
+            "type": "array",
+            "description": "Other symbols and names the gene is known by ('p53', 'p44' for Trp53). The query may have matched one of these rather than `symbol`.",
+            "items": {
+              "type": "string"
+            }
           }
         }
       }

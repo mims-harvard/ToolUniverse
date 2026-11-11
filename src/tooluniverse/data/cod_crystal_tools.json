@@ -305,6 +305,139 @@
                   "string",
                   "null"
                 ]
+              },
+              "Rall": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The R factor over all reflections: how closely the refined model agrees with the measured data. Lower is better; '0.028' on the row measured. A structure with no R factor has not been refined against data you can check."
+              },
+              "Z": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Formula units per unit cell."
+              },
+              "Zprime": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Formula units per asymmetric unit."
+              },
+              "cellformula": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The formula of the CONTENTS OF THE UNIT CELL -- Z times the chemical formula. Measured '- Ca4 Mg4 O24 Si8 -' on a row whose `formula` is '- Ca Mg O6 Si2 -'. Read as the compound's formula it multiplies every count by Z."
+              },
+              "compoundsource": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Where the sample came from: a mineral locality ('DeKalb, New York') or 'synthetic'. A natural specimen and a synthetic preparation of the same formula are different samples and often different structures."
+              },
+              "date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Date of the COD revision this record was last changed in, 'YYYY-MM-DD' ('2023-03-26')."
+              },
+              "diffrpressure": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Pressure during the diffraction experiment, in kPa as COD stores it. Measured '100' -- one atmosphere -- on a diopside row whose paper is titled 'at pressure to 10 GPa Sample: P = 1 atm'. A structure measured under pressure is not the ambient structure."
+              },
+              "firstpage": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "First page of the paper in `journal`."
+              },
+              "flags": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "COD's own record flags. 'has coordinates' on all 15 rows measured; a record without it carries no atomic coordinates, so it cannot be used as a structure."
+              },
+              "lastpage": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Last page of the paper in `journal`."
+              },
+              "nel": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How many distinct elements the record's own formula contains. Measured '4' on all ten rows returned for a query that asked nel='2' (diopside, Ca Mg Si O), so COD does not apply the nel filter to the result set -- read this field rather than trusting the parameter."
+              },
+              "sgHall": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Space group in Hall notation ('-C 2yc'), the machine-readable form. `sg` is the Hermann-Mauguin symbol ('C 1 2/c 1') and `sgNumber` the International Tables number; all three name the same group."
+              },
+              "siga": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Estimated standard deviation of cell parameter `a`, same units. A cell edge without its e.s.d. cannot honestly be compared with another."
+              },
+              "sigb": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Estimated standard deviation of cell parameter `b`."
+              },
+              "sigbeta": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Estimated standard deviation of cell angle `beta`, in degrees."
+              },
+              "sigc": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Estimated standard deviation of cell parameter `c`."
+              },
+              "svnrevision": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The COD subversion revision the record was last changed in ('282068'). Two answers citing the same `file` at different revisions are not the same deposition state."
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Clock time of that revision, 'HH:MM:SS' ('10:11:39'). Read with `date` and `svnrevision`."
+              },
+              "volume": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The JOURNAL volume the paper appeared in -- '93' for American Mineralogist 2008, '1930' for a Zentralblatt entry. It is not a unit-cell volume; `vol` is."
               }
             }
           }

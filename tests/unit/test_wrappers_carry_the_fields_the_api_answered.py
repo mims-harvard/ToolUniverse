@@ -11703,3 +11703,183 @@ def test_a_page_note_is_absent_when_the_page_is_complete():
     desc = props["page_note"]["description"]
     assert "Present ONLY when" in desc
     assert "Its ABSENCE is the signal" in desc
+
+
+# ---------------------------------------------------------------------------
+# Six tools that answered nothing the first time they were asked.
+#
+# The catalogue sweep that produced the batches above recorded, for each of
+# these, an error body or an empty list: COD gave back only .status and .url,
+# LNCipedia only .status, ENCORI a data list of length zero, SemanticScholar a
+# .detail error payload. A tool that returns nothing has no undeclared fields,
+# so all six scored a clean zero while declaring nothing. Re-running the whole
+# catalogue -- not re-scoring the stored readings, which can only ever show
+# the state at sweep time -- caught them answering for real.
+# ---------------------------------------------------------------------------
+
+
+def test_cod_says_which_volume_is_the_journal_and_which_is_the_cell():
+    """Two fields named `volume` and `vol`, one of them not a volume at all.
+
+    COD rows carry the journal volume as `volume` ('93' for American
+    Mineralogist 2008) next to `a`, `b`, `c` and `vol`, the unit-cell volume.
+    `cellformula` is Z times `formula`, not the compound's formula. And `nel`
+    measured '4' on all ten rows returned for a query that asked nel='2', so
+    the parameter did not filter the set and only the field says so.
+    """
+    items = _at(_config("COD_search_structures")["return_schema"], "[]")["properties"]
+    for name in (
+        "cellformula",
+        "compoundsource",
+        "date",
+        "time",
+        "svnrevision",
+        "diffrpressure",
+        "firstpage",
+        "lastpage",
+        "volume",
+        "flags",
+        "nel",
+        "sgHall",
+        "Z",
+        "Zprime",
+        "Rall",
+        "siga",
+        "sigb",
+        "sigc",
+        "sigbeta",
+    ):
+        assert name in items, f"{name} is returned and not declared"
+    assert "It is not a unit-cell volume" in items["volume"]["description"]
+    assert "CONTENTS OF THE UNIT CELL" in items["cellformula"]["description"]
+    assert "does not apply the nel filter" in items["nel"]["description"]
+    assert "cannot be used as a structure" in items["flags"]["description"]
+
+
+def test_the_lncrna_sibling_of_a_declared_mirna_tool_caught_up():
+    """The same wrapper, the same upstream, one tool declared and one not.
+
+    `miRBase_get_mirna_xrefs` and `LNCipedia_get_lncrna_xrefs` are both
+    miRNAGetTool over RNAcentral. An earlier round added diseases,
+    disease_count, diseases_truncated, url, ncbi_gene_id, citations_url,
+    first_seen and last_seen to the wrapper and declared them on the miRNA
+    tool only.
+    """
+    for tool in ("miRBase_get_mirna_xrefs", "LNCipedia_get_lncrna_xrefs"):
+        xref = _at(_config(tool)["return_schema"], ".cross_references[]")["properties"]
+        for name in (
+            "diseases",
+            "disease_count",
+            "diseases_truncated",
+            "url",
+            "ncbi_gene_id",
+            "citations_url",
+            "first_seen",
+            "last_seen",
+        ):
+            assert name in xref, f"{tool} does not declare {name}"
+        assert "not a count" in xref["citations_url"]["description"]
+
+
+def test_the_mouse_gene_search_is_restricted_to_mouse():
+    """A tool named for MGI that returned no mouse gene at all.
+
+    `MGI_search_genes` promises "mouse (Mus musculus) genes ... Use this to
+    find mouse gene IDs before calling MGI_get_gene". It was configured with
+    endpoint_type `search_genes`, the unfiltered Alliance search, so the first
+    ten hits for 'insulin' were six Homo sapiens rows (HGNC:6081, ...) and
+    four Rattus norvegicus rows (RGD:2915, ...) and no mouse gene -- gene ids
+    that MGI_get_gene cannot take. The wrapper already had an `mgi_search`
+    branch, filtered to Mus musculus and used by nothing; this is that branch.
+
+    `species` is declared alongside, because it is the field that says whether
+    a row is the gene the tool's name promises.
+    """
+    cfg = _config("MGI_search_genes")
+    assert cfg["fields"]["endpoint_type"] == "mgi_search"
+    items = _at(cfg["return_schema"], "[]")["properties"]
+    for name in (
+        "species",
+        "diseases",
+        "automated_description",
+        "synonyms",
+        "gene_synopsis",
+        "search_score",
+        "so_term",
+        "related_data_counts",
+    ):
+        assert name in items, f"{name} is returned and not declared"
+    assert "no mouse gene at all" in items["species"]["description"]
+    # A map keyed out of the data declares its value shape, not its keys.
+    assert isinstance(items["related_data_counts"].get("additionalProperties"), dict)
+
+
+def test_encori_motif_rows_can_be_told_apart():
+    """Two rows identical on everything the wrapper returned.
+
+    The UGCAUG scan comes back with MBNL2 in brain twice, one hippocampus and
+    one frontal cortex. ENCORI says so in Properties, SubAccession and
+    Citation, which the wrapper read and dropped. `pvalue` underflows and
+    prints 0 on 15 of the 25 rows measured, so `pvalue_ln` is the only number
+    that still separates them; `target_percentage` is 0 on all 25 rows
+    upstream and carries nothing at all.
+    """
+    items = _at(_config("ENCORI_scan_RBP_motifs")["return_schema"], "[]")["properties"]
+    for name in (
+        "properties",
+        "sub_accession",
+        "citation",
+        "pvalue_ln",
+        "target_percentage",
+        "motif_matrix",
+        "region",
+        "cell_tissue",
+        "main_accession",
+    ):
+        assert name in items, f"{name} is returned and not declared"
+    assert "differ only here" in items["properties"]["description"]
+    assert "ONLY USABLE NUMBER" in items["pvalue_ln"]["description"]
+    assert "carries no information" in items["target_percentage"]["description"]
+
+
+def test_an_elided_abstract_is_not_a_missing_one():
+    """A null abstract with a field next to it explaining why.
+
+    Semantic Scholar returned `abstract: null` for Jinek 2012 and, in
+    openAccessPdf.disclaimer, "The following paper fields have been elided by
+    the publisher: {'abstract'}". Undeclared, the two cases -- a paper with no
+    abstract, and a paper whose abstract was withheld -- look the same.
+    """
+    pdf = _at(_config("SemanticScholar_get_paper")["return_schema"], ".openAccessPdf")[
+        "properties"
+    ]
+    assert "disclaimer" in pdf
+    assert "license" in pdf
+    assert "elided" in pdf["disclaimer"]["description"]
+    ids = _at(_config("SemanticScholar_get_paper")["return_schema"], ".externalIds")[
+        "properties"
+    ]
+    assert "MAG" in ids
+
+
+def test_the_count_of_associations_is_not_the_count_on_the_page():
+    """500 and 5420, and only one of them was declared.
+
+    `EnsemblPheno_get_by_term` sets association_count to len(associations) --
+    the page -- and total_associations to the size of the set. For 'Alzheimer
+    disease' those are 500 and 5420. association_count was declared without a
+    description and reads as the answer to "how many associations does this
+    term have".
+    """
+    props = _success_branch(_config("EnsemblPheno_get_by_term")["return_schema"])[
+        "properties"
+    ]
+    assert "total_associations" in props
+    assert (
+        "THIS is the size of the result set"
+        in props["total_associations"]["description"]
+    )
+    assert (
+        "not the number of associations for the term"
+        in (props["association_count"]["description"])
+    )

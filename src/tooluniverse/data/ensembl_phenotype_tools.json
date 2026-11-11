@@ -353,7 +353,8 @@
               "type": "string"
             },
             "association_count": {
-              "type": "integer"
+              "type": "integer",
+              "description": "How many associations are on THIS PAGE. It is len(associations) and always equals `returned` -- 500 where `total_associations` was 5420 -- so it is not the number of associations for the term."
             },
             "returned": {
               "type": "integer"
@@ -449,6 +450,13 @@
                   }
                 }
               }
+            },
+            "total_associations": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many associations Ensembl returned for the term BEFORE this page was cut -- 5420 for 'Alzheimer disease' against the 500 in `associations`. THIS is the size of the result set; `association_count` is not."
             }
           },
           "not": {

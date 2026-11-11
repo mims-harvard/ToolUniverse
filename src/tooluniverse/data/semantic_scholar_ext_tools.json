@@ -150,6 +150,20 @@
                 },
                 "status": {
                   "type": "string"
+                },
+                "disclaimer": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Semantic Scholar's notice about what it could NOT give you. Measured on the Jinek 2012 record: \"The following paper fields have been elided by the publisher: {'abstract'}\" -- that reply's `abstract` was null for that reason, not because the paper has none. Without this field an elided abstract and an absent one look the same."
+                },
+                "license": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Licence of the open-access copy where Semantic Scholar knows it; null on the measured record even though `status` was GREEN."
                 }
               }
             },
@@ -183,6 +197,13 @@
                     "integer",
                     "null"
                   ]
+                },
+                "MAG": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Microsoft Academic Graph id. MAG was retired in 2021, so this is a historical identifier, useful only for cross-walking records that still carry it."
                 }
               }
             },
