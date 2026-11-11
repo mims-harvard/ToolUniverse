@@ -243,6 +243,27 @@
             },
             "oneTestPerPeople": {
               "type": "integer"
+            },
+            "activePerOneMillion": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Active cases per million population, e.g. 2348.13. The population-normalised figure, which is the only one comparable between countries."
+            },
+            "criticalPerOneMillion": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Critical cases per million, e.g. 2.81."
+            },
+            "recoveredPerOneMillion": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Recoveries per million, e.g. 327994.92."
             }
           },
           "not": {

@@ -101,6 +101,565 @@
                   "heavy_atom_number": {
                     "type": "integer",
                     "description": "Number of heavy (non-hydrogen) atoms"
+                  },
+                  "allChemClassifications": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Every chemical class assigned to the compound, pooled from both taxonomies below, e.g. ['Imidazopyrimidines', 'Purine alkaloids|Purine alkaloids', 'Alkaloids|Alkaloids', 'Xanthines', 'Organic compounds']. A flat union, so it does not say which scheme gave which label."
+                  },
+                  "alogp2": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "ALogP squared, the form QSAR models use directly."
+                  },
+                  "amralogp": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Molar refractivity from the same Ghose-Crippen parameterisation."
+                  },
+                  "apol": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Sum of atomic polarisabilities."
+                  },
+                  "bcutDescriptor": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "Six BCUT eigenvalue descriptors - the lowest and highest eigenvalue for each of three atomic weightings (mass, charge, polarisability), in that order."
+                  },
+                  "bond_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of bonds in the structure."
+                  },
+                  "bpol": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Sum of the absolute differences in polarisability across each bond."
+                  },
+                  "chemicalTaxonomyClassyfireSuperclass": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ClassyFire superclass, e.g. 'Organoheterocyclic compounds'."
+                  },
+                  "circularFingerprint": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "Indices of the set bits in the circular (ECFP-style) fingerprint - the one used for similarity search."
+                  },
+                  "contains_linear_sugars": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether an open-chain sugar moiety was detected."
+                  },
+                  "contains_ring_sugars": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether a cyclic sugar moiety was detected."
+                  },
+                  "deep_smiles": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DeepSMILES form of the structure, the syntax used for machine-learning models. Measured empty ('') on records where the service did not compute it."
+                  },
+                  "eccentricConnectivityIndexDescriptor": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Eccentric connectivity index of the molecular graph."
+                  },
+                  "ertlFunctionalFragments": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": "integer"
+                    },
+                    "description": "Functional groups found by Ertl's algorithm, as a map from the group's SMARTS-like string to its count, e.g. {'*n(*)*': 4, '[c]=O': 2}."
+                  },
+                  "ertlFunctionalFragmentsPseudoSmiles": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": "integer"
+                    },
+                    "description": "The same functional groups written in pseudo-SMILES with R-groups spelled out, e.g. {'[C*]=O': 1, 'RN*(R)R': 4}."
+                  },
+                  "extendedFingerprint": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "Indices of the set bits in the CDK extended fingerprint, which adds ring information to the path-based one."
+                  },
+                  "fmfDescriptor": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Fraction of the molecular framework - the share of heavy atoms that belong to the scaffold rather than the side chains."
+                  },
+                  "fragmentComplexityDescriptor": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Nilakantan fragment complexity."
+                  },
+                  "fragments": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": "integer"
+                    },
+                    "description": "Murcko-style fragments of the structure, as a map from the fragment's pseudo-SMILES to how many times it occurs, e.g. {'[O](=[C](p[C]p[N]))': 1}. Keyed by the fragment, so the property names are data, not a fixed set."
+                  },
+                  "fragmentsWithSugar": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": "integer"
+                    },
+                    "description": "The same fragment map computed before sugar removal. Identical to fragments for a compound with no sugar moiety."
+                  },
+                  "fsp3": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Fraction of carbons that are sp3 hybridised; a measure of three-dimensionality."
+                  },
+                  "gravitationalIndexHeavyAtoms": {
+                    "type": [
+                      "number",
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gravitational index over heavy atoms, a 3D descriptor. Measured as the STRING 'NaN' when no coordinates are available."
+                  },
+                  "hybridizationRatioDescriptor": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Fraction of sp3 among all hybridised carbons."
+                  },
+                  "inchi2D": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InChI with stereochemistry layers stripped. Equal to inchi for a compound that has no stereocentres."
+                  },
+                  "inchikey2D": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The first, skeleton block of the InChIKey only - 14 characters, e.g. 'RYYVLZVUVIJVGH'. It is not the 27-character key, so it matches every stereoisomer and cannot be used where a full InChIKey is expected."
+                  },
+                  "kappaShapeIndex1": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "First-order Hall-Kier kappa shape index."
+                  },
+                  "kappaShapeIndex2": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Second-order kappa shape index."
+                  },
+                  "kappaShapeIndex3": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Third-order kappa shape index."
+                  },
+                  "manholdlogp": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Mannhold LogP, a logP estimate from atom counts alone."
+                  },
+                  "max_number_of_rings": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Largest ring count found by the ring perception used, e.g. 3."
+                  },
+                  "min_number_of_rings": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Smallest ring count found, e.g. 2. It differs from max_number_of_rings because fused systems can be counted more than one way."
+                  },
+                  "murko_framework": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The Bemis-Murcko scaffold as SMILES, e.g. 'n1cnc2N=C[N]c2c1' - the ring system with side chains removed, which is how series of analogues are grouped."
+                  },
+                  "npl_noh_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The same score computed with hydrogens suppressed."
+                  },
+                  "npl_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Natural-product-likeness score; positive values mean more natural-product-like than drug-like."
+                  },
+                  "npl_sugar_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Natural-product-likeness of the sugar-free structure. Separates likeness that comes from the aglycone from likeness that comes from the glycosylation."
+                  },
+                  "numberSpiroAtoms": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Atoms shared by two rings joined at a single atom."
+                  },
+                  "number_of_carbons": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Carbon atom count."
+                  },
+                  "number_of_nitrogens": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Nitrogen atom count."
+                  },
+                  "number_of_oxygens": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Oxygen atom count."
+                  },
+                  "petitjeanNumber": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Petitjean topological shape index from the graph."
+                  },
+                  "petitjeanShapeGeom": {
+                    "type": [
+                      "number",
+                      "string",
+                      "null"
+                    ],
+                    "description": "Petitjean geometric shape ratio, which needs 3D coordinates. Measured as the STRING 'NaN' when the service has no conformer, so the field is not always a number."
+                  },
+                  "petitjeanShapeTopo": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Petitjean topological shape ratio."
+                  },
+                  "pfCounts": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The PubChem fingerprint as 'count' (how many bits are set, e.g. 113) and 'bits' (their indices). The same information as pubchemFingerprint with its length stated.",
+                    "properties": {
+                      "count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Number of set bits."
+                      },
+                      "bits": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "integer"
+                        },
+                        "description": "Indices of the set bits."
+                      }
+                    }
+                  },
+                  "pubchemBits": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The PubChem fingerprint base64-encoded, the form PubChem itself serves."
+                  },
+                  "pubchemBitsString": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The PubChem fingerprint written out as a string of '0' and '1' characters."
+                  },
+                  "pubchemFingerprint": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "Indices of the set bits in the 881-bit PubChem substructure fingerprint. Positions, not a bit string; pubchemBitsString carries the same thing expanded."
+                  },
+                  "smiles2D": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SMILES with stereochemistry removed, e.g. 'Cn1c(=O)c2c(ncn2C)n(C)c1=O'."
+                  },
+                  "sugar_free_heavy_atom_number": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Heavy atoms left after sugar removal. Equal to heavy_atom_number when no sugar was found."
+                  },
+                  "sugar_free_smiles": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SMILES of the aglycone - the structure with sugar moieties removed, e.g. 'O=C1C2=C(N=CN2C)N(C(=O)N1C)C'. For a compound with no sugar it is the structure itself."
+                  },
+                  "sugar_free_total_atom_number": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "All atoms left after sugar removal."
+                  },
+                  "taxonomyReferenceObjects": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": "object"
+                    },
+                    "description": "The evidence behind allTaxa, keyed by reference and resolved per taxonomy source. Each value maps a source name ('iNaturalist', 'Open Tree of Life', ...) to organism records carrying organism_value, cleaned_organism_id, wikidata_id and the full rank chain (kingdom, phylum, classx, order, family, genus, species). NOTE the keys: they are DOIs with every '.' rewritten as '$x$x$', e.g. '10$x$x$1248/CPB$x$x$55$x$x$598' is DOI 10.1248/CPB.55.598. The DOI cannot be recovered without undoing that substitution."
+                  },
+                  "total_atom_number": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "All atoms including hydrogens."
+                  },
+                  "tpsaEfficiency": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Polar surface area divided by molecular weight."
+                  },
+                  "vabcDescriptor": {
+                    "type": [
+                      "number",
+                      "string",
+                      "null"
+                    ],
+                    "description": "Van der Waals volume by the VABC method. Measured as the STRING 'NaN' when it could not be computed."
+                  },
+                  "vertexAdjMagnitude": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Vertex adjacency magnitude of the graph."
+                  },
+                  "weinerPathNumber": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Wiener path number - the sum of all shortest-path lengths."
+                  },
+                  "weinerPolarityNumber": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Wiener polarity number - how many atom pairs are exactly three bonds apart."
+                  },
+                  "zagrebIndex": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Zagreb index, the sum of squared vertex degrees."
+                  },
+                  "allTaxa": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Every organism LOTUS records this compound in, as scientific names - 148 of them for caffeine, from 'Coffea canephora' to 'Schizosaccharomyces pombe' and 'Anthozoa'. LOTUS exists to record which organism a natural product was found in, and this is the only field that answers it."
+                  },
+                  "alogp": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Ghose-Crippen ALogP, the calculated octanol/water partition coefficient."
+                  },
+                  "chemicalTaxonomyClassyfireClass": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ClassyFire class, e.g. 'Imidazopyrimidines'."
+                  },
+                  "chemicalTaxonomyClassyfireDirectParent": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The most specific ClassyFire term for the compound, e.g. 'Xanthines'. More informative than the class, and the level a chemist would name."
+                  },
+                  "chemicalTaxonomyClassyfireKingdom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ClassyFire kingdom, e.g. 'Organic compounds'."
+                  },
+                  "chemicalTaxonomyNPclassifierClass": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "NPClassifier class, e.g. 'Purine alkaloids|Purine alkaloids'. '|'-joined as above."
+                  },
+                  "chemicalTaxonomyNPclassifierPathway": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "NPClassifier biosynthetic pathway, e.g. 'Alkaloids'. Measured values repeat the term joined by '|' ('Alkaloids|Alkaloids') when more than one classifier run agreed, so the string may need splitting on '|' before use."
+                  },
+                  "chemicalTaxonomyNPclassifierSuperclass": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "NPClassifier superclass, e.g. 'Pseudoalkaloids (transamidation)|Pseudoalkaloids'. '|'-joined as above, and the two halves are not always the same string."
+                  },
+                  "hBondAcceptorCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of H-bond acceptors"
+                  },
+                  "hBondDonorCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of H-bond donors"
+                  },
+                  "iupac_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The systematic IUPAC name, e.g. '1,3,7-trimethyl-2,3,6,7-tetrahydro-1H-purine-2,6-dione'. traditional_name gives the common name ('caffeine') instead."
+                  },
+                  "lipinskiRuleOf5Failures": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many of Lipinski's four rules the compound breaks; 0 means it passes all of them."
+                  },
+                  "topoPSA": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Topological polar surface area in square angstroms - the standard permeability proxy."
+                  },
+                  "xlogp": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "XLogP3 lipophilicity, computed by a different method than alogp; the two disagree by design."
                   }
                 }
               }
@@ -319,6 +878,471 @@
                 "null"
               ],
               "description": "Source organisms from which this natural product has been isolated"
+            },
+            "allChemClassifications": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Every chemical class assigned to the compound, pooled from both taxonomies below, e.g. ['Imidazopyrimidines', 'Purine alkaloids|Purine alkaloids', 'Alkaloids|Alkaloids', 'Xanthines', 'Organic compounds']. A flat union, so it does not say which scheme gave which label."
+            },
+            "alogp2": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "ALogP squared, the form QSAR models use directly."
+            },
+            "amralogp": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Molar refractivity from the same Ghose-Crippen parameterisation."
+            },
+            "apol": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Sum of atomic polarisabilities."
+            },
+            "bcutDescriptor": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "number"
+              },
+              "description": "Six BCUT eigenvalue descriptors - the lowest and highest eigenvalue for each of three atomic weightings (mass, charge, polarisability), in that order."
+            },
+            "bond_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of bonds in the structure."
+            },
+            "bpol": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Sum of the absolute differences in polarisability across each bond."
+            },
+            "chemicalTaxonomyClassyfireSuperclass": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ClassyFire superclass, e.g. 'Organoheterocyclic compounds'."
+            },
+            "circularFingerprint": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "integer"
+              },
+              "description": "Indices of the set bits in the circular (ECFP-style) fingerprint - the one used for similarity search."
+            },
+            "contains_linear_sugars": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether an open-chain sugar moiety was detected."
+            },
+            "contains_ring_sugars": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether a cyclic sugar moiety was detected."
+            },
+            "deep_smiles": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "DeepSMILES form of the structure, the syntax used for machine-learning models. Measured empty ('') on records where the service did not compute it."
+            },
+            "eccentricConnectivityIndexDescriptor": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Eccentric connectivity index of the molecular graph."
+            },
+            "ertlFunctionalFragments": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "description": "Functional groups found by Ertl's algorithm, as a map from the group's SMARTS-like string to its count, e.g. {'*n(*)*': 4, '[c]=O': 2}."
+            },
+            "ertlFunctionalFragmentsPseudoSmiles": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "description": "The same functional groups written in pseudo-SMILES with R-groups spelled out, e.g. {'[C*]=O': 1, 'RN*(R)R': 4}."
+            },
+            "extendedFingerprint": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "integer"
+              },
+              "description": "Indices of the set bits in the CDK extended fingerprint, which adds ring information to the path-based one."
+            },
+            "fmfDescriptor": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Fraction of the molecular framework - the share of heavy atoms that belong to the scaffold rather than the side chains."
+            },
+            "fragmentComplexityDescriptor": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Nilakantan fragment complexity."
+            },
+            "fragments": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "description": "Murcko-style fragments of the structure, as a map from the fragment's pseudo-SMILES to how many times it occurs, e.g. {'[O](=[C](p[C]p[N]))': 1}. Keyed by the fragment, so the property names are data, not a fixed set."
+            },
+            "fragmentsWithSugar": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "description": "The same fragment map computed before sugar removal. Identical to fragments for a compound with no sugar moiety."
+            },
+            "fsp3": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Fraction of carbons that are sp3 hybridised; a measure of three-dimensionality."
+            },
+            "gravitationalIndexHeavyAtoms": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
+              "description": "Gravitational index over heavy atoms, a 3D descriptor. Measured as the STRING 'NaN' when no coordinates are available."
+            },
+            "hybridizationRatioDescriptor": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Fraction of sp3 among all hybridised carbons."
+            },
+            "inchi2D": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChI with stereochemistry layers stripped. Equal to inchi for a compound that has no stereocentres."
+            },
+            "inchikey2D": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The first, skeleton block of the InChIKey only - 14 characters, e.g. 'RYYVLZVUVIJVGH'. It is not the 27-character key, so it matches every stereoisomer and cannot be used where a full InChIKey is expected."
+            },
+            "kappaShapeIndex1": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "First-order Hall-Kier kappa shape index."
+            },
+            "kappaShapeIndex2": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Second-order kappa shape index."
+            },
+            "kappaShapeIndex3": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Third-order kappa shape index."
+            },
+            "manholdlogp": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Mannhold LogP, a logP estimate from atom counts alone."
+            },
+            "max_number_of_rings": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Largest ring count found by the ring perception used, e.g. 3."
+            },
+            "min_number_of_rings": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Smallest ring count found, e.g. 2. It differs from max_number_of_rings because fused systems can be counted more than one way."
+            },
+            "murko_framework": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The Bemis-Murcko scaffold as SMILES, e.g. 'n1cnc2N=C[N]c2c1' - the ring system with side chains removed, which is how series of analogues are grouped."
+            },
+            "npl_noh_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The same score computed with hydrogens suppressed."
+            },
+            "npl_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Natural-product-likeness score; positive values mean more natural-product-like than drug-like."
+            },
+            "npl_sugar_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Natural-product-likeness of the sugar-free structure. Separates likeness that comes from the aglycone from likeness that comes from the glycosylation."
+            },
+            "numberSpiroAtoms": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Atoms shared by two rings joined at a single atom."
+            },
+            "number_of_carbons": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Carbon atom count."
+            },
+            "number_of_nitrogens": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Nitrogen atom count."
+            },
+            "number_of_oxygens": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Oxygen atom count."
+            },
+            "petitjeanNumber": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Petitjean topological shape index from the graph."
+            },
+            "petitjeanShapeGeom": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
+              "description": "Petitjean geometric shape ratio, which needs 3D coordinates. Measured as the STRING 'NaN' when the service has no conformer, so the field is not always a number."
+            },
+            "petitjeanShapeTopo": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Petitjean topological shape ratio."
+            },
+            "pfCounts": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The PubChem fingerprint as 'count' (how many bits are set, e.g. 113) and 'bits' (their indices). The same information as pubchemFingerprint with its length stated.",
+              "properties": {
+                "count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of set bits."
+                },
+                "bits": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "integer"
+                  },
+                  "description": "Indices of the set bits."
+                }
+              }
+            },
+            "pubchemBits": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The PubChem fingerprint base64-encoded, the form PubChem itself serves."
+            },
+            "pubchemBitsString": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The PubChem fingerprint written out as a string of '0' and '1' characters."
+            },
+            "pubchemFingerprint": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "integer"
+              },
+              "description": "Indices of the set bits in the 881-bit PubChem substructure fingerprint. Positions, not a bit string; pubchemBitsString carries the same thing expanded."
+            },
+            "smiles2D": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "SMILES with stereochemistry removed, e.g. 'Cn1c(=O)c2c(ncn2C)n(C)c1=O'."
+            },
+            "sugar_free_heavy_atom_number": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Heavy atoms left after sugar removal. Equal to heavy_atom_number when no sugar was found."
+            },
+            "sugar_free_smiles": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "SMILES of the aglycone - the structure with sugar moieties removed, e.g. 'O=C1C2=C(N=CN2C)N(C(=O)N1C)C'. For a compound with no sugar it is the structure itself."
+            },
+            "sugar_free_total_atom_number": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "All atoms left after sugar removal."
+            },
+            "taxonomyReferenceObjects": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": {
+                "type": "object"
+              },
+              "description": "The evidence behind allTaxa, keyed by reference and resolved per taxonomy source. Each value maps a source name ('iNaturalist', 'Open Tree of Life', ...) to organism records carrying organism_value, cleaned_organism_id, wikidata_id and the full rank chain (kingdom, phylum, classx, order, family, genus, species). NOTE the keys: they are DOIs with every '.' rewritten as '$x$x$', e.g. '10$x$x$1248/CPB$x$x$55$x$x$598' is DOI 10.1248/CPB.55.598. The DOI cannot be recovered without undoing that substitution."
+            },
+            "total_atom_number": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "All atoms including hydrogens."
+            },
+            "tpsaEfficiency": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Polar surface area divided by molecular weight."
+            },
+            "vabcDescriptor": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
+              "description": "Van der Waals volume by the VABC method. Measured as the STRING 'NaN' when it could not be computed."
+            },
+            "vertexAdjMagnitude": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Vertex adjacency magnitude of the graph."
+            },
+            "weinerPathNumber": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Wiener path number - the sum of all shortest-path lengths."
+            },
+            "weinerPolarityNumber": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Wiener polarity number - how many atom pairs are exactly three bonds apart."
+            },
+            "zagrebIndex": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Zagreb index, the sum of squared vertex degrees."
+            },
+            "_links": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "HAL links for the record, under 'self' and 'lotusUniqueNaturalProduct'. The addresses to re-fetch this compound."
             }
           },
           "not": {

@@ -268,6 +268,65 @@
       "properties": {
         "error": {
           "type": "string"
+        },
+        "expression_unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The unit the values are in: 'nTPM (normalized Transcripts Per Million)'. nTPM values are comparable across tissues within HPA but not with raw TPM or FPKM from elsewhere."
+        },
+        "gene_synonym": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Other symbols for the gene, e.g. ['IDDM1', ...]. Explains why a query under a different name reached this gene."
+        },
+        "disease_expression": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Expression in the diseased tissue, or 'N/A' where HPA holds none - measured 'N/A'. A string, and 'N/A' is not zero."
+        },
+        "disease_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The disease the comparison is for, e.g. 'lung cancer'."
+        },
+        "disease_vs_healthy": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The comparison itself, e.g. 'Insufficient data for comparison'. The field that says there is no answer; without it an absent comparison looks like no difference."
+        },
+        "gene_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The gene the query resolved to, e.g. 'TP53'."
+        },
+        "gene_symbol": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The gene symbol, equal to gene_name in the measured reply."
+        },
+        "tissue_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The tissue the comparison is for, e.g. 'lung'."
         }
       }
     }
@@ -981,6 +1040,69 @@
       "properties": {
         "error": {
           "type": "string"
+        },
+        "expression_level_basis": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "States that expression_level is computed by ToolUniverse from expression_value and is not HPA's own classification. Without it, the level reads as an HPA call rather than a derived one."
+        },
+        "expression_unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The unit the values are in: 'nTPM (normalized Transcripts Per Million)'. nTPM values are comparable across tissues within HPA but not with raw TPM or FPKM from elsewhere."
+        },
+        "column_queried": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact HPA column the value came from, e.g. 'Tissue RNA - liver [nTPM]'. The unit and the dataset, on record; the value alone carries neither."
+        },
+        "expression_level": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A banding of that value - 'high', 'medium', 'low', 'not detected'. Computed by ToolUniverse from expression_value rather than taken from HPA, so it is a derived label, not an HPA call."
+        },
+        "expression_value": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The expression figure as a STRING, e.g. '15.6'. It needs converting before arithmetic."
+        },
+        "gene_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The gene the query resolved to, e.g. 'TP53'."
+        },
+        "source_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The tissue, cell line or cell type the value is for, e.g. 'liver'."
+        },
+        "source_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which of those it is, e.g. 'tissue', 'cell_line', 'single_cell_type'. The same name can exist in more than one category, and the value means different things in each."
+        },
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Whether the lookup succeeded, e.g. 'ok'. Separates a gene with no expression from a lookup that failed."
         }
       }
     }

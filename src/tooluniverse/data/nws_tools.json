@@ -309,11 +309,89 @@
                       },
                       "isDaytime": {
                         "type": "boolean"
+                      },
+                      "icon": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "URL of the weather icon for the period, e.g. '.../icons/land/night/skc?size=medium'. The icon path encodes the sky condition, which the short forecast text gives only in words."
+                      },
+                      "probabilityOfPrecipitation": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "Chance of precipitation for the period, as 'unitCode' and 'value'. The value is a bare number and the unit code is what makes it a percentage; it can also be null, which is not zero."
                       }
                     }
                   }
+                },
+                "elevation": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Elevation of the grid cell, as 'unitCode' and 'value'. Temperature follows elevation, so a surprising forecast is often a cell at a different height."
+                },
+                "forecastGenerator": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which NWS generator produced the forecast, e.g. 'BaselineForecastGenerator'."
+                },
+                "generatedAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When this forecast was generated, e.g. '2026-11-11T03:42:21+00:00'."
+                },
+                "units": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which unit system the values are in, e.g. 'us'. 'us' means Fahrenheit and miles per hour; reading those as metric is a large error, and the period values carry no unit of their own."
+                },
+                "updateTime": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When the underlying gridded data was last updated. Earlier than generatedAt, and it is the real age of the forecast."
+                },
+                "validTimes": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The interval the forecast covers, as an ISO 8601 interval with a duration, e.g. '2026-11-10T20:00:00+00:00/P7DT5H'. The part after the '/' is a DURATION, not an end instant, so it has to be added to the start."
                 }
               }
+            },
+            "@context": {
+              "type": [
+                "array",
+                "object",
+                "null"
+              ],
+              "description": "The JSON-LD context the feed declares, e.g. ['https://geojson.org/geojson-ld/geojson-context.jsonld', {...}]. What makes the reply linked data rather than plain GeoJSON."
+            },
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the point sits on, e.g. 'land'. A marine point is served by different products, so this changes which forecasts apply."
+            },
+            "geometry": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The forecast area as GeoJSON ('type' and 'coordinates') - the grid cell, not the requested point."
             }
           },
           "not": {

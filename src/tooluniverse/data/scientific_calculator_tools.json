@@ -304,6 +304,34 @@
             },
             "solubility_mol_per_L": {
               "type": "number"
+            },
+            "Ksp": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The solubility product used, e.g. 1.8e-10. The constant the answer depends on; a different source's Ksp gives a different answer."
+            },
+            "anion_conc": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Equilibrium anion concentration. Equal to the cation figure for a 1:1 salt and not otherwise."
+            },
+            "cation_conc": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Equilibrium cation concentration, e.g. 1.3416407864998738e-05 mol/L."
+            },
+            "expression": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The equilibrium expression that was solved, e.g. 'Ksp = (1s)^1 * (1s)^1 = 1 * s^2'. Shows the stoichiometry assumed, which is where a wrong answer usually comes from."
             }
           },
           "required": [

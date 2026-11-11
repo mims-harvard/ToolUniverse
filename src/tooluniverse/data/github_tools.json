@@ -455,6 +455,104 @@
             "updated_at": {
               "type": "string",
               "description": "Last profile update date (ISO 8601)"
+            },
+            "events_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for the account's events, e.g. with a '{/...}' placeholder in it. An RFC 6570 URI TEMPLATE, not a URL - requesting it unexpanded returns 404."
+            },
+            "followers_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL listing the account's followers, e.g. 'https://api.github.com/users/torvalds/followers'. A plain URL, unlike several of its siblings."
+            },
+            "following_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for who the account follows, e.g. with a '{/...}' placeholder in it. An RFC 6570 URI TEMPLATE, not a URL - requesting it unexpanded returns 404."
+            },
+            "gists_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for the account's gists, e.g. with a '{/...}' placeholder in it. An RFC 6570 URI TEMPLATE, not a URL - requesting it unexpanded returns 404."
+            },
+            "gravatar_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Legacy Gravatar hash. Measured NULL - GitHub stopped populating it, so it is a declared always-empty field rather than a dropped one."
+            },
+            "node_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The account's GraphQL node id, e.g. 'MDQ6VXNlcjEwMjQwMjU='. Required by the GraphQL API, where the numeric id is not accepted."
+            },
+            "organizations_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL listing the account's organisations."
+            },
+            "received_events_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL listing events the account received."
+            },
+            "repos_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for the account's repositories, e.g. with a '{/...}' placeholder in it. An RFC 6570 URI TEMPLATE, not a URL - requesting it unexpanded returns 404."
+            },
+            "site_admin": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True for a GitHub staff account."
+            },
+            "starred_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for repositories the account has starred, e.g. with a '{/...}' placeholder in it. An RFC 6570 URI TEMPLATE, not a URL - requesting it unexpanded returns 404."
+            },
+            "subscriptions_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL listing the account's watched repositories."
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL for the account, e.g. 'https://api.github.com/users/torvalds'. The API address, not the html_url a person would open."
+            },
+            "user_view_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How much of the profile this view shows, e.g. 'public'. An authenticated request can see more, so a field missing here may exist."
             }
           },
           "not": {

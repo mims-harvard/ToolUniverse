@@ -63,9 +63,30 @@
               },
               "rna_type": {
                 "type": "string"
+              },
+              "length": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Length of the sequence in nucleotides, e.g. 77."
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "API URL for this sequence in this species, e.g. 'https://rnacentral.org/api/v1/rna/URS00006B57E0/9606'. The URS id alone is species-agnostic; this is the species-specific record."
               }
             }
           }
+        },
+        "count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many sequences match the query in total, e.g. 61829. The returned list is one page of them."
         }
       },
       "required": [

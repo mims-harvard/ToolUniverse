@@ -88,6 +88,26 @@
                 "querytranslation": {
                   "type": "string",
                   "description": "How NCBI interpreted the query"
+                },
+                "translationset": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "How NCBI rewrote the query terms, each {from, to}, e.g. 'Homo sapiens[Organism]' expanded to its full organism clause. Entrez silently rewrites queries, and this is the only record of what was actually searched."
+                },
+                "translationstack": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "The parsed query as a stack of terms with their fields and hit counts, e.g. {'term': 'TP53[Symbol]', 'field': 'Symbol', 'count': ...}. Which clause contributed which hits, and so why a query returned more or fewer results than expected."
                 }
               }
             }

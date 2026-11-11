@@ -285,6 +285,13 @@
             "raw_data": {
               "type": "string",
               "description": "Complete original KEGG flat-file record."
+            },
+            "remark": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "KEGG's cross-reference note, e.g. 'Same as: D08646'. Says that the compound is the same entity as a KEGG DRUG entry, which is how a metabolite record is joined to its drug record."
             }
           }
         },

@@ -97,6 +97,48 @@
                   }
                 }
               }
+            },
+            "total_phenotypes": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many phenotype associations Ensembl holds for the variant in total, e.g. 1140 for rs429358 - against the 200 that came back. The only field that reveals the returned list is a sixth of the answer; phenotype_count counts the page, not the whole."
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when results remain beyond this page."
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied, e.g. 200."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many results were skipped before this page."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many came back, e.g. 149."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the full set did not fit in this page."
             }
           },
           "not": {

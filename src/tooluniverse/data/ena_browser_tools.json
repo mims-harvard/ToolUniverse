@@ -16,7 +16,9 @@
           "default": false
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/ena/browser/api/fasta/{accession}",
@@ -47,7 +49,9 @@
           "description": "EMBL/GenBank accession number. NOT RefSeq (NC_*, NM_*, NP_*). Examples: 'U00096', 'AJ312385', 'M15390'"
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/ena/browser/api/embl/{accession}",
@@ -75,7 +79,9 @@
           "description": "ENA metadata record accession. Supported types: Study (ERP*, SRP*, PRJ*), Sample (ERS*, SRS*, SAM*), Run (ERR*, SRR*), Experiment (ERX*, SRX*), Analysis (ERZ*, SRZ*), Taxon (numeric ID). NOT for sequence accessions (U#####, M#####, etc.). Examples: 'SAMEA2620084' (sample), 'ERX2484999' (experiment), '562' (taxon)"
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/ena/browser/api/xml/{accession}",
@@ -108,7 +114,9 @@
           "default": false
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/ena/browser/api/fasta/{accession}",
@@ -144,7 +152,9 @@
           "description": "EMBL/GenBank accession number. NOT RefSeq (NC_*, NM_*, NP_*). Examples: 'U00096', 'AJ312385', 'M15390'"
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/ena/browser/api/summary/{accession}",
@@ -223,7 +233,9 @@
           "description": "EMBL/GenBank accession number. NOT RefSeq (NC_*, NM_*, NP_*). Examples: 'U00096', 'AJ312385'"
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/ena/browser/api/versions/{accession}",
@@ -260,12 +272,36 @@
                   },
                   "status": {
                     "type": "string"
+                  },
+                  "secondaryAccession": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Secondary accessions for the version, e.g. ['AE000111-AE000510'] - often a RANGE in one string. Measured on 1 of 3 versions."
+                  },
+                  "text": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL of the version's EMBL flat file, e.g. 'https://www.ebi.ac.uk/ena/browser/api/embl/U00096.3'. Where the actual record for that version can be read."
                   }
                 }
               }
             }
           },
           "description": "Version history with details for each version"
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Content type ENA served, e.g. 'application/json'. ENA answers some requests as EMBL flat file or XML, and this is what distinguishes them."
         }
       }
     },

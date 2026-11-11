@@ -174,6 +174,13 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "doi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DOI of the paper the affinity was measured in, e.g. '10.1016/j.chembiol.2004.02.012'. The citation for the measurement, which nothing else in the row gives."
                   }
                 }
               }
@@ -495,6 +502,34 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "inhibitor": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "BindingDB's own label for the compound in the measurement, e.g. 'Cobweb_bdb'."
+                  },
+                  "smiles": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SMILES of the compound as BindingDB holds it, e.g. 'CC(=O)Oc1ccccc1C(=O)O'. Confirms which compound the affinity belongs to; a name can resolve to several."
+                  },
+                  "species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Species of that target, e.g. 'Human'. An affinity measured on a rat orthologue is not a human affinity, and the number alone does not say."
+                  },
+                  "target": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The protein the affinity was measured against, e.g. 'ATP-binding cassette sub-family C member 4'."
                   }
                 }
               }

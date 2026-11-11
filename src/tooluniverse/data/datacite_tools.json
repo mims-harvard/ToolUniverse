@@ -120,6 +120,34 @@
                         "null"
                       ],
                       "description": "Specific resource type"
+                    },
+                    "bibtex": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "BibTeX entry type for citing the dataset, e.g. 'misc'. Note that a dataset is 'misc' in BibTeX, so a reference manager will not call it a dataset."
+                    },
+                    "citeproc": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "CSL type, e.g. 'dataset'."
+                    },
+                    "ris": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "RIS reference type, e.g. 'DATA'."
+                    },
+                    "schemaOrg": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "schema.org type, e.g. 'Dataset'. What a search engine sees."
                     }
                   }
                 },
@@ -192,8 +220,175 @@
                       }
                     }
                   }
+                },
+                "citationCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many times DataCite has recorded this dataset being cited. 0 means none recorded, which is not the same as none existing: only citations deposited with DataCite are counted."
+                },
+                "created": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When the metadata record was created in DataCite."
+                },
+                "dates": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Every date the depositor supplied, each with 'date' and 'dateType' - 'Collected', 'Issued', 'Available', 'Updated', 'Submitted'. A 'Collected' value may be a range, e.g. '1998-01-01/2024-12-31', which is when the data was gathered rather than published. 8 such entries on the measured record."
+                },
+                "downloadCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Downloads aggregated the same way, and subject to the same caveat."
+                },
+                "isActive": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "False once the DOI has been withdrawn by its registrant."
+                },
+                "metadataVersion": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many times the metadata has been revised in DataCite; 0 for a record never updated since deposit."
+                },
+                "partCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records are parts of this one; non-zero marks it as a collection."
+                },
+                "partOfCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records this one is a part of."
+                },
+                "prefix": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The DOI's registrant prefix, e.g. '10.5281' (Zenodo). Identifies the repository without parsing the DOI string."
+                },
+                "published": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The publication date as the depositor gave it, which may be a bare year ('2020') rather than a full date."
+                },
+                "referenceCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many works this dataset itself cites."
+                },
+                "registered": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When the DOI was first registered with DataCite, e.g. '2020-10-14T14:51:55.000Z'. The publicationYear is what the depositor claims; this is when the DOI actually came into being."
+                },
+                "schemaVersion": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The DataCite metadata schema the record was deposited against, e.g. 'http://datacite.org/schema/kernel-4'. Which fields are even allowed to be present."
+                },
+                "source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "How the metadata reached DataCite: 'mds' (deposited through the Metadata Store), 'api', 'fabricaForm' and so on. Where the record came from, which bears on how complete it is."
+                },
+                "state": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Registration state: 'findable' (indexed and resolvable), 'registered' (resolvable but not indexed) or 'draft' (not yet registered). A draft DOI does not resolve, and nothing else in the record says so."
+                },
+                "suffix": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The DOI's local part, e.g. 'zenodo.4088438'."
+                },
+                "updated": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When the metadata record was last changed. Dataset metadata is mutable, so this says how stale the rest of the reply may be."
+                },
+                "versionCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many later versions of this record exist."
+                },
+                "versionOfCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records this one is a version OF. 1 means it is itself a version of something else, so it is not the top of its chain."
+                },
+                "viewCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Views DataCite has aggregated from the repository's usage reports. 0 where the repository files no reports."
+                },
+                "xml": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The complete DataCite XML record, base64-encoded. Everything the depositor submitted, including fields this reply does not break out."
+                },
+                "rightsList": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Licence terms, each with 'rights', 'rightsUri' and where given the SPDX triple below. An empty list means the depositor stated no licence, which is not the same as public domain."
                 }
               }
+            },
+            "relationships": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "JSON:API relationship links for the record - client, provider, media, references, citations, parts, partOf, versions. The addresses to follow for the things the *Count fields only count."
             }
           },
           "not": {
@@ -315,8 +510,201 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "citationCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many times DataCite has recorded this dataset being cited. 0 means none recorded, which is not the same as none existing: only citations deposited with DataCite are counted."
+                  },
+                  "created": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the metadata record was created in DataCite."
+                  },
+                  "dates": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Every date the depositor supplied, each with 'date' and 'dateType' - 'Collected', 'Issued', 'Available', 'Updated', 'Submitted'. A 'Collected' value may be a range, e.g. '1998-01-01/2024-12-31', which is when the data was gathered rather than published. 8 such entries on the measured record."
+                  },
+                  "downloadCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Downloads aggregated the same way, and subject to the same caveat."
+                  },
+                  "identifiers": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Identifiers other than the DOI, each with 'identifier' and 'identifierType', e.g. {'identifier': '31622', 'identifierType': 'ICPSR Study Number'}. The repository's own accession, which is how the dataset is cited in its home system."
+                  },
+                  "isActive": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "False once the DOI has been withdrawn by its registrant."
+                  },
+                  "language": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Language of the dataset's content as an ISO code, e.g. 'en'."
+                  },
+                  "metadataVersion": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many times the metadata has been revised in DataCite; 0 for a record never updated since deposit."
+                  },
+                  "partCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many records are parts of this one; non-zero marks it as a collection."
+                  },
+                  "partOfCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many records this one is a part of."
+                  },
+                  "referenceCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many works this dataset itself cites."
+                  },
+                  "registered": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the DOI was first registered with DataCite, e.g. '2020-10-14T14:51:55.000Z'. The publicationYear is what the depositor claims; this is when the DOI actually came into being."
+                  },
+                  "schemaVersion": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The DataCite metadata schema the record was deposited against, e.g. 'http://datacite.org/schema/kernel-4'. Which fields are even allowed to be present."
+                  },
+                  "sizes": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Sizes as free text, e.g. ['12 MB']. Empty where the depositor gave none."
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How the metadata reached DataCite: 'mds' (deposited through the Metadata Store), 'api', 'fabricaForm' and so on. Where the record came from, which bears on how complete it is."
+                  },
+                  "state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Registration state: 'findable' (indexed and resolvable), 'registered' (resolvable but not indexed) or 'draft' (not yet registered). A draft DOI does not resolve, and nothing else in the record says so."
+                  },
+                  "updated": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the metadata record was last changed. Dataset metadata is mutable, so this says how stale the rest of the reply may be."
+                  },
+                  "version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The depositor's own version label, e.g. 'v6'. A free-text string, not a number."
+                  },
+                  "versionCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many later versions of this record exist."
+                  },
+                  "versionOfCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many records this one is a version OF. 1 means it is itself a version of something else, so it is not the top of its chain."
+                  },
+                  "viewCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Views DataCite has aggregated from the repository's usage reports. 0 where the repository files no reports."
+                  },
+                  "relatedIdentifiers": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Links to other works, each with relationType, relatedIdentifier and relatedIdentifierType, e.g. {'relationType': 'IsVersionOf', 'relatedIdentifier': '10.3886/icpsr31622'}. This is where the paper that describes the dataset, and the version it supersedes, are named."
+                  },
+                  "rightsList": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Licence terms, each with 'rights', 'rightsUri' and where given the SPDX triple below. An empty list means the depositor stated no licence, which is not the same as public domain."
+                  },
+                  "contributors": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Contributors other than the creators, each with a name and contributorType, e.g. {'name': 'McMaster University', 'contributorType': ...}. Measured on 1 of 5 records. The hosting institution and data manager appear here rather than in the author list."
                   }
                 }
+              },
+              "relationships": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "JSON:API relationship links for the record - client, provider, media, references, citations, parts, partOf, versions. The addresses to follow for the things the *Count fields only count."
               }
             }
           }

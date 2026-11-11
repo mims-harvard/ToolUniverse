@@ -8825,3 +8825,287 @@ def test_a_wormbase_phenotype_can_be_cited():
     inter = _success_props(_config("WormBase_get_interactions")["return_schema"])
     for name in ("total_genetic_interactions", "total_physical_interactions"):
         assert name in inter, f"{name} is returned and not declared"
+
+
+# ---------------------------------------------------------------------------
+# Batch 89: the 101 tools of axis-2 shards 9/11/13/15/17/19/21/23, measured
+# 2026-11-10. 322 of its 697 paths were declared by reusing a description this
+# effort had already measured on a SIBLING tool in the same config file --
+# same upstream, same field name, and the sibling confirmed to answer it by a
+# live call. The guards below cover the ones written fresh.
+# ---------------------------------------------------------------------------
+
+
+def test_a_serious_event_filter_says_how_many_events_it_is_hiding():
+    """192,245 serious events, 20 rows returned, and three truncation fields.
+
+    Measured 2026-11-10, `FAERS_filter_serious_events` answers
+    total_serious_events 192245 beside returned 20, and its
+    top_serious_reactions list is capped by openFDA at the 20 most-reported
+    reactions -- with top_serious_reactions_truncated true and a
+    top_serious_reactions_truncation_note saying so. A proportion computed over
+    those 20 as if they were all the reactions is wrong, and none of it was
+    declared. seriousness_type matters as much: a count of "serious" events
+    means something different under 'death' than under 'all'.
+    """
+    props = _success_props(_config("FAERS_filter_serious_events")["return_schema"])
+    for name in (
+        "total_serious_events",
+        "returned",
+        "has_more",
+        "next_offset",
+        "seriousness_type",
+        "top_serious_reactions",
+        "top_serious_reactions_truncated",
+        "top_serious_reactions_truncation_note",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+    assert "192245" in props["total_serious_events"]["description"]
+
+
+def test_a_pdb_coordinate_inventory_declares_what_it_is_not():
+    """Every count read 0, and a warning said why.
+
+    `PDB_inspect_structure` answered recognized_glycan_residue_count 0 with a
+    warning reading "No coordinates match the recognized glycan names; this
+    entry appears to carry no glycan." The zero alone cannot distinguish "no
+    glycan" from "glycan not looked for", and `limitations` says the report is
+    a coordinate inventory with no connectivity or geometry validation at all
+    -- without which it reads as a validation. Also the two chain-length maps:
+    declared SEQRES lengths against observed lengths is how much of the
+    protein is missing from the model, which neither number alone reveals.
+    """
+    props = _success_props(_config("PDB_inspect_structure")["return_schema"])
+    data = props["data"]["properties"] if "data" in props else props
+    for name in (
+        "warnings",
+        "limitations",
+        "declared_protein_seqres_chain_lengths",
+        "observed_protein_chain_lengths",
+        "recognized_glycan_residue_names",
+        "residue_details_truncated",
+        "alternate_location_records",
+        "coincident_heavy_coordinate_group_count",
+    ):
+        assert name in data, f"{name} is returned and not declared"
+    assert "validation" in data["limitations"]["description"]
+
+
+def test_an_obis_taxon_says_whether_its_name_is_the_accepted_one():
+    """A synonym and its accepted name counted as two taxa is the error here.
+
+    `OBIS_search_taxa` returns taxonomicStatus ('accepted'),
+    acceptedNameUsage ('Gadus') and acceptedNameUsageID (125732), plus the
+    four habitat flags is_marine / is_brackish / is_freshwater /
+    is_terrestrial. The habitat flags are how an occurrence placed in the wrong
+    environment is spotted, and more than one can be true at once.
+    """
+    props = _success_props(_config("OBIS_search_taxa")["return_schema"])
+    row = props["results"]["items"]["properties"]
+    for name in (
+        "taxonomicStatus",
+        "acceptedNameUsage",
+        "acceptedNameUsageID",
+        "taxonRank",
+        "is_marine",
+        "is_brackish",
+        "is_freshwater",
+        "is_terrestrial",
+    ):
+        assert name in row, f"{name} is returned and not declared"
+    assert "synonym" in row["taxonomicStatus"]["description"]
+
+
+def test_an_r_package_record_declares_what_installing_it_needs():
+    """53 fields on the r-universe record, and the install-blockers among them.
+
+    `Bioconductor_get_package` answered Config/pak/sysreqs ('zlib1g-dev'),
+    _rundeps (45 packages), _sysdeps, _status and _binaries. An install fails
+    on a machine without the system libraries and nothing else in the record
+    warns of it; _status says whether an installable artefact exists at all;
+    _binaries says whether one exists for the caller's R and platform.
+    `CRAN_get_package` likewise returns NeedsCompilation and MD5sum.
+    """
+    props = _success_props(_config("Bioconductor_get_package")["return_schema"])
+    for name in (
+        "Config/pak/sysreqs",
+        "_rundeps",
+        "_sysdeps",
+        "_status",
+        "_binaries",
+        "_sha256",
+        "_expires",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+    cran = _success_props(_config("CRAN_get_package")["return_schema"])
+    for name in ("NeedsCompilation", "MD5sum", "BugReports"):
+        assert name in cran, f"CRAN_get_package returns {name}, undeclared"
+
+
+def test_a_diagnostic_result_declares_its_confusion_matrix():
+    """Sensitivity without tp, fp, tn, fn cannot be rechecked.
+
+    `Epidemiology_diagnostic` returns all four cells (90/10/880/20), n_total
+    and prevalence. Predictive values depend on the prevalence, so the same
+    sensitivity means something different in another population -- and the
+    figure the PPV was computed at was declared nowhere. `PopGen_hwe_test` has
+    the same shape: obs_AA, obs_Aa, obs_aa are the whole test input, and
+    `PopGen_fst` needs p1, p2, n1, n2 for the same reason.
+    """
+    ep = _success_props(_config("Epidemiology_diagnostic")["return_schema"])
+    ep = ep["data"]["properties"] if "data" in ep else ep
+    for name in ("tp", "fp", "tn", "fn", "n_total", "prevalence"):
+        assert name in ep, f"Epidemiology_diagnostic returns {name}, undeclared"
+    hwe = _success_props(_config("PopGen_hwe_test")["return_schema"])
+    hwe = hwe["data"]["properties"] if "data" in hwe else hwe
+    for name in ("obs_AA", "obs_Aa", "obs_aa", "df"):
+        assert name in hwe, f"PopGen_hwe_test returns {name}, undeclared"
+    fst = _success_props(_config("PopGen_fst")["return_schema"])
+    fst = fst["data"]["properties"] if "data" in fst else fst
+    for name in ("p1", "p2", "n1", "n2"):
+        assert name in fst, f"PopGen_fst returns {name}, undeclared"
+
+
+def test_an_nws_forecast_says_which_unit_system_its_numbers_are_in():
+    """`units: "us"` means Fahrenheit, and the period values carry no unit.
+
+    `NWS_get_forecast` returns units, validTimes, updateTime and
+    forecastGenerator. validTimes is an ISO 8601 interval whose second half is
+    a DURATION ('2026-11-10T20:00:00+00:00/P7DT5H'), not an end instant, so it
+    has to be added to the start. probabilityOfPrecipitation is an object whose
+    value can be null, which is not zero.
+    """
+    props = _success_props(_config("NWS_get_forecast")["return_schema"])
+    p = props["properties"]["properties"]
+    for name in ("units", "validTimes", "updateTime", "forecastGenerator"):
+        assert name in p, f"{name} is returned and not declared"
+    assert "Fahrenheit" in p["units"]["description"]
+    assert "DURATION" in p["validTimes"]["description"]
+
+
+def test_ctd_associations_say_whether_a_human_curated_them():
+    """`direct_evidence` is the line between "treats" and "shares a gene with".
+
+    Both `CTD_get_chemical_diseases` and `CTD_get_disease_chemicals` return
+    direct_evidence ('marker/mechanism', 'therapeutic') and pubmed_ids on all
+    100 rows. CTD leaves direct_evidence empty for an association it inferred
+    through a shared gene rather than curated, so without it an inferred link
+    reads exactly like a curated one.
+    """
+    for tool in ("CTD_get_chemical_diseases", "CTD_get_disease_chemicals"):
+        rs = _config(tool)["return_schema"]
+        branch = (
+            [b for b in rs["oneOf"] if "error" not in (b.get("properties") or {})][0]
+            if rs.get("oneOf")
+            else rs
+        )
+        row = branch["items"]["properties"]
+        for name in ("direct_evidence", "pubmed_ids"):
+            assert name in row, f"{tool} returns {name} and does not declare it"
+        assert "infer" in row["direct_evidence"]["description"].lower()
+
+
+def test_a_dataone_search_says_whether_its_count_is_a_count():
+    """numFoundExact false means the total is a lower bound, not a total.
+
+    `DataONE_search_datasets` returns response.numFoundExact and
+    responseHeader.zkConnected. The second is the sharper one: false means the
+    index's coordination service was unreachable, so the answer may be served
+    from an incomplete set of shards -- a silently partial result that looks
+    like a complete one.
+    """
+    props = _success_props(_config("DataONE_search_datasets")["return_schema"])
+    assert "numFoundExact" in props["response"]["properties"]
+    hdr = props["responseHeader"]["properties"]
+    assert "zkConnected" in hdr
+    assert "shard" in hdr["zkConnected"]["description"]
+
+
+def test_dotted_property_names_are_declared_as_single_keys():
+    """Three upstreams put a literal '.' inside a property name.
+
+    WHOGHO_list_dimension_values answers '@odata.context';
+    BOLDSystems_search_by_bin answers 'country/ocean' and 'province/state'
+    with a '/' in the name; Bioconductor_get_package answers 'Authors@R',
+    'Date/Publication' and 'Config/pak/sysreqs'. Read as a path rather than a
+    key, each of these looks like a nested object that does not exist -- which
+    is how a first measurement of '@odata.context' reported it absent when it
+    was there.
+    """
+    who = _success_props(_config("WHOGHO_list_dimension_values")["return_schema"])
+    assert "@odata.context" in who, "the OData context key is returned and undeclared"
+    assert "." in who["@odata.context"]["description"]
+    rs = _config("BOLDSystems_search_by_bin")["return_schema"]
+    branch = (
+        [b for b in rs["oneOf"] if "error" not in (b.get("properties") or {})][0]
+        if rs.get("oneOf")
+        else rs
+    )
+    row = branch["items"]["properties"]
+    for name in ("country/ocean", "province/state", "insdc_acs"):
+        assert name in row, f"{name} is returned and not declared"
+    bioc = _success_props(_config("Bioconductor_get_package")["return_schema"])
+    for name in ("Authors@R", "Date/Publication", "Config/pak/sysreqs"):
+        assert name in bioc, f"{name} is returned and not declared"
+
+
+def test_github_url_templates_are_declared_as_templates():
+    """`events_url` ends in `{/privacy}` and 404s if requested unexpanded.
+
+    `GitHub_get_user_profile` returns eight URL fields, several of them RFC
+    6570 URI templates with a `{...}` placeholder. Declared as plain URLs a
+    caller fetches them as-is and gets a 404. gravatar_id is declared too: it
+    is null on every account because GitHub stopped populating it, so it is a
+    documented always-empty field rather than a suspected drop.
+    """
+    props = _success_props(_config("GitHub_get_user_profile")["return_schema"])
+    for name in ("events_url", "gists_url", "starred_url", "following_url"):
+        assert name in props, f"{name} is returned and not declared"
+        assert "TEMPLATE" in props[name]["description"], (
+            f"{name} is a URI template and a caller has to be told"
+        )
+    assert "gravatar_id" in props
+    assert "null" in props["gravatar_id"]["description"].lower()
+
+
+def test_a_modeldb_record_declares_its_value_attr_id_wrapper():
+    """Every ModelDB field arrives as {value, attr_id}, one level in.
+
+    `ModelDB_get_paper` and `ModelDB_get_celltype` wrap each field, so
+    `doi` is not the DOI -- `doi.value` is, with `doi.value_lower` beside it
+    for case-insensitive matching and `attr_id` identifying the field in
+    ModelDB's own schema. last_page is the sharpest case: it reads '68' for a
+    paper running 1157-1168, abbreviated to the changing digits, so it is not
+    a page number on its own.
+    """
+    props = _success_props(_config("ModelDB_get_paper")["return_schema"])
+    for name in ("doi", "journal", "volume", "first_page", "last_page", "year"):
+        assert name in props, f"{name} is returned and not declared"
+        assert "value" in (props[name].get("properties") or {}), (
+            f"{name} is wrapped as {{value, attr_id}} and the wrapper is not declared"
+        )
+    assert "value_lower" in props["doi"]["properties"]
+    assert "1157" in props["last_page"]["description"]
+    ct = _success_props(_config("ModelDB_get_celltype")["return_schema"])
+    for name in ("neurolex", "neuroelectro", "neuron_category"):
+        assert name in ct, f"ModelDB_get_celltype returns {name}, undeclared"
+
+
+def test_a_regulomedb_variant_declares_both_of_its_coordinate_systems():
+    """HGVS is 1-based and SPDI is 0-based, and both are returned.
+
+    `RegulomeDB_query_variant` answers hgvs
+    ('NC_000008.11:g.37966280A>G') and spdi
+    ('NC_000008.11:37966279:A:G') for the same variant -- the positions differ
+    by one by design. It also returns ref and alt, without which the
+    regulatory evidence is not attached to a change, and `motif_note`, which
+    states how motif_count differs from motif_records. Two near-identical
+    numbers with different definitions is exactly where a caller needs telling.
+    """
+    props = _success_props(_config("RegulomeDB_query_variant")["return_schema"])
+    for name in ("motif_count", "motif_records", "motif_note"):
+        assert name in props, f"{name} is returned and not declared"
+    row = props["variants"]["items"]["properties"]
+    for name in ("ref", "alt", "hgvs", "spdi", "gencode_category", "freq"):
+        assert name in row, f"{name} is returned and not declared"
+    assert "0-based" in row["spdi"]["description"]

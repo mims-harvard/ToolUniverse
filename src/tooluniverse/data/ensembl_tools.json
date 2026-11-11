@@ -1076,6 +1076,40 @@
           },
           "namespace": {
             "type": "string"
+          },
+          "definition": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The term's definition, e.g. 'The region of a cell that lies just beneath the plasma membrane...'. What the label only gestures at."
+          },
+          "ontology": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Which ontology the ancestor belongs to, e.g. 'GO'. One ancestor chain can cross ontologies."
+          },
+          "subsets": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Ontology slims the term belongs to, e.g. ['goslim_candida', ...]. Measured on 1 of 4. Which curated subset a term is in decides whether it appears in a slim-based summary."
+          },
+          "synonyms": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Other names for the term, e.g. ['ectoplasm', ...]. Measured on 2 of 4 ancestors."
           }
         }
       }

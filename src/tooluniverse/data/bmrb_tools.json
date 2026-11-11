@@ -176,6 +176,40 @@
               },
               "smiles": {
                 "type": "string"
+              },
+              "citations": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "The paper titles associated with the entry. The publication behind the data."
+              },
+              "data_types": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "object"
+                },
+                "description": "What data the entry holds, each with its 'type' and a count, e.g. {'type': 'assigned_chemical_shifts', 'count': ...}. Whether the entry has the measurement a caller needs before it is fetched."
+              },
+              "label": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The entry's title, e.g. 'Backbone 1H and 15N chemical shift assignments for yeast...'. What the entry is actually about."
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "BMRB entry id for the hit, e.g. '53883'. Named 'value' rather than anything suggesting an accession."
               }
             }
           }
@@ -564,6 +598,34 @@
               },
               "link": {
                 "type": "string"
+              },
+              "Accession_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The UniProt accession matched, e.g. 'P04637'. Echoes what the query resolved to."
+              },
+              "Entity_ID": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Which molecule within the entry, e.g. 1. An entry can hold several, and chemical shifts belong to one of them."
+              },
+              "Entry_ID": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "BMRB entry id, e.g. '11578'. The accession to fetch the NMR data with."
+              },
+              "Link_Type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the entry was linked to the accession, e.g. 'PDB cross-referencing'. An inferred link via PDB is weaker evidence than a direct annotation, and the row otherwise looks the same."
               }
             }
           }

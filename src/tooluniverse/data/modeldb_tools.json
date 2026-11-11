@@ -289,12 +289,244 @@
               "properties": {
                 "value": {
                   "type": "string"
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for the title field; it identifies the field in ModelDB's schema, not the record."
                 }
               }
             },
             "references": {
               "type": "object",
               "description": "References cited by this paper"
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL for the paper record, e.g. 'https://modeldb.science/api/v1/papers/4307'."
+            },
+            "authors": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The paper's authors, each with a ModelDB object_id and name, e.g. 'Migliore M'. The citation's author list. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "class_id": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Numeric id of the ModelDB class the record belongs to, e.g. 42."
+            },
+            "doi": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "DOI of the paper, e.g. '10.1152/jn.1995.73.3.1157'. The only stable citation link here. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                },
+                "value_lower": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The DOI lower-cased, which ModelDB stores alongside the DOI itself for case-insensitive matching. DOIs are case-insensitive by specification but are usually printed mixed-case, so a lookup against `value` can miss where one against this succeeds."
+                }
+              }
+            },
+            "first_page": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "First page, e.g. '1157'. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "journal": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Journal name, e.g. 'Journal of neurophysiology'. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "last_page": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Last page, abbreviated to the digits that change - measured '68' for a paper running from first_page 1157, i.e. 1168. It is NOT a page number on its own. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "missing_references": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ModelDB's curation note on whether the paper's references have been entered, e.g. 'all done'. Says whether an empty reference list means none exist or none have been curated yet. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "month": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Publication month as an abbreviation, e.g. 'Mar'. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "pubmed_id": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "PubMed id, e.g. '7608762'. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "ver_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When that version was created, e.g. '2023-05-08T16:49:10.970343'."
+            },
+            "ver_number": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Version of the paper record, e.g. 4."
+            },
+            "volume": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Volume, e.g. '73'. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "year": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Publication year, e.g. '1995'. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
             }
           },
           "not": {
@@ -409,6 +641,222 @@
             "class_id": {
               "type": "integer",
               "description": "Classification ID"
+            },
+            "Can_Form_type": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Which canonical forms the cell type can take, e.g. 'Canonical form 3'. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "Picture": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The illustration attached to the cell type, with its file name, extension and mime type. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "Picture_from": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Where that illustration came from, e.g. 'GM Shepherd, Synaptic Organization of the Brain, New York: ...'. The attribution a reuse would need. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "coordinates_2d": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The cell type's position in ModelDB's 2-D layout, e.g. '84,87'. A display coordinate, not anatomy. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "description": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Prose description of the cell type, e.g. 'The principal neuron of region CA3 of the hippocampus...'. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "neuroelectro": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The NeuroElectro id, e.g. '89'. The route to measured electrophysiological properties for this cell type. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "neurolex": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The NeuroLex identifier for the cell type, e.g. 'Hippocampus_CA3_pyramidal_cell'. The join to the wider neuroanatomy vocabularies. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "neuron_category": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Whether it is a 'principal' neuron or an interneuron - the distinction that decides its role in a circuit. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "neurontype": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The neuron type, e.g. 'Pyramidal', as an object list with ModelDB object ids. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "organism": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The organism the cell type belongs to, e.g. 'Vertebrates'. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "rotation": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Display rotation for that layout, e.g. 45. Also presentation, not biology. ModelDB wraps it as {'value', 'attr_id'}, so the content is one level in under 'value'.",
+              "properties": {
+                "value": {
+                  "description": "The field's content."
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field; it identifies the field in ModelDB's schema, not the record."
+                }
+              }
+            },
+            "ver_number": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Version of the cell-type record, e.g. 13."
             }
           },
           "not": {

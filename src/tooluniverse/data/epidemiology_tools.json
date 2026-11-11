@@ -50,6 +50,20 @@
                 },
                 "epidemic_suppressed": {
                   "type": "boolean"
+                },
+                "R0": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "The basic reproduction number used, e.g. 3.0. The herd-immunity threshold follows directly from it, so the answer is only as good as this input."
+                },
+                "VE": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Vaccine efficacy used, e.g. 0.94. The required coverage is the threshold divided by this, which is why a coverage above 1 can come out of a low efficacy."
                 }
               }
             }
@@ -324,6 +338,48 @@
                 },
                 "LR_neg": {
                   "type": "number"
+                },
+                "fn": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "False negatives, e.g. 20. The four cells are the whole confusion matrix; without them no reported sensitivity or specificity can be rechecked or given a confidence interval."
+                },
+                "fp": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "False positives, e.g. 10."
+                },
+                "n_total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Total subjects, e.g. 1000."
+                },
+                "prevalence": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Prevalence in the sample, e.g. 0.11. Predictive values depend on it, so the same sensitivity means something different in another population - and this is the figure the reported PPV and NPV were computed at."
+                },
+                "tn": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "True negatives, e.g. 880."
+                },
+                "tp": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "True positives, e.g. 90."
                 }
               }
             }

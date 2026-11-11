@@ -72,6 +72,91 @@
                       },
                       "locations": {
                         "type": "array"
+                      },
+                      "admin": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "Record administration dates - 'created' and 'last_modified', each with a date and the ROR schema version. How current the organisation record is."
+                      },
+                      "links": {
+                        "type": "array",
+                        "description": "Website and Wikipedia links",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "status": {
+                        "type": "string",
+                        "description": "Organization status (active, withdrawn, inactive)"
+                      },
+                      "domains": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Internet domains ROR records for the organisation, e.g. ['mit.edu']. The field that lets an email address or URL be matched to an organisation; empty where ROR holds none."
+                      },
+                      "established": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Year the organization was established"
+                      },
+                      "external_ids": {
+                        "type": "array",
+                        "description": "External identifiers (GRID, ISNI, Wikidata, FundRef)",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "all": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "preferred": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "The preferred value among the external ids of this type, e.g. 'grid.457196.8'. An organisation can carry several GRID or ISNI ids and only this one should be used."
+                            }
+                          }
+                        }
+                      },
+                      "relationships": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "The organisation's links to others, each with a type ('Parent', 'Child', 'Related', 'Successor'), the other organisation's ROR id and its label. How a hospital is tied to its university, or a renamed institute to its successor. Empty for an organisation ROR records no relations for."
+                      },
+                      "types": {
+                        "type": "array",
+                        "description": "Organization types (e.g., education, funder, company, healthcare, nonprofit, government, facility, archive)",
+                        "items": {
+                          "type": "string"
+                        }
                       }
                     }
                   }

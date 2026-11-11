@@ -432,6 +432,54 @@
                   "year"
                 ]
               }
+            },
+            "CTerminus": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How the peptide's C-terminus is capped, e.g. 'AMD' for amidated or 'FREE' for a free acid. Amidation changes charge and activity, so two otherwise identical sequences are different peptides."
+            },
+            "majorName": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "DBAASP's preferred name for the peptide. Measured NULL, so a caller should not expect one."
+            },
+            "noteReference": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reference for the record's notes. Measured NULL."
+            },
+            "physicoChemicalProperties": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "The peptide's computed properties, each {name, value} - 13 on the measured record, starting with its sequence. Charge, hydrophobicity and amphipathicity are in here and nowhere else, and they are what antimicrobial activity is predicted from."
+            },
+            "targetObjects": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "What the peptide was tested against, each with a 'name', e.g. 'Lipid Bilayer'. A model membrane and a live organism are very different evidence for antimicrobial activity."
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The peptide's DBAASP card, e.g. 'https://dbaasp.org/peptide-card?id=DBAASPS_107'. Where a human can see the full record."
             }
           },
           "required": [

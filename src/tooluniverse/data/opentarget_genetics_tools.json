@@ -654,6 +654,20 @@
                       }
                     }
                   }
+                },
+                "returned": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many credible sets came back, e.g. 10."
+                },
+                "truncated": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when more studies matched than were returned - true on the measured call. A GWAS study list read as complete when it is a page misstates how much evidence exists."
                 }
               }
             }
@@ -1398,6 +1412,20 @@
                           "string",
                           "null"
                         ]
+                      },
+                      "datasourceId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Which source the pharmacogenomic row came from, e.g. 'clinpgx'."
+                      },
+                      "pgxCategory": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "What kind of effect it is, e.g. 'efficacy', 'toxicity', 'dosage', 'metabolism'. A variant affecting efficacy and one affecting toxicity lead to opposite decisions, and the row otherwise looks the same."
                       }
                     }
                   }

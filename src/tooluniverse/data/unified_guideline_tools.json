@@ -61,6 +61,13 @@
                 },
                 "source": {
                   "type": "string"
+                },
+                "truncation_note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Plain-language statement of how much of the result set came back - 'Returned the top N of M documents matching this query. This is a ranked slice, not the full set.' The sentence that stops a ranked slice being read as the complete answer."
                 }
               },
               "required": [

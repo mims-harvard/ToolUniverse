@@ -398,6 +398,20 @@
                   "description": "Contains citation metadata block with title, authors, description, subjects, keywords"
                 }
               }
+            },
+            "data": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The dataset record - id, identifier, persistentUrl, protocol, publication date, and the versioned metadata blocks. The payload."
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Dataverse's own status string, e.g. 'OK'. The envelope's success flag."
             }
           },
           "not": {

@@ -422,6 +422,13 @@
                 "description": "Download URL"
               }
             }
+          },
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The file's own uuid within the record, e.g. 'd75c4a9a-6736-4d87-a2b8-50be88eea607'. Not the record id, and it is what a file-level download URL is built from."
           }
         }
       }
@@ -615,6 +622,13 @@
         },
         "type": {
           "type": "string"
+        },
+        "icon": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filename of the licence's badge image. Measured NULL on all 25 licences, so a caller should not expect one."
         }
       }
     },

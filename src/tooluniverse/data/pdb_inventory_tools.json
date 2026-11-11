@@ -295,6 +295,179 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "alternate_location_records": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records carrying an altloc indicator. A structure with alternate conformations counts some atoms more than once unless they are filtered."
+                },
+                "ambiguous_residue_identifier_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Residues whose chain, number and insertion code do not uniquely identify them. Any per-residue join is unreliable where this is non-zero."
+                },
+                "coincident_heavy_coordinate_extra_records": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records those coincident groups contribute beyond one per position."
+                },
+                "coincident_heavy_coordinate_group_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Groups of heavy atoms sitting at the same position. Usually alternate conformations or a deposition error; either way the atom count is not the atom count."
+                },
+                "coordinate_records": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Total coordinate records read, e.g. 660."
+                },
+                "declared_protein_seqres_chain_lengths": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Chain lengths as DECLARED in SEQRES, keyed by chain. The sequence that was in the crystal."
+                },
+                "element_inferred_records": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records whose element had to be inferred from the atom name because the element column was empty. Inference can be wrong, so a non-zero count qualifies every per-element figure."
+                },
+                "heavy_coordinate_records": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Coordinate records for non-hydrogen atoms, e.g. 660. Equal to the total for a structure with no hydrogens, which most X-ray entries are."
+                },
+                "input_kind": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What the caller supplied, e.g. 'pdb_id' or uploaded coordinates. Says whether the inventory describes a public entry or a local file."
+                },
+                "limitations": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "What the inventory does not do, e.g. 'Coordinate inventory only; no chemical connectivity, bond orders or geometry validation.' Without them the report reads as a validation, which it is not."
+                },
+                "max_residue_details": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "The cap on how many per-residue entries are listed, e.g. 100."
+                },
+                "noncontiguous_residue_identifier_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Residues whose numbering jumps - a gap in the model, usually a disordered loop that was not resolved."
+                },
+                "nonprotein_residue_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Residues that are not amino acids, e.g. 58 - waters, ions, ligands and sugars."
+                },
+                "nonprotein_residues": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Each of those residues, with its chain, residue_number, insertion_code and name. What the non-protein content actually is; a count of 58 could be 58 waters or a bound drug."
+                },
+                "observed_protein_chain_lengths": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Chain lengths actually OBSERVED in the coordinates, keyed by chain. The difference from the declared lengths is how much of the protein is missing from the model, which neither number alone reveals."
+                },
+                "recognized_glycan_coordinate_records": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many coordinate records those glycan residues account for."
+                },
+                "recognized_glycan_residue_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many residues matched those names."
+                },
+                "recognized_glycan_residue_names": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "The glycan residue names this inventory looks for, e.g. ['BGC', ...] - 10 of them. The list the glycan counts below were computed against, so a sugar outside it is invisible here."
+                },
+                "record_types": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Counts of each PDB record type seen, keyed 'ATOM', 'HETATM' and so on. Where the coordinate total breaks down between polymer and non-polymer."
+                },
+                "residue_details_truncated": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when the per-residue list was cut at that cap, so the listing is a sample of the residues rather than all of them."
+                },
+                "seqres_records_present": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when the entry declares its full sequence in SEQRES. Without it, the observed chain cannot be compared with what was supposed to be there."
+                },
+                "unknown_element_records": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records whose element could not be determined at all."
+                },
+                "warnings": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "What is odd about this structure, e.g. 'No coordinates match the recognized glycan names; this entry appears to carry no glycan.' The counts above all read as 0 in that case, and this sentence is what distinguishes 'no glycan' from 'glycan not looked for'."
                 }
               }
             }

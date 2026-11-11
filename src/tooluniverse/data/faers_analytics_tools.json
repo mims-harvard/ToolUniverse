@@ -315,6 +315,90 @@
               "description": "Which cohort was measured and what the split means for these figures, in prose."
             }
           }
+        },
+        "coverage_note": {
+          "type": "string",
+          "description": "Explains that the stratification covers only reports where the demographic is recorded, naming stratified_report_count, total_reports_matching_query and the coverage fraction."
+        },
+        "drug_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The drug the rollup is for, normalised to upper case, e.g. 'IBUPROFEN'. What the query actually resolved to."
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the rollup stops at Preferred Term level: 'Full MedDRA hierarchy (HLT, SOC) requires MedDRA license. Showing Preferred Term (PT) level...'. Without it, the absence of System Organ Class looks like an absence of data rather than a licensing limit."
+        },
+        "has_more": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when events remain beyond this page."
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The offset to pass for the next page, e.g. 20."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many were skipped before this page."
+        },
+        "returned": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many rows came back, e.g. 20."
+        },
+        "seriousness_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which seriousness criterion was applied, e.g. 'all', 'death', 'hospitalization', 'life-threatening'. A count of 'serious' events means something different under each, and the number alone does not say which."
+        },
+        "top_serious_reactions": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "The most-reported reactions, each {reaction, count}, e.g. {'reaction': 'PAIN', 'count': 16119} - 20 of them."
+        },
+        "top_serious_reactions_truncated": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when that list is a prefix - true on the measured call."
+        },
+        "top_serious_reactions_truncation_note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why it is a prefix: openFDA returns only the 20 most-reported serious reactions for a query. A rate computed over these 20 as if they were all reactions is wrong, and this sentence is what says so."
+        },
+        "total_serious_events": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many serious events match the filter in total, e.g. 192245 - against the 20 rows returned. The single most important number here, and it was declared nowhere."
         }
       }
     },

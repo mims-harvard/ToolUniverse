@@ -67,6 +67,34 @@
                 },
                 "interpretation": {
                   "type": "string"
+                },
+                "df": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Degrees of freedom, e.g. 1."
+                },
+                "obs_AA": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Observed homozygotes for the major allele, e.g. 735."
+                },
+                "obs_Aa": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Observed heterozygotes, e.g. 300."
+                },
+                "obs_aa": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Observed homozygotes for the minor allele, e.g. 65. The three counts are the whole test input; without them the p-value cannot be rechecked and the direction of the departure is unknown."
                 }
               }
             }
@@ -160,6 +188,34 @@
                 },
                 "interpretation": {
                   "type": "string"
+                },
+                "n1": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Sample size of population 1, e.g. 100."
+                },
+                "n2": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Sample size of population 2, e.g. 100. Fst from small samples is badly biased upward, which the statistic alone does not reveal."
+                },
+                "p1": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Allele frequency in population 1, e.g. 0.8."
+                },
+                "p2": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Allele frequency in population 2, e.g. 0.3. Fst follows from these two, and without them the value cannot be rechecked or signed."
                 }
               }
             }

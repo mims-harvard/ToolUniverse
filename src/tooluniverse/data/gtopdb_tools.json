@@ -338,6 +338,13 @@
               },
               "synonyms": {
                 "type": "string"
+              },
+              "labelled": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the ligand is a labelled probe - radiolabelled or fluorescent - rather than the parent compound. A labelled analogue has different properties and should not be treated as the drug itself."
               }
             }
           }

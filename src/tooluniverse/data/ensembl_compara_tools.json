@@ -320,6 +320,20 @@
                       "null"
                     ],
                     "description": "Genomic location of the gene, e.g. '2:68622806-68623744'."
+                  },
+                  "species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Species name"
+                  },
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ensembl gene id of the tree member, e.g. 'ENSSSCG00000058680'. The leaf label is a protein or species name; this is the gene it belongs to."
                   }
                 }
               },

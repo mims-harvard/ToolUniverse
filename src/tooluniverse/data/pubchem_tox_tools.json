@@ -617,6 +617,13 @@
                   }
                 }
               }
+            },
+            "total_ecotoxicity_values": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many ecotoxicity records PubChem holds, e.g. 5."
             }
           },
           "not": {
@@ -831,6 +838,13 @@
                   }
                 }
               }
+            },
+            "total_human_toxicity_values": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many human-toxicity records PubChem holds, e.g. 3."
             }
           },
           "not": {
@@ -1386,6 +1400,13 @@
                   }
                 }
               }
+            },
+            "total_acute_effects": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many acute-effect records PubChem holds, e.g. 7. Says whether the returned list is all of them."
             }
           },
           "not": {

@@ -849,6 +849,13 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list. Measured present on 3 of 5 result rows, and it must be split on ' | '."
               }
             }
           }
@@ -867,6 +874,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }
@@ -1237,6 +1251,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }
@@ -1628,6 +1649,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }
@@ -2425,6 +2453,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }
@@ -3322,6 +3357,69 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "articles_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many articles were skipped before this page."
+              },
+              "articles_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of them came back, e.g. 17."
+              },
+              "articles_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many cited articles DrugBank holds for the drug, e.g. 17."
+              },
+              "articles_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the article list was cut."
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list. Measured present on 3 of 5 result rows, and it must be split on ' | '."
+              },
+              "patents_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many patents were skipped before this page."
+              },
+              "patents_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many came back."
+              },
+              "patents_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many patents DrugBank holds; 0 on the measured call."
+              },
+              "patents_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the patent list was cut. False with a total of 0 means DrugBank genuinely holds none, which a bare empty list does not distinguish from a dropped field."
               }
             }
           }
@@ -3340,6 +3438,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; one offset governs them together."
             }
           }
         }
@@ -3939,6 +4044,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }

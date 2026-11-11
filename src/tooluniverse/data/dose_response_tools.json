@@ -63,6 +63,13 @@
         },
         "input_responses": {
           "type": "array"
+        },
+        "stimulatory_curve_warning": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Present when the fitted curve RISES with concentration instead of falling. The IC50 is then being read off an inhibition model that does not describe the data, so the value is not meaningful. Absent when the fit behaves."
         }
       }
     },
@@ -152,6 +159,13 @@
         },
         "note": {
           "type": "string"
+        },
+        "stimulatory_curve_warning": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Present when the fitted curve RISES with concentration instead of falling. The IC50 is then being read off an inhibition model that does not describe the data, so the value is not meaningful. Absent when the fit behaves."
         }
       }
     },

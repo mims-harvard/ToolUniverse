@@ -116,12 +116,47 @@
                         },
                         "sourceEntries": {
                           "type": "object"
+                        },
+                        "annotation": {
+                          "type": [
+                            "object",
+                            "null"
+                          ],
+                          "description": "The variant's VEP annotation - chromosome, start, end, vepVersion, vepCacheVersion and consequence types. Measured on 4 of 5 variants. The vepVersion matters: consequences change between VEP releases."
+                        },
+                        "length": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Length of the variant in bases, e.g. 1. Distinguishes an SNV from an indel, which the coordinates alone do not."
                         }
                       }
                     }
+                  },
+                  "dbTime": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Milliseconds EVA spent in its database for this query, e.g. 2427."
+                  },
+                  "time": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Milliseconds for the whole response, e.g. 0."
                   }
                 }
               }
+            },
+            "queryOptions": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The query as EVA executed it: 'metadata', 'limit', 'skip' and 'count'. The limit and skip that were actually applied, which the request alone does not pin down once defaults are in play."
             }
           },
           "not": {

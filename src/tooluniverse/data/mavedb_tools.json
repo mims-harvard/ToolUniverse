@@ -21,7 +21,9 @@
           "description": "Zero-based result offset. Continue with metadata.next_offset while has_more is true."
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "operation": "search"
@@ -41,85 +43,369 @@
       "items": {
         "type": "object",
         "properties": {
-          "urn": {"type": ["string", "null"]},
-          "title": {"type": ["string", "null"]},
-          "short_description": {"type": ["string", "null"]},
-          "num_variants": {"type": ["integer", "null"]},
-          "published_date": {"type": ["string", "null"]},
-          "target_genes": {"type": ["array", "null"], "items": {"type": "string"}},
-          "target_gene_details": {
-          "type": "array",
-          "description": "What the assay was run on. `uniprot_id` used to be read from targetSequence.uniprot, a key a target sequence does not carry, so it was null on every score set while the accession sat in uniprotIdFromMappedMetadata.",
-          "items": {
-            "type": "object",
-            "properties": {
-            "name": {"type": ["string", "null"]},
-            "category": {"type": ["string", "null"], "description": "e.g. protein_coding"},
-            "mapped_hgnc_name": {"type": ["string", "null"]},
-            "accession": {"type": ["string", "null"], "description": "Given instead of a sequence on most search rows"},
-            "accession_gene": {"type": ["string", "null"]},
-            "accession_assembly": {"type": ["string", "null"]},
-            "is_base_editor": {"type": ["boolean", "null"]},
-            "uniprot_id": {"type": ["string", "null"]},
-            "external_identifiers": {"type": "array", "items": {"type": "object"}, "description": "Ensembl, RefSeq and UniProt ids with the offset each is aligned at"},
-            "sequence_type": {"type": ["string", "null"], "description": "dna or protein"},
-            "sequence_length": {"type": ["integer", "null"]},
-            "sequence": {"type": ["string", "null"], "description": "The construct positions are numbered against"},
-            "organism": {"type": ["string", "null"], "description": "A score set read against the wrong organism is a different experiment"},
-            "taxon_id": {"type": ["integer", "string", "null"]},
-            "common_name": {"type": ["string", "null"]},
-            "taxon_rank": {"type": ["string", "null"]},
-            "taxon_url": {"type": ["string", "null"]},
-            "taxon_reference": {"type": ["string", "null"]},
-            "record_id": {"type": ["integer", "string", "null"], "description": "MaveDB's internal numeric key; the urn is what its endpoints take"}
+          "urn": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "short_description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "num_variants": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "published_date": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "target_genes": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
             }
-          }
+          },
+          "target_gene_details": {
+            "type": "array",
+            "description": "What the assay was run on. `uniprot_id` used to be read from targetSequence.uniprot, a key a target sequence does not carry, so it was null on every score set while the accession sat in uniprotIdFromMappedMetadata.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "category": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "e.g. protein_coding"
+                },
+                "mapped_hgnc_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "accession": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Given instead of a sequence on most search rows"
+                },
+                "accession_gene": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "accession_assembly": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "is_base_editor": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "uniprot_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "external_identifiers": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Ensembl, RefSeq and UniProt ids with the offset each is aligned at"
+                },
+                "sequence_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "dna or protein"
+                },
+                "sequence_length": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "sequence": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The construct positions are numbered against"
+                },
+                "organism": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "A score set read against the wrong organism is a different experiment"
+                },
+                "taxon_id": {
+                  "type": [
+                    "integer",
+                    "string",
+                    "null"
+                  ]
+                },
+                "common_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "taxon_rank": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "taxon_url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "taxon_reference": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "record_id": {
+                  "type": [
+                    "integer",
+                    "string",
+                    "null"
+                  ],
+                  "description": "MaveDB's internal numeric key; the urn is what its endpoints take"
+                }
+              }
+            }
           },
           "publications": {
-          "type": "array",
-          "description": "The papers, as MaveDB answers them: title, journal, year, DOI, a formatted citation and the author list. The tools returned the bare PubMed number.",
-          "items": {
-            "type": "object",
-            "properties": {
-            "identifier": {"type": ["string", "null"]},
-            "db_name": {"type": ["string", "null"]},
-            "title": {"type": ["string", "null"]},
-            "journal": {"type": ["string", "null"]},
-            "year": {"type": ["integer", "string", "null"]},
-            "doi": {"type": ["string", "null"]},
-            "url": {"type": ["string", "null"]},
-            "citation": {"type": ["string", "null"]},
-            "authors": {"type": "array", "items": {"type": "object", "properties": {"name": {"type": ["string", "null"]}, "primary": {"type": ["boolean", "null"]}}}},
-            "author_count": {"type": "integer"},
-            "authors_truncated": {"type": "boolean"}
+            "type": "array",
+            "description": "The papers, as MaveDB answers them: title, journal, year, DOI, a formatted citation and the author list. The tools returned the bare PubMed number.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "identifier": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "db_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "journal": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "year": {
+                  "type": [
+                    "integer",
+                    "string",
+                    "null"
+                  ]
+                },
+                "doi": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "citation": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "authors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "primary": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "author_count": {
+                  "type": "integer"
+                },
+                "authors_truncated": {
+                  "type": "boolean"
+                }
+              }
             }
-          }
           },
-          "secondary_publications": {"type": "array", "items": {"type": "object"}, "description": "Carried; present on 2 of the 62 BRCA1 hits, so a default page of 20 can hold none"},
-          "experiment_urn": {"type": ["string", "null"]},
-          "experiment_title": {"type": ["string", "null"]},
-          "experiment_method": {"type": ["string", "null"], "description": "How the assay was done, which is what tells two score sets of the same gene apart"},
-          "experiment_set_urn": {"type": ["string", "null"]},
+          "secondary_publications": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Carried; present on 2 of the 62 BRCA1 hits, so a default page of 20 can hold none"
+          },
+          "experiment_urn": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "experiment_title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "experiment_method": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "How the assay was done, which is what tells two score sets of the same gene apart"
+          },
+          "experiment_set_urn": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "keywords": {
-          "type": "array",
-          "description": "The controlled keywords the experiment is indexed under: the assay method, the phenotype measured, how the library was delivered. A caller had the free-text title to guess from.",
-          "items": {
-            "type": "object",
-            "properties": {
-            "key": {"type": ["string", "null"]},
-            "label": {"type": ["string", "null"]},
-            "description": {"type": ["string", "null"]},
-            "special": {"type": ["boolean", "null"]},
-            "system": {"type": ["string", "null"]},
-            "code": {"type": ["string", "null"]},
-            "version": {"type": ["string", "null"]},
-            "note": {"type": ["string", "null"], "description": "The curator's note on why this keyword applies here, which is not the term's definition"}
+            "type": "array",
+            "description": "The controlled keywords the experiment is indexed under: the assay method, the phenotype measured, how the library was delivered. A caller had the free-text title to guess from.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "special": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "system": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "code": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The curator's note on why this keyword applies here, which is not the term's definition"
+                }
+              }
             }
-          }
           },
-          "license": {"type": ["string", "null"]},
-          "license_name": {"type": ["string", "null"]},
-          "license_url": {"type": ["string", "null"]}
+          "license": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "license_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "license_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     }
@@ -135,7 +421,9 @@
           "description": "MaveDB score set URN (e.g., 'urn:mavedb:00000001-a-1'). Obtain URNs from MaveDB_search_score_sets."
         }
       },
-      "required": ["urn"]
+      "required": [
+        "urn"
+      ]
     },
     "fields": {
       "operation": "get_score_set"
@@ -152,51 +440,215 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "urn": {"type": ["string", "null"]},
-        "title": {"type": ["string", "null"]},
-        "short_description": {"type": ["string", "null"]},
-        "abstract": {"type": ["string", "null"]},
-        "method": {"type": ["string", "null"]},
-        "num_variants": {"type": ["integer", "null"]},
-        "published_date": {"type": ["string", "null"]},
-        "license": {"type": ["string", "null"]},
-        "license_name": {"type": ["string", "null"]},
-        "license_url": {"type": ["string", "null"]},
+        "urn": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "short_description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "abstract": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "method": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "num_variants": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "published_date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "license_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "license_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "target_genes": {
           "type": "array",
           "description": "What the assay was run on. `uniprot_id` used to be read from targetSequence.uniprot, a key a target sequence does not carry, so it was null on every score set while the accession sat in uniprotIdFromMappedMetadata.",
           "items": {
             "type": "object",
             "properties": {
-            "name": {"type": ["string", "null"]},
-            "category": {"type": ["string", "null"], "description": "e.g. protein_coding"},
-            "mapped_hgnc_name": {"type": ["string", "null"]},
-            "accession": {"type": ["string", "null"], "description": "Given instead of a sequence on most search rows"},
-            "accession_gene": {"type": ["string", "null"]},
-            "accession_assembly": {"type": ["string", "null"]},
-            "is_base_editor": {"type": ["boolean", "null"]},
-            "uniprot_id": {"type": ["string", "null"]},
-            "external_identifiers": {"type": "array", "items": {"type": "object"}, "description": "Ensembl, RefSeq and UniProt ids with the offset each is aligned at"},
-            "sequence_type": {"type": ["string", "null"], "description": "dna or protein"},
-            "sequence_length": {"type": ["integer", "null"]},
-            "sequence": {"type": ["string", "null"], "description": "The construct positions are numbered against"},
-            "organism": {"type": ["string", "null"], "description": "A score set read against the wrong organism is a different experiment"},
-            "taxon_id": {"type": ["integer", "string", "null"]},
-            "common_name": {"type": ["string", "null"]},
-            "taxon_rank": {"type": ["string", "null"]},
-            "taxon_url": {"type": ["string", "null"]},
-            "taxon_reference": {"type": ["string", "null"]},
-            "record_id": {"type": ["integer", "string", "null"], "description": "MaveDB's internal numeric key; the urn is what its endpoints take"}
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "category": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "e.g. protein_coding"
+              },
+              "mapped_hgnc_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "accession": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Given instead of a sequence on most search rows"
+              },
+              "accession_gene": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "accession_assembly": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "is_base_editor": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "uniprot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "external_identifiers": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "Ensembl, RefSeq and UniProt ids with the offset each is aligned at"
+              },
+              "sequence_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "dna or protein"
+              },
+              "sequence_length": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "sequence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The construct positions are numbered against"
+              },
+              "organism": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A score set read against the wrong organism is a different experiment"
+              },
+              "taxon_id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ]
+              },
+              "common_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "taxon_rank": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "taxon_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "taxon_reference": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "record_id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "MaveDB's internal numeric key; the urn is what its endpoints take"
+              }
             }
           }
-          },
+        },
         "doi_identifiers": {
-          "type": ["array", "null"],
-          "items": {"type": "string"}
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
         },
         "primary_publications": {
-          "type": ["array", "null"],
-          "items": {"type": "string"},
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
           "description": "The bare identifiers, kept as they were; `publications` has the same papers in full"
         },
         "publications": {
@@ -205,82 +657,317 @@
           "items": {
             "type": "object",
             "properties": {
-            "identifier": {"type": ["string", "null"]},
-            "db_name": {"type": ["string", "null"]},
-            "title": {"type": ["string", "null"]},
-            "journal": {"type": ["string", "null"]},
-            "year": {"type": ["integer", "string", "null"]},
-            "doi": {"type": ["string", "null"]},
-            "url": {"type": ["string", "null"]},
-            "citation": {"type": ["string", "null"]},
-            "authors": {"type": "array", "items": {"type": "object", "properties": {"name": {"type": ["string", "null"]}, "primary": {"type": ["boolean", "null"]}}}},
-            "author_count": {"type": "integer"},
-            "authors_truncated": {"type": "boolean"}
+              "identifier": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "db_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "journal": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "year": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ]
+              },
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "citation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "authors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "primary": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "author_count": {
+                "type": "integer"
+              },
+              "authors_truncated": {
+                "type": "boolean"
+              }
             }
           }
-          },
-        "secondary_publications": {"type": "array", "items": {"type": "object"}},
+        },
+        "secondary_publications": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
         "score_distribution": {
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "description": "The range and histogram of the scores. Without it there is no way to choose a threshold or even to know which direction is damaging: UBE2I runs -0.39 to 4.12 over 24 bins, and nullCount says how many variants have no score.",
           "properties": {
-            "min": {"type": ["number", "null"]},
-            "max": {"type": ["number", "null"]},
-            "counts": {"type": "array", "items": {"type": "integer"}},
-            "nullCount": {"type": ["integer", "null"]},
-            "version": {"type": ["integer", "string", "null"]}
+            "min": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "max": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "counts": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "nullCount": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "version": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ]
+            }
           }
         },
         "dataset_columns": {
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "description": "Which columns the score table has -- score, sd, se, exp.score, df, pred.score for UBE2I -- which decides whether a per-variant query can ask for an error estimate",
           "properties": {
-            "scoreColumns": {"type": "array", "items": {"type": "string"}},
-            "countColumns": {"type": "array", "items": {"type": "string"}}
+            "scoreColumns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "countColumns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "recordType": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "MaveDB's discriminator for the block, e.g. 'DatasetColumns'. Says which schema the surrounding object follows."
+            }
           }
         },
         "score_calibrations": {
           "type": "array",
           "description": "Where MaveDB has one: the score ranges that map onto ACMG PS3/BS3 evidence strengths, with the variant count in each band and MaveDB's own research-use-only flag. For a score set used to interpret a variant this is the part that says what a score MEANS.",
-          "items": {"type": "object"}
-        },
-        "experiment": {
-          "type": ["object", "null"],
-          "description": "The parent experiment: its own abstract and method, the keywords it is indexed under, and the other score sets from the same assay",
-          "properties": {
-            "urn": {"type": ["string", "null"]},
-            "title": {"type": ["string", "null"]},
-            "short_description": {"type": ["string", "null"]},
-            "abstract": {"type": ["string", "null"]},
-            "method": {"type": ["string", "null"]},
-            "keywords": {
-            "type": "array",
-            "description": "The controlled keywords the experiment is indexed under: the assay method, the phenotype measured, how the library was delivered. A caller had the free-text title to guess from.",
-            "items": {
-              "type": "object",
-              "properties": {
-                "key": {"type": ["string", "null"]},
-                "label": {"type": ["string", "null"]},
-                "description": {"type": ["string", "null"]},
-                "special": {"type": ["boolean", "null"]},
-                "system": {"type": ["string", "null"]},
-                "code": {"type": ["string", "null"]},
-                "version": {"type": ["string", "null"]},
-                "note": {"type": ["string", "null"], "description": "The curator's note on why this keyword applies here, which is not the term's definition"}
-              }
-            }
-          },
-            "score_set_urns": {"type": "array", "items": {"type": "string"}},
-            "num_score_sets": {"type": ["integer", "null"]},
-            "publications": {"type": "array", "items": {"type": "object"}}
+          "items": {
+            "type": "object"
           }
         },
-        "mapping_state": {"type": ["string", "null"], "description": "'incomplete' is why a variant query can come back with no VRS allele"},
-        "processing_state": {"type": ["string", "null"]},
-        "meta_analyzes_score_set_urns": {"type": "array", "items": {"type": "string"}},
-        "meta_analyzed_by_score_set_urns": {"type": "array", "items": {"type": "string"}},
-        "official_collections": {"type": "array", "items": {"type": "object"}},
-        "external_links": {"type": ["object", "null"]}
+        "experiment": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The parent experiment: its own abstract and method, the keywords it is indexed under, and the other score sets from the same assay",
+          "properties": {
+            "urn": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "short_description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "abstract": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "method": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "keywords": {
+              "type": "array",
+              "description": "The controlled keywords the experiment is indexed under: the assay method, the phenotype measured, how the library was delivered. A caller had the free-text title to guess from.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "special": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "system": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The curator's note on why this keyword applies here, which is not the term's definition"
+                  }
+                }
+              }
+            },
+            "score_set_urns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "num_score_sets": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "publications": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "mapping_state": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'incomplete' is why a variant query can come back with no VRS allele"
+        },
+        "processing_state": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "meta_analyzes_score_set_urns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "meta_analyzed_by_score_set_urns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "official_collections": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "external_links": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
       }
     }
   },
@@ -299,12 +986,17 @@
           "description": "Optional filter: HGVS protein notation substring (e.g., 'Arg175', 'p.Arg175His'). Case-insensitive partial match on protein-level HGVS."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum variants to return after client-side filtering. Set to 0 or null to return all variants in the score set (default — needed for whole-protein DMS workflows). Set to a positive integer to truncate. The MaveDB API returns the full CSV in one HTTP call regardless, so 'unlimited' has no extra cost.",
           "default": 0
         }
       },
-      "required": ["urn"]
+      "required": [
+        "urn"
+      ]
     },
     "fields": {
       "operation": "get_variant_scores"
@@ -324,21 +1016,59 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "urn": {"type": "string"},
-        "total_variants_in_set": {"type": "integer"},
-        "returned": {"type": "integer"},
-        "truncated": {"type": "boolean"},
-        "limit_applied": {"type": ["integer", "null"]},
-        "hgvs_filter": {"type": ["string", "null"]},
+        "urn": {
+          "type": "string"
+        },
+        "total_variants_in_set": {
+          "type": "integer"
+        },
+        "returned": {
+          "type": "integer"
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "limit_applied": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "hgvs_filter": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "variants": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "hgvs_nt": {"type": ["string", "null"]},
-              "hgvs_splice": {"type": ["string", "null"]},
-              "hgvs_pro": {"type": ["string", "null"]},
-              "score": {"type": ["number", "null"]}
+              "hgvs_nt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "hgvs_splice": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "hgvs_pro": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
             }
           }
         }
@@ -356,7 +1086,9 @@
           "description": "Search query: gene symbol (e.g., 'TP53', 'BRCA1'), protein name, or keywords describing the experiment."
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "operation": "search_experiments"
@@ -373,66 +1105,256 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "query": {"type": "string"},
-        "total_experiments": {"type": "integer"},
+        "query": {
+          "type": "string"
+        },
+        "total_experiments": {
+          "type": "integer"
+        },
         "experiments": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "urn": {"type": ["string", "null"]},
-              "title": {"type": ["string", "null"]},
-              "short_description": {"type": ["string", "null"]},
-              "published_date": {"type": ["string", "null"]},
+              "urn": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "short_description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "published_date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "score_set_urns": {
                 "type": "array",
-                "items": {"type": "string"}
+                "items": {
+                  "type": "string"
+                }
               },
-              "num_score_sets": {"type": "integer"},
+              "num_score_sets": {
+                "type": "integer"
+              },
               "publications": {
                 "type": "array",
                 "description": "Each paper with its journal, year, DOI, citation and author list, not only the identifier and title",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "identifier": {"type": ["string", "null"]},
-                    "db_name": {"type": ["string", "null"]},
-                    "title": {"type": ["string", "null"]},
-                    "journal": {"type": ["string", "null"]},
-                    "year": {"type": ["integer", "string", "null"]},
-                    "doi": {"type": ["string", "null"]},
-                    "url": {"type": ["string", "null"]},
-                    "citation": {"type": ["string", "null"]},
-                    "authors": {"type": "array", "items": {"type": "object"}},
-                    "author_count": {"type": "integer"},
-                    "authors_truncated": {"type": "boolean"}
+                    "identifier": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "db_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "title": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "journal": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "year": {
+                      "type": [
+                        "integer",
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "doi": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "citation": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "authors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "author_count": {
+                      "type": "integer"
+                    },
+                    "authors_truncated": {
+                      "type": "boolean"
+                    }
                   }
                 }
               },
-              "abstract": {"type": ["string", "null"], "description": "An experiment IS its method; the row carried a title and a one-line description, so two experiments on the same gene were indistinguishable"},
-              "method": {"type": ["string", "null"], "description": "How the library was made and how the phenotype was read"},
+              "abstract": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "An experiment IS its method; the row carried a title and a one-line description, so two experiments on the same gene were indistinguishable"
+              },
+              "method": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the library was made and how the phenotype was read"
+              },
               "keywords": {
                 "type": "array",
                 "description": "The controlled keywords the experiment is indexed under: assay method, phenotype measured, delivery method",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "key": {"type": ["string", "null"]},
-                    "label": {"type": ["string", "null"]},
-                    "description": {"type": ["string", "null"]},
-                    "special": {"type": ["boolean", "null"]},
-                    "system": {"type": ["string", "null"]},
-                    "code": {"type": ["string", "null"]},
-                    "version": {"type": ["string", "null"]},
-                    "note": {"type": ["string", "null"]}
+                    "key": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "label": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "special": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "system": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "code": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "version": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "note": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
                   }
                 }
               },
-              "experiment_set_urn": {"type": ["string", "null"]},
-              "secondary_publications": {"type": "array", "items": {"type": "object"}},
-              "raw_read_identifiers": {"type": "array", "items": {"type": "object"}},
-              "doi_identifiers": {"type": "array", "items": {"type": "object", "properties": {"identifier": {"type": ["string", "null"]}, "url": {"type": ["string", "null"]}}}},
-              "contributors": {"type": "array", "description": "Who deposited it, with the ORCIDs that are the attribution they asked for", "items": {"type": "object", "properties": {"orcid_id": {"type": ["string", "null"]}, "given_name": {"type": ["string", "null"]}, "family_name": {"type": ["string", "null"]}}}}
+              "experiment_set_urn": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "secondary_publications": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "raw_read_identifiers": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "doi_identifiers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "identifier": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "contributors": {
+                "type": "array",
+                "description": "Who deposited it, with the ORCIDs that are the attribution they asked for",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "orcid_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "given_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "family_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -450,15 +1372,23 @@
           "description": "MaveDB score set URN (e.g., 'urn:mavedb:00000115-a-7'). Obtain from MaveDB_search_score_sets."
         },
         "uniprot_id": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Optional UniProt accession (e.g., 'P01116' for KRAS). If supplied, the tool fetches the canonical sequence and verifies the MaveDB position numbering against it via a landmark check; sets numbering_offset and surfaces a warning in numbering_check if the positions don't match (silent off-by-N is the #1 silent bug in DMS analysis)."
         },
         "score_field": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Optional explicit column name to use as the variant score (e.g., 'score', 'ddG', 'fitness'). If omitted, tries 'score' → 'ddG' → 'fitness' → first numeric non-HGVS field in that order. The actual field used is reported in data.score_field_used."
         }
       },
-      "required": ["urn"]
+      "required": [
+        "urn"
+      ]
     },
     "fields": {
       "operation": "get_effect_matrix"
@@ -567,7 +1497,10 @@
           "description": "MaveDB score set URN (e.g., 'urn:mavedb:00001263-a-2' for BRCA2 SGE). Obtain from MaveDB_search_score_sets."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum mapped variants on this page. Set to 0 or null to return everything from offset onward.",
           "default": 0
         },
@@ -578,7 +1511,9 @@
           "default": 0
         }
       },
-      "required": ["urn"]
+      "required": [
+        "urn"
+      ]
     },
     "fields": {
       "operation": "get_mapped_variants"
@@ -798,11 +1733,17 @@
           "description": "MaveDB score set URN (e.g., 'urn:mavedb:00001263-a-2' for BRCA2 SGE). Obtain from MaveDB_search_score_sets."
         },
         "clinical_significance": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Optional exact-match filter on ClinVar clinical significance (case-insensitive), e.g. 'Pathogenic', 'Benign', 'Uncertain significance'."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum clinical controls on this page. Set to 0 or null to return everything from offset onward.",
           "default": 0
         },
@@ -813,7 +1754,9 @@
           "default": 0
         }
       },
-      "required": ["urn"]
+      "required": [
+        "urn"
+      ]
     },
     "fields": {
       "operation": "get_clinical_controls"
@@ -931,13 +1874,27 @@
                     "items": {
                       "type": "object",
                       "properties": {
-                        "variant_urn": {"type": ["string", "null"]},
-                        "allele_digest": {"type": ["string", "null"]}
+                        "variant_urn": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "allele_digest": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
                       }
                     }
                   },
                   "record_id": {
-                    "type": ["integer", "string", "null"],
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
                     "description": "MaveDB's internal numeric key for the control"
                   }
                 }
@@ -974,7 +1931,10 @@
           "description": "MaveDB score set URN (e.g., 'urn:mavedb:00001263-a-2' for BRCA2 SGE). Obtain from MaveDB_search_score_sets."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum gnomAD variants on this page. Set to 0 or null to return everything from offset onward.",
           "default": 0
         },
@@ -985,7 +1945,9 @@
           "default": 0
         }
       },
-      "required": ["urn"]
+      "required": [
+        "urn"
+      ]
     },
     "fields": {
       "operation": "get_gnomad_variants"
@@ -1040,7 +2002,11 @@
                 "type": "object",
                 "properties": {
                   "record_id": {
-                    "type": ["integer", "string", "null"],
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
                     "description": "MaveDB's internal numeric key for the row"
                   },
                   "db_name": {

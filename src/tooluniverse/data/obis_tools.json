@@ -77,6 +77,160 @@
                   },
                   "genus": {
                     "type": "string"
+                  },
+                  "acceptedNameUsage": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The accepted name for this taxon, e.g. 'Gadus'. For a synonym this is the name to use instead; for an accepted name it is itself."
+                  },
+                  "acceptedNameUsageID": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of that accepted name, e.g. 125732. The id to query OBIS occurrences under."
+                  },
+                  "classid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the class, e.g. 293496."
+                  },
+                  "familyid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the family, e.g. 125469."
+                  },
+                  "genusid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the genus, e.g. 125732. The ranks come with both a name and an id; only the id is safe to join on."
+                  },
+                  "infraphylum": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Infraphylum name, e.g. 'Gnathostomata'."
+                  },
+                  "infraphylumid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the infraphylum, e.g. 1828."
+                  },
+                  "is_brackish": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when it is classed as brackish-water."
+                  },
+                  "is_freshwater": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when it is classed as freshwater."
+                  },
+                  "is_marine": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when WoRMS classes the taxon as marine."
+                  },
+                  "is_terrestrial": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when it is classed as terrestrial. The four habitat flags together are how an occurrence placed in the wrong environment is spotted - a terrestrial-only taxon in a marine dataset is a data error, and more than one flag can be true."
+                  },
+                  "kingdomid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the kingdom, e.g. 2."
+                  },
+                  "orderid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the order, e.g. 10313."
+                  },
+                  "phylumid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the phylum, e.g. 1821."
+                  },
+                  "scientificNameAuthorship": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Author and year of the name, e.g. 'Linnaeus, 1758'. Part of the name for citation, and what distinguishes homonyms."
+                  },
+                  "subphylum": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Subphylum name, e.g. 'Vertebrata'."
+                  },
+                  "subphylumid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the subphylum, e.g. 146419."
+                  },
+                  "superclass": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Superclass name, e.g. 'Actinopteri'."
+                  },
+                  "superclassid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the superclass, e.g. 843664."
+                  },
+                  "taxonID": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "WoRMS AphiaID for the matched name, e.g. 125732. The id survives a rename; the name does not."
+                  },
+                  "taxonRank": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Rank of the match, e.g. 'Genus'. A genus-level match and a species-level one answer different questions, and the name alone does not say which this is."
+                  },
+                  "taxonomicStatus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the name is 'accepted', a 'synonym' or 'unaccepted'. Counting records under a synonym and under its accepted name as different taxa is the error this prevents."
                   }
                 }
               }

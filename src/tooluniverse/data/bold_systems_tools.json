@@ -265,6 +265,125 @@
                   "string",
                   "null"
                 ]
+              },
+              "class": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Class, e.g. 'Mammalia'. Note the property name shadows a Python keyword, so it has to be read by subscript."
+              },
+              "collection_date_start": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Start of the collection date, or null where the depositor gave none - measured null on the example record."
+              },
+              "collectors": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who collected the specimen, e.g. 'Metro Toronto Zoo'. Also reveals a captive or zoo origin, which matters for a record used as a wild-population reference."
+              },
+              "family": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Family, e.g. 'Felidae'."
+              },
+              "genus": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Genus, e.g. 'Panthera'. Together with the ranks above this is the full lineage behind the identification, which the species name alone does not give."
+              },
+              "identification_rank": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How deep the identification goes, e.g. 'species', 'genus', 'family'. A record identified only to genus looks the same otherwise, so reading the name without this rank overstates what is known."
+              },
+              "inst": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Institution holding the voucher specimen, e.g. 'Royal Ontario Museum'. Where the physical specimen can be examined."
+              },
+              "kingdom": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Kingdom of the identified taxon, e.g. 'Animalia'."
+              },
+              "marker_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The barcode region sequenced, e.g. 'COI-5P', 'ITS', 'matK', 'rbcL'. Sequences from different markers are not comparable, and this is the only field that says which was used."
+              },
+              "nuc_basecount": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Length of the barcode sequence in bases, e.g. 643. A short COI-5P read is a weak barcode; the sequence string alone does not flag that."
+              },
+              "order": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Order, e.g. 'Carnivora'."
+              },
+              "phylum": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Phylum, e.g. 'Chordata'."
+              },
+              "sampleid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The depositor's own specimen id, e.g. 'ROM PM13004'. What links the record to the physical voucher in the collection."
+              },
+              "subfamily": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Subfamily, e.g. 'Pantherinae'."
+              },
+              "country/ocean": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Country or ocean the specimen came from, e.g. 'Germany'. Measured on 3 of 10 records. NOTE the '/' in the property name - it is one key, not a path."
+              },
+              "insdc_acs": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "INSDC (GenBank/ENA/DDBJ) accession for the sequence, e.g. 'JF444381'. Measured on 9 of 10 records. The route to the sequence outside BOLD."
+              },
+              "province/state": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Province or state within that country, e.g. 'Bavaria'. Measured on 1 of 10. Also one key containing a '/'."
               }
             }
           }

@@ -2434,6 +2434,48 @@
                   "string",
                   "null"
                 ]
+              },
+              "datasetId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which GTEx release the value comes from, e.g. 'gtex_v8'. Medians are not comparable across releases, and the number alone does not say which one it is."
+              },
+              "ontologyId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UBERON id of the tissue, e.g. 'UBERON:0013756'. The tissue name GTEx uses is its own label; this is the id that joins to other resources."
+              },
+              "chromosome": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Chromosome of the variant, e.g. 'chr5' - with the 'chr' prefix, unlike several other GTEx fields."
+              },
+              "geneSymbolUpper": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The gene symbol in upper case, e.g. 'ERAP2'. Same caveat - gene symbols are normally mixed case."
+              },
+              "pos": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Position of the variant, e.g. 96659855."
+              },
+              "snpIdUpper": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The variant's rsID in upper case, e.g. 'RS72772072'. Note the case: it will not match a lower-case 'rs72772072' in a string comparison."
               }
             }
           }
@@ -2769,6 +2811,20 @@
                     }
                   }
                 }
+              },
+              "ontologyId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UBERON id of the tissue, e.g. 'UBERON:0013756'. The tissue name GTEx uses is its own label; this is the id that joins to other resources."
+              },
+              "unit": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The unit the expression values are in, e.g. 'log(CP10K)'. Log-transformed counts per 10,000 - averaging or summing them as if they were linear counts is wrong, and nothing else states the transform."
               }
             }
           }
@@ -2957,6 +3013,20 @@
                   "number",
                   "null"
                 ]
+              },
+              "datasetId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which GTEx release the value comes from, e.g. 'gtex_v8'. Medians are not comparable across releases, and the number alone does not say which one it is."
+              },
+              "ontologyId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UBERON id of the tissue, e.g. 'UBERON:0013756'. The tissue name GTEx uses is its own label; this is the id that joins to other resources."
               }
             }
           }

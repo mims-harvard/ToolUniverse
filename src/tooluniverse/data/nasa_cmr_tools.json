@@ -523,12 +523,110 @@
                                 "string",
                                 "null"
                               ]
+                            },
+                            "hreflang": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Language of the linked resource, e.g. 'en-US'."
+                            },
+                            "inherited": {
+                              "type": [
+                                "boolean",
+                                "null"
+                              ],
+                              "description": "True when the link came from the parent collection rather than this granule. Measured on 44 of 54 links - an inherited link may not resolve to this granule's own data."
+                            },
+                            "length": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Size of the linked file as a STRING with its unit, e.g. '0.0MB'. Measured on only 4 of 54 links."
                             }
                           }
                         }
+                      },
+                      "boxes": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "The collection's bounding boxes as 'south west north east' strings, e.g. ['-90 -180 90 180'] for global coverage. The spatial extent, which nothing else in the row states."
+                      },
+                      "browse_flag": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when the collection has browse imagery - a preview that can be shown without downloading the data."
+                      },
+                      "coordinate_system": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "How the collection's spatial extent is expressed, e.g. 'CARTESIAN' or 'GEODETIC'. Reading a box without it gives wrong geometry near the poles."
+                      },
+                      "data_center": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Hosting data center"
+                      },
+                      "original_format": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The metadata format the collection was supplied in, e.g. 'UMM_JSON', 'DIF10', 'ECHO10'. Whether a field is missing because it was not supplied or because the source format has no slot for it."
+                      },
+                      "updated": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the collection's metadata was last revised, e.g. '2017-04-28T05:01:46.000Z'."
+                      },
+                      "day_night_flag": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Whether the granule was acquired by day, by night, or both, e.g. 'UNSPECIFIED', 'DAY', 'NIGHT'. For optical instruments a night granule holds no usable reflectance."
+                      },
+                      "granule_size": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Size of the granule in megabytes, as a STRING, e.g. '14.350640296936033'. Needs converting before it can be summed to a download budget."
+                      },
+                      "online_access_flag": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when the granule can be downloaded directly rather than ordered."
                       }
                     }
                   }
+                },
+                "updated": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When the collection's metadata was last revised, e.g. '2017-04-28T05:01:46.000Z'."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "CMR concept ID (e.g., 'C2036882064-POCLOUD')"
                 }
               }
             }

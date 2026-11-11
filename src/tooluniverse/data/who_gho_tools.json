@@ -376,6 +376,13 @@
                   }
                 }
               }
+            },
+            "@odata.context": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The OData metadata URL for the collection, e.g. 'https://ghoapi.azureedge.net/api/$metadata#Collection(Default.DIMENSION_VALUE)'. It names which OData entity type the rows in 'value' are, which is the only statement of their shape. NOTE the property name contains a literal '.', so it is one key and not a path through '@odata'."
             }
           },
           "required": [

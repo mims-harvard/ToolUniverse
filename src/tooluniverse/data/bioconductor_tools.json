@@ -394,6 +394,438 @@
                 "null"
               ],
               "description": "Whether package needs compilation (yes/no)"
+            },
+            "_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The search index's internal document id, e.g. '6ae75cf12e87f76f20acd09a'. Not the package name and not stable across reindexing."
+            },
+            "_searchresults": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many packages matched the query in total, e.g. 46, repeated on every row. The returned list is only a page of them, and this is the only field that says so."
+            },
+            "_user": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Owner of the search index the hit came from, e.g. 'bioc'."
+            },
+            "Authors@R": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The package's authors as an R expression, e.g. 'c(person(\"Michael\", \"Love\", email=..., role=c(\"aut\",\"cre\")), ...)'. Roles are in here and nowhere else, so this is what says who to cite ('aut') as against who to email ('cre'). NOTE the '@' in the property name."
+            },
+            "Config/pak/sysreqs": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "System libraries the package needs, e.g. 'zlib1g-dev'. An install fails on a machine without them, and nothing else in the record warns of it. NOTE the '/' characters in the property name."
+            },
+            "Date/Publication": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the build was published, e.g. '2026-10-30 14:15:37 UTC'. NOTE the '/' in the property name."
+            },
+            "Encoding": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Character encoding the package's files use, e.g. 'UTF-8'. Reading a non-UTF-8 package's help text as UTF-8 mangles author names."
+            },
+            "Packaged": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "When and by whom the tarball was built, as 'Date' and 'User'."
+            },
+            "RemoteRef": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Git ref the build came from, e.g. 'HEAD'."
+            },
+            "RemoteSha": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Exact commit the build came from, e.g. '4ba3e3a159da872566d825609a119a7615069663'. The only field that pins the source to a revision; a version number does not."
+            },
+            "Repository": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The repository serving this build, e.g. 'https://bioc.r-universe.dev'. Which of several mirrors the metadata describes."
+            },
+            "RoxygenNote": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which roxygen2 version generated the documentation, e.g. '7.3.3'."
+            },
+            "Type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "DESCRIPTION Type field, e.g. 'Package'."
+            },
+            "VignetteBuilder": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Packages needed to build the vignettes, e.g. 'knitr, rmarkdown'. A comma-delimited string, not a list."
+            },
+            "_abi": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The package's binary interface, as 'exports' and 'imports'. What breaks downstream if this package changes."
+            },
+            "_assets": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Extra files published beside the artefact, e.g. ['extra/citation.cff', ...]. citation.cff is the machine-readable citation."
+            },
+            "_binaries": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "Built binaries, each with its R version, OS and package version, e.g. {'r': '4.7.0', 'os': 'linux', 'version': '1.53.7'}. Whether a binary exists for the caller's R and platform, as against having to build from source."
+            },
+            "_bioc": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "Bioconductor release lines carrying the package, each with 'branch' ('devel' or 'release'), its 'version' and the 'bioc' release number, e.g. {'branch': 'devel', 'version': '1.53.6', 'bioc': '3.24'}. The devel and release versions differ, and this is the only field that says which is which."
+            },
+            "_bioccheck": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "BiocCheck results as counts of 'error', 'warning' and 'note'. Bioconductor's own quality gate; a package can build cleanly and still carry BiocCheck errors."
+            },
+            "_buildurl": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The CI run that produced the build, e.g. a github.com/r-universe/bioc/actions/runs URL. Where to read the build log when _status is not 'success'."
+            },
+            "_commit": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The source commit, with its id, author, committer, message and time. The change this build contains."
+            },
+            "_contributors": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "Everyone who has committed to the package, each with their login, commit count and uuid, e.g. {'user': 'mikelove', 'count': 831}. Who actually maintains it, as distinct from who is named in Authors@R."
+            },
+            "_cranurl": {
+              "type": [
+                "string",
+                "boolean",
+                "null"
+              ],
+              "description": "The package's CRAN URL, or the BOOLEAN false when it is not on CRAN - measured false for DESeq2. A field that is sometimes a URL and sometimes a boolean."
+            },
+            "_created": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the artefact was created, e.g. '2026-11-01T12:52:44.000Z'."
+            },
+            "_devurl": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The package's development repository, e.g. 'https://github.com/thelovelab/deseq2'. The place to file an issue; _upstream is only the Bioconductor mirror."
+            },
+            "_distro": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The Linux distribution the build ran on, e.g. 'resolute'."
+            },
+            "_expires": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When r-universe will stop serving this build, e.g. '2027-02-09T13:16:47.000Z'. A pinned URL stops working after it, which nothing else warns of."
+            },
+            "_exports": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Every object the package exports, e.g. ['collapseReplicates', ...] - 57 for DESeq2. What a caller can actually use without knowing the package."
+            },
+            "_file": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Filename of the artefact, e.g. 'DESeq2_1.53.7.tar.gz'."
+            },
+            "_fileid": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Content-addressed download URL for the artefact."
+            },
+            "_filesize": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Size of the artefact in bytes, e.g. 3025259."
+            },
+            "_help": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "The package's help pages, each with its 'page' and 'title' - 40 for DESeq2. The documentation index, without which a caller has to guess function names."
+            },
+            "_homeurl": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The project's stated home page."
+            },
+            "_host": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What ran the build, e.g. 'GitHub-Actions'."
+            },
+            "_indexed": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the build is in the package index, so install.packages can see it. An unindexed build exists and cannot be installed."
+            },
+            "_jobs": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "The individual build jobs, each with its id, duration and config, e.g. {'job': 125159223001, 'time': 230, 'config': 'bioc-check'}. Which checks ran and how long they took."
+            },
+            "_maintainer": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The maintainer's name, email, login, description and uuid. Who to contact; Authors@R gives the role but not the resolved account."
+            },
+            "_mentions": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many times the package is mentioned in the literature r-universe indexes, e.g. 9583. The usage signal; download counts are not in this record."
+            },
+            "_nocasepkg": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The package name lower-cased, e.g. 'deseq2'. What r-universe matches case-insensitively against."
+            },
+            "_owner": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The r-universe that owns this build, e.g. 'bioc'."
+            },
+            "_published": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When it was published to the universe."
+            },
+            "_rbuild": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "R version used to build the source tarball, e.g. '4.6.2'."
+            },
+            "_realowner": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The underlying owner where _owner is an alias."
+            },
+            "_registered": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the package is registered in the universe rather than only built there."
+            },
+            "_rundeps": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Every package needed at run time, e.g. ['abind', ...] - 45 for DESeq2. The real install cost, which the DESCRIPTION's direct Imports understates."
+            },
+            "_selfowned": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the package is built in its own author's universe rather than a mirror universe."
+            },
+            "_sha256": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "SHA-256 of the artefact, e.g. '85b66c89e43a1a9a4dcd...'. What verifies a download; the version string does not."
+            },
+            "_status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Build outcome, e.g. 'success' or 'failure'. A record with a failed status still carries version and metadata, so nothing else reveals there is no installable artefact."
+            },
+            "_sysdeps": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "System libraries the binary links against, each with its shlib and system package, e.g. {'shlib': 'liblapack', 'package': 'libopenblas0-pthread'}. Why a binary built elsewhere may not load here."
+            },
+            "_topics": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Topic tags for the package, e.g. ['sequencing', ...] - 14 for DESeq2."
+            },
+            "_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What kind of artefact this record is for, e.g. 'src' or 'win'/'mac' for a binary."
+            },
+            "_universes": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Every r-universe this package appears in, e.g. ['bioc', ...]. The same package can be served by several, and each may hold a different version."
+            },
+            "_updates": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "Commit activity by week, each {week, n}, e.g. {'week': '2025-44', 'n': 2}. Whether the package is still being worked on."
+            },
+            "_upstream": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The git repository r-universe builds from, e.g. 'https://github.com/bioc/DESeq2'. Where the built artefact actually came from, which can differ from the project's own home."
+            },
+            "_userbio": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The owning account's profile - uuid, type, name, followers and description. Whether the publisher is a person or an organisation."
+            },
+            "_vignettes": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "The package's vignettes, each with its source, built filename and title. The worked examples, which are usually the only usable introduction."
             }
           }
         },

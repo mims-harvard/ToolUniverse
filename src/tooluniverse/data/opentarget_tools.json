@@ -4396,6 +4396,13 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "indications": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The drug's indications, under 'rows', with 'count' for how many exist and 'returned'/'truncated' for how many came back. The truncated flag is what stops a partial indication list being read as the drug's full label."
                 }
               }
             }
@@ -5675,6 +5682,16 @@
               }
             }
           }
+        },
+        "geneOntologyTerms": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "The GO terms matched, each with its 'id' and 'label', e.g. {'id': 'GO:0006915', 'label': 'apoptotic process'}. The result itself, which the schema named nowhere."
         }
       }
     }

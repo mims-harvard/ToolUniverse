@@ -639,6 +639,13 @@
             "null"
           ],
           "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
+        },
+        "molecule_chembl_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ChEMBL id of the drug the row is about, e.g. 'CHEMBL1201581'."
         }
       }
     },

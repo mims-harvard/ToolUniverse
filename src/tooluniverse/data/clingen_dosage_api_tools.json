@@ -165,6 +165,55 @@
               "null"
             ],
             "description": "Last curation date"
+          },
+          "haplo_mondo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The MONDO id for the same disease; identical to haplo_disease_id in every row sampled."
+          },
+          "hhr": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "The counter ClinGen reports beside haplo_history. 0 in every row sampled, including rows whose haplo_history is null, so a non-zero value has not been observed and its unit is not stated by the API."
+          },
+          "omimcombo": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "ClinGen's packed code for the omim/morbid pair above; 3 in every row sampled, where both read 'Yes'. The API documents no key for the other values, so treat it as opaque and read omim and morbid instead."
+          },
+          "rawdate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The same curation date as an unambiguous timestamp with offset, e.g. '2021-09-23T08:27:44.000-0400'."
+          },
+          "symbol_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The gene's HGNC id as ClinGen keys it, e.g. 'HGNC:1100'. Equal to hgnc_id in every row sampled."
+          },
+          "thr": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "The same counter for triplo_history, and likewise 0 in every row sampled."
+          },
+          "type": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "0=gene, 1=region"
           }
         },
         "additionalProperties": true

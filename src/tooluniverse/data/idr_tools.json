@@ -579,6 +579,13 @@
                 },
                 "url:datasets": {
                   "type": "string"
+                },
+                "data": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The study record itself - its @type, @id, omero:details, Name and Description. The payload, nested one level below the envelope's own 'data'."
                 }
               }
             }

@@ -199,6 +199,27 @@
                           "boolean",
                           "null"
                         ]
+                      },
+                      "total_size": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Total bytes of the experiment's runs, as a STRING, e.g. '7096958061'. It exceeds 2^32, and it is what says whether a download is 7 GB or 70 MB before one is started."
+                      },
+                      "library_selection": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "How the library was selected, e.g. 'RT-PCR', 'PCR', 'RANDOM', 'PolyA'. Determines what the reads can be used for - an RT-PCR amplicon library is not a transcriptome."
+                      },
+                      "study_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The study's own title, e.g. 'NGS data from \"Saturation genome editing of BRCA1 across...\"'. What the experiment was for."
                       }
                     }
                   }

@@ -285,12 +285,26 @@
             "line_count": {
               "type": "integer",
               "description": "Number of data lines"
+            },
+            "lines": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many lines the returned text has, e.g. 139."
             }
           }
         },
         "url": {
           "type": "string",
           "description": "API URL used"
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Content type KEGG served, e.g. 'text/plain; charset=utf-8'. KEGG answers some pathway requests with an image or a KGML document, and this is what distinguishes them."
         }
       }
     },
@@ -348,6 +362,13 @@
               "description": {
                 "type": "string",
                 "description": "Organism description"
+              },
+              "kegg_genome_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "KEGG's genome identifier for the organism, e.g. 'T01001' - present on all 11951 rows. Several KEGG genome endpoints take this T-number and not the three-letter organism code."
               }
             }
           }

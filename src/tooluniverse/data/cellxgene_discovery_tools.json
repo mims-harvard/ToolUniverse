@@ -410,6 +410,14 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "is_primary_data": {
+                    "type": [
+                      "array",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether the dataset holds primary data or a reanalysis of someone else's. Measured as a LIST of booleans ([false]) rather than a single boolean, because a dataset can mix both. Counting a reanalysis as an independent observation double-counts the cells."
                   }
                 }
               }
@@ -606,6 +614,23 @@
             "datasets_with_cell_count": {
               "type": "integer",
               "description": "How many of the datasets report a cell count. The listing endpoint reports none, which is why total_cells is null rather than 0."
+            },
+            "contact_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Who to contact about the collection, e.g. 'Walid Khaled'."
+            },
+            "links": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "Supplementary resources for the collection, each with a link_name and URL, e.g. a trained CellTypist model. The artefacts needed to reuse the analysis rather than only the data."
             }
           },
           "not": {
@@ -743,6 +768,13 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "collection_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The collection the dataset belongs to, e.g. 'c114c20f-1ef4-49a5-9c2e-d965787fb90c'. Datasets from one collection share a study and must not be treated as independent."
                   }
                 }
               }

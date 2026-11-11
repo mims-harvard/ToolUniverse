@@ -747,6 +747,71 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "anatomical_structure": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where the gene is expressed, e.g. 'abdominal 1 transverse muscle cell'."
+                  },
+                  "anatomical_structure_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The FBbt ontology id for that structure, e.g. 'FBbt:00000671'. The name is free text; only the CURIE joins to an ontology."
+                  },
+                  "assay": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How the expression was measured, e.g. 'in situ reporter'. A reporter construct and an antibody stain are different evidence for the same claim."
+                  },
+                  "assay_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The MMO ontology id for that assay, e.g. 'MMO:0000670'."
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What kind of annotation the row is, e.g. 'gene_expression_annotation'."
+                  },
+                  "stage_terms": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Developmental stages the annotation applies to, e.g. ['UBERON:0000068']. Expression at one stage is not expression at another."
+                  },
+                  "term_ids": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Every ontology id attached to the annotation, e.g. ['UBERON:0000068', ...] - 4 on the measured row. The union, so it does not say which id is the structure and which the stage."
+                  },
+                  "uberon_term_ids": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Just the UBERON ids among them, e.g. 2 of the 4. The cross-species terms, which are what make a fly annotation comparable to a mouse or human one."
                   }
                 }
               }

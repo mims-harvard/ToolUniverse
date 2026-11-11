@@ -8,14 +8,19 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["query"],
+      "required": [
+        "query"
+      ],
       "properties": {
         "query": {
           "type": "string",
           "description": "Free-text keyword, or a field-scoped Lucene query like 'tags.name:translator'."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Max APIs to return, 1-100. Default 25."
         }
       }
@@ -27,21 +32,70 @@
           "items": {
             "type": "object",
             "properties": {
-              "api_id": {"type": ["string", "null"]},
-              "slug": {"type": ["string", "null"]},
-              "title": {"type": ["string", "null"]},
-              "description": {"type": ["string", "null"]},
-              "base_url": {"type": ["string", "null"], "description": "The server to call, chosen production-first. `servers[0].url` is not that: the CFDE gene API lists its development server first and its production server second."},
-              "base_url_maturity": {"type": ["string", "null"], "description": "Which kind of server base_url is: production, staging or development. An entry whose only server is a development one says so here instead of passing it off as the API."},
+              "api_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "slug": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "base_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The server to call, chosen production-first. `servers[0].url` is not that: the CFDE gene API lists its development server first and its production server second."
+              },
+              "base_url_maturity": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which kind of server base_url is: production, staging or development. An entry whose only server is a development one says so here instead of passing it off as the API."
+              },
               "servers": {
                 "type": "array",
                 "description": "Every server the registry entry declares.",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "url": {"type": ["string", "null"]},
-                    "description": {"type": ["string", "null"], "description": "The entry's own label for the server."},
-                    "maturity": {"type": ["string", "null"], "description": "x-maturity: production, staging or development."}
+                    "url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The entry's own label for the server."
+                    },
+                    "maturity": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "x-maturity: production, staging or development."
+                    }
                   }
                 }
               },
@@ -49,26 +103,65 @@
                 "type": "object",
                 "description": "The API's own published support contact, which the search already requested in _SEARCH_FIELDS and never read.",
                 "properties": {
-                  "name": {"type": ["string", "null"]},
-                  "email": {"type": ["string", "null"], "description": "Contact email as the registry publishes it."},
-                  "url": {"type": ["string", "null"]},
-                  "role": {"type": ["string", "null"], "description": "x-role, e.g. 'responsible developer'."}
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "email": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Contact email as the registry publishes it."
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "role": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "x-role, e.g. 'responsible developer'."
+                  }
                 }
               },
-              "tags": {"type": "array", "items": {"type": "string"}}
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"query": "variant", "limit": 5},
-      {"query": "tags.name:translator", "limit": 5}
+      {
+        "query": "variant",
+        "limit": 5
+      },
+      {
+        "query": "tags.name:translator",
+        "limit": 5
+      }
     ]
   },
   {
@@ -80,7 +173,9 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["api_id"],
+      "required": [
+        "api_id"
+      ],
       "properties": {
         "api_id": {
           "type": "string",
@@ -98,26 +193,83 @@
           },
           "type": "object",
           "properties": {
-            "title": {"type": ["string", "null"]},
-            "description": {"type": ["string", "null"]},
-            "version": {"type": ["string", "null"]},
-            "contact": {"type": ["string", "null"]},
-            "terms_of_service": {"type": ["string", "null"]},
-            "base_urls": {"type": "array", "items": {"type": "string"}},
-            "tags": {"type": "array", "items": {"type": "string"}},
-            "endpoint_count": {"type": "integer"},
-            "endpoints": {"type": "array", "items": {"type": "string"}}
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "contact": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "terms_of_service": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "base_urls": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "endpoint_count": {
+              "type": "integer"
+            },
+            "endpoints": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "total_endpoints": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many endpoints the API declares, e.g. 5."
+            }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"api_id": "myvariant"}
+      {
+        "api_id": "myvariant"
+      }
     ]
   }
 ]

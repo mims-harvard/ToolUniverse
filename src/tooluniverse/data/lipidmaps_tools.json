@@ -167,6 +167,27 @@
             "string",
             "null"
           ]
+        },
+        "inchi": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Full InChI for the structure."
+        },
+        "lipidbank_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "LipidBank id, e.g. 'DFA0224'."
+        },
+        "synonyms": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Other names as a single '; '-delimited STRING, e.g. 'Cervonic acid; Docosahexaenoic acid; C22:6n-3,6,9,12,15,18'. Not a list; the shorthand notation is in here too."
         }
       }
     }

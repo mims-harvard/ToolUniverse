@@ -144,6 +144,27 @@
                   "null"
                 ],
                 "description": "Relevance score"
+              },
+              "drug_a": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The first drug in the interaction, with its chembl, ddinter, drugbank, name and pubchem ids. Which drug the row is about, in every namespace needed to join it."
+              },
+              "drug_b": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The second drug in the interaction, with the same identifier set."
+              },
+              "level": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Severity of the interaction, e.g. 'Moderate', 'Major', 'Minor'. The field that decides whether the interaction matters clinically, and it was declared nowhere."
               }
             }
           }

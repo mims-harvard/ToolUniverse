@@ -1154,6 +1154,44 @@
                     ]
                   }
                 }
+              },
+              "columns": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "The dataset's column names, e.g. ['Year', ...]. Whether it holds the variable a caller needs, without fetching it."
+              },
+              "data_updated_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the DATA last changed, e.g. '2020-09-08T14:06:39.000Z'."
+              },
+              "download_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many times the dataset has been downloaded, e.g. 66625. The only usage signal here."
+              },
+              "link": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The dataset's page on data.cdc.gov, e.g. 'https://data.cdc.gov/d/v6ab-adf5'. Where it can actually be downloaded."
+              },
+              "updated_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the METADATA last changed, e.g. '2026-09-22T23:48:46.000Z'. Six years apart on the measured record - reading this one as the data's age makes a stale dataset look current."
               }
             }
           }
