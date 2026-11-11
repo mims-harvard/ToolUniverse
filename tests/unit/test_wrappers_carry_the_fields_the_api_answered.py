@@ -10627,3 +10627,57 @@ def test_an_interaction_says_how_it_was_detected():
     ref = row["references"]["items"]["properties"]
     for name in ("agr_curie", "pubmed_id", "mod_id", "citation", "cross_references"):
         assert name in ref, f"references[].{name} is declared nowhere"
+
+
+def test_an_hpo_annotation_says_how_often_the_phenotype_occurs():
+    """ "Very frequent" and "Occasional" arrived as identical rows.
+
+    Monarch answers each disease-phenotype association with
+    frequency_qualifier -- an HPO term from HP:0040280 "Obligate" to
+    HP:0040285 "Excluded" -- plus onset and sex qualifiers, the observed
+    counts behind the frequency, the ECO evidence codes, knowledge_level and
+    agent_type. `Mondo_get_disease_phenotypes` returned seven fields and none
+    of those.
+
+    Measured 2026-11-11 on the tool's own example: all ten rows carry a
+    frequency and they are not the same one. Without it the list says which
+    phenotypes occur and not which ones matter, which is the content of an
+    HPO annotation rather than a detail of it.
+    """
+    rs = _config("Mondo_get_disease_phenotypes")["return_schema"]
+    branches = rs.get("oneOf") or [rs]
+    row = None
+    for b in branches:
+        if "error" in (b.get("required") or []):
+            continue
+        node = b.get("items") if (b.get("type") == "array" or "items" in b) else b
+        props = (node or {}).get("properties") or {}
+        if "phenotype_id" in props:
+            row = props
+            break
+        for val in props.values():
+            items = val.get("items") if isinstance(val, dict) else None
+            if isinstance(items, dict) and "phenotype_id" in (
+                items.get("properties") or {}
+            ):
+                row = items["properties"]
+                break
+        if row:
+            break
+    assert row is not None, "the phenotype row is declared nowhere"
+    for name in (
+        "frequency_id",
+        "frequency",
+        "onset_id",
+        "onset",
+        "sex",
+        "observed_count",
+        "observed_total",
+        "evidence",
+        "knowledge_level",
+        "agent_type",
+        "publications",
+    ):
+        assert name in row, f"{name} is answered upstream and not returned"
+    assert "HP:0040280" in row["frequency_id"]["description"]
+    assert "denominator" in row["observed_total"]["description"]

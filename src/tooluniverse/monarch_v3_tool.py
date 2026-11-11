@@ -775,6 +775,26 @@ class MonarchV3Tool(BaseTool):
                     "predicate": item.get("predicate"),
                     "negated": item.get("negated"),
                     "primary_knowledge_source": item.get("primary_knowledge_source"),
+                    # How often the phenotype occurs in the disease. This is
+                    # the content of an HPO annotation: an obligate feature
+                    # and an occasional one are not the same claim, and
+                    # without it they arrive as identical rows.
+                    "frequency_id": item.get("frequency_qualifier"),
+                    "frequency": item.get("frequency_qualifier_label"),
+                    "observed_count": item.get("has_count"),
+                    "observed_total": item.get("has_total"),
+                    "observed_percentage": item.get("has_percentage"),
+                    # When it appears, and in whom.
+                    "onset_id": item.get("onset_qualifier"),
+                    "onset": item.get("onset_qualifier_label"),
+                    "sex": item.get("sex_qualifier_label") or item.get("sex_qualifier"),
+                    # What the claim rests on. knowledge_level separates a
+                    # curated assertion from a prediction, and agent_type says
+                    # whether a human made it.
+                    "evidence": item.get("has_evidence"),
+                    "knowledge_level": item.get("knowledge_level"),
+                    "agent_type": item.get("agent_type"),
+                    "publications": item.get("publications"),
                 }
             )
 
