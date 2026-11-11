@@ -11,7 +11,9 @@
           "description": "dbSNP rsID (e.g., 'rs12345', '12345')"
         }
       },
-      "required": ["rsid"]
+      "required": [
+        "rsid"
+      ]
     },
     "fields": {
       "endpoint": "/esummary.fcgi",
@@ -34,15 +36,24 @@
               "description": "dbSNP reference ID, with the 'rs' prefix (e.g. 'rs80338939')"
             },
             "snp_id": {
-              "type": ["integer", "null"],
+              "type": [
+                "integer",
+                "null"
+              ],
               "description": "Numeric dbSNP ID without the 'rs' prefix (e.g. 80338939)"
             },
             "chromosome": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Chromosome name (e.g. '13'), without a 'chr' prefix"
             },
             "position": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Genomic coordinate on GRCh38 as a 'chromosome:position' STRING (e.g. '13:20189547'), not an integer. Identical to 'position_grch38'; see the 'assembly' field for the build label. Retained under this name for backwards compatibility."
             },
             "assembly": {
@@ -50,30 +61,46 @@
               "description": "Genome assembly that 'position' and 'position_grch38' are expressed on. Always 'GRCh38', dbSNP's current assembly."
             },
             "position_grch38": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Genomic coordinate on GRCh38 as a 'chromosome:position' string, from esummary 'chrpos'. Same value as 'position', explicitly labelled."
             },
             "position_grch37": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Genomic coordinate for the same variant on GRCh37 (hg19) as a 'chromosome:position' string, from esummary 'chrpos_prev_assm'. Null when dbSNP has no previous-assembly mapping. Use this, not 'position', for GRCh37/hg19 pipelines."
             },
             "allele": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Variant allele as reported by dbSNP"
             },
             "snp_class": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Variant class (e.g. 'snv', 'delins', 'del')"
             },
             "clinical_significance": {
               "type": "array",
               "description": "ClinVar clinical significance terms (e.g. 'pathogenic'). A single-element list containing an empty string when dbSNP reports none.",
-              "items": {"type": "string"}
+              "items": {
+                "type": "string"
+              }
             },
             "genes": {
               "type": "array",
               "description": "Symbols of genes overlapping the variant",
-              "items": {"type": "string"}
+              "items": {
+                "type": "string"
+              }
             },
             "allele_frequencies": {
               "type": "array",
@@ -93,29 +120,45 @@
               }
             },
             "hgvs_notation": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "dbSNP 'docsum' string. Not bare HGVS: a pipe-delimited record whose first segment is 'HGVS=' followed by a comma-separated list of HGVS expressions, then SEQ=/LEN=/GENE= segments. Parse before use."
             },
             "spdi_notation": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Comma-separated SPDI expressions (sequence:position:deleted:inserted)"
             },
             "function_class": {
               "type": "array",
               "description": "Molecular consequence terms (e.g. 'frameshift_variant')",
-              "items": {"type": "string"}
+              "items": {
+                "type": "string"
+              }
             },
             "validated": {
               "type": "array",
               "description": "dbSNP validation status terms (e.g. 'by-frequency')",
-              "items": {"type": "string"}
+              "items": {
+                "type": "string"
+              }
             },
             "created_date": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Record creation date, 'YYYY/MM/DD HH:MM'"
             },
             "updated_date": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Record last-update date, 'YYYY/MM/DD HH:MM'"
             }
           }
@@ -127,6 +170,13 @@
         "url": {
           "type": "string",
           "description": "API URL used (NCBI E-utilities esummary.fcgi)"
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Content type dbSNP served, e.g. 'application/json; charset=UTF-8'."
         }
       }
     },
@@ -144,7 +194,11 @@
       "RsID"
     ],
     "metadata": {
-      "tags": ["snp", "variant", "genomics"],
+      "tags": [
+        "snp",
+        "variant",
+        "genomics"
+      ],
       "difficulty_level": "easy",
       "estimated_execution_time": "< 2 seconds"
     }
@@ -174,7 +228,9 @@
           "minimum": 0
         }
       },
-      "required": ["gene_symbol"]
+      "required": [
+        "gene_symbol"
+      ]
     },
     "fields": {
       "endpoint": "/esearch.fcgi",
@@ -249,6 +305,13 @@
         "url": {
           "type": "string",
           "description": "API URL used (NCBI E-utilities esearch.fcgi)"
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Content type dbSNP served, e.g. 'application/json; charset=UTF-8'."
         }
       }
     },
@@ -270,7 +333,11 @@
       "Search"
     ],
     "metadata": {
-      "tags": ["gene", "search", "variants"],
+      "tags": [
+        "gene",
+        "search",
+        "variants"
+      ],
       "difficulty_level": "easy",
       "estimated_execution_time": "< 3 seconds"
     }
@@ -287,7 +354,9 @@
           "description": "dbSNP rsID (e.g., 'rs12345', '12345')"
         }
       },
-      "required": ["rsid"]
+      "required": [
+        "rsid"
+      ]
     },
     "fields": {
       "endpoint": "/esummary.fcgi",
@@ -386,6 +455,13 @@
         "url": {
           "type": "string",
           "description": "API URL used"
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Content type dbSNP served, e.g. 'application/json; charset=UTF-8'. dbSNP answers some requests with XML or a plain-text error page, and this is what distinguishes them."
         }
       }
     },
@@ -403,7 +479,11 @@
       "Population"
     ],
     "metadata": {
-      "tags": ["frequency", "population", "allele"],
+      "tags": [
+        "frequency",
+        "population",
+        "allele"
+      ],
       "difficulty_level": "easy",
       "estimated_execution_time": "< 2 seconds"
     }

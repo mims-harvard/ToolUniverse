@@ -553,6 +553,26 @@
                               }
                             }
                           }
+                        },
+                        "fieldInfos": {
+                          "type": [
+                            "array",
+                            "null"
+                          ],
+                          "items": {
+                            "type": "object"
+                          },
+                          "description": "The fields that can be searched or retrieved in the subdomain, each with id, name, description and flags. Measured on 2 of 26 subdomains. Without it a caller cannot know which fields a query may name."
+                        },
+                        "indexInfos": {
+                          "type": [
+                            "array",
+                            "null"
+                          ],
+                          "items": {
+                            "type": "object"
+                          },
+                          "description": "Index statistics for the subdomain, each {name, value}, e.g. {'name': 'Number of entries', 'value': '207042'}. How much is actually in there."
                         }
                       }
                     }

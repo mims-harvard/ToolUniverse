@@ -115,6 +115,13 @@
               "public": {
                 "type": "integer",
                 "description": "Public accessibility: 2 = public"
+              },
+              "MappingMethodId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which mapping method the group supports, as a string, e.g. '1'. Determines which analyses can be run against it."
               }
             }
           }

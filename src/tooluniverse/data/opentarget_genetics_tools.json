@@ -289,6 +289,20 @@
                           }
                         }
                       }
+                    },
+                    "returned": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many credible sets came back, e.g. 5."
+                    },
+                    "truncated": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when more credible sets exist than were returned - true on the measured call. Fine-mapping read as complete when it is a page of 5 misattributes the signal."
                     }
                   }
                 }
@@ -1186,6 +1200,13 @@
                           "number",
                           "null"
                         ]
+                      },
+                      "normalisedScore": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "The predictor's score rescaled to 0-1, e.g. 0.68. Predictors use incompatible native scales (some where high is damaging, some the reverse), and this is the only figure comparable across them."
                       }
                     }
                   }

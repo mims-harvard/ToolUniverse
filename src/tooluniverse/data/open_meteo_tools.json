@@ -113,6 +113,34 @@
             },
             "hourly_units": {
               "type": "object"
+            },
+            "elevation": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Elevation of the grid cell in metres, e.g. 1.0. Open-Meteo returns the forecast for its own grid cell, and temperature is elevation-dependent, so a mismatch with the requested point explains a surprising value."
+            },
+            "generationtime_ms": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "How long Open-Meteo took to compute the forecast, in milliseconds."
+            },
+            "timezone_abbreviation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Abbreviation for that timezone, e.g. 'GMT'."
+            },
+            "utc_offset_seconds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of the returned timestamps from UTC, in seconds. The hourly times are LOCAL unless this is zero, so reading them as UTC shifts the whole forecast."
             }
           },
           "not": {

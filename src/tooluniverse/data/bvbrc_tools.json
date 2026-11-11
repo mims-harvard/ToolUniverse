@@ -1332,6 +1332,16 @@
                   "array",
                   "null"
                 ]
+              },
+              "taxon_id": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "integer"
+                },
+                "description": "NCBI taxonomy ids for the structure's source organisms, e.g. [2697049] (SARS-CoV-2). A list, since a complex can span organisms."
               }
             }
           }

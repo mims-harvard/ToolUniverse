@@ -355,6 +355,13 @@
                   "string",
                   "null"
                 ]
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Relevance score for the hit, e.g. 40.0. An exact symbol match scores far above a partial one, so this is what separates them."
               }
             }
           }
@@ -435,6 +442,13 @@
                   "string",
                   "null"
                 ]
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Relevance score for the hit, e.g. 2.5478106. Results come back ordered by it."
               }
             }
           }

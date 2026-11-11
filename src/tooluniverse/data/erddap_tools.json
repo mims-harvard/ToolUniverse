@@ -69,6 +69,16 @@
                   "items": {
                     "type": "array"
                   }
+                },
+                "columnTypes": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "The data type of each column in the result table, e.g. ['String', ...] - 17 on the measured call."
                 }
               }
             }
@@ -143,6 +153,16 @@
                   "items": {
                     "type": "array"
                   }
+                },
+                "columnTypes": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "The data type of each column in the table, e.g. ['String', ...]. The rows are returned untyped, so this is the only statement of what each value is."
                 }
               }
             }

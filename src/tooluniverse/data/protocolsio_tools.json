@@ -8,7 +8,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search_protocols"],
+          "enum": [
+            "search_protocols"
+          ],
           "description": "Operation type",
           "default": "search_protocols"
         },
@@ -17,16 +19,31 @@
           "description": "Keyword(s) to search across protocol titles, descriptions, and authors (e.g., 'CRISPR knockout', 'single cell RNA-seq library prep')."
         },
         "order_field": {
-          "type": ["string", "null"],
-          "enum": ["relevance", "activity", "date", "name", "id", null],
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "relevance",
+            "activity",
+            "date",
+            "name",
+            "id",
+            null
+          ],
           "description": "Sort field. Default 'relevance'."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum number of results to return (default 10, max 50)."
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -46,24 +63,51 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "id": { "type": "integer" },
-                      "title": { "type": "string" },
-                      "doi": { "type": ["string", "null"] },
-                      "authors": { "type": "array" },
-                      "published_on": { "type": ["integer", "string", "null"] }
+                      "id": {
+                        "type": "integer"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "doi": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "authors": {
+                        "type": "array"
+                      },
+                      "published_on": {
+                        "type": [
+                          "integer",
+                          "string",
+                          "null"
+                        ]
+                      }
                     }
                   }
                 },
-                "total_count": { "type": "integer" }
+                "total_count": {
+                  "type": "integer"
+                }
               }
             },
-            "metadata": { "type": "object" }
+            "metadata": {
+              "type": "object"
+            }
           }
         },
         {
           "type": "object",
-          "properties": { "error": { "type": "string" } },
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -74,7 +118,9 @@
         "limit": 5
       }
     ],
-    "required_api_keys": ["PROTOCOLS_IO_API_KEY"],
+    "required_api_keys": [
+      "PROTOCOLS_IO_API_KEY"
+    ],
     "api_key_info": {
       "PROTOCOLS_IO_API_KEY": {
         "domain": "Molecular Cloning & Lab Methods",
@@ -84,7 +130,9 @@
         "without": "protocols.io tools are blocked without it."
       }
     },
-    "fields": { "operation": "search_protocols" }
+    "fields": {
+      "operation": "search_protocols"
+    }
   },
   {
     "name": "ProtocolsIO_get_protocol",
@@ -95,21 +143,36 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_protocol"],
+          "enum": [
+            "get_protocol"
+          ],
           "description": "Operation type",
           "default": "get_protocol"
         },
         "protocol_id": {
-          "type": ["integer", "string"],
+          "type": [
+            "integer",
+            "string"
+          ],
           "description": "protocols.io protocol ID (integer), URI slug, or DOI (e.g., 65123, or 'dx.doi.org/10.17504/protocols.io.xxxxx')."
         },
         "content_format": {
-          "type": ["string", "null"],
-          "enum": ["json", "html", "markdown", null],
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "json",
+            "html",
+            "markdown",
+            null
+          ],
           "description": "Format for free-text fields (description, steps). Default 'json'."
         }
       },
-      "required": ["protocol_id"]
+      "required": [
+        "protocol_id"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -124,22 +187,98 @@
             "data": {
               "type": "object",
               "properties": {
-                "id": { "type": "integer" },
-                "title": { "type": "string" },
-                "description": { "type": "string" },
-                "doi": { "type": ["string", "null"] },
-                "authors": { "type": "array" },
-                "materials": { "type": "array" },
-                "published_on": { "type": ["integer", "string", "null"] }
+                "id": {
+                  "type": "integer"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "doi": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "authors": {
+                  "type": "array"
+                },
+                "materials": {
+                  "type": "array"
+                },
+                "published_on": {
+                  "type": [
+                    "integer",
+                    "string",
+                    "null"
+                  ]
+                }
               }
             },
-            "metadata": { "type": "object" }
+            "metadata": {
+              "type": "object"
+            },
+            "error_details": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Structured detail for the failure, present alongside 'error' whenever ToolUniverse itself refused the call: 'type' (e.g. 'ToolUnavailableError'), 'message', 'retriable' (false for a missing API key -- retrying will not help), 'next_steps' (what the caller can actually do) and 'details'. The error string alone does not say whether a retry is worth attempting.",
+              "properties": {
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The error class, e.g. 'ToolUnavailableError'."
+                },
+                "message": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The same text as 'error'."
+                },
+                "retriable": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "False when retrying cannot succeed, as for a missing credential."
+                },
+                "next_steps": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Concrete actions that would make the call work."
+                },
+                "details": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Any extra machine-readable context; frequently empty."
+                }
+              }
+            }
           }
         },
         {
           "type": "object",
-          "properties": { "error": { "type": "string" } },
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -149,8 +288,12 @@
         "protocol_id": 65123
       }
     ],
-    "required_api_keys": ["PROTOCOLS_IO_API_KEY"],
-    "fields": { "operation": "get_protocol" }
+    "required_api_keys": [
+      "PROTOCOLS_IO_API_KEY"
+    ],
+    "fields": {
+      "operation": "get_protocol"
+    }
   },
   {
     "name": "ProtocolsIO_get_protocol_steps",
@@ -161,21 +304,36 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_protocol_steps"],
+          "enum": [
+            "get_protocol_steps"
+          ],
           "description": "Operation type",
           "default": "get_protocol_steps"
         },
         "protocol_id": {
-          "type": ["integer", "string"],
+          "type": [
+            "integer",
+            "string"
+          ],
           "description": "protocols.io protocol ID (integer), URI slug, or DOI."
         },
         "content_format": {
-          "type": ["string", "null"],
-          "enum": ["json", "html", "markdown", null],
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "json",
+            "html",
+            "markdown",
+            null
+          ],
           "description": "Format for step text. Default 'json'."
         }
       },
-      "required": ["protocol_id"]
+      "required": [
+        "protocol_id"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -195,22 +353,91 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "id": { "type": ["integer", "string"] },
-                      "guid": { "type": ["string", "null"] },
-                      "components": { "type": "array" }
+                      "id": {
+                        "type": [
+                          "integer",
+                          "string"
+                        ]
+                      },
+                      "guid": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "components": {
+                        "type": "array"
+                      }
                     }
                   }
                 },
-                "step_count": { "type": "integer" }
+                "step_count": {
+                  "type": "integer"
+                }
               }
             },
-            "metadata": { "type": "object" }
+            "metadata": {
+              "type": "object"
+            },
+            "error_details": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Structured detail for the failure, present alongside 'error' whenever ToolUniverse itself refused the call: 'type' (e.g. 'ToolUnavailableError'), 'message', 'retriable' (false for a missing API key -- retrying will not help), 'next_steps' (what the caller can actually do) and 'details'. The error string alone does not say whether a retry is worth attempting.",
+              "properties": {
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The error class, e.g. 'ToolUnavailableError'."
+                },
+                "message": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The same text as 'error'."
+                },
+                "retriable": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "False when retrying cannot succeed, as for a missing credential."
+                },
+                "next_steps": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Concrete actions that would make the call work."
+                },
+                "details": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Any extra machine-readable context; frequently empty."
+                }
+              }
+            }
           }
         },
         {
           "type": "object",
-          "properties": { "error": { "type": "string" } },
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -220,7 +447,11 @@
         "protocol_id": 65123
       }
     ],
-    "required_api_keys": ["PROTOCOLS_IO_API_KEY"],
-    "fields": { "operation": "get_protocol_steps" }
+    "required_api_keys": [
+      "PROTOCOLS_IO_API_KEY"
+    ],
+    "fields": {
+      "operation": "get_protocol_steps"
+    }
   }
 ]

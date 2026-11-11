@@ -266,6 +266,13 @@
                 "string",
                 "null"
               ]
+            },
+            "last_status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "RGD's status for the strain, e.g. 'Unknown', 'Live', 'Cryopreserved', 'Extinct'. Whether the strain can still be obtained."
             }
           },
           "not": {

@@ -8,14 +8,19 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["query"],
+      "required": [
+        "query"
+      ],
       "properties": {
         "query": {
           "type": "string",
           "description": "Keyword or phrase, e.g. 'pollen development'."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Max terms to return, 1-100. Default 20."
         }
       }
@@ -27,23 +32,72 @@
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": ["string", "null"]},
-              "annotation_class_label": {"type": ["string", "null"]},
-              "description": {"type": ["string", "null"]},
-              "source": {"type": ["string", "null"]}
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "annotation_class_label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "is_obsolete": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the term has been retired. Obsolete terms are returned by search alongside current ones."
+              },
+              "synonym": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Other names for the term. Measured on 2 of 5 hits, and what explains a hit whose label does not match the query."
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"query": "pollen development", "limit": 5},
-      {"query": "drought stress", "limit": 5}
+      {
+        "query": "pollen development",
+        "limit": 5
+      },
+      {
+        "query": "drought stress",
+        "limit": 5
+      }
     ]
   },
   {
@@ -55,7 +109,9 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["term_id"],
+      "required": [
+        "term_id"
+      ],
       "properties": {
         "term_id": {
           "type": "string",
@@ -73,22 +129,66 @@
           },
           "type": "object",
           "properties": {
-            "id": {"type": "string"},
-            "annotation_class_label": {"type": ["string", "null"]},
-            "description": {"type": ["string", "null"]},
-            "source": {"type": ["string", "null"]}
+            "id": {
+              "type": "string"
+            },
+            "annotation_class_label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "is_obsolete": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the term has been retired. An obsolete term still answers a lookup and must not be used for new annotation."
+            },
+            "synonym": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Other names for the term, e.g. ['formation of generative and vegetative cells', ...] - 5 on the measured term."
+            }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"term_id": "GO:0009555"},
-      {"term_id": "PO:0025281"}
+      {
+        "term_id": "GO:0009555"
+      },
+      {
+        "term_id": "PO:0025281"
+      }
     ]
   },
   {
@@ -100,14 +200,19 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["query"],
+      "required": [
+        "query"
+      ],
       "properties": {
         "query": {
           "type": "string",
           "description": "Gene id or accession, e.g. 'AT4G32150'."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Max annotations to return, 1-100. Default 20."
         }
       }
@@ -119,37 +224,158 @@
           "items": {
             "type": "object",
             "properties": {
-              "bioentity": {"type": ["string", "null"]},
-              "bioentity_label": {"type": ["string", "null"]},
-              "annotation_class": {"type": ["string", "null"]},
-              "annotation_class_label": {"type": ["string", "null"]},
-              "taxon_label": {"type": ["string", "null"]},
-              "bioentity_name": {"type": ["string", "null"], "description": "The gene's full name where Planteome records one"},
-              "synonym": {"type": ["array", "string", "null"], "items": {"type": "string"}, "description": "Other identifiers and names for the gene, which is how a hit found under one id is matched to another source"},
-              "aspect": {"type": ["string", "null"], "description": "Ontology aspect: P (biological process), F (molecular function), C (cellular component)"},
-              "taxon": {"type": ["string", "null"], "description": "NCBITaxon id behind taxon_label, e.g. NCBITaxon:3702"},
-              "evidence_type": {"type": ["string", "null"], "description": "Three-letter evidence code, e.g. IEA, IDA, IMP"},
-              "evidence": {"type": ["string", "null"], "description": "The ECO term for the evidence code, e.g. ECO:0000501"},
-              "evidence_label": {"type": ["string", "null"], "description": "The ECO term's label, e.g. 'evidence used in automatic assertion'"},
-              "evidence_with": {"type": ["array", "string", "null"], "items": {"type": "string"}, "description": "What the annotation was inferred from, e.g. InterPro:IPR001388 -- what makes a computed (IEA) annotation checkable"},
-              "assigned_by": {"type": ["string", "null"], "description": "The source database that made the annotation, e.g. InterPro, TAIR. The description promises annotations across source databases; this names the source."},
-              "source": {"type": ["string", "null"], "description": "The gene identifier's namespace, e.g. AGI_LocusCode"},
-              "date": {"type": ["string", "null"], "description": "When the annotation was made, YYYYMMDD"},
-              "reference": {"type": ["array", "string", "null"], "items": {"type": "string"}, "description": "Supporting references, e.g. TAIR:AnalysisReference:501756966, PMID:..."}
+              "bioentity": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bioentity_label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "annotation_class": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "annotation_class_label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "taxon_label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bioentity_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The gene's full name where Planteome records one"
+              },
+              "synonym": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Other identifiers and names for the gene, which is how a hit found under one id is matched to another source"
+              },
+              "aspect": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ontology aspect: P (biological process), F (molecular function), C (cellular component)"
+              },
+              "taxon": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "NCBITaxon id behind taxon_label, e.g. NCBITaxon:3702"
+              },
+              "evidence_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Three-letter evidence code, e.g. IEA, IDA, IMP"
+              },
+              "evidence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The ECO term for the evidence code, e.g. ECO:0000501"
+              },
+              "evidence_label": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The ECO term's label, e.g. 'evidence used in automatic assertion'"
+              },
+              "evidence_with": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "What the annotation was inferred from, e.g. InterPro:IPR001388 -- what makes a computed (IEA) annotation checkable"
+              },
+              "assigned_by": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The source database that made the annotation, e.g. InterPro, TAIR. The description promises annotations across source databases; this names the source."
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The gene identifier's namespace, e.g. AGI_LocusCode"
+              },
+              "date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the annotation was made, YYYYMMDD"
+              },
+              "reference": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Supporting references, e.g. TAIR:AnalysisReference:501756966, PMID:..."
+              }
             },
             "description": "One annotation. Planteome's Solr documents also carry ancestor expansions (taxon_closure, isa_partof_closure, evidence_closure and their label variants); those restate the term's own hierarchy and are deliberately not returned."
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"query": "AT4G32150", "limit": 5},
-      {"query": "AT1G01010", "limit": 5}
+      {
+        "query": "AT4G32150",
+        "limit": 5
+      },
+      {
+        "query": "AT1G01010",
+        "limit": 5
+      }
     ]
   }
 ]

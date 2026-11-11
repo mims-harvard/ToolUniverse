@@ -46,6 +46,13 @@
         },
         "data": {
           "type": "object"
+        },
+        "search_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The Enamine web search this query corresponds to, e.g. 'https://enamine.net/compound-search/quick?q=pyridine'. Where a human can see the same result, and the only route to the parts the API does not return."
         }
       }
     },
@@ -151,6 +158,13 @@
         },
         "data": {
           "type": "object"
+        },
+        "search_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The Enamine structure search this query corresponds to, e.g. 'https://enamine.net/compound-search/structure?smiles=c1cccnc1'."
         }
       }
     },

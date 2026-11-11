@@ -124,6 +124,13 @@
                       "number",
                       "null"
                     ]
+                  },
+                  "selection": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which instrument-selection strategy produced the estimate, e.g. 'HF'. MR estimates from different selection strategies are not comparable, and the effect size alone does not say which was used."
                   }
                 }
               }
@@ -315,6 +322,27 @@
                       "null"
                     ],
                     "description": "Standard error of the h2 intercept; the intercept away from 1 indicates population stratification or unmodelled confounding"
+                  },
+                  "h2": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "SNP heritability of the trait, e.g. 0.203. A genetic correlation with a low-heritability trait is poorly estimated whatever its own standard error says."
+                  },
+                  "h2_intercept": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "LDSC intercept from the heritability regression, e.g. 1.055. Above 1 indicates confounding or population stratification, which inflates the correlation."
+                  },
+                  "rg_se": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Standard error of the genetic correlation, e.g. 0.003421. Without it an rg cannot be tested or compared."
                   }
                 }
               }
@@ -866,6 +894,27 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Gene end coordinate, e.g. 41277500. With start this is the interval to query other resources on; the gene name alone is not a locus."
+                  },
+                  "gene_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene biotype, e.g. 'protein_coding'."
+                  },
+                  "start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Gene start coordinate, e.g. 41196312."
                   }
                 }
               }

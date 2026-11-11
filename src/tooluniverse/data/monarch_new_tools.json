@@ -10,31 +10,95 @@
           "description": "Entity CURIE identifier. Examples: 'HGNC:11998' (TP53), 'MONDO:0007739' (Huntington disease), 'MONDO:0005148' (type 2 diabetes), 'HP:0001250' (seizure)."
         }
       },
-      "required": ["id"]
+      "required": [
+        "id"
+      ]
     },
     "fields": {
       "endpoint": "entity"
     },
     "type": "MonarchV3Tool",
     "test_examples": [
-      {"id": "HGNC:11998"},
-      {"id": "MONDO:0007739"}
+      {
+        "id": "HGNC:11998"
+      },
+      {
+        "id": "MONDO:0007739"
+      }
     ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "id": {"type": ["string", "null"]},
-        "name": {"type": ["string", "null"]},
-        "full_name": {"type": ["string", "null"]},
-        "category": {"type": ["string", "null"]},
-        "description": {"type": ["string", "null"]},
-        "symbol": {"type": ["string", "null"]},
-        "synonyms": {"type": "array", "items": {"type": "string"}},
-        "xrefs": {"type": "array", "items": {"type": "string"}},
-        "taxon": {"type": ["string", "null"]},
-        "taxon_label": {"type": ["string", "null"]},
-        "provided_by": {"type": ["string", "null"]},
-        "deprecated": {"type": "boolean", "description": "True if this ontology term is obsolete. Obsolete terms remain queryable but carry no annotations."}
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "full_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "symbol": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "synonyms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "xrefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "taxon": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "taxon_label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "provided_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "deprecated": {
+          "type": "boolean",
+          "description": "True if this ontology term is obsolete. Obsolete terms remain queryable but carry no annotations."
+        }
       }
     }
   },
@@ -78,23 +142,75 @@
     },
     "type": "MonarchV3Tool",
     "test_examples": [
-      {"subject": "HGNC:11998", "limit": 5},
-      {"subject": "MONDO:0005148", "category": "biolink:DiseaseToPhenotypicFeatureAssociation", "limit": 5}
+      {
+        "subject": "HGNC:11998",
+        "limit": 5
+      },
+      {
+        "subject": "MONDO:0005148",
+        "category": "biolink:DiseaseToPhenotypicFeatureAssociation",
+        "limit": 5
+      }
     ],
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "subject": {"type": ["string", "null"]},
-          "subject_label": {"type": ["string", "null"]},
-          "object": {"type": ["string", "null"]},
-          "object_label": {"type": ["string", "null"]},
-          "category": {"type": ["string", "null"]},
-          "predicate": {"type": ["string", "null"]},
-          "negated": {"type": ["boolean", "null"]},
-          "provided_by": {"type": ["string", "null"]},
-          "primary_knowledge_source": {"type": ["string", "null"]}
+          "subject": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "subject_label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "object": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "object_label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "category": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "predicate": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "negated": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "provided_by": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "primary_knowledge_source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     }
@@ -127,7 +243,9 @@
           "description": "Zero-based offset. Continue with metadata.next_offset."
         }
       },
-      "required": ["query"],
+      "required": [
+        "query"
+      ],
       "additionalProperties": false
     },
     "fields": {
@@ -135,22 +253,108 @@
     },
     "type": "MonarchV3Tool",
     "test_examples": [
-      {"query": "Alzheimer", "category": "biolink:Disease", "limit": 5},
-      {"query": "BRCA1", "limit": 5}
+      {
+        "query": "Alzheimer",
+        "category": "biolink:Disease",
+        "limit": 5
+      },
+      {
+        "query": "BRCA1",
+        "limit": 5
+      }
     ],
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "id": {"type": ["string", "null"]},
-          "name": {"type": ["string", "null"]},
-          "category": {"type": ["string", "null"]},
-          "symbol": {"type": ["string", "null"]},
-          "description": {"type": ["string", "null"]},
-          "taxon": {"type": ["string", "null"]},
-          "taxon_label": {"type": ["string", "null"]},
-          "deprecated": {"type": "boolean", "description": "True if this ontology term is obsolete. Obsolete terms remain queryable but carry no annotations."}
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "category": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "symbol": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "taxon": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "taxon_label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "deprecated": {
+            "type": "boolean",
+            "description": "True if this ontology term is obsolete. Obsolete terms remain queryable but carry no annotations."
+          },
+          "namespace": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Which ontology the hit belongs to, e.g. 'MONDO', 'HP', 'MP'. One search returns terms from several, and mixing a human phenotype with a mouse one is a common error."
+          },
+          "provided_by": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Which Monarch data source supplied the node, e.g. 'phenio_nodes'."
+          },
+          "score": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Relevance score, e.g. 40.130344. The order is by it."
+          },
+          "synonyms": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Other names for the term, e.g. ['AD', ...] - 8 on the measured hit. Explains why a term whose label does not resemble the query was returned."
+          },
+          "xrefs": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Equivalent identifiers in other vocabularies, e.g. ['DOID:10652', ...] - 14 on the measured hit. The join to any other resource."
+          }
         }
       }
     }

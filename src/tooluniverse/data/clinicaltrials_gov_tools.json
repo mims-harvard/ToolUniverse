@@ -1124,21 +1124,48 @@
                     "type": "object",
                     "description": "How much the posted results hold -- outcome measures, serious and other adverse event terms, arm groups, participant flow groups, baseline measures. Empty when the trial has posted none. The row carries the counts rather than hundreds of result rows.",
                     "properties": {
-                      "outcome_measure_results": {"type": "integer"},
-                      "serious_adverse_events": {"type": "integer"},
-                      "other_adverse_events": {"type": "integer"},
-                      "adverse_event_groups": {"type": "integer"},
-                      "adverse_event_frequency_threshold": {"type": ["string", "null"]},
-                      "participant_flow_groups": {"type": "integer"},
-                      "baseline_measures": {"type": "integer"}
+                      "outcome_measure_results": {
+                        "type": "integer"
+                      },
+                      "serious_adverse_events": {
+                        "type": "integer"
+                      },
+                      "other_adverse_events": {
+                        "type": "integer"
+                      },
+                      "adverse_event_groups": {
+                        "type": "integer"
+                      },
+                      "adverse_event_frequency_threshold": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "participant_flow_groups": {
+                        "type": "integer"
+                      },
+                      "baseline_measures": {
+                        "type": "integer"
+                      }
                     }
                   },
                   "results_section_tools": {
                     "type": "object",
                     "description": "Which tool returns each part of the posted results. Empty when the trial has posted none.",
                     "properties": {
-                      "outcome_results": {"type": ["string", "null"]},
-                      "adverse_events": {"type": ["string", "null"]}
+                      "outcome_results": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "adverse_events": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
                     }
                   },
                   "nct_id": {
@@ -1166,7 +1193,9 @@
                     ]
                   },
                   "phases": {
-                    "items": {"type": "string"},
+                    "items": {
+                      "type": "string"
+                    },
                     "description": "Trial phases, e.g. PHASE2.",
                     "type": "array"
                   },
@@ -1177,12 +1206,16 @@
                     ]
                   },
                   "conditions": {
-                    "items": {"type": "string"},
+                    "items": {
+                      "type": "string"
+                    },
                     "description": "Conditions studied.",
                     "type": "array"
                   },
                   "interventions": {
-                    "items": {"type": "string"},
+                    "items": {
+                      "type": "string"
+                    },
                     "description": "Intervention names.",
                     "type": "array"
                   },
@@ -1219,7 +1252,60 @@
                     }
                   },
                   "locations": {
-                    "items": {"type": "object", "properties": {"facility": {"type": ["string", "null"]}, "city": {"type": ["string", "null"]}, "state": {"type": ["string", "null"]}, "zip": {"type": ["string", "null"]}, "country": {"type": ["string", "null"]}, "status": {"type": ["string", "null"], "description": "Recruitment status at this site."}, "latitude": {"type": ["number", "null"]}, "longitude": {"type": ["number", "null"]}}},
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "facility": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "city": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "state": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "zip": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "country": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "status": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Recruitment status at this site."
+                        },
+                        "latitude": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "longitude": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
                     "type": "array"
                   },
                   "location_count": {
@@ -1237,25 +1323,74 @@
                       "type": "string"
                     }
                   },
-                  "primary_outcome_measures": {"type": "array", "items": {"type": "string"}, "description": "What the trial measures, capped at 5. The row carried nothing about the outcomes, so a search for an endpoint needed a per-study call."},
-                  "primary_outcome_count": {"type": "integer"},
-                  "secondary_outcome_count": {"type": "integer"},
-                  "arms": {
-                    "items": {"type": "object", "properties": {"label": {"type": ["string", "null"]}, "type": {"type": ["string", "null"], "description": "EXPERIMENTAL, PLACEBO_COMPARATOR, ..."}, "description": {"type": ["string", "null"]}, "intervention_names": {"type": "array", "items": {"type": "string"}}}},
+                  "primary_outcome_measures": {
                     "type": "array",
-                    "description": "The trial's arms with what each was given, capped at 5, so a two-arm comparison can be read off the search result.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "What the trial measures, capped at 5. The row carried nothing about the outcomes, so a search for an endpoint needed a per-study call."
+                  },
+                  "primary_outcome_count": {
+                    "type": "integer"
+                  },
+                  "secondary_outcome_count": {
+                    "type": "integer"
+                  },
+                  "arms": {
                     "items": {
                       "type": "object",
                       "properties": {
-                        "label": {"type": ["string", "null"]},
-                        "type": {"type": ["string", "null"]},
-                        "intervention_names": {"type": "array", "items": {"type": "string"}}
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "intervention_names": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
                       }
-                    }
+                    },
+                    "type": "array",
+                    "description": "The trial's arms with what each was given, capped at 5, so a two-arm comparison can be read off the search result."
                   },
-                  "arm_count": {"type": "integer"},
+                  "arm_count": {
+                    "type": "integer"
+                  },
                   "references": {
-                    "items": {"type": "object", "properties": {"pmid": {"type": ["string", "null"]}, "type": {"type": ["string", "null"], "description": "BACKGROUND, RESULT or DERIVED."}, "citation": {"type": ["string", "null"]}}},
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "pmid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "BACKGROUND, RESULT or DERIVED."
+                        },
+                        "citation": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
                     "type": "array",
                     "description": "The publications behind this record"
                   },
@@ -1322,7 +1457,10 @@
               ]
             },
             "executed_query": {
-              "type": "object", "additionalProperties": {"type": "string"}, "description": "The parameters actually sent to ClinicalTrials.gov, keyed by API field: a value is rewritten into Essie syntax before it is sent (an intervention becomes \"(AREA[InterventionName]metformin OR AREA[InterventionOtherName]metformin)\"), and this is what was executed. query_rewrites explains each change.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
               "description": "The query parameters actually sent to ClinicalTrials.gov, after phrase-quoting and AREA[] field restriction. Compare against what you passed: they differ whenever `query_rewrites` is non-empty."
             },
             "query_rewrites": {
@@ -1503,6 +1641,26 @@
                   },
                   "type": {
                     "type": "string"
+                  },
+                  "arm_group_labels": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Which arms the intervention was given in, e.g. ['Placebo']. An intervention listed without its arms cannot be matched to the arm it belongs to, so a placebo reads like a treatment."
+                  },
+                  "other_names": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Other names the sponsor gave the intervention -- brand names, code numbers, synonyms. Measured on 4 of 23 intervention items across 9 studies, so its absence is normal. It is how the same drug is recognised across trials that each call it something different."
                   }
                 }
               }
@@ -1582,41 +1740,100 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "description": {"type": ["string", "null"]},
-                  "measure": {"type": ["string", "null"]},
-                  "time_frame": {"type": ["string", "null"]}
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "measure": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "time_frame": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
               }
             },
-            "secondary_outcome_count": {"type": "integer"},
+            "secondary_outcome_count": {
+              "type": "integer"
+            },
             "other_outcomes": {
               "type": "array",
               "description": "Pre-registered measures ClinicalTrials.gov classes as neither primary nor secondary.",
               "items": {
                 "type": "object",
                 "properties": {
-                  "description": {"type": ["string", "null"]},
-                  "measure": {"type": ["string", "null"]},
-                  "time_frame": {"type": ["string", "null"]}
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "measure": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "time_frame": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
               }
             },
-            "other_outcome_count": {"type": "integer"},
-            "has_results": {"type": "boolean", "description": "Whether the record has a posted results section. This handler reads protocolSection only -- what the trial set out to do -- and a trial with results was indistinguishable from one without."},
+            "other_outcome_count": {
+              "type": "integer"
+            },
+            "has_results": {
+              "type": "boolean",
+              "description": "Whether the record has a posted results section. This handler reads protocolSection only -- what the trial set out to do -- and a trial with results was indistinguishable from one without."
+            },
             "results_summary": {
               "type": "object",
               "description": "How much is in the posted results: NCT04280705 has 43 outcome-measure results, 100 serious adverse events and 10 other events. Empty when there are no results. The rows themselves belong to the tools named in results_section_tools.",
               "properties": {
-                "outcome_measure_results": {"type": "integer"},
-                "serious_adverse_events": {"type": "integer"},
-                "other_adverse_events": {"type": "integer"},
-                "adverse_event_groups": {"type": "integer"},
-                "adverse_event_frequency_threshold": {"type": ["string", "number", "null"], "description": "The percentage above which non-serious events were reported, so an absent event can be read as below threshold rather than as absent"},
-                "participant_flow_groups": {"type": "integer"},
-                "baseline_measures": {"type": "integer"}
+                "outcome_measure_results": {
+                  "type": "integer"
+                },
+                "serious_adverse_events": {
+                  "type": "integer"
+                },
+                "other_adverse_events": {
+                  "type": "integer"
+                },
+                "adverse_event_groups": {
+                  "type": "integer"
+                },
+                "adverse_event_frequency_threshold": {
+                  "type": [
+                    "string",
+                    "number",
+                    "null"
+                  ],
+                  "description": "The percentage above which non-serious events were reported, so an absent event can be read as below threshold rather than as absent"
+                },
+                "participant_flow_groups": {
+                  "type": "integer"
+                },
+                "baseline_measures": {
+                  "type": "integer"
+                }
               }
             },
-            "results_section_tools": {"type": "object", "description": "Which tool returns each part of the results section; empty when there are no results."},
+            "results_section_tools": {
+              "type": "object",
+              "description": "Which tool returns each part of the results section; empty when there are no results."
+            },
             "eligibility_criteria": {
               "type": [
                 "string",
@@ -1873,7 +2090,60 @@
                     }
                   },
                   "locations": {
-                    "items": {"type": "object", "properties": {"facility": {"type": ["string", "null"]}, "city": {"type": ["string", "null"]}, "state": {"type": ["string", "null"]}, "zip": {"type": ["string", "null"]}, "country": {"type": ["string", "null"]}, "status": {"type": ["string", "null"], "description": "Recruitment status at this site."}, "latitude": {"type": ["number", "null"]}, "longitude": {"type": ["number", "null"]}}},
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "facility": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "city": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "state": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "zip": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "country": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "status": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Recruitment status at this site."
+                        },
+                        "latitude": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "longitude": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
                     "type": "array",
                     "description": "A page of the trial's sites, with coordinates so 'near me' needs no geocoding."
                   },
@@ -1958,7 +2228,36 @@
                     "description": "Secondary outcome measures in total."
                   },
                   "arms": {
-                    "items": {"type": "object", "properties": {"label": {"type": ["string", "null"]}, "type": {"type": ["string", "null"], "description": "EXPERIMENTAL, PLACEBO_COMPARATOR, ..."}, "description": {"type": ["string", "null"]}, "intervention_names": {"type": "array", "items": {"type": "string"}}}},
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "EXPERIMENTAL, PLACEBO_COMPARATOR, ..."
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "intervention_names": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
                     "type": "array",
                     "description": "Arm groups with their type and interventions."
                   },
@@ -1967,7 +2266,30 @@
                     "description": "Arm groups in total."
                   },
                   "references": {
-                    "items": {"type": "object", "properties": {"pmid": {"type": ["string", "null"]}, "type": {"type": ["string", "null"], "description": "BACKGROUND, RESULT or DERIVED."}, "citation": {"type": ["string", "null"]}}},
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "pmid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "BACKGROUND, RESULT or DERIVED."
+                        },
+                        "citation": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
                     "type": "array",
                     "description": "Publications the registrant linked."
                   },
@@ -2013,7 +2335,10 @@
               ]
             },
             "executed_query": {
-              "type": "object", "additionalProperties": {"type": "string"}, "description": "The parameters actually sent to ClinicalTrials.gov, keyed by API field: a value is rewritten into Essie syntax before it is sent (an intervention becomes \"(AREA[InterventionName]metformin OR AREA[InterventionOtherName]metformin)\"), and this is what was executed. query_rewrites explains each change.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
               "description": "The query parameters actually sent to ClinicalTrials.gov, after phrase-quoting and AREA[] field restriction. Compare against what you passed: they differ whenever `query_rewrites` is non-empty."
             },
             "query_rewrites": {
@@ -2251,7 +2576,60 @@
                     }
                   },
                   "locations": {
-                    "items": {"type": "object", "properties": {"facility": {"type": ["string", "null"]}, "city": {"type": ["string", "null"]}, "state": {"type": ["string", "null"]}, "zip": {"type": ["string", "null"]}, "country": {"type": ["string", "null"]}, "status": {"type": ["string", "null"], "description": "Recruitment status at this site."}, "latitude": {"type": ["number", "null"]}, "longitude": {"type": ["number", "null"]}}},
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "facility": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "city": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "state": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "zip": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "country": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "status": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Recruitment status at this site."
+                        },
+                        "latitude": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "longitude": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
                     "type": "array",
                     "description": "A page of the trial's sites, with coordinates so 'near me' needs no geocoding."
                   },
@@ -2336,7 +2714,36 @@
                     "description": "Secondary outcome measures in total."
                   },
                   "arms": {
-                    "items": {"type": "object", "properties": {"label": {"type": ["string", "null"]}, "type": {"type": ["string", "null"], "description": "EXPERIMENTAL, PLACEBO_COMPARATOR, ..."}, "description": {"type": ["string", "null"]}, "intervention_names": {"type": "array", "items": {"type": "string"}}}},
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "EXPERIMENTAL, PLACEBO_COMPARATOR, ..."
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "intervention_names": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
                     "type": "array",
                     "description": "Arm groups with their type and interventions."
                   },
@@ -2345,7 +2752,30 @@
                     "description": "Arm groups in total."
                   },
                   "references": {
-                    "items": {"type": "object", "properties": {"pmid": {"type": ["string", "null"]}, "type": {"type": ["string", "null"], "description": "BACKGROUND, RESULT or DERIVED."}, "citation": {"type": ["string", "null"]}}},
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "pmid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "BACKGROUND, RESULT or DERIVED."
+                        },
+                        "citation": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
                     "type": "array",
                     "description": "Publications the registrant linked."
                   },
@@ -2391,7 +2821,10 @@
               ]
             },
             "executed_query": {
-              "type": "object", "additionalProperties": {"type": "string"}, "description": "The parameters actually sent to ClinicalTrials.gov, keyed by API field: a value is rewritten into Essie syntax before it is sent (an intervention becomes \"(AREA[InterventionName]metformin OR AREA[InterventionOtherName]metformin)\"), and this is what was executed. query_rewrites explains each change.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
               "description": "The query parameters actually sent to ClinicalTrials.gov, after phrase-quoting and AREA[] field restriction. Compare against what you passed: they differ whenever `query_rewrites` is non-empty."
             },
             "query_rewrites": {

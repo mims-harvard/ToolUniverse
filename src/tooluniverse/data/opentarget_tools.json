@@ -225,6 +225,13 @@
                                 }
                               }
                             }
+                          },
+                          "score": {
+                            "type": [
+                              "number",
+                              "null"
+                            ],
+                            "description": "Open Targets association score for the target-disease pair, e.g. 0.8763240905984302. Rows are ordered by it, and it is the whole basis on which one association outranks another."
                           }
                         }
                       }
@@ -2020,6 +2027,13 @@
               }
             }
           }
+        },
+        "drug": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The drug record, with 'name', 'id' and 'drugWarnings' - the warnings themselves, each with its type, description and the authority that issued it. The blackbox status this tool exists to report lives in here."
         }
       }
     }
@@ -2629,6 +2643,26 @@
                       },
                       "datasource": {
                         "type": "string"
+                      },
+                      "biosamples": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "Where the safety signal was observed, each with cellFormat and cellLabel, e.g. {'cellFormat': 'cell line', 'cellLabel': 'HepaRG'}. Measured on 1 of 4 liabilities. A liability seen only in one hepatocyte line is not an organism-level finding."
+                      },
+                      "effects": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "The direction of the effect, each with 'direction', e.g. 'Activation/Increase/Upregulation'. Measured on 1 of 4. Whether the liability follows from activating or inhibiting the target - which decides whether it applies to the drug being considered."
                       }
                     }
                   }
@@ -4727,6 +4761,20 @@
                 },
                 "isApproved": {
                   "type": "boolean"
+                },
+                "drugType": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What kind of molecule the drug is, e.g. 'Small molecule'."
+                },
+                "maximumClinicalStage": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The furthest stage reached, e.g. 'APPROVAL'. The approval status this tool exists to report, and it was declared nowhere."
                 }
               }
             }

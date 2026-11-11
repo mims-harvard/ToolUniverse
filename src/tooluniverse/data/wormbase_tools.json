@@ -405,6 +405,16 @@
                         }
                       }
                     }
+                  },
+                  "references": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Identifiers of the papers reporting the phenotype, e.g. ['AGRKB:101000000617864'] - present on all 49 phenotypes. The citation; a phenotype without one cannot be followed up."
                   }
                 }
               }
@@ -1537,6 +1547,20 @@
                 "string",
                 "null"
               ]
+            },
+            "total_genetic_interactions": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many genetic interactions WormBase holds for the gene, e.g. 10."
+            },
+            "total_physical_interactions": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many physical interactions, e.g. 84. Genetic and physical interaction are different claims, and the totals say which kind the returned list is mostly made of."
             }
           },
           "not": {

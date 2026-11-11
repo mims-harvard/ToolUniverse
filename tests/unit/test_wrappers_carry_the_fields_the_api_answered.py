@@ -8590,3 +8590,238 @@ def test_no_declaration_of_mine_sits_on_a_branch_that_requires_error():
             f"{name} is declared on the branch that requires 'error', so the "
             "schema claims a failed call returns it"
         )
+
+
+# ---------------------------------------------------------------------------
+# Batch 88: the 51 tools of axis-2 shards 0-7, measured 2026-11-10.
+# ---------------------------------------------------------------------------
+
+
+def test_a_crossref_hit_says_which_version_each_licence_and_link_covers():
+    """25 fields on the row, and the two that decide reuse were among them.
+
+    `Crossref_search_works` declared 9 properties. Measured 2026-11-10, each
+    row also carries `license` -- whose `content-version` is 'vor', 'am' or
+    'tdm', so a licence on the accepted manuscript does not cover the
+    published version -- and `link`, whose `intended-application` is
+    'text-mining' or 'similarity-checking', so the URL is not a reader link
+    and usually needs a key. Also `score`, without which the ranking cannot be
+    reproduced, and `issn-type`, the only thing separating the print ISSN from
+    the electronic one in the flat `ISSN` list.
+    """
+    rs = _config("Crossref_search_works")["return_schema"]
+    branch = (
+        [b for b in rs["oneOf"] if "error" not in (b.get("properties") or {})][0]
+        if rs.get("oneOf")
+        else rs
+    )
+    row = branch["items"]["properties"]
+    for name in ("license", "link", "score", "issn-type", "ISSN", "page", "volume"):
+        assert name in row, f"{name} is returned on every row and not declared"
+    assert "content-version" in row["license"]["description"]
+    assert "intended-application" in row["link"]["description"]
+    assert "print" in row["issn-type"]["description"]
+
+
+def test_crossref_structured_dates_say_how_deep_their_nesting_goes():
+    """`date-parts` is [[year, month, day]] -- one level deeper than it looks.
+
+    Crossref returns created, deposited, indexed, issued and published-print
+    as objects whose `date-parts` is a nested array. Reading date-parts as the
+    date rather than date-parts[0] yields a list where a year was expected, and
+    the declaration is the only place to say so.
+    """
+    rs = _config("Crossref_search_works")["return_schema"]
+    branch = (
+        [b for b in rs["oneOf"] if "error" not in (b.get("properties") or {})][0]
+        if rs.get("oneOf")
+        else rs
+    )
+    row = branch["items"]["properties"]
+    for name in ("created", "deposited", "indexed", "issued", "published-print"):
+        assert name in row, f"{name} is returned and not declared"
+        assert "date-parts" in (row[name].get("properties") or {}), (
+            f"{name} should declare its date-parts shape"
+        )
+
+
+def test_a_genetic_correlation_comes_with_its_error_and_its_intercept():
+    """An rg of 0.203 with an LDSC intercept of 1.055 is a different claim.
+
+    `EpiGraphDB_get_genetic_correlations` returns h2 (SNP heritability),
+    h2_intercept and rg_se on all 50 rows. An intercept above 1 indicates
+    confounding or stratification, which inflates the correlation; a low h2
+    means the rg is poorly estimated whatever its own error says. None of the
+    three was declared, so the correlation stood alone.
+    """
+    props = _success_props(_config("EpiGraphDB_get_genetic_correlations")["return_schema"])
+    row = props["correlations"]["items"]["properties"]
+    for name in ("h2", "h2_intercept", "rg_se"):
+        assert name in row, f"{name} is returned and not declared"
+    assert "confound" in row["h2_intercept"]["description"].lower()
+
+
+def test_a_gpcr_residue_number_says_which_numbering_scheme_it_follows():
+    """Generic GPCR numbers only mean anything inside one scheme.
+
+    `GPCRdb_get_protein` returns residue_numbering_scheme ('GPCRdb(A)') and
+    receptor_class ('Class A (Rhodopsin)'). Read under the wrong scheme a
+    generic residue number points at a different residue, and neither field
+    was declared.
+    """
+    props = _success_props(_config("GPCRdb_get_protein")["return_schema"])
+    data = props["data"]["properties"] if "data" in props else props
+    for name in ("residue_numbering_scheme", "receptor_class", "sequence", "source"):
+        assert name in data, f"{name} is returned and not declared"
+    assert "scheme" in data["residue_numbering_scheme"]["description"]
+
+
+def test_an_open_meteo_forecast_says_whether_its_times_are_local():
+    """utc_offset_seconds, and a whole forecast shifted without it.
+
+    `OpenMeteo_get_weather_forecast` returns utc_offset_seconds,
+    timezone_abbreviation and elevation. The hourly timestamps are local
+    unless the offset is zero, so reading them as UTC moves the forecast by
+    hours. Elevation matters too: Open-Meteo answers for its own grid cell,
+    and temperature follows elevation.
+    """
+    props = _success_props(_config("OpenMeteo_get_weather_forecast")["return_schema"])
+    for name in ("utc_offset_seconds", "timezone_abbreviation", "elevation"):
+        assert name in props, f"{name} is returned and not declared"
+    assert "LOCAL" in props["utc_offset_seconds"]["description"] or "local" in props[
+        "utc_offset_seconds"
+    ]["description"]
+
+
+def test_an_erddap_table_declares_the_types_of_its_untyped_rows():
+    """ERDDAP returns rows with no types and columnTypes beside them.
+
+    Both `ERDDAP_get_dataset_info` and `ERDDAP_search_datasets` answer
+    table.columnTypes -- 5 and 17 entries respectively. The rows themselves
+    carry no type information, so this is the only statement of what each
+    value is, and it was declared in neither.
+    """
+    for tool in ("ERDDAP_get_dataset_info", "ERDDAP_search_datasets"):
+        props = _success_props(_config(tool)["return_schema"])
+        table = props["table"]["properties"]
+        assert "columnTypes" in table, f"{tool} returns table.columnTypes, undeclared"
+
+
+def test_a_variant_effect_score_is_declared_as_the_comparable_one():
+    """Predictors use incompatible native scales; one field is comparable.
+
+    `OpenTargets_get_variant_effect_predictions` returns normalisedScore on
+    every row. Native predictor scores run in opposite directions -- high is
+    damaging for some, benign for others -- so comparing them directly is
+    wrong, and the rescaled figure was undeclared.
+    """
+    props = _success_props(_config("OpenTargets_get_variant_effect_predictions")["return_schema"])
+    row = props["variant"]["properties"]["variantEffect"]["items"]["properties"]
+    assert "normalisedScore" in row
+    assert "comparable" in row["normalisedScore"]["description"]
+
+
+def test_a_partial_taxonomic_parse_says_that_it_was_partial():
+    """`parsedPartially` true, and the result looks like a clean parse.
+
+    `GBIF_parse_name` returns parsedPartially and canonicalNameComplete
+    ('Panthera leo (Linnaeus, 1758)'). Without the flag a half-parsed name is
+    indistinguishable from a parsed one; without the complete form the
+    authorship is dropped from any citation built on it.
+    """
+    rs = _config("GBIF_parse_name")["return_schema"]
+    branch = (
+        [b for b in rs["oneOf"] if "error" not in (b.get("properties") or {})][0]
+        if rs.get("oneOf")
+        else rs
+    )
+    row = branch["items"]["properties"]
+    for name in ("parsedPartially", "canonicalNameComplete"):
+        assert name in row, f"{name} is returned and not declared"
+
+
+def test_an_approval_status_tool_declares_the_approval_status():
+    """maximumClinicalStage is the answer the tool's name promises.
+
+    `OpenTargets_get_drug_approval_status_by_chemblId` returned
+    maximumClinicalStage 'APPROVAL' and drugType 'Small molecule', and
+    declared neither -- so the one field the tool exists to report was absent
+    from its own schema.
+    """
+    props = _success_props(
+        _config("OpenTargets_get_drug_approval_status_by_chemblId")["return_schema"]
+    )
+    data = props["data"]["properties"] if "data" in props else props
+    drug = data["drug"]["properties"]
+    for name in ("maximumClinicalStage", "drugType"):
+        assert name in drug, f"{name} is returned and not declared"
+
+
+def test_tools_that_refuse_for_a_missing_key_declare_whether_a_retry_helps():
+    """error_details carries `retriable`, and seven tools declared none of it.
+
+    Measured 2026-11-10: Addgene_search_plasmids, MetaCyc_get_pathway,
+    MetaCyc_get_reaction, MetaCyc_search_pathways, ProtocolsIO_get_protocol,
+    ProtocolsIO_get_protocol_steps and USCensus_get_population all answered
+    an error envelope carrying error_details with type, message, retriable and
+    next_steps. `retriable` is false for a missing credential, so without it an
+    agent cannot tell a transient outage from a configuration problem it must
+    stop and report.
+    """
+    for tool in (
+        "Addgene_search_plasmids",
+        "MetaCyc_get_pathway",
+        "MetaCyc_get_reaction",
+        "MetaCyc_search_pathways",
+        "ProtocolsIO_get_protocol",
+        "ProtocolsIO_get_protocol_steps",
+        "USCensus_get_population",
+    ):
+        cfg = _config(tool)
+        rs = cfg["return_schema"]
+        found = []
+        for branch in (rs.get("oneOf") or rs.get("anyOf") or [rs]):
+            props = branch.get("properties") or {}
+            if "error_details" in props:
+                found.append(props["error_details"])
+        assert found, f"{tool} returns error_details and declares it nowhere"
+        assert "retriable" in (found[0].get("properties") or {}), (
+            f"{tool}: error_details should declare `retriable`"
+        )
+
+
+def test_a_truncated_credible_set_list_says_so():
+    """5 credible sets returned, truncated true, neither declared.
+
+    `OpenTargets_get_variant_credible_sets` answers returned and truncated
+    under variant.credibleSets. Fine-mapping read as complete when it is a
+    page of five misattributes the signal to whichever sets happened to come
+    back. `PubMed_Guidelines_Search` has the same problem in words: its
+    truncation_note reads "Returned the top 0 of 2 documents matching this
+    query. This is a ranked slice, not the full set."
+    """
+    props = _success_props(_config("OpenTargets_get_variant_credible_sets")["return_schema"])
+    cs = props["variant"]["properties"]["credibleSets"]["properties"]
+    for name in ("returned", "truncated"):
+        assert name in cs, f"{name} is returned and not declared"
+    gl = _success_props(_config("PubMed_Guidelines_Search")["return_schema"])
+    meta = gl["metadata"]["properties"]
+    assert "truncation_note" in meta, "the truncation note is returned and undeclared"
+
+
+def test_a_wormbase_phenotype_can_be_cited():
+    """49 phenotypes, each with a reference, and the field undeclared.
+
+    `WormBase_get_phenotypes` returns `references` on every phenotype, e.g.
+    ['AGRKB:101000000617864']. A phenotype assertion with no citation cannot
+    be followed up or weighed. `WormBase_get_interactions` likewise returns
+    total_genetic_interactions and total_physical_interactions -- genetic and
+    physical interaction are different claims, and the totals say which kind
+    dominates the list.
+    """
+    props = _success_props(_config("WormBase_get_phenotypes")["return_schema"])
+    row = props["phenotypes"]["items"]["properties"]
+    assert "references" in row, "the citation is returned and not declared"
+    inter = _success_props(_config("WormBase_get_interactions")["return_schema"])
+    for name in ("total_genetic_interactions", "total_physical_interactions"):
+        assert name in inter, f"{name} is returned and not declared"

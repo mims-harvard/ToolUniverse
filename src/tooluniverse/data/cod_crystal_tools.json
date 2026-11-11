@@ -614,6 +614,20 @@
                   "null"
                 ],
                 "description": "Entry status"
+              },
+              "svnrevision": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Revision of the COD entry, e.g. '293656'. COD entries are revised, and this says which revision the data came from."
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Time of day the entry was last modified, e.g. '07:57:20'. Only the time; the date is a separate field."
               }
             }
           }
