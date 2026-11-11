@@ -111,6 +111,72 @@
       "properties": {
         "error": {
           "type": "string"
+        },
+        "genes": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "The matching genes, each with gene_name, ensembl_id, gene_synonyms and the HPA fields for the entry. The result itself, which the schema named nowhere - 45 entries for the query 'TP53'."
+        },
+        "has_more": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when matches remain beyond this page."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page size applied, e.g. 50."
+        },
+        "match_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many came back in this reply, e.g. 45. Equal to total_matches only when nothing was cut."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many matches were skipped before this page."
+        },
+        "result_set_complete": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when this reply contains every match, so the caller can stop paging. The single flag that answers 'is this all of it'."
+        },
+        "search_query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The query as it was run, e.g. 'TP53'. HPA normalises what it was given, so this says what actually matched."
+        },
+        "total_matches": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many genes matched the query in total, e.g. 45."
+        },
+        "truncated": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when the returned list is shorter than the match set."
         }
       }
     }
@@ -703,6 +769,71 @@
       "properties": {
         "error": {
           "type": "string"
+        },
+        "enriched_tissues": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "The tissues HPA marks the gene as enriched in, e.g. ['pancreas']. HPA's own specificity judgement, as distinct from the raw values."
+        },
+        "ensembl_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ensembl gene id for that gene, e.g. 'ENSG00000254647'. The unambiguous identity behind the symbol."
+        },
+        "expression_level_basis": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "States that expression_level is computed by ToolUniverse from expression_value and is not HPA's own classification. Without it, the level reads as an HPA call rather than a derived one."
+        },
+        "expression_unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The unit the values are in: 'nTPM (normalized Transcripts Per Million)'. nTPM values are comparable across tissues within HPA but not with raw TPM or FPKM from elsewhere."
+        },
+        "gene": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The gene the query resolved to, e.g. 'INS'. A synonym can resolve elsewhere, so this says which gene the numbers belong to."
+        },
+        "gene_synonym": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Other symbols for the gene, e.g. ['IDDM1', ...]. Explains why a query under a different name reached this gene."
+        },
+        "queried_tissues": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "The tissues asked for, e.g. ['pancreas']. Echoed so a tissue HPA holds no data for can be told from one that was never requested."
+        },
+        "tissue_expression": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The expression values per tissue, keyed by tissue name. The payload of the reply."
         }
       }
     }

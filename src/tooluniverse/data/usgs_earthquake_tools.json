@@ -59,6 +59,27 @@
                 },
                 "title": {
                   "type": "string"
+                },
+                "api": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Version of the USGS feed API that produced the reply, e.g. '2.8.2'."
+                },
+                "status": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "HTTP status USGS recorded for the feed generation, e.g. 200."
+                },
+                "url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The exact feed URL queried, e.g. '.../summary/significant_month.geojson'. The record of which magnitude threshold and time window the answer actually covers."
                 }
               }
             },
@@ -81,6 +102,13 @@
                         "items": {
                           "type": "number"
                         }
+                      },
+                      "type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "GeoJSON geometry type, 'Point'. USGS reports an epicentre as a point, never an extent."
                       }
                     }
                   },
@@ -159,11 +187,112 @@
                           "null"
                         ],
                         "description": "Instrumental intensity (Modified Mercalli)"
+                      },
+                      "code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The event code within its network, e.g. '7000tx16'. Combined with 'net' it forms the full event id."
+                      },
+                      "detail": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "URL of the full GeoJSON record for this one quake, with all its products. The feed row is a summary; this is where the rest is."
+                      },
+                      "dmin": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Horizontal distance from the epicentre to the nearest station, in degrees. Large values mean the depth is poorly constrained."
+                      },
+                      "gap": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Largest azimuthal gap between stations, in degrees, e.g. 29. Above about 180 the location is unreliable whatever the other numbers say."
+                      },
+                      "ids": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Every event id this quake is known by, comma-delimited with leading and trailing commas, e.g. ',us7000tx16,'. Regional networks assign their own ids to the same quake, and this is how duplicates are recognised."
+                      },
+                      "net": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Network that contributed the preferred origin, e.g. 'us', 'ci', 'ak'. Which observatory's solution is being reported."
+                      },
+                      "nst": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Number of seismic stations used to locate the event, e.g. 129. More stations means a tighter location."
+                      },
+                      "rms": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Root-mean-square residual of the travel-time fit, in seconds. How well the reported location explains the arrivals."
+                      },
+                      "sources": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Every network that contributed, comma-delimited with leading and trailing commas, e.g. ',us,'."
+                      },
+                      "status": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Whether a human has checked the solution: 'reviewed' means an analyst confirmed it, 'automatic' means no one has. The difference between a provisional and a confirmed earthquake."
+                      },
+                      "type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "What the event was, e.g. 'earthquake', 'quarry blast', 'explosion', 'ice quake'. Not every row in an earthquake feed is an earthquake."
+                      },
+                      "types": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Every product available for the quake, comma-delimited, e.g. ',dyfi,ground-failure,losspager,moment-tensor,origin,phase-data,shakemap,'. Says whether a ShakeMap or a loss estimate exists before one is requested."
                       }
                     }
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GeoJSON feature type, 'Feature'."
                   }
                 }
               }
+            },
+            "bbox": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "number"
+              },
+              "description": "Bounding box of every quake in the feed, as six numbers: min longitude, min latitude, min depth, max longitude, max latitude, max depth. Depth is part of it, so it is six values, not four."
             }
           },
           "not": {

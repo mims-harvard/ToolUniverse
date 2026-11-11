@@ -374,9 +374,39 @@
       ],
       "description": "Epitope record: accession, entryName, sequence, sequenceChecksum, taxid, and a `features` array of EPITOPE entries (type, description, begin, end, xrefs to IEDB, evidences).",
       "properties": {
-        "accession": {"type": "string"},
-        "entryName": {"type": "string"},
-        "features": {"type": "array", "items": {"type": "object"}}
+        "accession": {
+          "type": "string"
+        },
+        "entryName": {
+          "type": "string"
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "sequence": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The protein's full amino-acid sequence. Epitope positions are indices into it, so without the sequence the positions cannot be read as residues."
+        },
+        "sequenceChecksum": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "CRC-64 checksum of that sequence, e.g. '12491882143176220977'. Confirms the epitope coordinates refer to the same sequence version the caller holds."
+        },
+        "taxid": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "NCBI taxonomy id of the source organism, e.g. 9606 for human. The accession alone does not state the species."
+        }
       }
     },
     "test_examples": [

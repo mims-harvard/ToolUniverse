@@ -15,7 +15,7 @@
           "default": 10,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of taxon matches to return (1\u2013100)."
+          "description": "Number of taxon matches to return (1–100)."
         },
         "offset": {
           "type": "integer",
@@ -145,7 +145,7 @@
           "default": 10,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of records in this cursor page (1\u2013100)."
+          "description": "Number of records in this cursor page (1–100)."
         },
         "after": {
           "type": "string",
@@ -428,6 +428,125 @@
                       "integer",
                       "number"
                     ]
+                  },
+                  "brackish": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when OBIS classes the taxon as brackish-water. One of the environment flags used to spot records placed in the wrong habitat."
+                  },
+                  "country": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Country of the occurrence, e.g. 'Australia'."
+                  },
+                  "fieldNumber": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The collector's field or instrument number, e.g. 'VR2W-109072' - here an acoustic receiver's serial. What ties the record back to the physical sampling effort."
+                  },
+                  "footprintWKT": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The occurrence's geometry as WKT. Measured as the degenerate 'POINT ( )' on records whose footprint was not populated, so it is not a reliable geometry source."
+                  },
+                  "gigaclass": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "WoRMS gigaclass of the taxon, e.g. 'Actinopterygii'."
+                  },
+                  "gigaclassid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "WoRMS AphiaID of that gigaclass, e.g. 10194. The id is what survives a taxonomic rename; the name does not."
+                  },
+                  "locality": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The collector's own description of the place, e.g. 'ORPH 11'. Free text, and often the only clue to a site that the coordinates alone do not name."
+                  },
+                  "modified": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the source dataset last changed the record, e.g. '2022-01-17'."
+                  },
+                  "organismQuantity": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How many organisms were observed, as a STRING, e.g. '38'. Meaningless without organismQuantityType below, and it needs converting before arithmetic."
+                  },
+                  "organismQuantityType": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the quantity counts, e.g. 'detections per day', 'individuals', 'percentage of cover'. A quantity of 38 means different things under different types, so reading the number alone can be badly wrong."
+                  },
+                  "parvphylum": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "WoRMS parvphylum, e.g. 'Osteichthyes'."
+                  },
+                  "parvphylumid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "WoRMS AphiaID of that parvphylum, e.g. 152352."
+                  },
+                  "sss": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Sea surface salinity at the occurrence, e.g. 35.23, from the same climatology."
+                  },
+                  "sst": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Sea surface temperature at the occurrence, in degrees Celsius, e.g. 25.74 - interpolated by OBIS from climatology, not measured by the collector."
+                  },
+                  "suborder": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "WoRMS suborder, e.g. 'Percoidei'."
+                  },
+                  "suborderid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "WoRMS AphiaID of that suborder, e.g. 151751."
+                  },
+                  "vernacularName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The common name for the taxon as the dataset recorded it, e.g. 'Common Coral Trout'. The only non-scientific name in the row."
                   }
                 }
               }

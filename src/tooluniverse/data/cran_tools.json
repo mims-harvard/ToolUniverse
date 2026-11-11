@@ -197,6 +197,48 @@
             "timeline": {
               "type": "object",
               "description": "Map of version string to release date (ISO 8601)"
+            },
+            "_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The package name, which CRAN's CouchDB uses as the document id, e.g. 'ggplot2'."
+            },
+            "_rev": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "CouchDB revision token for the record, e.g. '34-94ca0daa28f51a3e74e5aab77836513c'. The leading number counts how many times CRAN's metadata for the package has changed."
+            },
+            "archived": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the package has been removed from CRAN. An archived package still has versions and a title, so nothing else in the reply reveals that it can no longer be installed."
+            },
+            "latest": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The current version on CRAN, e.g. '4.0.3'. Which of the listed versions is the one `install.packages` would fetch."
+            },
+            "revdeps": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many CRAN packages depend on this one, e.g. 410. The measure of how much would break if it changed."
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The package's one-line title, e.g. 'Create Elegant Data Visualisations Using the Grammar of Graphics'."
             }
           },
           "not": {

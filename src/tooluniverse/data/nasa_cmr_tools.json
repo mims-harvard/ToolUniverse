@@ -176,7 +176,10 @@
                           "null"
                         ],
                         "items": {
-                          "type": ["string", "object"]
+                          "type": [
+                            "string",
+                            "object"
+                          ]
                         }
                       },
                       "links": {
@@ -184,6 +187,165 @@
                           "array",
                           "null"
                         ]
+                      },
+                      "archive_center": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The DAAC that archives the collection, e.g. 'NASA/JPL/PODAAC'. Which centre to approach for the data, and it is not always the same as data_center."
+                      },
+                      "association_details": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The concept ids of the variables, services, tools and citations associated with the collection - the ids needed to request any of them."
+                      },
+                      "associations": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The same associations as counts and id lists, keyed 'variables', 'services', 'tools', 'citations'."
+                      },
+                      "boxes": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "The collection's bounding boxes as 'south west north east' strings, e.g. ['-90 -180 90 180'] for global coverage. The spatial extent, which nothing else in the row states."
+                      },
+                      "browse_flag": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when the collection has browse imagery - a preview that can be shown without downloading the data."
+                      },
+                      "consortiums": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Programmes the collection belongs to, e.g. ['GEOSS', 'EOSDIS']."
+                      },
+                      "coordinate_system": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "How the collection's spatial extent is expressed, e.g. 'CARTESIAN' or 'GEODETIC'. Reading a box without it gives wrong geometry near the poles."
+                      },
+                      "entry_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The collection's versioned entry id, e.g. 'OSTIA-UKMO-L4-GLOB-REP-v2.0_2.0' - short_name and version_id joined. The identifier CMR's own documentation cites."
+                      },
+                      "has_combine": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when granules can be concatenated server-side."
+                      },
+                      "has_formats": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when a service can convert the data to another format on request."
+                      },
+                      "has_spatial_subsetting": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when a spatial subset can be requested, so a region can be fetched without the globe."
+                      },
+                      "has_temporal_subsetting": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when a time subset can be requested."
+                      },
+                      "has_transforms": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when regridding or reprojection is offered."
+                      },
+                      "has_variables": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when individual variables can be requested instead of whole granules."
+                      },
+                      "organizations": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Every organisation CMR records for the collection, e.g. ['NASA/JPL/PODAAC', 'UKMO']. Producer and archiver together, which the two single-valued centre fields separate but do not list."
+                      },
+                      "original_format": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The metadata format the collection was supplied in, e.g. 'UMM_JSON', 'DIF10', 'ECHO10'. Whether a field is missing because it was not supplied or because the source format has no slot for it."
+                      },
+                      "score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "CMR's relevance score for the hit, e.g. 1.5840001. Results are ordered by it, so without it the ranking cannot be reproduced or a weak match spotted."
+                      },
+                      "service_features": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The same capabilities broken out per service - 'harmony', 'opendap' and 'esi', each with its own has_formats/has_variables/has_subsetting flags. The has_* flags above are the union, so they do not say which service provides what."
+                      },
+                      "updated": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the collection's metadata was last revised, e.g. '2017-04-28T05:01:46.000Z'."
+                      },
+                      "collection_data_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "How the collection is graded, e.g. 'SCIENCE_QUALITY'. Separates a science-quality product from a near-real-time or expedited one, which is the difference between data fit for publication and data fit for monitoring. Measured present on 1 of 5 entries, so its absence is not a statement about the collection."
+                      },
+                      "dif_ids": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "The collection's ids in other catalogues, e.g. ['EO:EUM:DAT:SENTINEL-3:SL_2_WST___NRT_2017-07-05']. How a NASA CMR collection is matched to the same product in a partner archive. Measured present on 2 of 5 entries."
                       }
                     }
                   }

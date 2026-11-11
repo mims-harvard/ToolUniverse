@@ -344,11 +344,207 @@
                       },
                       "expires": {
                         "type": "string"
+                      },
+                      "@id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The alert's JSON-LD identity, the same URL as the feature's id."
+                      },
+                      "@type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "JSON-LD class of the record, 'wx:Alert'."
+                      },
+                      "affectedZones": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "API URLs of the NWS forecast or county zones the alert covers, e.g. ['https://api.weather.gov/zones/county/TXC465']. For an alert with no polygon this is the only statement of where it applies."
+                      },
+                      "category": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "CAP event category, e.g. 'Met' for meteorological. Separates weather alerts from the geophysical, safety and security categories the same feed can carry."
+                      },
+                      "code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "CAP profile the alert follows, e.g. 'IPAWSv1.0'."
+                      },
+                      "ends": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the hazard is expected to end. Null for an alert with no stated end, which is not the same as one that has already expired."
+                      },
+                      "eventCode": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The event's codes by scheme: 'SAME' (the three-letter radio code, e.g. FFA) and 'NationalWeatherService' (the VTEC phenomenon code). Stable keys for an event type whose headline text is not."
+                      },
+                      "geocode": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The same coverage as codes rather than URLs: 'SAME' (the FIPS codes broadcast on NOAA Weather Radio) and 'UGC' (NWS zone codes). The form an alerting system matches against."
+                      },
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The alert's CAP identifier, e.g. 'urn:oid:2.49.0.1.840.0.c2ff...001.1'. The id NWS's own references list points at, and what ties an Update to the alert it replaces."
+                      },
+                      "instruction": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The protective-action text for the public, e.g. \"Turn around, don't drown when encountering flooded roads...\". Separate from the description and often the part that matters most to a reader."
+                      },
+                      "language": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Language of the alert text, e.g. 'en-US'. NWS also issues Spanish alerts, so the text is not always English."
+                      },
+                      "messageType": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Whether this message is the 'Alert' itself or an 'Update', 'Cancel' or 'Ack' of an earlier one. An Update looks like a fresh alert otherwise, and the measured example is one."
+                      },
+                      "onset": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the hazard is expected to begin, e.g. '2026-11-10T19:08:00-06:00'. Distinct from 'sent': an alert is normally issued before the hazard starts."
+                      },
+                      "parameters": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The alert's extra CAP parameters, each a list of values: AWIPSidentifier, WMOidentifier, NWSheadline, BLOCKCHANNEL, 'EAS-ORG', VTEC and eventEndingTime among them. VTEC carries the machine-readable event string, and NWSheadline the headline a broadcaster reads out."
+                      },
+                      "references": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "The earlier alerts this message supersedes, each with its @id, identifier and sent time. The only way to tell which alert an Update is updating."
+                      },
+                      "response": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The action the issuer recommends, e.g. 'Avoid', 'Shelter', 'Evacuate', 'Monitor'. The CAP field a responder acts on."
+                      },
+                      "scope": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Who the alert is addressed to, e.g. 'Public', 'Restricted' or 'Private'."
+                      },
+                      "sender": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Email identity of the issuing office, e.g. 'w-nws.webmaster@noaa.gov'."
+                      },
+                      "senderName": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The issuing office in words, e.g. 'NWS Austin/San Antonio TX'. Which forecast office owns the alert."
+                      },
+                      "sent": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When this message was issued. For messageType 'Update' it is the time of the revision, not of the original alert."
+                      },
+                      "status": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Whether the message is a real alert ('Actual') or a test, exercise or draft. Treating a 'Test' as 'Actual' is the mistake this field exists to prevent."
+                      },
+                      "web": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "URL with more information about the event, e.g. 'http://www.weather.gov'."
                       }
                     }
+                  },
+                  "geometry": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The alert's own polygon as GeoJSON ('type' plus 'coordinates'). Null for alerts issued by zone rather than by shape, which is why affectedZones exists. Without it an alert cannot be drawn on a map or tested against a point."
+                  },
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Canonical URL of the alert, e.g. 'https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.c2ff...001.1'. The address to re-fetch or cite this alert."
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GeoJSON feature type, 'Feature'."
                   }
                 }
               }
+            },
+            "@context": {
+              "type": [
+                "array",
+                "object",
+                "null"
+              ],
+              "description": "The JSON-LD context the feed declares, e.g. ['https://geojson.org/geojson-ld/geojson-context.jsonld', {...}]. What makes the reply linked data rather than plain GeoJSON."
+            },
+            "updated": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When NWS last rebuilt the active-alert set, e.g. '2026-11-11T01:45:06+00:00'. Alerts are continuously revised, so this is the only field that says how current the answer is."
             }
           },
           "not": {

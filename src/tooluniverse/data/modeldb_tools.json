@@ -96,6 +96,13 @@
               "properties": {
                 "value": {
                   "type": "string"
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field, e.g. 25. Every attribute block carries one alongside its value; it identifies the field in ModelDB's own schema, not the model."
                 }
               }
             },
@@ -116,6 +123,13 @@
                       }
                     }
                   }
+                },
+                "attr_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ModelDB's internal attribute id for this field, e.g. 25. Every attribute block carries one alongside its value; it identifies the field in ModelDB's own schema, not the model."
                 }
               }
             },
@@ -138,6 +152,69 @@
             "model_paper": {
               "type": "object",
               "description": "Associated publication(s)"
+            },
+            "class_id": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Numeric id of the ModelDB class the entry belongs to, e.g. 19. The key behind the model's category."
+            },
+            "gitrepo": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the model's source is kept in a git repository rather than only as a ModelDB archive."
+            },
+            "has_modelview": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Whether a ModelView structural analysis exists for the model, as a {'value', 'attr_id'} pair."
+            },
+            "hide_autolaunch_button": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Whether ModelDB suppresses the one-click launch button for this model, as a {'value', 'attr_id'} pair. Effectively says the model cannot be run in the browser."
+            },
+            "implemented_by": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Who implemented the model, as ModelDB's {'value', 'attr_id'} pair - the credit for the code as distinct from the paper's authors."
+            },
+            "modelviews": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The ModelView analyses available, under 'all' and 'default'. Which precomputed views of the model's structure can be opened."
+            },
+            "runprotocols": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How to run the model, as a {'value', 'attr_id'} pair. The instructions needed to reproduce the published figures; without them the downloaded archive is just files."
+            },
+            "simPFid": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The model's SimPlatform id, as a {'value', 'attr_id'} pair."
+            },
+            "ver_number": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Version number of the model entry, e.g. 14. ModelDB entries are revised, and nothing else here says which revision was fetched."
             }
           },
           "not": {

@@ -1759,6 +1759,13 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list, e.g. '10 Person ANSI | 217 | 217 Strong Tab | 222 Tablets | ...'. It can run to thousands of characters and must be split on ' | ' to be used."
               }
             }
           }
@@ -2460,6 +2467,69 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list, e.g. '10 Person ANSI | 217 | 217 Strong Tab | 222 Tablets | ...'. It can run to thousands of characters and must be split on ' | ' to be used."
+              },
+              "prices_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many price records were skipped before this page."
+              },
+              "prices_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of them came back."
+              },
+              "prices_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many price records exist for the drug; 1 on the measured call. DrugBank holds pricing for only a minority of drugs, so a total of 0 is common and does not mean the drug is unmarketed."
+              },
+              "prices_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the price list was cut."
+              },
+              "products_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many products were skipped before this page."
+              },
+              "products_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of them this reply contains, e.g. 25. Against a total of 2269, the returned list is about 1% of the answer."
+              },
+              "products_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many marketed products DrugBank holds for the drug, e.g. 2269."
+              },
+              "products_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the product list was cut. The flag that separates 'this drug has 25 products' from 'here are 25 of its 2269 products'."
               }
             }
           }
@@ -2478,6 +2548,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists above - products, prices, pathways, reactions. One offset governs all of them, so they page together."
             }
           }
         }
@@ -2834,6 +2911,13 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list, e.g. '10 Person ANSI | 217 | 217 Strong Tab | 222 Tablets | ...'. It can run to thousands of characters and must be split on ' | ' to be used."
               }
             }
           }
@@ -2852,6 +2936,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists above - products, prices, pathways, reactions. One offset governs all of them, so they page together."
             }
           }
         }
@@ -3447,6 +3538,62 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "pathways_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many pathways were skipped before this page."
+              },
+              "pathways_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of them came back, e.g. 25."
+              },
+              "pathways_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many pathways DrugBank associates with the drug, e.g. 30."
+              },
+              "pathways_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the pathway list was cut - true on the measured call, where 25 of 30 came back."
+              },
+              "reactions_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many reactions were skipped before this page."
+              },
+              "reactions_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of them came back."
+              },
+              "reactions_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many metabolic reactions DrugBank holds for the drug; 0 on the measured call."
+              },
+              "reactions_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the reaction list was cut. False with a total of 0 means DrugBank genuinely holds none, which a bare empty list does not distinguish from a dropped field."
               }
             }
           }
@@ -3465,6 +3612,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists above - products, prices, pathways, reactions. One offset governs all of them, so they page together."
             }
           }
         }

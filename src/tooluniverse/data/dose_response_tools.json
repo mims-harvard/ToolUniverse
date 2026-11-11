@@ -19,7 +19,7 @@
           "items": {
             "type": "number"
           },
-          "description": "Drug concentrations (must be positive, e.g., [0.001, 0.01, 0.1, 1, 10, 100] in \u00b5M). At least 4 points required."
+          "description": "Drug concentrations (must be positive, e.g., [0.001, 0.01, 0.1, 1, 10, 100] in µM). At least 4 points required."
         },
         "responses": {
           "type": "array",
@@ -111,7 +111,7 @@
           "items": {
             "type": "number"
           },
-          "description": "Drug concentrations (positive values, e.g., in \u00b5M or nM)"
+          "description": "Drug concentrations (positive values, e.g., in µM or nM)"
         },
         "responses": {
           "type": "array",
@@ -248,6 +248,20 @@
         },
         "potency_interpretation": {
           "type": "string"
+        },
+        "compound_a_stimulatory_warning": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Present when compound A's fitted curve RISES with concentration instead of falling. The IC50 and the potency comparison are then being read off an inhibition model that does not describe the data, so the ratio is not meaningful. Absent when the fit behaves."
+        },
+        "compound_b_stimulatory_warning": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The same warning for compound B."
         }
       }
     },

@@ -330,6 +330,34 @@
               },
               "bit_score": {
                 "type": "number"
+              },
+              "q.start": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Start position of the alignment in the QUERY sequence, 1-based. The property name contains a literal '.', so it is one key, not a nested object."
+              },
+              "q.end": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "End position of the alignment in the query sequence. With q.start it says which part of the submitted sequence matched - a 100% identity over 20 of 300 residues is a very different hit from one over all 300."
+              },
+              "s.start": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Start position of the alignment in the matched BMRB entry's sequence."
+              },
+              "s.end": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "End position in the matched entry's sequence. Together with the query pair it locates the shared region in both sequences."
               }
             }
           }

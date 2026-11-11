@@ -40,9 +40,21 @@
     },
     "type": "SRATool",
     "test_examples": [
-      {"query": "BRCA1", "organism": "Homo sapiens", "library_strategy": "RNA-Seq", "limit": 3},
-      {"organism": "human gut metagenome", "limit": 3},
-      {"query": "single cell kidney", "platform": "ILLUMINA", "limit": 3}
+      {
+        "query": "BRCA1",
+        "organism": "Homo sapiens",
+        "library_strategy": "RNA-Seq",
+        "limit": 3
+      },
+      {
+        "organism": "human gut metagenome",
+        "limit": 3
+      },
+      {
+        "query": "single cell kidney",
+        "platform": "ILLUMINA",
+        "limit": 3
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -57,8 +69,12 @@
             "data": {
               "type": "object",
               "properties": {
-                "total": {"type": "integer"},
-                "returned": {"type": "integer"},
+                "total": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
                 "start": {
                   "type": "integer"
                 },
@@ -71,28 +87,107 @@
                     "null"
                   ]
                 },
-                "query_used": {"type": "string"},
+                "query_used": {
+                  "type": "string"
+                },
                 "experiments": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
-                      "uid": {"type": "string"},
-                      "title": {"type": ["string", "null"]},
-                      "organism": {"type": ["string", "null"]},
-                      "taxid": {"type": ["string", "null"]},
-                      "platform": {"type": ["string", "null"]},
-                      "library_strategy": {"type": ["string", "null"]},
-                      "library_source": {"type": ["string", "null"]},
-                      "library_layout": {"type": ["string", "null"]},
-                      "total_runs": {"type": ["string", "null"]},
-                      "total_spots": {"type": ["string", "null"]},
-                      "total_bases": {"type": ["string", "null"]},
-                      "experiment_accession": {"type": ["string", "null"]},
-                      "study_accession": {"type": ["string", "null"]},
-                      "bioproject": {"type": ["string", "null"]},
-                      "submitter": {"type": ["string", "null"]},
-                      "runs": {"type": ["array", "null"]},
+                      "uid": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "organism": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "taxid": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "platform": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "library_strategy": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "library_source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "library_layout": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "total_runs": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "total_spots": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "total_bases": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "experiment_accession": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "study_accession": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "bioproject": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "submitter": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "runs": {
+                        "type": [
+                          "array",
+                          "null"
+                        ]
+                      },
                       "runs_returned": {
                         "type": [
                           "integer",
@@ -110,15 +205,21 @@
                 }
               }
             },
-            "metadata": {"type": "object"}
+            "metadata": {
+              "type": "object"
+            }
           }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -134,14 +235,18 @@
           "description": "SRA accession number (e.g., 'SRX26927637', 'SRP000001', 'SRS000001')"
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "operation": "get_experiment"
     },
     "type": "SRATool",
     "test_examples": [
-      {"accession": "SRX515811"}
+      {
+        "accession": "SRX515811"
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -156,24 +261,111 @@
             "data": {
               "type": "object",
               "properties": {
-                "uid": {"type": "string"},
-                "title": {"type": ["string", "null"]},
-                "organism": {"type": ["string", "null"]},
-                "taxid": {"type": ["string", "null"]},
-                "platform": {"type": ["string", "null"]},
-                "library_strategy": {"type": ["string", "null"]},
-                "library_source": {"type": ["string", "null"]},
-                "library_selection": {"type": ["string", "null"]},
-                "library_layout": {"type": ["string", "null"]},
-                "total_runs": {"type": ["string", "null"]},
-                "total_spots": {"type": ["string", "null"]},
-                "total_bases": {"type": ["string", "null"]},
-                "experiment_accession": {"type": ["string", "null"]},
-                "study_accession": {"type": ["string", "null"]},
-                "study_name": {"type": ["string", "null"]},
-                "bioproject": {"type": ["string", "null"]},
-                "submitter": {"type": ["string", "null"]},
-                "runs": {"type": ["array", "null"]},
+                "uid": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "organism": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "taxid": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "platform": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "library_strategy": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "library_source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "library_selection": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "library_layout": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "total_runs": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "total_spots": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "total_bases": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "experiment_accession": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "study_accession": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "study_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "bioproject": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "submitter": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "runs": {
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
                 "runs_returned": {
                   "type": [
                     "integer",
@@ -185,18 +377,31 @@
                     "boolean",
                     "null"
                   ]
+                },
+                "total_size": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Total bytes of the experiment's runs, as a STRING, e.g. '7096958061'. It exceeds 2^32, and it is what says whether a download is 7 GB or 70 MB before one is started."
                 }
               }
             },
-            "metadata": {"type": "object"}
+            "metadata": {
+              "type": "object"
+            }
           }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

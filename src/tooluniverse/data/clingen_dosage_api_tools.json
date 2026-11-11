@@ -11,7 +11,9 @@
           "description": "Gene symbol to search for (e.g., 'BRCA1', 'MECP2', 'TP53'). Case-insensitive."
         }
       },
-      "required": ["gene"]
+      "required": [
+        "gene"
+      ]
     },
     "fields": {
       "operation": "dosage_by_gene",
@@ -22,36 +24,170 @@
       "items": {
         "type": "object",
         "properties": {
-          "symbol": { "type": ["string", "null"], "description": "Gene symbol" },
-          "hgnc_id": { "type": ["string", "null"], "description": "HGNC ID (e.g., HGNC:1100)" },
-          "location": { "type": ["string", "null"], "description": "Cytogenetic band (e.g., 17q21.31)" },
-          "grch37": { "type": ["string", "null"], "description": "GRCh37 coordinates" },
-          "grch38": { "type": ["string", "null"], "description": "GRCh38 coordinates" },
-          "haplo_assertion": { "type": ["integer", "string", "null"], "description": "Haploinsufficiency score: 0=None, 1=Little, 2=Emerging, 3=Sufficient, 30=AR, 40=Unlikely" },
-          "triplo_assertion": { "type": ["integer", "string", "null"], "description": "Triplosensitivity score: 0=None, 1=Little, 2=Emerging, 3=Sufficient, 40=Unlikely" },
-          "pli": { "type": ["number", "null"], "description": "gnomAD pLI score" },
-          "hi": { "type": ["number", "null"], "description": "Haploinsufficiency prediction score (%)" },
-          "plof": { "type": ["number", "null"], "description": "pLoF score" },
-          "haplo_disease": { "type": ["string", "null"], "description": "Disease associated with haploinsufficiency" },
-          "haplo_disease_id": { "type": ["string", "null"], "description": "MONDO ID for haplo disease" },
-          "triplo_disease": { "type": ["string", "null"], "description": "Disease associated with triplosensitivity" },
-          "triplo_disease_id": { "type": ["string", "null"], "description": "MONDO ID for triplo disease" },
-          "omim": { "type": ["string", "null"], "description": "Whether gene has OMIM entry (Yes/No)" },
-          "omimlink": { "type": ["string", "null"], "description": "OMIM gene ID" },
-          "morbid": { "type": ["string", "null"], "description": "Whether gene is in OMIM morbid map" },
-          "acmgsf": { "type": ["integer", "null"], "description": "ACMG secondary findings gene (1=yes, 0=no)" },
-          "locus": { "type": ["string", "null"], "description": "Locus type (e.g., protein-coding gene)" },
-          "date": { "type": ["string", "null"], "description": "Last curation date" }
+          "symbol": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Gene symbol"
+          },
+          "hgnc_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "HGNC ID (e.g., HGNC:1100)"
+          },
+          "location": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Cytogenetic band (e.g., 17q21.31)"
+          },
+          "grch37": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "GRCh37 coordinates"
+          },
+          "grch38": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "GRCh38 coordinates"
+          },
+          "haplo_assertion": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "Haploinsufficiency score: 0=None, 1=Little, 2=Emerging, 3=Sufficient, 30=AR, 40=Unlikely"
+          },
+          "triplo_assertion": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "Triplosensitivity score: 0=None, 1=Little, 2=Emerging, 3=Sufficient, 40=Unlikely"
+          },
+          "pli": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "gnomAD pLI score"
+          },
+          "hi": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Haploinsufficiency prediction score (%)"
+          },
+          "plof": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "pLoF score"
+          },
+          "haplo_disease": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Disease associated with haploinsufficiency"
+          },
+          "haplo_disease_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "MONDO ID for haplo disease"
+          },
+          "triplo_disease": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Disease associated with triplosensitivity"
+          },
+          "triplo_disease_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "MONDO ID for triplo disease"
+          },
+          "omim": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Whether gene has OMIM entry (Yes/No)"
+          },
+          "omimlink": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "OMIM gene ID"
+          },
+          "morbid": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Whether gene is in OMIM morbid map"
+          },
+          "acmgsf": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "ACMG secondary findings gene (1=yes, 0=no)"
+          },
+          "locus": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Locus type (e.g., protein-coding gene)"
+          },
+          "date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Last curation date"
+          }
         },
         "additionalProperties": true
       }
     },
     "test_examples": [
-      { "gene": "BRCA1" },
-      { "gene": "MECP2" }
+      {
+        "gene": "BRCA1"
+      },
+      {
+        "gene": "MECP2"
+      }
     ],
     "metadata": {
-      "tags": ["dosage sensitivity", "haploinsufficiency", "triplosensitivity", "CNV interpretation", "ClinGen", "clinical genomics", "pLI"],
+      "tags": [
+        "dosage sensitivity",
+        "haploinsufficiency",
+        "triplosensitivity",
+        "CNV interpretation",
+        "ClinGen",
+        "clinical genomics",
+        "pLI"
+      ],
       "difficulty_level": "beginner",
       "estimated_execution_time": "< 5 seconds"
     }
@@ -77,12 +213,19 @@
         },
         "assembly": {
           "type": "string",
-          "enum": ["GRCh37", "GRCh38"],
+          "enum": [
+            "GRCh37",
+            "GRCh38"
+          ],
           "default": "GRCh38",
           "description": "Genome assembly version."
         }
       },
-      "required": ["chromosome", "start", "end"]
+      "required": [
+        "chromosome",
+        "start",
+        "end"
+      ]
     },
     "fields": {
       "operation": "dosage_region_search",
@@ -93,18 +236,179 @@
       "items": {
         "type": "object",
         "properties": {
-          "symbol": { "type": ["string", "null"] },
-          "hgnc_id": { "type": ["string", "null"] },
-          "type": { "type": ["integer", "null"], "description": "0=gene, 1=region" },
-          "location": { "type": ["string", "null"] },
-          "grch37": { "type": ["string", "null"] },
-          "grch38": { "type": ["string", "null"] },
-          "haplo_assertion": { "type": ["integer", "string", "null"] },
-          "triplo_assertion": { "type": ["integer", "string", "null"] },
-          "pli": { "type": ["number", "null"] },
-          "hi": { "type": ["number", "null"] },
-          "haplo_disease": { "type": ["string", "null"] },
-          "triplo_disease": { "type": ["string", "null"] }
+          "symbol": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hgnc_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "type": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "0=gene, 1=region"
+          },
+          "location": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "grch37": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "grch38": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "haplo_assertion": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ]
+          },
+          "triplo_assertion": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ]
+          },
+          "pli": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "hi": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "haplo_disease": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "triplo_disease": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "acmgsf": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "1 when the gene is on the ACMG secondary-findings list, 0 when it is not - BRCA1 (HGNC:1100) reads 1, A4GALT reads 0. Whether an incidental finding in this gene is reportable."
+          },
+          "date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Curation date as MM/DD/YYYY, e.g. '09/23/2021'. Ambiguous for the first twelve days of a month - use rawdate when the order matters."
+          },
+          "haplo_disease_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Ontology id of the haploinsufficiency-associated disease, e.g. 'MONDO:0700268'. haplo_disease gives only the name, which cannot be joined on."
+          },
+          "haplo_mondo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The MONDO id for the same disease; identical to haplo_disease_id in every row sampled."
+          },
+          "hhr": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "The counter ClinGen reports beside haplo_history. 0 in every row sampled, including rows whose haplo_history is null, so a non-zero value has not been observed and its unit is not stated by the API."
+          },
+          "locus": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "HGNC locus type, e.g. 'protein-coding gene'. Distinguishes a curated protein-coding gene from an RNA gene or a region, which the dosage ratings alone do not."
+          },
+          "morbid": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "'Yes' when the gene is in the OMIM morbid map - that is, tied to a described phenotype. Also a string."
+          },
+          "omim": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "'Yes' when OMIM has an entry for the gene. A string, not a boolean."
+          },
+          "omimcombo": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "ClinGen's packed code for the omim/morbid pair above; 3 in every row sampled, where both read 'Yes'. The API documents no key for the other values, so treat it as opaque and read omim and morbid instead."
+          },
+          "omimlink": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The gene's MIM number, e.g. '113705'. What is needed to actually open the OMIM entry that `omim` only asserts exists."
+          },
+          "plof": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "gnomAD observed/expected loss-of-function ratio, e.g. 0.89 for BRCA1, 1.39 for A4GALT. Below 1 means fewer LoF variants than expected, so values can and do exceed 1. Distinct from pli, which is a probability, not a ratio."
+          },
+          "rawdate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The same curation date as an unambiguous timestamp with offset, e.g. '2021-09-23T08:27:44.000-0400'."
+          },
+          "symbol_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The gene's HGNC id as ClinGen keys it, e.g. 'HGNC:1100'. Equal to hgnc_id in every row sampled."
+          },
+          "thr": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "The same counter for triplo_history, and likewise 0 in every row sampled."
+          }
         },
         "additionalProperties": true
       }
@@ -118,7 +422,14 @@
       }
     ],
     "metadata": {
-      "tags": ["dosage sensitivity", "CNV interpretation", "region query", "ClinGen", "clinical genomics", "microarray"],
+      "tags": [
+        "dosage sensitivity",
+        "CNV interpretation",
+        "region query",
+        "ClinGen",
+        "clinical genomics",
+        "microarray"
+      ],
       "difficulty_level": "intermediate",
       "estimated_execution_time": "< 5 seconds"
     }

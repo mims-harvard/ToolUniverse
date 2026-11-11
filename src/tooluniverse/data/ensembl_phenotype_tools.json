@@ -559,6 +559,13 @@
                   }
                 }
               }
+            },
+            "total_phenotypes": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many phenotype associations Ensembl holds for the variant in total, e.g. 1140 for rs429358 - against the 200 that came back. The only field that reveals the returned list is a sixth of the answer; phenotype_count counts the page, not the whole."
             }
           },
           "not": {

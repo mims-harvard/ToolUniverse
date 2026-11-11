@@ -234,6 +234,27 @@
               }
             }
           }
+        },
+        "scan_complete": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when every target in the source was examined. False means the score rests on a partial scan."
+        },
+        "targets_examined": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many targets were actually examined, e.g. 4461."
+        },
+        "total_associated_targets": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many targets the source associates with the disease, e.g. 4461."
         }
       }
     },
@@ -384,6 +405,27 @@
               }
             }
           }
+        },
+        "scan_complete": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when every target in the source was examined. False means the score is computed over a partial scan and so is not comparable with a complete one."
+        },
+        "targets_examined": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many targets were actually examined, e.g. 4461."
+        },
+        "total_associated_targets": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many targets the source associates with the disease, e.g. 4461. Equal to targets_examined when the scan completed; a smaller examined count is how a partial scan shows itself."
         }
       }
     },

@@ -396,6 +396,13 @@
                   }
                 }
               }
+            },
+            "total_toxicity_values": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many toxicity values PubChem holds for the compound, e.g. 5. Says whether the returned list is all of them."
             }
           },
           "not": {

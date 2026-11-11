@@ -217,8 +217,64 @@
                             },
                             "name": {
                               "type": "string"
+                            },
+                            "continent_code": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Two-letter continent code, e.g. 'EU'."
+                            },
+                            "continent_name": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Continent name, e.g. 'Europe'."
+                            },
+                            "country_code": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "ISO 3166-1 alpha-2 country code, e.g. 'SI'."
+                            },
+                            "country_subdivision_code": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Code of the first-level subdivision, e.g. '061'."
+                            },
+                            "country_subdivision_name": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Name of that subdivision, e.g. 'Ljubljana' - the region or state, which the city name alone does not give."
+                            },
+                            "lat": {
+                              "type": [
+                                "number",
+                                "null"
+                              ],
+                              "description": "Latitude of the location in decimal degrees, e.g. 46.05108."
+                            },
+                            "lng": {
+                              "type": [
+                                "number",
+                                "null"
+                              ],
+                              "description": "Longitude in decimal degrees, e.g. 14.50513."
                             }
                           }
+                        },
+                        "geonames_id": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "GeoNames id of the location, e.g. 3196359. The stable key for joining to any other gazetteer."
                         }
                       }
                     }
@@ -252,12 +308,60 @@
                           "items": {
                             "type": "string"
                           }
+                        },
+                        "preferred": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The preferred value among the external ids of this type, e.g. 'grid.457196.8'. An organisation can carry several GRID or ISNI ids and only this one should be used."
                         }
                       }
                     }
+                  },
+                  "admin": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Record administration dates - 'created' and 'last_modified', each with a date and the ROR schema version. How current the organisation record is."
+                  },
+                  "domains": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Internet domains ROR records for the organisation, e.g. ['mit.edu']. The field that lets an email address or URL be matched to an organisation; empty where ROR holds none."
+                  },
+                  "relationships": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "The organisation's links to others, each with a type ('Parent', 'Child', 'Related', 'Successor'), the other organisation's ROR id and its label. How a hospital is tied to its university, or a renamed institute to its successor. Empty for an organisation ROR records no relations for."
                   }
                 }
               }
+            },
+            "meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Facet counts over the whole result set, keyed 'types', 'countries', 'continents' and 'statuses', each a list of {id, title, count}. Says how the matches break down beyond the page returned."
+            },
+            "time_taken": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How long ROR took to serve the query, in milliseconds."
             }
           },
           "not": {

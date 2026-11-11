@@ -123,6 +123,55 @@
                       "null"
                     ],
                     "description": "Package topics/tags"
+                  },
+                  "_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The search index's internal document id, e.g. '6ae75cf12e87f76f20acd09a'. Not the package name and not stable across reindexing."
+                  },
+                  "_searchresults": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many packages matched the query in total, e.g. 46, repeated on every row. The returned list is only a page of them, and this is the only field that says so."
+                  },
+                  "_user": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Owner of the search index the hit came from, e.g. 'bioc'."
+                  },
+                  "_uuid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "The index's numeric uuid for the document."
+                  },
+                  "match": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Raw text-match score for the hit, e.g. 115.09784574086044."
+                  },
+                  "rank": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The combined ranking score results are ordered by, e.g. 949.2221839842782. Blends the text match with popularity, so it is not comparable to 'match' and is what actually decided the order."
+                  },
+                  "stars": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many GitHub stars the package's repository has, e.g. 12."
                   }
                 }
               }
@@ -134,9 +183,15 @@
             "query": {
               "description": "Search query used",
               "oneOf": [
-                {"type": "string"},
-                {"type": "object"},
-                {"type": "null"}
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object"
+                },
+                {
+                  "type": "null"
+                }
               ]
             },
             "limit": {

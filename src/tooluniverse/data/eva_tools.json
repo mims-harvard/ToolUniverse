@@ -439,6 +439,20 @@
                   "type": {
                     "type": "string",
                     "description": "Variant type (e.g., SNV)"
+                  },
+                  "createdDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When EVA first created the clustered variant record, e.g. '2000-07-17T02:24:00'. How long the rs id has existed."
+                  },
+                  "validated": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the clustered variant has been validated by EVA. False means unvalidated, not invalid - and an unvalidated rs id looks identical otherwise."
                   }
                 }
               }

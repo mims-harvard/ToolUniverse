@@ -1108,6 +1108,41 @@
                         "type": "string"
                       }
                     }
+                  },
+                  "class": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OMERO type of the annotation, e.g. 'MapAnnotationI'. Says which annotation shape the record follows."
+                  },
+                  "date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the annotation was created, e.g. '2017-06-16T20:58:19+01:00'."
+                  },
+                  "link": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The link joining the annotation to the image, with its own id, owner, parent, date and permissions. The annotation can be attached by someone other than its author, and only this says who attached it and when."
+                  },
+                  "owner": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Who created the annotation, as {'id': ...}. The provenance of the metadata, not of the image."
+                  },
+                  "permissions": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "What the caller may do with the annotation - canDelete, canAnnotate, canLink, canEdit."
                   }
                 }
               }

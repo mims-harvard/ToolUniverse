@@ -41,7 +41,7 @@
         },
         "page_size": {
           "type": "integer",
-          "description": "Alias for limit \u2014 number of results to return"
+          "description": "Alias for limit — number of results to return"
         }
       },
       "required": [
@@ -739,11 +739,53 @@
                       },
                       "citedOrder": {
                         "type": "integer"
+                      },
+                      "citationType": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "What kind of work the citing item is, e.g. 'research-article; journal article'. A semicolon-delimited list, so it can name more than one type - which separates a review or a comment from primary research."
+                      },
+                      "citedByCount": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "How many works cite the CITING article in turn. 0 means that paper is itself uncited, which is a statement about it, not about the article queried."
+                      },
+                      "pageInfo": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Page range or article number within the volume, e.g. '1785302'. For an electronic-only journal this is an article id, not a page range."
+                      },
+                      "volume": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Journal volume of the citing article, e.g. '6'. A string, since volumes are not always numeric."
+                      },
+                      "issue": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Journal issue of the citing article, e.g. '1'. A string, and measured present on 6 of 10 rows - journals that number only by volume omit it, so its absence is not an error."
                       }
                     }
                   }
                 }
               }
+            },
+            "request": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The query echoed back - 'id', 'source', 'offSet' and 'pageSize'. Which article's citations these are and which page of them, neither of which the list itself states."
             }
           },
           "required": [
@@ -888,7 +930,7 @@
   {
     "type": "EuropePMCFullTextFetchTool",
     "name": "EuropePMC_get_fulltext",
-    "description": "Fetch a PMC article's full text with deterministic fallbacks: Europe PMC fullTextXML \u2192 NCBI PMC OAI (JATS) \u2192 NCBI efetch (XML) \u2192 PMC HTML. Designed for machine consumption: returns structured provenance (source/format/content_type) and a retrieval_trace of every attempt.",
+    "description": "Fetch a PMC article's full text with deterministic fallbacks: Europe PMC fullTextXML → NCBI PMC OAI (JATS) → NCBI efetch (XML) → PMC HTML. Designed for machine consumption: returns structured provenance (source/format/content_type) and a retrieval_trace of every attempt.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1072,7 +1114,7 @@
   {
     "type": "EuropePMCFullTextSnippetsTool",
     "name": "EuropePMC_get_fulltext_snippets",
-    "description": "Fetch an article's full text (best-effort) and return bounded text snippets around provided terms. Uses deterministic fallbacks: Europe PMC fullTextXML \u2192 NCBI PMC OAI (JATS) \u2192 NCBI efetch (XML) \u2192 PMC HTML. Returns a machine-readable retrieval_trace so callers can see exactly what succeeded/failed.",
+    "description": "Fetch an article's full text (best-effort) and return bounded text snippets around provided terms. Uses deterministic fallbacks: Europe PMC fullTextXML → NCBI PMC OAI (JATS) → NCBI efetch (XML) → PMC HTML. Returns a machine-readable retrieval_trace so callers can see exactly what succeeded/failed.",
     "parameter": {
       "type": "object",
       "properties": {

@@ -1279,7 +1279,10 @@
                 "type": "string"
               },
               "pathologyNotes": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "description": "Pathologist's note for the sample, e.g. '2 pieces diffuse established cirrhosis, ...'. Non-null for all 20 Liver samples measured. Null for tissues that carry no note."
               },
               "sampleId": {
@@ -1313,7 +1316,10 @@
                 "type": "string"
               },
               "autolysisScore": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "description": "Autolysis score, e.g. 'Mild'. Non-null for all 20 Liver samples measured. Null where it was not scored."
               },
               "datasetId": {
@@ -2559,6 +2565,20 @@
                   "string",
                   "null"
                 ]
+              },
+              "datasetId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which GTEx release the value comes from, e.g. 'gtex_v8'. Medians are not comparable across releases, and the number alone does not say which one it is."
+              },
+              "ontologyId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UBERON id of the tissue, e.g. 'UBERON:0013756'. The tissue name GTEx uses is its own label; this is the id that joins to other resources."
               }
             }
           }

@@ -155,7 +155,18 @@ class BridgeDbTool(BaseTool):
         return results
 
     def _parse_tsv_attributes(self, text: str) -> Dict[str, Any]:
-        """Parse tab-separated attribute data into structured dict."""
+        """Parse tab-separated attribute data into structured dict.
+
+        BridgeDb writes each line as ``name<TAB>value`` -- 'Symbol\tD-Glucose',
+        'BrutoFormula\tC6H12O6', and one 'Synonym\t...' line per synonym. Read
+        the columns the other way round and the returned map is keyed by the
+        value instead of by the attribute, so attributes['Dextrose'] is the
+        string 'Synonym' and none of the names this tool documents -- Symbol,
+        BrutoFormula, InChI, InChIKey, Monoisotopic Weight, Synonyms -- can be
+        looked up at all. It also loses attributes outright wherever two share a
+        value: D-glucose's Symbol and one of its 28 Synonym lines are both
+        'D-Glucose', so one overwrote the other.
+        """
         attributes = {}
         synonyms = []
         for line in text.strip().split("\n"):
@@ -163,8 +174,8 @@ class BridgeDbTool(BaseTool):
                 continue
             parts = line.split("\t")
             if len(parts) >= 2:
-                value = parts[0]
-                key = parts[1]
+                key = parts[0]
+                value = parts[1]
                 if key == "Synonym":
                     synonyms.append(value)
                 else:

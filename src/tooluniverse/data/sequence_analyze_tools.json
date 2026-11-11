@@ -87,6 +87,27 @@
                     "integer",
                     "null"
                   ]
+                },
+                "residue": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which residue was counted, e.g. 'C'. Echoes the request, so a count is never ambiguous about what it counted."
+                },
+                "source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Where the sequence came from, e.g. 'UniProt REST API' - as opposed to a sequence supplied by the caller."
+                },
+                "uniprot_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The accession the sequence was fetched for, e.g. 'P00533'. Says which isoform the count applies to."
                 }
               }
             }
@@ -164,6 +185,13 @@
                 },
                 "composition": {
                   "type": "object"
+                },
+                "gc_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of G and C bases counted, e.g. 11. The absolute count behind the percentage, which a short sequence makes essential - 100% of 2 bases is not a GC-rich sequence."
                 }
               }
             }
@@ -312,6 +340,13 @@
                 },
                 "composition": {
                   "type": "object"
+                },
+                "estimated_mw_monoisotopic_da": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Monoisotopic molecular weight in daltons, e.g. 8300.5 - computed from the most abundant isotope of each element, which is what mass spectrometry measures. The average mass reported beside it is a different number and the two are not interchangeable."
                 }
               }
             }

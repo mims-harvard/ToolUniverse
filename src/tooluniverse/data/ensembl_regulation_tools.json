@@ -209,6 +209,62 @@
                   }
                 }
               }
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when elements remain beyond this page."
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to the request."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many elements were skipped before this page."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many elements came back in this page."
+            },
+            "total": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The same total under the generic pagination name used across these tools."
+            },
+            "total_constrained_elements": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many constrained elements overlap the region in total. element_count counts the ones returned, so these two disagree whenever the answer was cut."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the full set did not fit. A truncated list of constrained elements read as complete understates how much of a region is under selection."
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset to pass to get the next page, or null on the last one."
             }
           },
           "not": {

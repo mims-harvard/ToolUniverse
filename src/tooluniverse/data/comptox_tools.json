@@ -8,7 +8,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search_chemical"],
+          "enum": [
+            "search_chemical"
+          ],
           "description": "Operation type",
           "default": "search_chemical"
         },
@@ -17,12 +19,22 @@
           "description": "Chemical name, CASRN, DTXSID, DTXCID, or InChIKey to search for (e.g., 'aspirin', '1912-24-9', 'DTXSID7020182')."
         },
         "match_type": {
-          "type": ["string", "null"],
-          "enum": ["equal", "start-with", "contain", null],
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "equal",
+            "start-with",
+            "contain",
+            null
+          ],
           "description": "Match mode: 'equal' for exact match (default), 'start-with' or 'contain' for partial/fuzzy search."
         }
       },
-      "required": ["word"]
+      "required": [
+        "word"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -42,26 +54,50 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "searchName": { "type": "string" },
-                      "preferredName": { "type": "string" },
-                      "dtxsid": { "type": "string" },
-                      "dtxcid": { "type": "string" },
-                      "casrn": { "type": "string" },
-                      "smiles": { "type": "string" },
-                      "rank": { "type": "integer" }
+                      "searchName": {
+                        "type": "string"
+                      },
+                      "preferredName": {
+                        "type": "string"
+                      },
+                      "dtxsid": {
+                        "type": "string"
+                      },
+                      "dtxcid": {
+                        "type": "string"
+                      },
+                      "casrn": {
+                        "type": "string"
+                      },
+                      "smiles": {
+                        "type": "string"
+                      },
+                      "rank": {
+                        "type": "integer"
+                      }
                     }
                   }
                 },
-                "result_count": { "type": "integer" }
+                "result_count": {
+                  "type": "integer"
+                }
               }
             },
-            "metadata": { "type": "object" }
+            "metadata": {
+              "type": "object"
+            }
           }
         },
         {
           "type": "object",
-          "properties": { "error": { "type": "string" } },
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -72,7 +108,9 @@
         "match_type": "equal"
       }
     ],
-    "required_api_keys": ["EPA_COMPTOX_API_KEY"],
+    "required_api_keys": [
+      "EPA_COMPTOX_API_KEY"
+    ],
     "api_key_info": {
       "EPA_COMPTOX_API_KEY": {
         "domain": "Toxicology & Chemical Safety",
@@ -82,7 +120,9 @@
         "without": "CompTox tools are blocked without it."
       }
     },
-    "fields": { "operation": "search_chemical" }
+    "fields": {
+      "operation": "search_chemical"
+    }
   },
   {
     "name": "CompTox_get_chemical_detail",
@@ -93,7 +133,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_chemical_detail"],
+          "enum": [
+            "get_chemical_detail"
+          ],
           "description": "Operation type",
           "default": "get_chemical_detail"
         },
@@ -102,11 +144,16 @@
           "description": "DSSTox Substance Identifier (e.g., 'DTXSID7020182')."
         },
         "projection": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Response detail level. Default 'chemicaldetailall' (full detail). Other options include 'chemicalidentifier' (names/IDs only) and 'chemicalstructure' (structure fields only)."
         }
       },
-      "required": ["dtxsid"]
+      "required": [
+        "dtxsid"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -121,25 +168,100 @@
             "data": {
               "type": "object",
               "properties": {
-                "preferredName": { "type": "string" },
-                "dtxsid": { "type": "string" },
-                "dtxcid": { "type": "string" },
-                "casrn": { "type": "string" },
-                "iupacName": { "type": "string" },
-                "smiles": { "type": "string" },
-                "molFormula": { "type": "string" },
-                "monoisotopicMass": { "type": "number" },
-                "totalAssays": { "type": "integer" },
-                "activeAssays": { "type": "integer" }
+                "preferredName": {
+                  "type": "string"
+                },
+                "dtxsid": {
+                  "type": "string"
+                },
+                "dtxcid": {
+                  "type": "string"
+                },
+                "casrn": {
+                  "type": "string"
+                },
+                "iupacName": {
+                  "type": "string"
+                },
+                "smiles": {
+                  "type": "string"
+                },
+                "molFormula": {
+                  "type": "string"
+                },
+                "monoisotopicMass": {
+                  "type": "number"
+                },
+                "totalAssays": {
+                  "type": "integer"
+                },
+                "activeAssays": {
+                  "type": "integer"
+                }
               }
             },
-            "metadata": { "type": "object" }
+            "metadata": {
+              "type": "object"
+            },
+            "error_details": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Structured detail for the failure, present alongside 'error' whenever ToolUniverse itself refused the call: 'type' (e.g. 'ToolUnavailableError'), 'message', 'retriable' (false for a missing API key - retrying will not help), 'next_steps' (what the caller can actually do, e.g. pass credentials to run_one_function or set the environment variable) and 'details'. The error string alone does not say whether a retry is worth attempting.",
+              "properties": {
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The error class, e.g. 'ToolUnavailableError'."
+                },
+                "message": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The same text as 'error'."
+                },
+                "retriable": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "False when retrying cannot succeed, as for a missing credential."
+                },
+                "next_steps": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Concrete actions that would make the call work."
+                },
+                "details": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Any extra machine-readable context; frequently empty."
+                }
+              }
+            }
           }
         },
         {
           "type": "object",
-          "properties": { "error": { "type": "string" } },
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -149,8 +271,12 @@
         "dtxsid": "DTXSID7020182"
       }
     ],
-    "required_api_keys": ["EPA_COMPTOX_API_KEY"],
-    "fields": { "operation": "get_chemical_detail" }
+    "required_api_keys": [
+      "EPA_COMPTOX_API_KEY"
+    ],
+    "fields": {
+      "operation": "get_chemical_detail"
+    }
   },
   {
     "name": "CompTox_get_hazard_data",
@@ -161,7 +287,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_hazard_data"],
+          "enum": [
+            "get_hazard_data"
+          ],
           "description": "Operation type",
           "default": "get_hazard_data"
         },
@@ -170,7 +298,9 @@
           "description": "DSSTox Substance Identifier (e.g., 'DTXSID7020182')."
         }
       },
-      "required": ["dtxsid"]
+      "required": [
+        "dtxsid"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -190,27 +320,65 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "dtxsid": { "type": "string" },
-                      "name": { "type": "string" },
-                      "source": { "type": "string" },
-                      "toxvalType": { "type": "string" },
-                      "toxvalNumeric": { "type": ["number", "null"] },
-                      "toxvalUnits": { "type": ["string", "null"] },
-                      "studyType": { "type": ["string", "null"] },
-                      "species": { "type": ["string", "null"] }
+                      "dtxsid": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "toxvalType": {
+                        "type": "string"
+                      },
+                      "toxvalNumeric": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "toxvalUnits": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "studyType": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "species": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
                     }
                   }
                 },
-                "record_count": { "type": "integer" }
+                "record_count": {
+                  "type": "integer"
+                }
               }
             },
-            "metadata": { "type": "object" }
+            "metadata": {
+              "type": "object"
+            }
           }
         },
         {
           "type": "object",
-          "properties": { "error": { "type": "string" } },
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -220,8 +388,12 @@
         "dtxsid": "DTXSID7020182"
       }
     ],
-    "required_api_keys": ["EPA_COMPTOX_API_KEY"],
-    "fields": { "operation": "get_hazard_data" }
+    "required_api_keys": [
+      "EPA_COMPTOX_API_KEY"
+    ],
+    "fields": {
+      "operation": "get_hazard_data"
+    }
   },
   {
     "name": "CompTox_get_bioactivity_summary",
@@ -232,7 +404,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_bioactivity_summary"],
+          "enum": [
+            "get_bioactivity_summary"
+          ],
           "description": "Operation type",
           "default": "get_bioactivity_summary"
         },
@@ -241,7 +415,9 @@
           "description": "DSSTox Substance Identifier (e.g., 'DTXSID7020182')."
         }
       },
-      "required": ["dtxsid"]
+      "required": [
+        "dtxsid"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -256,23 +432,55 @@
             "data": {
               "type": "object",
               "properties": {
-                "dtxsid": { "type": "string" },
-                "activeMc": { "type": "integer", "description": "Active multi-concentration assay count" },
-                "totalMc": { "type": "integer", "description": "Total multi-concentration assays tested" },
-                "activeSc": { "type": "integer", "description": "Active single-concentration assay count" },
-                "totalSc": { "type": "integer", "description": "Total single-concentration assays tested" },
-                "cytotoxMedianUm": { "type": ["number", "null"], "description": "Cytotoxicity burst median point, in micromolar" },
-                "ntested": { "type": "number" },
-                "nhit": { "type": "number" }
+                "dtxsid": {
+                  "type": "string"
+                },
+                "activeMc": {
+                  "type": "integer",
+                  "description": "Active multi-concentration assay count"
+                },
+                "totalMc": {
+                  "type": "integer",
+                  "description": "Total multi-concentration assays tested"
+                },
+                "activeSc": {
+                  "type": "integer",
+                  "description": "Active single-concentration assay count"
+                },
+                "totalSc": {
+                  "type": "integer",
+                  "description": "Total single-concentration assays tested"
+                },
+                "cytotoxMedianUm": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Cytotoxicity burst median point, in micromolar"
+                },
+                "ntested": {
+                  "type": "number"
+                },
+                "nhit": {
+                  "type": "number"
+                }
               }
             },
-            "metadata": { "type": "object" }
+            "metadata": {
+              "type": "object"
+            }
           }
         },
         {
           "type": "object",
-          "properties": { "error": { "type": "string" } },
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -282,8 +490,12 @@
         "dtxsid": "DTXSID7020182"
       }
     ],
-    "required_api_keys": ["EPA_COMPTOX_API_KEY"],
-    "fields": { "operation": "get_bioactivity_summary" }
+    "required_api_keys": [
+      "EPA_COMPTOX_API_KEY"
+    ],
+    "fields": {
+      "operation": "get_bioactivity_summary"
+    }
   },
   {
     "name": "CompTox_get_bioactivity_assays",
@@ -294,7 +506,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_bioactivity_assays"],
+          "enum": [
+            "get_bioactivity_assays"
+          ],
           "description": "Operation type",
           "default": "get_bioactivity_assays"
         },
@@ -303,7 +517,9 @@
           "description": "DSSTox Substance Identifier (e.g., 'DTXSID7020182')."
         }
       },
-      "required": ["dtxsid"]
+      "required": [
+        "dtxsid"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -323,24 +539,103 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "dtxsid": { "type": "string" },
-                      "aeid": { "type": ["integer", "null"] },
-                      "hitCall": { "type": ["number", "null"] },
-                      "ac50": { "type": ["number", "null"] },
-                      "modl": { "type": ["string", "null"] }
+                      "dtxsid": {
+                        "type": "string"
+                      },
+                      "aeid": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "hitCall": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "ac50": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "modl": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
                     }
                   }
                 },
-                "record_count": { "type": "integer" }
+                "record_count": {
+                  "type": "integer"
+                }
               }
             },
-            "metadata": { "type": "object" }
+            "metadata": {
+              "type": "object"
+            },
+            "error_details": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Structured detail for the failure, present alongside 'error' whenever ToolUniverse itself refused the call: 'type' (e.g. 'ToolUnavailableError'), 'message', 'retriable' (false for a missing API key - retrying will not help), 'next_steps' (what the caller can actually do, e.g. pass credentials to run_one_function or set the environment variable) and 'details'. The error string alone does not say whether a retry is worth attempting.",
+              "properties": {
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The error class, e.g. 'ToolUnavailableError'."
+                },
+                "message": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The same text as 'error'."
+                },
+                "retriable": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "False when retrying cannot succeed, as for a missing credential."
+                },
+                "next_steps": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Concrete actions that would make the call work."
+                },
+                "details": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Any extra machine-readable context; frequently empty."
+                }
+              }
+            }
           }
         },
         {
           "type": "object",
-          "properties": { "error": { "type": "string" } },
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -350,7 +645,11 @@
         "dtxsid": "DTXSID7020182"
       }
     ],
-    "required_api_keys": ["EPA_COMPTOX_API_KEY"],
-    "fields": { "operation": "get_bioactivity_assays" }
+    "required_api_keys": [
+      "EPA_COMPTOX_API_KEY"
+    ],
+    "fields": {
+      "operation": "get_bioactivity_assays"
+    }
   }
 ]

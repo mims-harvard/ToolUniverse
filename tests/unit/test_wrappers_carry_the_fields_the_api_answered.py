@@ -528,6 +528,27 @@ def _source(module):
     return path.read_text()
 
 
+def _success_props(rs, _depth=0):
+    """The properties of the success branch, unwrapping nested oneOf.
+
+    A `properties` block beside `oneOf` belongs to no branch and the schema
+    walker never reads it, so the branch has to be chosen rather than assumed
+    -- and PharmGKB_get_drug_label_annotations has a oneOf whose first branch
+    is itself a oneOf, so the unwrapping recurses.
+    """
+    branches = rs.get("oneOf") or rs.get("anyOf")
+    if not branches or _depth > 6:
+        props = rs.get("properties")
+        assert isinstance(props, dict), f"no properties to read: {sorted(rs)}"
+        return props
+    scored = []
+    for b in branches:
+        props = b.get("properties") or {}
+        scored.append((("error" in props) and len(props) <= 2, len(props), b))
+    scored.sort(key=lambda x: (x[0], -x[1]))
+    return _success_props(scored[0][2], _depth + 1)
+
+
 def _config(tool_name):
     for path in sorted(DATA.glob("*.json")):
         try:
@@ -7851,3 +7872,404 @@ def test_a_hit_the_caller_asked_for_is_marked_as_such():
         schema = json.dumps(_config(tool).get("return_schema"))
         assert '"user_requested"' in schema, f"{tool} returns it undeclared"
         assert "rather than because it matched the search" in schema
+
+
+# ---------------------------------------------------------------------------
+# Batch 86: the 65 tools of axis-2 shards 16/18/20/22, measured 2026-11-10.
+# ---------------------------------------------------------------------------
+
+
+def test_bridgedb_attributes_are_keyed_by_the_attribute_not_by_its_value():
+    """`_parse_tsv_attributes` had the two TSV columns the wrong way round.
+
+    BridgeDb answers `name<TAB>value`:
+
+        Monoisotopic Weight\t180.063388116
+        Symbol\tD-Glucose
+        BrutoFormula\tC6H12O6
+        Synonym\tDextrose
+
+    The parser read `value = parts[0]; key = parts[1]`, so the map came back
+    keyed by the value: `attributes["Dextrose"] == "Synonym"` and
+    `attributes["C6H12O6"] == "BrutoFormula"`. Every name this tool's own
+    schema and description promise -- Symbol, BrutoFormula, InChI, InChIKey,
+    Monoisotopic Weight, Synonyms -- was then unreachable, and the
+    `if key == "Synonym"` branch never fired, so the Synonyms list was never
+    built. It also dropped attributes outright wherever two shared a value:
+    D-glucose's Symbol and one of its 28 Synonym lines are both "D-Glucose",
+    so one overwrote the other and the Symbol was lost.
+    """
+    from tooluniverse.bridgedb_tool import BridgeDbTool
+
+    tsv = (
+        "Monoisotopic Weight\t180.063388116\n"
+        "InChIKey\tWQZGKKKJIJFFOK-VFUOTHLCSA-N\n"
+        "Symbol\tD-Glucose\n"
+        "BrutoFormula\tC6H12O6\n"
+        "SMILES\tOC[C@H]1O[C@@H](O)[C@H](O)[C@@H](O)[C@@H]1O\n"
+        "Synonym\tD-Glucose\n"
+        "Synonym\tDextrose\n"
+        "Synonym\tbeta-D-Glucose\n"
+    )
+    parsed = BridgeDbTool._parse_tsv_attributes(BridgeDbTool.__new__(BridgeDbTool), tsv)
+
+    assert parsed["Symbol"] == "D-Glucose", (
+        "the Symbol attribute did not survive; a Synonym line sharing its "
+        f"value overwrote it: {parsed!r}"
+    )
+    assert parsed["BrutoFormula"] == "C6H12O6"
+    assert parsed["Monoisotopic Weight"] == "180.063388116"
+    assert parsed["InChIKey"] == "WQZGKKKJIJFFOK-VFUOTHLCSA-N"
+    assert parsed["SMILES"].startswith("OC[C@H]1O")
+    assert parsed["Synonyms"] == ["D-Glucose", "Dextrose", "beta-D-Glucose"], (
+        f"the repeated Synonym lines were not collected: {parsed!r}"
+    )
+    assert "Synonym" not in parsed.values(), (
+        "an attribute NAME is being used as a value, so the map is still "
+        f"inverted: {parsed!r}"
+    )
+    assert "Dextrose" not in parsed, (
+        "a synonym is still being used as a key: " f"{parsed!r}"
+    )
+
+
+def test_bridgedb_declares_every_attribute_name_its_upstream_answers():
+    """The four names measured live and absent from the schema.
+
+    A metabolite answers Symbol, BrutoFormula, InChI, InChIKey, SMILES,
+    "Monoisotopic Weight" and a Synonym line per synonym; a gene or protein
+    answers Symbol, Type, Description and Chromosome. SMILES, Type,
+    Description and Chromosome were declared nowhere, and the level carried
+    no `additionalProperties` to say it was open.
+    """
+    cfg = _config("BridgeDb_attributes")
+    branch = [
+        b
+        for b in cfg["return_schema"]["oneOf"]
+        if "error" not in (b.get("properties") or {})
+    ][0]
+    attrs = branch["properties"]["attributes"]
+    props = attrs["properties"]
+    for name in (
+        "Symbol",
+        "BrutoFormula",
+        "InChI",
+        "InChIKey",
+        "Monoisotopic Weight",
+        "Synonyms",
+        "SMILES",
+        "Type",
+        "Description",
+        "Chromosome",
+    ):
+        assert name in props, f"BridgeDb answers {name} and the schema omits it"
+        assert props[name].get("description"), f"{name} is declared with no description"
+    assert isinstance(attrs.get("additionalProperties"), dict), (
+        "the attributes level is open -- BridgeDb may answer a name beyond "
+        "these -- so it needs an additionalProperties schema, not nothing"
+    )
+
+
+def test_lotus_declares_the_organism_a_natural_product_was_found_in():
+    """LOTUS exists to record compound-organism occurrence and declared none of it.
+
+    `LOTUS_search_by_inchikey` returns 92 keys per record. The schema declared
+    seven -- id, lotus_id, traditional_name, smiles, inchikey,
+    molecular_formula, molecular_weight -- and nothing about organisms at all.
+    Measured for caffeine on 2026-11-10: `allTaxa` held 148 scientific names
+    (Coffea canephora, Camellia sinensis, Schizosaccharomyces pombe,
+    Anthozoa), and `taxonomyReferenceObjects` held the per-reference taxonomy
+    behind them.
+    """
+    cfg = _config("LOTUS_search_by_inchikey")
+    branch = [
+        b
+        for b in cfg["return_schema"]["oneOf"]
+        if "error" not in (b.get("properties") or {})
+    ][0]
+    row = branch["properties"]["naturalProducts"]["items"]["properties"]
+    assert "allTaxa" in row, "the source organisms are not declared"
+    assert "taxonomyReferenceObjects" in row, (
+        "the evidence linking the compound to each organism is not declared"
+    )
+    assert "$x$x$" in row["taxonomyReferenceObjects"]["description"], (
+        "the keys of taxonomyReferenceObjects are DOIs with '.' rewritten as "
+        "'$x$x$'; a caller that is not told cannot recover the DOI"
+    )
+    assert len(row) >= 80, (
+        f"the record carries 92 keys; the schema declares {len(row)}"
+    )
+
+
+def test_lotus_descriptors_that_come_back_as_the_string_nan_admit_a_string():
+    """Three 3D descriptors are the STRING "NaN" when there is no conformer.
+
+    gravitationalIndexHeavyAtoms, petitjeanShapeGeom and vabcDescriptor all
+    measured "NaN" as a string for caffeine. Declared as a number, a validating
+    caller rejects a reply the service considers normal.
+    """
+    cfg = _config("LOTUS_search_by_inchikey")
+    branch = [
+        b
+        for b in cfg["return_schema"]["oneOf"]
+        if "error" not in (b.get("properties") or {})
+    ][0]
+    row = branch["properties"]["naturalProducts"]["items"]["properties"]
+    for name in (
+        "gravitationalIndexHeavyAtoms",
+        "petitjeanShapeGeom",
+        "vabcDescriptor",
+    ):
+        types = row[name]["type"]
+        assert "string" in types, (
+            f"{name} measured as the string 'NaN'; declared types are {types}"
+        )
+
+
+def test_lotus_fragment_maps_declare_their_value_shape_not_their_keys():
+    """Four fields are maps keyed by the fragment itself.
+
+    fragments, fragmentsWithSugar, ertlFunctionalFragments and
+    ertlFunctionalFragmentsPseudoSmiles are {fragment-string: count}. The keys
+    are data, so the honest declaration is `additionalProperties`; naming the
+    keys as properties would be declaring one caffeine's worth of SMARTS as
+    the schema.
+    """
+    cfg = _config("LOTUS_search_by_inchikey")
+    branch = [
+        b
+        for b in cfg["return_schema"]["oneOf"]
+        if "error" not in (b.get("properties") or {})
+    ][0]
+    row = branch["properties"]["naturalProducts"]["items"]["properties"]
+    for name in (
+        "fragments",
+        "fragmentsWithSugar",
+        "ertlFunctionalFragments",
+        "ertlFunctionalFragmentsPseudoSmiles",
+    ):
+        assert isinstance(row[name].get("additionalProperties"), dict), (
+            f"{name} is a map keyed by the fragment; it needs an "
+            "additionalProperties schema"
+        )
+        assert not row[name].get("properties"), (
+            f"{name}'s keys are data and must not be declared as properties"
+        )
+
+
+def test_every_chembl_rest_tool_declares_the_envelope_it_actually_returns():
+    """One wrapper, 27 tools, and an error shape none of them declared.
+
+    `ChEMBLRESTTool` in chem_tool.py returns `{status, data, url}` plus
+    `page_meta` or `pagination` when ChEMBL sends one and `count` when the
+    payload is countable; on failure it returns
+    `{status, error, url, status_code, detail}`. Measured 2026-11-10:
+    ChEMBL_get_assay_activities answered page_meta
+    `{"limit": 2, "next": null, "offset": 0, "previous": null,
+    "total_count": 1}`, and a bad id answered status_code 500 with an HTML
+    `detail`. Every one of the 27 schemas declared `status` and `data` only,
+    so neither the pagination total nor the existence of an error shape was
+    stated anywhere.
+    """
+    tools = []
+    for path in sorted(DATA.glob("*.json")):
+        try:
+            payload = json.loads(path.read_text())
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            continue
+        if not isinstance(payload, list):
+            continue
+        tools += [
+            t
+            for t in payload
+            if isinstance(t, dict)
+            and t.get("type") == "ChEMBLRESTTool"
+            and "data" in ((t.get("return_schema") or {}).get("properties") or {})
+        ]
+    assert len(tools) >= 27, f"expected the whole family, found {len(tools)}"
+    for t in tools:
+        props = t["return_schema"]["properties"]
+        for name in ("url", "page_meta", "pagination", "error", "status_code", "detail"):
+            assert name in props, f"{t['name']} does not declare {name}"
+        total = props["page_meta"]["properties"]["total_count"]
+        assert "match" in total["description"].lower() or "total" in total["description"].lower()
+        assert props["status"].get("description"), f"{t['name']}: status has no description"
+
+
+def test_drugbank_nested_lists_declare_that_they_were_cut():
+    """2,269 products, 25 returned, and no declared field said so.
+
+    Measured 2026-11-10 on drugbank_get_drug_products_by_name_or_drugbank_id:
+    `products_total_count` 2269 against `products_shown_count` 25 and
+    `products_truncated` true. The wrapper computes all of it; the schema
+    declared none of it, so a caller reading the schema had no field to
+    consult before treating 25 products as the drug's full marketing history.
+    """
+    for tool, prefixes in (
+        ("drugbank_get_drug_products_by_name_or_drugbank_id", ("products", "prices")),
+        ("drugbank_get_drug_name_and_description_by_pathway_name", ("pathways", "reactions")),
+    ):
+        cfg = _config(tool)
+        rs = cfg["return_schema"]
+        row = _success_props(rs)["results"]["items"]["properties"]
+        for prefix in prefixes:
+            for suffix in ("total_count", "shown_count", "offset", "truncated"):
+                name = f"{prefix}_{suffix}"
+                assert name in row, f"{tool} returns {name} and does not declare it"
+                assert row[name].get("description"), f"{tool}: {name} has no description"
+            assert any(
+                c.isdigit() for c in row[f"{prefix}_total_count"]["description"]
+            ), (
+                f"{tool}: {prefix}_total_count should carry the measured count, "
+                "so the gap between the total and what came back is on record"
+            )
+
+
+def test_hpa_gene_search_declares_the_gene_list_it_returns():
+    """The payload itself was undeclared.
+
+    `HPA_search_genes_by_query` answers `genes` (45 entries for "TP53") plus
+    total_matches, match_count, limit, offset, has_more, truncated and
+    result_set_complete. The schema named none of them, so the one field that
+    carries the answer, and the one flag that says whether it is the whole
+    answer, were both missing.
+    """
+    cfg = _config("HPA_search_genes_by_query")
+    props = _success_props(cfg["return_schema"])
+    assert "genes" in props, "the gene list is the result and it is not declared"
+    for name in (
+        "search_query",
+        "total_matches",
+        "match_count",
+        "limit",
+        "offset",
+        "has_more",
+        "truncated",
+        "result_set_complete",
+    ):
+        assert name in props, f"HPA_search_genes_by_query returns {name}, undeclared"
+
+
+def test_a_variants_phenotype_count_says_how_many_were_left_out():
+    """rs429358 has 1,140 phenotype associations; 200 came back.
+
+    `EnsemblPheno_get_by_variant` returns phenotype_count (the page, 200) and
+    total_phenotypes (the set, 1140). Only the first was declared, so the
+    declared schema offered no way to tell a complete answer from a sixth of
+    one.
+    """
+    props = _success_props(_config("EnsemblPheno_get_by_variant")["return_schema"])
+    assert "total_phenotypes" in props, "the full count is returned and undeclared"
+    assert "1140" in props["total_phenotypes"]["description"], (
+        "the measurement belongs in the description"
+    )
+
+
+def test_constrained_element_pagination_is_declared_where_it_is_returned():
+    """Seven pagination fields sit in `data`, not in `metadata`.
+
+    Measured 2026-11-10, `EnsemblReg_get_constrained_elements` answers
+    returned, total, limit, offset, has_more, truncated, next_offset and
+    total_constrained_elements inside `data` alongside the elements, while
+    `metadata` holds only source and endpoint. The schema declared
+    element_count and nothing else.
+    """
+    props = _success_props(_config("EnsemblReg_get_constrained_elements")["return_schema"])
+    for name in (
+        "returned",
+        "total",
+        "limit",
+        "offset",
+        "has_more",
+        "truncated",
+        "next_offset",
+        "total_constrained_elements",
+    ):
+        assert name in props, f"{name} is returned in data and not declared"
+
+
+def test_bmrb_alignment_coordinates_are_declared_under_their_dotted_names():
+    """The row keys contain a literal '.', so they are four keys, not two objects.
+
+    `BMRB_search_by_sequence` rows carry "q.start", "q.end", "s.start" and
+    "s.end". Read as a path they look like nested objects `q` and `s`; they are
+    not, and the alignment span is the difference between a 100% identity over
+    20 residues and one over all 300.
+    """
+    rs = _config("BMRB_search_by_sequence")["return_schema"]
+    branch = [
+        b for b in rs["oneOf"] if "error" not in (b.get("properties") or {})
+    ][0]
+    row = branch["items"]["properties"]
+    for name in ("q.start", "q.end", "s.start", "s.end"):
+        assert name in row, f"{name} is returned and not declared"
+    assert "q" not in row and "s" not in row, (
+        "the keys are 'q.start' and 'q.end', not a nested object 'q'"
+    )
+
+
+def test_a_dose_response_comparison_declares_its_own_stimulatory_warning():
+    """The warning that says the IC50 is being read off the wrong model.
+
+    `DoseResponse_compare_potency` emits compound_a_stimulatory_warning when
+    the fitted curve RISES with concentration. The potency ratio is then
+    computed from an inhibition fit that does not describe the data. The
+    wrapper raises the flag; the schema declared neither of the two.
+    """
+    props = _success_props(_config("DoseResponse_compare_potency")["return_schema"])
+    for name in ("compound_a_stimulatory_warning", "compound_b_stimulatory_warning"):
+        assert name in props, f"{name} is returned and not declared"
+        assert props[name].get("description")
+
+
+def test_a_chembl_mechanism_row_says_which_way_the_drug_acts_and_who_said_so():
+    """Two declared fields out of thirteen on the rows that carry the pharmacology.
+
+    `ChEMBL_get_drug_mechanisms` declared mechanism_of_action and
+    target_chembl_id. Measured 2026-11-10 for CHEMBL1201581, each row also
+    carries action_type ("INHIBITOR"), direct_interaction, disease_efficacy,
+    max_phase, mechanism_refs (the DailyMed or PubMed citation),
+    molecular_mechanism, parent_molecule_chembl_id and mec_id. Without
+    action_type the prose is the only statement of direction; without
+    mechanism_refs the assertion cannot be checked; and without
+    parent_molecule_chembl_id a mechanism curated against the parent is
+    invisible to a lookup on the salt.
+    """
+    cfg = _config("ChEMBL_get_drug_mechanisms")
+    row = cfg["return_schema"]["properties"]["data"]["properties"]["mechanisms"][
+        "items"
+    ]["properties"]
+    for name in (
+        "action_type",
+        "direct_interaction",
+        "disease_efficacy",
+        "max_phase",
+        "mechanism_refs",
+        "molecular_mechanism",
+        "parent_molecule_chembl_id",
+        "mec_id",
+    ):
+        assert name in row, f"a mechanism row carries {name} and declares it nowhere"
+        assert row[name].get("description"), f"{name} is declared with no description"
+
+
+def test_a_pharmacogenomics_row_can_name_the_star_allele_it_is_about():
+    """The field that was absent from the first row and present on twenty-one.
+
+    `OpenTargets_drug_pharmacogenomics_data` answered 319 rows for aspirin.
+    haplotypeId was null on the first and non-null on 21 of them, carrying
+    'HLA-DPB1*03:01' and 'G6PD Mediterranean, Dallas, Panama'' Sassari,
+    Cagliari, Birmingham'. For HLA and G6PD the response is a property of the
+    haplotype rather than of any single variant, so a row read by genotypeId
+    alone loses what it is about. A probe that reads only the first row reports
+    the field absent; the audit walks every row, and it is there.
+    """
+    props = _success_props(
+        _config("OpenTargets_drug_pharmacogenomics_data")["return_schema"]
+    )
+    row = props["drug"]["properties"]["pharmacogenomics"]["items"]["properties"]
+    for name in ("haplotypeId", "haplotypeFromSourceId"):
+        assert name in row, f"{name} is returned on later rows and not declared"
+        assert "319" in row[name]["description"] or "21" in row[name]["description"], (
+            "the description should record how many rows carried it"
+        )

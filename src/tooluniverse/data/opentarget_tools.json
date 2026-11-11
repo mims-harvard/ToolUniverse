@@ -333,6 +333,13 @@
             "truncation_note": {
               "type": "string",
               "description": "Present only when a collection came back truncated: states how many of how many rows were returned and why the withheld rows cannot be fetched through this tool."
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Why the evidence list is empty when it is, e.g. 'IntOGen returns 0 evidence rows for this query. IntOGen only covers somatic tumor driver genes...'. The difference between a datasource having no evidence and the query being outside its scope."
             }
           }
         }
@@ -4179,6 +4186,34 @@
                       }
                     }
                   }
+                },
+                "drugType": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What kind of molecule the drug is, e.g. 'Small molecule', 'Antibody', 'Protein'. Determines how the mechanism and indications should be read."
+                },
+                "indications": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The drug's indications, under 'rows', with 'count' for how many exist and 'returned'/'truncated' for how many came back. The truncated flag is what stops a partial indication list being read as the drug's full label."
+                },
+                "maximumClinicalStage": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The furthest clinical stage the drug has reached, e.g. 'APPROVAL'. Whether it is approved or still in trials, which the indication list alone does not say."
+                },
+                "mechanismsOfAction": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The drug's mechanisms, under 'rows' - the target and action type for each."
                 }
               }
             }
@@ -4860,6 +4895,89 @@
                       },
                       "isDirectTarget": {
                         "type": "boolean"
+                      },
+                      "datatypeId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "What kind of pharmacogenomic evidence the row is, e.g. 'clinical_annotation'. Separates a curated clinical annotation from a variant-drug annotation, which carry very different weight."
+                      },
+                      "drugs": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "The drugs the row concerns, each with drugId and the drug's name, e.g. {'drugId': 'CHEMBL25', 'drug': {'name': 'ASPIRIN'}}. A pharmacogenomic row can name a combination, so this is a list."
+                      },
+                      "genotypeId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The genotype the effect is attributed to, as position and alleles, e.g. '19_3595925_G_A,A'. Which genotype - not merely which variant - the response applies to."
+                      },
+                      "literature": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "PubMed ids backing the row, e.g. ['27995340']. The citation, which nothing else in the row gives."
+                      },
+                      "studyId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "PharmGKB's id for the study behind the row, e.g. '1448617231'."
+                      },
+                      "target": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The gene the variant sits in, with its Ensembl 'id' and 'approvedSymbol'. The readable gene name, which targetFromSourceId only gives as an accession."
+                      },
+                      "targetFromSourceId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Ensembl gene id as the source recorded it, e.g. 'ENSG00000006638'."
+                      },
+                      "variantFunctionalConsequence": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The variant's consequence, with its Sequence Ontology 'id' and a readable 'label'."
+                      },
+                      "variantFunctionalConsequenceId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Sequence Ontology id of that consequence, e.g. 'SO_0001583' for a missense variant."
+                      },
+                      "haplotypeFromSourceId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "PharmGKB's own accession for that haplotype, e.g. 'PA165951131'. The join back to PharmGKB's haplotype record; measured on 17 of 319 rows."
+                      },
+                      "haplotypeId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The star allele or haplotype the effect is attributed to, e.g. 'HLA-DPB1*03:01' or 'G6PD Mediterranean, Dallas, Panama' Sassari, Cagliari, Birmingham'. For HLA and G6PD the response is a property of the haplotype, not of any single variant, so a row read by genotypeId alone loses what it is about. Measured on 21 of 319 rows."
                       }
                     }
                   }

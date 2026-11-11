@@ -8,23 +8,40 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["taxon_name"],
+      "required": [
+        "taxon_name"
+      ],
       "properties": {
         "taxon_name": {
           "type": "string",
           "description": "Taxon name matching rank, e.g. 'Panthera' (genus), 'Felidae' (family), 'Carnivora' (order), or 'Panthera leo' (species)."
         },
         "rank": {
-          "type": ["string", "null"],
-          "enum": ["genus", "family", "order", "species", null],
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "genus",
+            "family",
+            "order",
+            "species",
+            null
+          ],
           "description": "Taxonomic rank of taxon_name. Default 'genus', or 'species' when taxon_name has two words (e.g. 'Apis mellifera')."
         },
         "country": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Optional country/ocean name to narrow results, e.g. 'Canada'."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Max records to return, 1-200. Default 30."
         }
       }
@@ -36,25 +53,160 @@
           "items": {
             "type": "object",
             "properties": {
-              "processid": {"type": ["string", "null"]},
-              "bin_uri": {"type": ["string", "null"]},
-              "genus": {"type": ["string", "null"]},
-              "species": {"type": ["string", "null"]},
-              "identification": {"type": ["string", "null"]},
-              "insdc_acs": {"type": ["string", "null"]}
+              "processid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bin_uri": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "genus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "identification": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "insdc_acs": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "class": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Class, e.g. 'Mammalia'. Note the property name shadows a Python keyword, so it has to be read by subscript."
+              },
+              "collection_date_start": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Start of the collection date, or null where the depositor gave none - measured null on the example record."
+              },
+              "collectors": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who collected the specimen, e.g. 'Metro Toronto Zoo'. Also reveals a captive or zoo origin, which matters for a record used as a wild-population reference."
+              },
+              "family": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Family, e.g. 'Felidae'."
+              },
+              "identification_rank": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How deep the identification goes, e.g. 'species', 'genus', 'family'. A record identified only to genus looks the same otherwise, so reading the name without this rank overstates what is known."
+              },
+              "inst": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Institution holding the voucher specimen, e.g. 'Royal Ontario Museum'. Where the physical specimen can be examined."
+              },
+              "kingdom": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Kingdom of the identified taxon, e.g. 'Animalia'."
+              },
+              "marker_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The barcode region sequenced, e.g. 'COI-5P', 'ITS', 'matK', 'rbcL'. Sequences from different markers are not comparable, and this is the only field that says which was used."
+              },
+              "nuc_basecount": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Length of the barcode sequence in bases, e.g. 643. A short COI-5P read is a weak barcode; the sequence string alone does not flag that."
+              },
+              "order": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Order, e.g. 'Carnivora'."
+              },
+              "phylum": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Phylum, e.g. 'Chordata'."
+              },
+              "sampleid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The depositor's own specimen id, e.g. 'ROM PM13004'. What links the record to the physical voucher in the collection."
+              },
+              "subfamily": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Subfamily, e.g. 'Pantherinae'."
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"taxon_name": "Panthera", "rank": "genus", "limit": 5},
-      {"taxon_name": "Panthera leo", "rank": "species", "limit": 5}
+      {
+        "taxon_name": "Panthera",
+        "rank": "genus",
+        "limit": 5
+      },
+      {
+        "taxon_name": "Panthera leo",
+        "rank": "species",
+        "limit": 5
+      }
     ]
   },
   {
@@ -66,14 +218,19 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["bin_id"],
+      "required": [
+        "bin_id"
+      ],
       "properties": {
         "bin_id": {
           "type": "string",
           "description": "BOLD BIN identifier, e.g. 'BOLD:AAD6819' (the 'BOLD:' prefix is added automatically if omitted)."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Max records to return, 1-200. Default 30."
         }
       }
@@ -85,23 +242,55 @@
           "items": {
             "type": "object",
             "properties": {
-              "processid": {"type": ["string", "null"]},
-              "bin_uri": {"type": ["string", "null"]},
-              "species": {"type": ["string", "null"]},
-              "identification": {"type": ["string", "null"]}
+              "processid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bin_uri": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "identification": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"bin_id": "BOLD:AAD6819", "limit": 10},
-      {"bin_id": "AAD6819", "limit": 5}
+      {
+        "bin_id": "BOLD:AAD6819",
+        "limit": 10
+      },
+      {
+        "bin_id": "AAD6819",
+        "limit": 5
+      }
     ]
   },
   {
@@ -113,7 +302,9 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["process_id"],
+      "required": [
+        "process_id"
+      ],
       "properties": {
         "process_id": {
           "type": "string",
@@ -131,22 +322,150 @@
           },
           "type": "object",
           "properties": {
-            "processid": {"type": ["string", "null"]},
-            "bin_uri": {"type": ["string", "null"]},
-            "species": {"type": ["string", "null"]},
-            "insdc_acs": {"type": ["string", "null"]}
+            "processid": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "bin_uri": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "species": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "insdc_acs": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "class": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Class, e.g. 'Mammalia'. Note the property name shadows a Python keyword, so it has to be read by subscript."
+            },
+            "collectors": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Who collected the specimen, e.g. 'Metro Toronto Zoo'. Also reveals a captive or zoo origin, which matters for a record used as a wild-population reference."
+            },
+            "family": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Family, e.g. 'Felidae'."
+            },
+            "genus": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Genus, e.g. 'Panthera'. Together with the ranks above this is the full lineage behind the identification, which the species name alone does not give."
+            },
+            "identification": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The taxon the specimen was identified as, e.g. 'Panthera leo'."
+            },
+            "identification_rank": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How deep the identification goes, e.g. 'species', 'genus', 'family'. A record identified only to genus looks the same otherwise, so reading the name without this rank overstates what is known."
+            },
+            "inst": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Institution holding the voucher specimen, e.g. 'Royal Ontario Museum'. Where the physical specimen can be examined."
+            },
+            "kingdom": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Kingdom of the identified taxon, e.g. 'Animalia'."
+            },
+            "marker_code": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The barcode region sequenced, e.g. 'COI-5P', 'ITS', 'matK', 'rbcL'. Sequences from different markers are not comparable, and this is the only field that says which was used."
+            },
+            "nuc_basecount": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Length of the barcode sequence in bases, e.g. 643. A short COI-5P read is a weak barcode; the sequence string alone does not flag that."
+            },
+            "order": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Order, e.g. 'Carnivora'."
+            },
+            "phylum": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Phylum, e.g. 'Chordata'."
+            },
+            "sampleid": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The depositor's own specimen id, e.g. 'ROM PM13004'. What links the record to the physical voucher in the collection."
+            },
+            "subfamily": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Subfamily, e.g. 'Pantherinae'."
+            }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"process_id": "ABRMM002-06"},
-      {"process_id": "ABRMM043-06"}
+      {
+        "process_id": "ABRMM002-06"
+      },
+      {
+        "process_id": "ABRMM043-06"
+      }
     ]
   }
 ]
