@@ -353,6 +353,13 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "alternative_levels_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "The same count for a child HOG, e.g. 24."
                     }
                   }
                 }
@@ -362,6 +369,20 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "alternative_levels_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many other taxonomic levels this HOG is also defined at, e.g. 41. An orthologous group is level-dependent, so the same genes form different groups at different levels."
+              },
+              "children_hogs_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many sub-HOGs it contains, e.g. 36 - the duplications inside the group."
               }
             }
           }

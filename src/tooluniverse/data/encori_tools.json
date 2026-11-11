@@ -6,27 +6,45 @@
       "type": "object",
       "properties": {
         "mirna": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "miRNA name to get targets for, e.g. 'hsa-miR-21-5p', 'hsa-let-7a-5p'. Mutually exclusive with 'gene'."
         },
         "gene": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Gene symbol to get targeting miRNAs for, e.g. 'TP53', 'KRAS' (alias: 'gene_symbol'). Mutually exclusive with 'mirna'."
         },
         "assembly": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Genome assembly to query (default 'hg38'). Use 'hg19' for the older human build."
         },
         "clip_min": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Minimum number of supporting CLIP-seq experiments (default 1 = require experimental support; set 0 to include prediction-only)."
         },
         "program_min": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Minimum number of prediction programs that must call the interaction (default 1)."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum interactions to return (1-500, default 50)."
         },
         "offset": {
@@ -41,8 +59,14 @@
     "fields": {},
     "type": "ENCORITool",
     "test_examples": [
-      {"mirna": "hsa-miR-21-5p", "limit": 10},
-      {"gene": "TP53", "limit": 10}
+      {
+        "mirna": "hsa-miR-21-5p",
+        "limit": 10
+      },
+      {
+        "gene": "TP53",
+        "limit": 10
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -51,19 +75,40 @@
           "items": {
             "type": "object",
             "properties": {
-              "mirna": {"type": "string"},
-              "gene": {"type": "string"},
-              "gene_id": {"type": "string"},
-              "clip_experiments": {"type": "integer"},
-              "predicted_by": {"type": "array", "items": {"type": "string"}},
-              "n_programs": {"type": "integer"}
+              "mirna": {
+                "type": "string"
+              },
+              "gene": {
+                "type": "string"
+              },
+              "gene_id": {
+                "type": "string"
+              },
+              "clip_experiments": {
+                "type": "integer"
+              },
+              "predicted_by": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "n_programs": {
+                "type": "integer"
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -75,35 +120,59 @@
       "type": "object",
       "properties": {
         "rbp": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "RNA-binding protein symbol to get targets for, e.g. 'PTBP1', 'ELAVL1' (alias: 'RBP'). Mutually exclusive with 'gene'."
         },
         "gene": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Gene/transcript symbol to get binding RBPs for, e.g. 'TP53', 'MYC' (alias: 'gene_symbol'). Mutually exclusive with 'rbp'."
         },
         "assembly": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Genome assembly (default 'hg38'; use 'hg19' for the older build)."
         },
         "gene_type": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Transcript biotype to query: 'mRNA' (default), 'lncRNA', 'pseudogene', 'sncRNA', 'miRNA'."
         },
         "clip_min": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Minimum number of supporting CLIP-seq experiments (default 1)."
         },
         "pancancer_min": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Minimum pan-cancer support count (default 0)."
         },
         "cell_type": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Restrict to a CLIP cell line/tissue (default 'all')."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum binding rows to return (1-500, default 100)."
         },
         "offset": {
@@ -115,11 +184,20 @@
       },
       "required": []
     },
-    "fields": {"encori_endpoint": "RBPTarget/"},
+    "fields": {
+      "encori_endpoint": "RBPTarget/"
+    },
     "type": "ENCORITool",
     "test_examples": [
-      {"gene": "TP53", "clip_min": 5, "limit": 10},
-      {"rbp": "PTBP1", "limit": 10}
+      {
+        "gene": "TP53",
+        "clip_min": 5,
+        "limit": 10
+      },
+      {
+        "rbp": "PTBP1",
+        "limit": 10
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -128,21 +206,43 @@
           "items": {
             "type": "object",
             "properties": {
-              "rbp": {"type": "string"},
-              "gene": {"type": "string"},
-              "gene_id": {"type": "string"},
-              "cluster_num": {"type": "integer"},
-              "total_clip_experiments": {"type": "integer"},
-              "total_clip_sites": {"type": "integer"},
-              "chromosome": {"type": "string"},
-              "strand": {"type": "string"}
+              "rbp": {
+                "type": "string"
+              },
+              "gene": {
+                "type": "string"
+              },
+              "gene_id": {
+                "type": "string"
+              },
+              "cluster_num": {
+                "type": "integer"
+              },
+              "total_clip_experiments": {
+                "type": "integer"
+              },
+              "total_clip_sites": {
+                "type": "integer"
+              },
+              "chromosome": {
+                "type": "string"
+              },
+              "strand": {
+                "type": "string"
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -154,31 +254,52 @@
       "type": "object",
       "properties": {
         "gene": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Query gene or lncRNA symbol whose ceRNA partners are wanted, e.g. 'PTEN', 'MALAT1' (aliases: 'ceRNA', 'gene_symbol')."
         },
         "assembly": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Genome assembly (default 'hg38')."
         },
         "gene_type": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Biotype of the query gene: 'mRNA' (default), 'lncRNA', 'pseudogene', 'sncRNA'."
         },
         "shared_mirna_min": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Minimum number of shared miRNA families required (default 5)."
         },
         "pval": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "description": "Maximum hypergeometric p-value (default 0.01)."
         },
         "fdr": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "description": "Maximum FDR (default 0.01)."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum ceRNA partner rows to return (1-500, default 100)."
         },
         "offset": {
@@ -190,10 +311,16 @@
       },
       "required": []
     },
-    "fields": {"encori_endpoint": "ceRNA/"},
+    "fields": {
+      "encori_endpoint": "ceRNA/"
+    },
     "type": "ENCORITool",
     "test_examples": [
-      {"gene": "PTEN", "shared_mirna_min": 5, "limit": 10}
+      {
+        "gene": "PTEN",
+        "shared_mirna_min": 5,
+        "limit": 10
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -202,19 +329,45 @@
           "items": {
             "type": "object",
             "properties": {
-              "gene": {"type": "string"},
-              "partner": {"type": "string"},
-              "partner_id": {"type": "string"},
-              "shared_mirna_families": {"type": "integer"},
-              "pval": {"type": ["number", "string", "null"]},
-              "fdr": {"type": ["number", "string", "null"]}
+              "gene": {
+                "type": "string"
+              },
+              "partner": {
+                "type": "string"
+              },
+              "partner_id": {
+                "type": "string"
+              },
+              "shared_mirna_families": {
+                "type": "integer"
+              },
+              "pval": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "fdr": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -226,31 +379,52 @@
       "type": "object",
       "properties": {
         "rna": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "RNA symbol whose duplex partners are wanted, e.g. 'MALAT1', 'NEAT1' (aliases: 'RNA', 'gene')."
         },
         "assembly": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Genome assembly (default 'hg38')."
         },
         "gene_type": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Biotype of the query RNA: 'lncRNA' (default), 'mRNA', 'pseudogene', 'sncRNA', 'miRNA'. Must match the RNA's real biotype or ENCORI returns no rows."
         },
         "interaction_min": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Minimum interaction count (default 1)."
         },
         "exp_min": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Minimum number of supporting experiments (default 1)."
         },
         "cell_type": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Restrict to a cell line/tissue (default 'all')."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum interaction rows to return (1-500, default 100)."
         },
         "offset": {
@@ -262,10 +436,16 @@
       },
       "required": []
     },
-    "fields": {"encori_endpoint": "RNARNA/"},
+    "fields": {
+      "encori_endpoint": "RNARNA/"
+    },
     "type": "ENCORITool",
     "test_examples": [
-      {"rna": "MALAT1", "gene_type": "lncRNA", "limit": 10}
+      {
+        "rna": "MALAT1",
+        "gene_type": "lncRNA",
+        "limit": 10
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -274,19 +454,83 @@
           "items": {
             "type": "object",
             "properties": {
-              "rna": {"type": "string"},
-              "partner": {"type": "string"},
-              "interaction_num": {"type": "integer"},
-              "total_experiments": {"type": "integer"},
-              "total_reads": {"type": "integer"},
-              "free_energy": {"type": ["number", "string", "null"]}
+              "rna": {
+                "type": "string"
+              },
+              "partner": {
+                "type": "string"
+              },
+              "interaction_num": {
+                "type": "integer"
+              },
+              "total_experiments": {
+                "type": "integer"
+              },
+              "total_reads": {
+                "type": "integer"
+              },
+              "free_energy": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "align_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Alignment score for the predicted duplex, e.g. 12.0. Read with free_energy: a strong energy on a poor alignment is a weaker claim."
+              },
+              "cell_tissue": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Where the interaction was observed, e.g. 'HeLa'. An interaction seen only in one cell line should not be reported as general."
+              },
+              "partner_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ensembl gene id of the interacting partner, e.g. 'ENSG00000038382'."
+              },
+              "partner_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Biotype of the partner, e.g. 'protein_coding'. An lncRNA-mRNA interaction and an lncRNA-lncRNA one mean different things, and only this says which."
+              },
+              "rna_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ensembl gene id of the query RNA, e.g. 'ENSG00000251562' (MALAT1)."
+              },
+              "rna_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Biotype of the query RNA, e.g. 'lncRNA'."
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -298,35 +542,59 @@
       "type": "object",
       "properties": {
         "gene": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Target gene symbol to get cleaving miRNAs for, e.g. 'TP53' (alias: 'gene_symbol'). Mutually exclusive with 'mirna'."
         },
         "mirna": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "miRNA name to get cleavage targets for, e.g. 'hsa-miR-1-3p'. Mutually exclusive with 'gene'."
         },
         "assembly": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Genome assembly (default 'hg19' — the only assembly with degradome data; hg38 returns nothing)."
         },
         "gene_type": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Target biotype: 'mRNA' (default), 'lncRNA', 'pseudogene', 'sncRNA'."
         },
         "degradome_exp_min": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Minimum number of supporting degradome experiments (default 1)."
         },
         "clip_min": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Minimum number of supporting CLIP experiments (default 1)."
         },
         "cell_type": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Restrict to a cell line/tissue (default 'all')."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum cleavage rows to return (1-500, default 100)."
         },
         "offset": {
@@ -338,10 +606,16 @@
       },
       "required": []
     },
-    "fields": {"encori_endpoint": "degradomeRNA/"},
+    "fields": {
+      "encori_endpoint": "degradomeRNA/"
+    },
     "type": "ENCORITool",
     "test_examples": [
-      {"gene": "TP53", "assembly": "hg19", "limit": 10}
+      {
+        "gene": "TP53",
+        "assembly": "hg19",
+        "limit": 10
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -350,19 +624,37 @@
           "items": {
             "type": "object",
             "properties": {
-              "mirna": {"type": "string"},
-              "gene": {"type": "string"},
-              "cleave_event_num": {"type": "integer"},
-              "degradome_experiments": {"type": "integer"},
-              "total_reads": {"type": "integer"},
-              "category": {"type": "string"}
+              "mirna": {
+                "type": "string"
+              },
+              "gene": {
+                "type": "string"
+              },
+              "cleave_event_num": {
+                "type": "integer"
+              },
+              "degradome_experiments": {
+                "type": "integer"
+              },
+              "total_reads": {
+                "type": "integer"
+              },
+              "category": {
+                "type": "string"
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -374,27 +666,45 @@
       "type": "object",
       "properties": {
         "gene": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Bound target gene symbol, e.g. 'MYC' (alias: 'gene_symbol')."
         },
         "rbp": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "RNA-binding protein symbol, e.g. 'ACIN1' (alias: 'RBP')."
         },
         "tissue": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Tissue filter, e.g. 'breast', 'lung', 'liver'."
         },
         "disease": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Disease keyword, e.g. 'carcinoma', 'adenocarcinoma'."
         },
         "assembly": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Genome assembly (default 'hg38')."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum association rows to return (1-500, default 100)."
         },
         "offset": {
@@ -406,10 +716,17 @@
       },
       "required": []
     },
-    "fields": {"encori_endpoint": "RBPDisease/"},
+    "fields": {
+      "encori_endpoint": "RBPDisease/"
+    },
     "type": "ENCORITool",
     "test_examples": [
-      {"gene": "MYC", "tissue": "breast", "disease": "carcinoma", "limit": 10}
+      {
+        "gene": "MYC",
+        "tissue": "breast",
+        "disease": "carcinoma",
+        "limit": 10
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -418,20 +735,75 @@
           "items": {
             "type": "object",
             "properties": {
-              "rbp": {"type": "string"},
-              "gene": {"type": "string"},
-              "tissue": {"type": "string"},
-              "diseases": {"type": "string"},
-              "disease_cosmic_id": {"type": "string"},
-              "cosmic_num": {"type": "integer"},
-              "sample_num": {"type": "integer"}
+              "rbp": {
+                "type": "string"
+              },
+              "gene": {
+                "type": "string"
+              },
+              "tissue": {
+                "type": "string"
+              },
+              "diseases": {
+                "type": "string"
+              },
+              "disease_cosmic_id": {
+                "type": "string"
+              },
+              "cosmic_num": {
+                "type": "integer"
+              },
+              "sample_num": {
+                "type": "integer"
+              },
+              "clip_experiments": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many CLIP experiments support the RBP-site association, e.g. 5. The evidence weight; one experiment and six are not the same claim."
+              },
+              "clip_sites": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many distinct CLIP binding sites were found, e.g. 7."
+              },
+              "disease_num": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many distinct diseases the row covers, e.g. 3. The 'diseases' string is comma-delimited, so this is the count to check a split against."
+              },
+              "gene_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ensembl gene id of the target gene, e.g. 'ENSG00000136997'. The symbol beside it is ambiguous; this is not."
+              },
+              "mut_type_num": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many distinct mutation types were seen, e.g. 3."
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -443,27 +815,45 @@
       "type": "object",
       "properties": {
         "motif": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "RNA sequence motif to scan for (use U or T), e.g. 'UGCAUG'. Mutually exclusive with 'rbp'."
         },
         "rbp": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "RNA-binding protein symbol whose motifs are wanted, e.g. 'MBNL2' (alias: 'RBP')."
         },
         "assembly": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Genome assembly (default 'hg38')."
         },
         "length": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Motif length class: 'short' (default) or 'long'."
         },
         "rank_limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Per-dataset motif rank cutoff sent to ENCORI (1-100, default 10)."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum motif rows to return (1-500, default 100)."
         },
         "offset": {
@@ -475,10 +865,16 @@
       },
       "required": []
     },
-    "fields": {"encori_endpoint": "RBPMotifScan/"},
+    "fields": {
+      "encori_endpoint": "RBPMotifScan/"
+    },
     "type": "ENCORITool",
     "test_examples": [
-      {"motif": "UGCAUG", "rank_limit": 10, "limit": 10}
+      {
+        "motif": "UGCAUG",
+        "rank_limit": 10,
+        "limit": 10
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -487,20 +883,44 @@
           "items": {
             "type": "object",
             "properties": {
-              "rbp": {"type": "string"},
-              "dataset_id": {"type": "string"},
-              "motif_rank": {"type": "integer"},
-              "identified_motif": {"type": "string"},
-              "query_motif": {"type": "string"},
-              "target_peak_num": {"type": "integer"},
-              "pvalue": {"type": ["number", "string", "null"]}
+              "rbp": {
+                "type": "string"
+              },
+              "dataset_id": {
+                "type": "string"
+              },
+              "motif_rank": {
+                "type": "integer"
+              },
+              "identified_motif": {
+                "type": "string"
+              },
+              "query_motif": {
+                "type": "string"
+              },
+              "target_peak_num": {
+                "type": "integer"
+              },
+              "pvalue": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

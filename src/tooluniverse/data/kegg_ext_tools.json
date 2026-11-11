@@ -544,6 +544,20 @@
             "pathways": {
               "type": "object",
               "description": "Parent pathway IDs to names"
+            },
+            "raw_data": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The complete KEGG flat-file record as text, starting 'ENTRY       M00001            Pathway   Module'. Everything KEGG returned, including fields this reply does not break out."
+            },
+            "raw_fields": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The same record split by its KEGG field names - ENTRY, NAME, DEFINITION, DIAGRAM, CLASS, PATHWAY, ORTHOLOGY and the rest. DEFINITION carries the module's logical expression over KO ids, which is what makes a module testable against a genome."
             }
           }
         },

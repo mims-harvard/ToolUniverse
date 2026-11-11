@@ -8273,3 +8273,320 @@ def test_a_pharmacogenomics_row_can_name_the_star_allele_it_is_about():
         assert "319" in row[name]["description"] or "21" in row[name]["description"], (
             "the description should record how many rows carried it"
         )
+
+
+# ---------------------------------------------------------------------------
+# Batch 87: the 54 tools of axis-2 shards 24/26/28/30, measured 2026-11-10.
+# ---------------------------------------------------------------------------
+
+
+def test_open_food_facts_estimated_nutrients_are_declared_as_an_open_level():
+    """A nutrient map whose keys vary per product, and 18 that were not named.
+
+    `nutriments_estimated` named 35 nutrients and had no description and no
+    `additionalProperties`. Measured on a hazelnut spread 2026-11-10, the reply
+    also carried palmitic-acid_100g, stearic-acid_100g, oleic-acid_100g,
+    linoleic-acid_100g, alpha-linolenic-acid_100g, arachidonic-acid_100g,
+    lauric-acid_100g, myristic-acid_100g, butyric-acid_100g,
+    caproic-acid_100g, caprylic-acid_100g, capric-acid_100g,
+    docosahexaenoic-acid_100g, eicosapentaenoic-acid_100g,
+    monounsaturated-fat_100g, polyunsaturated-fat_100g, crude-ash_100g and
+    chloride_100g. Naming those 18 as well would declare one product's keys as
+    the schema; the level is open, so `additionalProperties` is the honest
+    form. The description also has to say the figures are MODELLED from the
+    ingredient list -- read as label values they are simply wrong.
+    """
+    cfg = _config("OpenFoodFacts_search_products")
+    row = _success_props(cfg["return_schema"])["products"]["items"]["properties"]
+    ne = row["nutriments_estimated"]
+    assert isinstance(ne.get("additionalProperties"), dict), (
+        "the nutrient key set varies per product; the level needs an "
+        "additionalProperties schema"
+    )
+    assert "ESTIMATED" in ne["description"] or "MODELLED" in ne["description"], (
+        "the description must say these are estimates, not label values"
+    )
+    for name, spec in (ne.get("properties") or {}).items():
+        assert spec.get("description"), f"nutriments_estimated.{name} has no description"
+    assert "categories" in row, "the product's categories are returned and undeclared"
+    assert "STRING" in row["categories"]["description"], (
+        "categories is a comma-delimited string, not a list, and a caller has "
+        "to be told"
+    )
+
+
+def test_a_tcia_series_declares_the_licence_it_is_released_under():
+    """1,018 series, each carrying a licence, and the schema named none of it.
+
+    Measured 2026-11-10 on `TCIA_get_series`: every row answered LicenseName
+    ("Creative Commons Attribution 3.0 Unported License"), LicenseURI and
+    CollectionURI (the collection's DOI). Whether imaging data may be
+    redistributed or used commercially is not something a caller should have to
+    guess, and nothing else in the row says it.
+    """
+    rs = _config("TCIA_get_series")["return_schema"]
+    branch = (
+        [b for b in rs["oneOf"] if "error" not in (b.get("properties") or {})][0]
+        if rs.get("oneOf")
+        else rs
+    )
+    props = branch["items"]["properties"]
+    for name in ("LicenseName", "LicenseURI", "CollectionURI"):
+        assert name in props, f"{name} is returned on every series and not declared"
+        assert props[name].get("description")
+    assert "Manufacturer" in props, (
+        "quantitative imaging features are not comparable across vendors; the "
+        "scanner manufacturer is returned and was undeclared"
+    )
+
+
+def test_a_de_identified_patient_name_is_declared_as_always_empty():
+    """PatientName came back null on every study, by design.
+
+    `TCIA_get_patient_studies` returns PatientName and TCIA strips it during
+    de-identification. Declaring it with that stated is the difference between
+    a documented always-empty field and a field a reader will suspect the
+    wrapper dropped.
+    """
+    rs = _config("TCIA_get_patient_studies")["return_schema"]
+    branch = (
+        [b for b in rs["oneOf"] if "error" not in (b.get("properties") or {})][0]
+        if rs.get("oneOf")
+        else rs
+    )
+    props = branch["items"]["properties"]
+    assert "PatientName" in props
+    desc = props["PatientName"]["description"]
+    assert "de-identif" in desc.lower(), (
+        "the reason it is always null belongs in the description: " f"{desc!r}"
+    )
+
+
+def test_an_msa_inspection_declares_the_warnings_that_contradict_its_numbers():
+    """mean coverage 1.0, mean identity 1.0, and the alignment was useless.
+
+    Measured 2026-11-10, `Protein_MSA_inspect` answered
+    mean_query_site_coverage 1.0 and mean_query_site_identity 1.0 on an
+    alignment whose `warnings` said "Query-only alignment: no additional
+    aligned sequence rows." and whose nonempty_nonquery_row_count was 0. The
+    schema declared neither the warnings nor the row counts, so the healthy
+    numbers were the whole of the declared answer.
+    """
+    props = _success_props(_config("Protein_MSA_inspect")["return_schema"])
+    data = props["data"]["properties"] if "data" in props else props
+    for name in (
+        "warnings",
+        "limitations",
+        "nonempty_nonquery_row_count",
+        "all_gap_row_count",
+        "duplicate_aligned_row_count",
+        "row_details_truncated",
+    ):
+        assert name in data, f"{name} is returned and not declared"
+    assert "useless" in data["warnings"]["description"] or "query-only" in data[
+        "warnings"
+    ]["description"].lower(), "the description should say what the warnings catch"
+
+
+def test_reactome_contained_events_say_how_many_reactions_were_left_out():
+    """142 reactions in the pathway, 50 returned, and none of it declared.
+
+    `ReactomeContent_get_contained_events` answers total_reactions 142,
+    reactions_returned 50, reactions_truncated true and has_more_reactions
+    true. A pathway's reaction list read as complete when it is a third of one
+    misstates what the pathway does.
+    """
+    props = _success_props(_config("ReactomeContent_get_contained_events")["return_schema"])
+    for name in (
+        "total_reactions",
+        "reactions_returned",
+        "reactions_truncated",
+        "has_more_reactions",
+        "reaction_limit",
+        "reaction_offset",
+        "next_reaction_offset",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+    assert "142" in props["total_reactions"]["description"]
+
+
+def test_a_species_comparison_declares_that_its_result_set_is_incomplete():
+    """result_set_complete false, truncated true, and a stall flag nobody declared.
+
+    `ReactomeAnalysis_species_comparison_v2` returns result_set_complete,
+    truncated, has_more, pagination_stalled and projection. pagination_stalled
+    is the one a paging loop needs: without it, a loop that pages until it sees
+    nothing new cannot tell a finished walk from a stuck one. `projection` says
+    whether the comparison rests on inferred orthologue annotations rather than
+    curated events, which changes what the comparison means.
+    """
+    props = _success_props(_config("ReactomeAnalysis_species_comparison_v2")["return_schema"])
+    for name in (
+        "result_set_complete",
+        "truncated",
+        "has_more",
+        "pagination_stalled",
+        "projection",
+        "page",
+        "page_size",
+        "returned",
+        "next_page",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+
+
+def test_unpaywall_declares_where_the_open_copies_actually_are():
+    """is_oa alone, and sixteen fields of substance undeclared.
+
+    Measured 2026-11-10 for 10.1038/nature12373: oa_locations held 5 copies
+    with their host_type, licence and version; first_oa_location named the
+    preferred one; has_repository_copy was true; journal_is_in_doaj was false.
+    A caller told only that an article is open access cannot find the copy,
+    cannot tell a published version from an accepted manuscript, and cannot
+    tell a DOAJ-indexed journal from one that is not.
+    """
+    props = _success_props(_config("Unpaywall_check_oa_status")["return_schema"])
+    for name in (
+        "oa_locations",
+        "first_oa_location",
+        "has_repository_copy",
+        "journal_is_in_doaj",
+        "journal_is_oa",
+        "authors",
+        "is_paratext",
+        "genre",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+    assert "version" in props["oa_locations"]["description"], (
+        "an accepted manuscript is not the published paper; the version field "
+        "inside each location has to be pointed out"
+    )
+
+
+def test_molglue_records_declare_the_selectivity_margin_they_report():
+    """70% primary degradation against 62% secondary, neither declared.
+
+    `MolGlueDB_get_compound` answers PrimaryTargetDegInfo
+    "70% degradation at 100 nM", SecondaryTarget "CK1a" and
+    SecondaryTargetDegInfo "62% degradation at 100 nM", plus
+    RecruitingProtein_UniProtID (the E3 ligase half of the ternary complex)
+    and ModeOfAction. Those two percentages next to each other are the
+    selectivity of a molecular glue, and the schema carried neither.
+    """
+    props = _success_props(_config("MolGlueDB_get_compound")["return_schema"])
+    for name in (
+        "PrimaryTargetDegInfo",
+        "SecondaryTarget",
+        "SecondaryTargetDegInfo",
+        "RecruitingProtein_UniProtID",
+        "ModeOfAction",
+        "Pharmacophore",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+    assert "DC50" in props["PrimaryTargetDegInfo"]["description"], (
+        "the figure carries its own concentration and is not a DC50; a caller "
+        "has to be told not to read it as one"
+    )
+
+
+def test_a_brenda_kinetic_row_names_its_organism_and_its_substrate():
+    """A Km with no substrate and no organism is not a measurement.
+
+    `BRENDA_get_enzyme_kinetics` rows carry organism ("Saimiri sciureus"),
+    tissue, substrates (9 on the measured row), products, parameter_types and
+    pubmed_id. The schema declared none of them, so the numbers stood alone --
+    and a Km from a squirrel monkey liver preparation is not a human Km.
+    """
+    props = _success_props(_config("BRENDA_get_enzyme_kinetics")["return_schema"])
+    row = props["kinetic_parameters"]["items"]["properties"]
+    for name in (
+        "organism",
+        "tissue",
+        "substrates",
+        "products",
+        "parameter_types",
+        "pubmed_id",
+        "ec_number",
+    ):
+        assert name in row, f"{name} is returned and not declared"
+
+
+def test_stitch_subscores_say_whether_an_interaction_was_ever_measured():
+    """A 0.986 combined score that is text mining and nothing else.
+
+    `STITCH_get_chemical_protein_interactions` answered tscore on all 27 rows,
+    dscore on 10 and escore on 5. Without the subscores a high combined score
+    reads as evidence; with them, a row whose only contribution is tscore is
+    co-mention in abstracts.
+    """
+    rs = _config("STITCH_get_chemical_protein_interactions")["return_schema"]
+    branch = (
+        [b for b in rs["oneOf"] if "error" not in (b.get("properties") or {})][0]
+        if rs.get("oneOf")
+        else rs
+    )
+    row = branch["items"]["properties"]
+    for name in ("tscore", "escore", "dscore"):
+        assert name in row, f"{name} is returned and not declared"
+    assert "text" in row["tscore"]["description"].lower()
+
+
+def test_an_orphanet_gene_list_says_which_subtypes_it_pooled():
+    """Genes from a subtype, returned under the parent disease.
+
+    `Orphanet_get_genes` for Marfan syndrome answers subtype_sources naming
+    'Marfan syndrome type 2' among others, and AssociationStatus per gene.
+    Without subtype_sources a gene associated only with a subtype reads as
+    associated with the parent disease; without AssociationStatus an
+    unassessed association reads like an assessed one.
+    """
+    props = _success_props(_config("Orphanet_get_genes")["return_schema"])
+    data = props["data"]["properties"] if "data" in props else props
+    assert "subtype_sources" in data, "the pooled subtypes are returned and undeclared"
+    row = data["genes"]["items"]["properties"]
+    for name in ("AssociationStatus", "GeneType", "Locus", "SourceOfValidation"):
+        assert name in row, f"{name} is returned and not declared"
+
+
+def test_an_orphanet_prevalence_says_whether_it_is_a_prevalence_at_all():
+    """'Case' and 'Value and class' are not the same kind of number.
+
+    `Orphanet_get_epidemiology` returns `qualification` per prevalence row.
+    A row qualified 'Case' is a count of reported cases; one qualified 'Value
+    and class' is a rate. Reading a case count as a prevalence is wrong by
+    orders of magnitude, and the field that distinguishes them was undeclared.
+    """
+    props = _success_props(_config("Orphanet_get_epidemiology")["return_schema"])
+    data = props["data"]["properties"] if "data" in props else props
+    row = data["prevalences"]["items"]["properties"]
+    assert "qualification" in row
+    assert "Case" in row["qualification"]["description"]
+
+
+def test_no_declaration_of_mine_sits_on_a_branch_that_requires_error():
+    """A branch-scoring heuristic picks the ERROR branch when success is an array.
+
+    `alphafold_get_prediction` has a oneOf whose success branch is an array of
+    54-field rows and whose error branch is an object with four. A helper that
+    scores each branch by its own `properties` reads 0 for the array -- the
+    fields are under `items` -- and so chose the error branch. chainId,
+    isComplex, msaUrl and plddtDocUrl were declared there, which is worse than
+    omitting them: it says a failure reply carries a chain id.
+
+    This guard pins the shape for the tools this effort declared fields on. The
+    catalogue has eight other branches that require `error` and declare
+    something beyond an error report; they are pre-existing and each needs its
+    own measurement to place, so they are not asserted here.
+    """
+    rs = _config("alphafold_get_prediction")["return_schema"]
+    error_branch = [b for b in rs["oneOf"] if "error" in (b.get("required") or [])]
+    assert len(error_branch) == 1
+    err = error_branch[0]["properties"]
+    success = [b for b in rs["oneOf"] if "error" not in (b.get("required") or [])][0]
+    row = success["items"]["properties"]
+    for name in ("chainId", "isComplex", "msaUrl", "plddtDocUrl"):
+        assert name in row, f"{name} belongs on the success rows"
+        assert name not in err, (
+            f"{name} is declared on the branch that requires 'error', so the "
+            "schema claims a failed call returns it"
+        )

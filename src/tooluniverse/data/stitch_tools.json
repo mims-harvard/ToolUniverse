@@ -78,6 +78,27 @@
               "score": {
                 "type": "number",
                 "description": "Combined confidence score (0-1)"
+              },
+              "dscore": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Curated-database subscore, e.g. 0.9. Measured on 10 of 27 rows."
+              },
+              "escore": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Experimental subscore. Measured on 5 of 27 rows - the evidence an assay actually supports."
+              },
+              "tscore": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Text-mining subscore, e.g. 0.986. Present on all 27 measured rows. A high combined score built only on text mining is co-mention in abstracts, not measurement."
               }
             }
           }
@@ -240,6 +261,27 @@
               },
               "annotation": {
                 "type": "string"
+              },
+              "ncbiTaxonId": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Taxon id of the resolved entity. Measured as -1 for a chemical, which has no taxon - so the value is a sentinel, not a real id."
+              },
+              "queryIndex": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Which of the submitted query terms this row answers, e.g. 0. Several terms are resolved in one call and the results are not necessarily in order, so this is the only safe join back."
+              },
+              "taxonName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Name for that taxon, e.g. 'small molecule' where the entity is a chemical rather than a protein."
               }
             }
           }

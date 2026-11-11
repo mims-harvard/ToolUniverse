@@ -2702,6 +2702,23 @@
                             },
                             "geneticBackground": {
                               "type": "string"
+                            },
+                            "id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "MGI identifier of the mouse model, e.g. 'MGI:3714349'. The key for looking the allele up at MGI; the phenotype text alone is not actionable."
+                            },
+                            "literature": {
+                              "type": [
+                                "array",
+                                "null"
+                              ],
+                              "items": {
+                                "type": "string"
+                              },
+                              "description": "PubMed ids reporting the model, e.g. ['25671302', ...] - 11 on the measured row, present on 677 of 678. The citation for the phenotype."
                             }
                           }
                         }
@@ -5078,6 +5095,13 @@
                               },
                               "hasBeenWithdrawn": {
                                 "type": "boolean"
+                              },
+                              "maximumClinicalStage": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "The furthest stage the drug has reached, e.g. 'PHASE_1'. Separates an approved drug from one that stopped in phase 1, which the name alone does not."
                               }
                             }
                           },
@@ -5097,6 +5121,16 @@
                                 "type": "string"
                               }
                             }
+                          },
+                          "diseases": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "The diseases the drug is indicated or trialled for, each with the disease id and name - 9 on the measured row, present on 28 of 32 rows. A drug against this target without its indications cannot be judged for repurposing."
                           }
                         }
                       }
@@ -5191,6 +5225,13 @@
                       }
                     }
                   }
+                },
+                "indications": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The drug's indications, under 'rows', with 'count' for how many exist and 'returned'/'truncated' for how many came back. The truncated flag is what stops a partial list being read as the drug's full label."
                 }
               }
             }

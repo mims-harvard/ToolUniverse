@@ -488,6 +488,48 @@
                   },
                   "tags": {
                     "type": "array"
+                  },
+                  "created": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the licence record was created in Zenodo, e.g. '2023-10-12T17:24:19.712198+00:00'."
+                  },
+                  "icon": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Filename of the licence's badge image. Measured NULL on all 25 licences, so a caller should not expect one."
+                  },
+                  "links": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "API links for the record, under 'self'. The address to fetch the licence on its own."
+                  },
+                  "revision_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Zenodo's revision counter for the record, e.g. 1."
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Record type, 'licenses'. Zenodo serves several vocabularies through the same shape, and this is what says which one."
+                  },
+                  "updated": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When it was last changed."
                   }
                 }
               }

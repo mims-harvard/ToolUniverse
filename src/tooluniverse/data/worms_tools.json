@@ -24,7 +24,11 @@
           "default": 1,
           "description": "1-based starting record number (default 1). Continue with the returned next_offset."
         },
-        "marine_only": {"type": "boolean", "default": true, "description": "Whether to restrict the search to marine taxa (default true, matching WoRMS's own default). Set to false to also return freshwater and terrestrial species, such as parasitic helminths, that the marine filter would otherwise hide. The effective value is echoed back as `marine_only` in the response."},
+        "marine_only": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to restrict the search to marine taxa (default true, matching WoRMS's own default). Set to false to also return freshwater and terrestrial species, such as parasitic helminths, that the marine filter would otherwise hide. The effective value is echoed back as `marine_only` in the response."
+        },
         "like": {
           "type": "boolean",
           "default": true,
@@ -36,7 +40,9 @@
           "description": "Limit results to extant taxa. Set false to include extinct records."
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "https://www.marinespecies.org/rest/AphiaRecordsByName/{query}",
@@ -49,50 +55,153 @@
           "items": {
             "type": "object",
             "properties": {
-              "AphiaID": {"type": "integer"},
-              "url": {"type": "string"},
-              "scientificname": {"type": "string"},
-              "authority": {"type": ["string", "null"]},
-              "status": {"type": "string"},
-              "unacceptreason": {"type": ["string", "null"]},
-              "taxonRankID": {"type": "integer"},
-              "rank": {"type": "string"},
-              "valid_AphiaID": {"type": "integer"},
-              "valid_name": {"type": "string"},
-              "valid_authority": {"type": ["string", "null"]},
-              "parentNameUsageID": {"type": "integer"},
-              "originalNameUsageID": {"type": ["integer", "null"]},
-              "kingdom": {"type": "string"},
-              "phylum": {"type": "string"},
-              "class": {"type": "string"},
-              "order": {"type": "string"},
-              "family": {"type": ["string", "null"]},
-              "genus": {"type": ["string", "null"]},
-              "citation": {"type": "string"},
-              "lsid": {"type": "string"},
-              "isMarine": {"type": ["integer", "null"]},
-              "isBrackish": {"type": ["integer", "null"]},
-              "isFreshwater": {"type": ["integer", "null"]},
-              "isTerrestrial": {"type": ["integer", "null"]},
-              "isExtinct": {"type": ["integer", "null"]},
-              "match_type": {"type": "string"},
-              "modified": {"type": "string"}
+              "AphiaID": {
+                "type": "integer"
+              },
+              "url": {
+                "type": "string"
+              },
+              "scientificname": {
+                "type": "string"
+              },
+              "authority": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": "string"
+              },
+              "unacceptreason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "taxonRankID": {
+                "type": "integer"
+              },
+              "rank": {
+                "type": "string"
+              },
+              "valid_AphiaID": {
+                "type": "integer"
+              },
+              "valid_name": {
+                "type": "string"
+              },
+              "valid_authority": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "parentNameUsageID": {
+                "type": "integer"
+              },
+              "originalNameUsageID": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "kingdom": {
+                "type": "string"
+              },
+              "phylum": {
+                "type": "string"
+              },
+              "class": {
+                "type": "string"
+              },
+              "order": {
+                "type": "string"
+              },
+              "family": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "genus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "citation": {
+                "type": "string"
+              },
+              "lsid": {
+                "type": "string"
+              },
+              "isMarine": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "isBrackish": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "isFreshwater": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "isTerrestrial": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "isExtinct": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "match_type": {
+                "type": "string"
+              },
+              "modified": {
+                "type": "string"
+              }
             }
           }
         },
         {
           "type": "object",
-          "required": ["error"],
+          "required": [
+            "error"
+          ],
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           }
         }
       ]
     },
     "test_examples": [
-      {"query": "Actinia equina", "limit": 5},
-      {"query": "Gadus", "limit": 10, "offset": 1},
-      {"query": "Schistosoma mansoni", "marine_only": false}
+      {
+        "query": "Actinia equina",
+        "limit": 5
+      },
+      {
+        "query": "Gadus",
+        "limit": 10,
+        "offset": 1
+      },
+      {
+        "query": "Schistosoma mansoni",
+        "marine_only": false
+      }
     ]
   },
   {
@@ -108,7 +217,9 @@
           "minimum": 1
         }
       },
-      "required": ["AphiaID"]
+      "required": [
+        "AphiaID"
+      ]
     },
     "fields": {
       "operation": "classification",
@@ -116,8 +227,12 @@
       "return_format": "JSON"
     },
     "test_examples": [
-      {"AphiaID": 127160},
-      {"AphiaID": 126436}
+      {
+        "AphiaID": 127160
+      },
+      {
+        "AphiaID": 126436
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -172,7 +287,9 @@
           "minimum": 1
         }
       },
-      "required": ["AphiaID"]
+      "required": [
+        "AphiaID"
+      ]
     },
     "fields": {
       "operation": "vernaculars",
@@ -180,8 +297,12 @@
       "return_format": "JSON"
     },
     "test_examples": [
-      {"AphiaID": 127160},
-      {"AphiaID": 126436}
+      {
+        "AphiaID": 127160
+      },
+      {
+        "AphiaID": 126436
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -235,7 +356,9 @@
           "minimum": 1
         }
       },
-      "required": ["AphiaID"]
+      "required": [
+        "AphiaID"
+      ]
     },
     "fields": {
       "operation": "distributions",
@@ -243,8 +366,12 @@
       "return_format": "JSON"
     },
     "test_examples": [
-      {"AphiaID": 127160},
-      {"AphiaID": 126436}
+      {
+        "AphiaID": 127160
+      },
+      {
+        "AphiaID": 126436
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -312,6 +439,13 @@
                   "number",
                   "null"
                 ]
+              },
+              "qualityStatus": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the distribution record has been checked, e.g. 'unreviewed' or 'checked'. An unreviewed record is a reported occurrence, not an accepted range."
               }
             }
           }
@@ -356,7 +490,9 @@
           "description": "1-based starting synonym record. Continue with next_offset."
         }
       },
-      "required": ["AphiaID"]
+      "required": [
+        "AphiaID"
+      ]
     },
     "fields": {
       "operation": "synonyms",
@@ -364,8 +500,12 @@
       "return_format": "JSON"
     },
     "test_examples": [
-      {"AphiaID": 127160},
-      {"AphiaID": 126436}
+      {
+        "AphiaID": 127160
+      },
+      {
+        "AphiaID": 126436
+      }
     ],
     "return_schema": {
       "oneOf": [

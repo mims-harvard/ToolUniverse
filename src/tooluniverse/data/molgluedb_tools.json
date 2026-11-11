@@ -8,14 +8,19 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["keyword"],
+      "required": [
+        "keyword"
+      ],
       "properties": {
         "keyword": {
           "type": "string",
           "description": "Search term: target protein ('IKZF2'), recruiting protein ('CRBN'), or compound name ('Lenalidomide')."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Max compounds to return, 1-200. Default 30."
         }
       }
@@ -27,25 +32,67 @@
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": ["integer", "null"]},
-              "Name": {"type": ["string", "null"]},
-              "SMILES": {"type": ["string", "null"]},
-              "Pharmacophore": {"type": ["string", "null"]},
-              "PrimaryTarget": {"type": ["string", "null"]},
-              "RecruitingProtein": {"type": ["string", "null"]}
+              "id": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "Name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "SMILES": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "Pharmacophore": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "PrimaryTarget": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "RecruitingProtein": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"keyword": "IKZF2", "limit": 5},
-      {"keyword": "Lenalidomide", "limit": 5}
+      {
+        "keyword": "IKZF2",
+        "limit": 5
+      },
+      {
+        "keyword": "Lenalidomide",
+        "limit": 5
+      }
     ]
   },
   {
@@ -57,7 +104,9 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["compound_id"],
+      "required": [
+        "compound_id"
+      ],
       "properties": {
         "compound_id": {
           "type": "integer",
@@ -75,23 +124,156 @@
           },
           "type": "object",
           "properties": {
-            "id": {"type": ["integer", "null"]},
-            "Name": {"type": ["string", "null"]},
-            "SMILES": {"type": ["string", "null"]},
-            "PrimaryTarget": {"type": ["string", "null"]},
-            "RecruitingProtein": {"type": ["string", "null"]}
+            "id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "Name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "SMILES": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "PrimaryTarget": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "RecruitingProtein": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "Core": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The scaffold family the glue belongs to, e.g. 'LenalidomideType'. Which chemical series a molecular glue comes from."
+            },
+            "Formula": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Molecular formula, e.g. 'C25H21N3O5'."
+            },
+            "IUPAC": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Systematic IUPAC name. Note the measured example names a trideuteriomethoxy group - an isotopologue the formula alone does not reveal."
+            },
+            "ModeOfAction": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether the glue acts 'non-covalent' or covalently. A covalent glue's occupancy and washout behave differently, which changes how the degradation figures should be read."
+            },
+            "MolWeight": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Molecular weight as a STRING, e.g. '446.48'. Needs converting before arithmetic."
+            },
+            "Pharmacophore": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The degron-binding motif, e.g. 'Glutarimide'. The part that engages the E3 ligase, and so what the glue's selectivity follows from."
+            },
+            "PrimaryTargetDegInfo": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Measured degradation of the primary target, as text, e.g. '70% degradation at 100 nM'. The potency, carrying its own concentration - it is not a DC50 and must not be read as one."
+            },
+            "RecruitingProtein_UniProtID": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "UniProt accession of the E3 ligase component recruited, e.g. 'Q96SW2' (CRBN). The half of the ternary complex that is not the target."
+            },
+            "ResearchStage": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How far the compound has got, e.g. 'Discovery', 'Preclinical', 'Clinical'."
+            },
+            "SecondaryTarget": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Another protein the glue degrades, e.g. 'CK1α'. The off-target that decides whether the glue is selective."
+            },
+            "SecondaryTargetDegInfo": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Measured degradation of that secondary target, e.g. '62% degradation at 100 nM'. Compared with the primary figure it is the selectivity margin - 70% against 62% is barely selective."
+            },
+            "SourceAddress_Website": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Link to that source, e.g. 'https://doi.org/10.1021/acs.jmedchem.3c01736'. The citation for every number in the record."
+            },
+            "SourceName": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Where the data was published, e.g. 'J. Med. Chem.'."
+            },
+            "StdInChIKey": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Standard InChIKey, e.g. 'JGWFFKIYBDZDFI-FIBGUPNXSA-N'. The structure key for joining to other chemical databases."
+            }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"compound_id": 1},
-      {"compound_id": 2}
+      {
+        "compound_id": 1
+      },
+      {
+        "compound_id": 2
+      }
     ]
   }
 ]

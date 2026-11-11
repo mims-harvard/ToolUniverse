@@ -278,6 +278,13 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "is_disease": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the event is a disease variant of a normal process. A disease reaction mixed into a normal pathway silently changes what the pathway describes."
                   }
                 }
               }
@@ -307,9 +314,72 @@
                       "null"
                     ],
                     "description": "Schema class (Reaction, BlackBoxEvent, etc.)"
+                  },
+                  "db_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Reactome's internal numeric id for the event, e.g. 141159. Distinct from the stable 'R-HSA-' identifier, and the one some Reactome endpoints require."
+                  },
+                  "is_disease": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the event is a disease variant of a normal process. A disease reaction mixed into a normal pathway silently changes what the pathway describes."
                   }
                 }
               }
+            },
+            "has_more_reactions": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when reactions remain beyond this page."
+            },
+            "next_reaction_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset to pass for the next page, e.g. 50."
+            },
+            "reaction_limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to the reactions, e.g. 50."
+            },
+            "reaction_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many reactions were skipped before this page, e.g. 0."
+            },
+            "reactions_returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many came back, e.g. 50."
+            },
+            "reactions_truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the reaction list was cut - true on the measured call, where 50 of 142 came back."
+            },
+            "total_reactions": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many reactions the pathway contains in total, e.g. 142."
             }
           },
           "not": {

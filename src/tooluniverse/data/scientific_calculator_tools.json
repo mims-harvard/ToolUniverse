@@ -187,6 +187,16 @@
             },
             "elemental_composition": {
               "type": "object"
+            },
+            "atoms": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "description": "Atom counts keyed by element symbol, e.g. {'C': 6, 'H': 12, 'O': 6}. The keys are whichever elements the formula contains, so the level is open by nature."
             }
           },
           "not": {
@@ -634,6 +644,47 @@
             },
             "p_value": {
               "type": "number"
+            },
+            "chi2": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The chi-square statistic, e.g. 2.0. The p-value alone cannot be rechecked or converted to an effect size without it."
+            },
+            "contributions": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "number"
+              },
+              "description": "Each cell's contribution to the statistic, e.g. [1.0, ...]. Which cell drives a significant result."
+            },
+            "df": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Degrees of freedom, e.g. 1. Required to interpret the statistic at all."
+            },
+            "expected_scaled": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "number"
+              },
+              "description": "The expected counts under the null, e.g. [100.0, ...]. Chi-square is unreliable when any expected count is small, and this is the only way to check that."
+            },
+            "significant_at_005": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the test is significant at alpha = 0.05 - the threshold applied, stated rather than left to the reader."
             }
           },
           "required": [

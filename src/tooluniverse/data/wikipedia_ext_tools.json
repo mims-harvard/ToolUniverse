@@ -70,6 +70,132 @@
                     "string",
                     "null"
                   ]
+                },
+                "content_urls": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Where to read the page, under 'desktop' and 'mobile', each with page, revisions, edit and talk URLs. The link to give a reader."
+                },
+                "coordinates": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Geographic coordinates of the subject, as 'lat' and 'lon', where it has any."
+                },
+                "description_source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Where the short description came from: 'local' (the wiki itself) or 'central' (Wikidata). Which project is answerable for it."
+                },
+                "dir": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Text direction, 'ltr' or 'rtl'. Rendering an rtl summary left-to-right makes it unreadable."
+                },
+                "displaytitle": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The title as HTML, e.g. '<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Baba Siddique</span></span>'. Carries the language and direction markup; it is not safe to print as text."
+                },
+                "extract_html": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The same lead paragraph with its markup, so the bolding and links survive."
+                },
+                "lang": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Language code of the page, e.g. 'en'."
+                },
+                "namespace": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Which MediaWiki namespace the page is in, as 'id' and 'text'. Separates an article from a Talk, Portal or Category page."
+                },
+                "normalizedtitle": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The display title as plain text, e.g. 'Battle of Glasgow, Missouri'."
+                },
+                "originalimage": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The lead image at full size, with 'source', 'width' and 'height'. Measured on 39 of 43 rows."
+                },
+                "pageid": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "MediaWiki page id, e.g. 1615876. The only identifier that survives a page being renamed."
+                },
+                "revision": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Revision id this summary was built from, e.g. '1370441679'. A wiki page changes continuously; without the revision the extract cannot be cited."
+                },
+                "thumbnail": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The lead image at thumbnail size, with its 'source' URL, 'width' and 'height'. Measured present on 39 of 43 most-read articles, so its absence is normal."
+                },
+                "tid": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Time-uuid of the cached summary render, e.g. '258a7b4e-9d12-11f1-9e69-04f4ff341f3a'."
+                },
+                "timestamp": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When that revision was made, e.g. '2026-08-21T03:41:09Z'."
+                },
+                "titles": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The page's title in three forms: 'canonical' (the URL form, underscores and all), 'normalized' (for display) and 'display' (with HTML markup). Picking the wrong one builds a broken link or prints raw markup."
+                },
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Summary type, e.g. 'standard', 'disambiguation', 'mainpage', 'no-extract'. A disambiguation page's extract is a list of other pages, not a description of a subject."
+                },
+                "wikibase_item": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Wikidata item id for the subject, e.g. 'Q4871102'. The join from an article to every other language edition and to structured data."
                 }
               }
             },
@@ -93,9 +219,159 @@
                           "string",
                           "null"
                         ]
+                      },
+                      "content_urls": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "Where to read the page, under 'desktop' and 'mobile', each with page, revisions, edit and talk URLs. The link to give a reader."
+                      },
+                      "description_source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Where the short description came from: 'local' (the wiki itself) or 'central' (Wikidata). Which project is answerable for it."
+                      },
+                      "dir": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Text direction, 'ltr' or 'rtl'. Rendering an rtl summary left-to-right makes it unreadable."
+                      },
+                      "displaytitle": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The title as HTML, e.g. '<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Baba Siddique</span></span>'. Carries the language and direction markup; it is not safe to print as text."
+                      },
+                      "extract": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The lead paragraph as plain text - the summary a reader would see."
+                      },
+                      "extract_html": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The same lead paragraph with its markup, so the bolding and links survive."
+                      },
+                      "lang": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Language code of the page, e.g. 'en'."
+                      },
+                      "namespace": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "Which MediaWiki namespace the page is in, as 'id' and 'text'. Separates an article from a Talk, Portal or Category page."
+                      },
+                      "normalizedtitle": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The display title as plain text, e.g. 'Battle of Glasgow, Missouri'."
+                      },
+                      "originalimage": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The lead image at full size, with 'source', 'width' and 'height'. Measured on 39 of 43 rows."
+                      },
+                      "pageid": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "MediaWiki page id, e.g. 1615876. The only identifier that survives a page being renamed."
+                      },
+                      "rank": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "The article's position in the most-read list, e.g. 4. The list is ordered by it; without it a reordered subset silently loses the ranking."
+                      },
+                      "revision": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Revision id this summary was built from, e.g. '1370441679'. A wiki page changes continuously; without the revision the extract cannot be cited."
+                      },
+                      "thumbnail": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The lead image at thumbnail size, with its 'source' URL, 'width' and 'height'. Measured present on 39 of 43 most-read articles, so its absence is normal."
+                      },
+                      "tid": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Time-uuid of the cached summary render, e.g. '258a7b4e-9d12-11f1-9e69-04f4ff341f3a'."
+                      },
+                      "timestamp": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When that revision was made, e.g. '2026-08-21T03:41:09Z'."
+                      },
+                      "titles": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The page's title in three forms: 'canonical' (the URL form, underscores and all), 'normalized' (for display) and 'display' (with HTML markup). Picking the wrong one builds a broken link or prints raw markup."
+                      },
+                      "type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Summary type, e.g. 'standard', 'disambiguation', 'mainpage', 'no-extract'. A disambiguation page's extract is a list of other pages, not a description of a subject."
+                      },
+                      "view_history": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "Daily view counts for the article, each as {date, views}, e.g. {'date': '2024-10-10Z', 'views': 176}. The trend behind the rank."
+                      },
+                      "wikibase_item": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Wikidata item id for the subject, e.g. 'Q4871102'. The join from an article to every other language edition and to structured data."
                       }
                     }
                   }
+                },
+                "date": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The date the most-read list is for, e.g. '2024-10-14Z'. The featured content changes daily, so this says which day the answer describes."
                 }
               }
             },
@@ -110,9 +386,26 @@
                   },
                   "text": {
                     "type": "string"
+                  },
+                  "pages": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "The articles attached to this 'on this day' event, each a full page summary. The event's text names them in prose; this is the structured link to each."
                   }
                 }
               }
+            },
+            "image": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The picture of the day, with its title, thumbnail, full image, file_page, artist, credit, license and description. Reusing a Wikimedia image needs the license and the credit, and this is the only place they appear."
             }
           },
           "not": {

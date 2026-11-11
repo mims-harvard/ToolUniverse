@@ -426,6 +426,13 @@
             "parameters": {
               "type": "object",
               "description": "Parameters used for the analysis"
+            },
+            "status_code": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "HTTP status the ProteinsPlus job returned, e.g. 200. Separates an empty result from a failed submission."
             }
           },
           "not": {

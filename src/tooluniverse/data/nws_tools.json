@@ -82,8 +82,114 @@
                 "timeZone": {
                   "type": "string",
                   "description": "IANA time zone"
+                },
+                "@id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Canonical URL of this point resource, e.g. 'https://api.weather.gov/points/38.8894,-77.0352'."
+                },
+                "@type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "JSON-LD class of the record, 'wx:Point'."
+                },
+                "astronomicalData": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Sun times for the point: sunrise, sunset, transit and the civil, nautical and astronomical twilight bounds. What makes a forecast readable as day or night."
+                },
+                "county": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "API URL of the county zone, e.g. '.../zones/county/DCC001'."
+                },
+                "fireWeatherZone": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "API URL of the fire-weather zone, e.g. '.../zones/fire/DCZ001'. Red flag warnings are issued by this zone, not the forecast zone."
+                },
+                "forecastGridData": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "API URL of the raw gridded forecast, e.g. '.../gridpoints/LWX/97,71'. The numeric forecast behind the worded one."
+                },
+                "forecastOffice": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "API URL of the Weather Forecast Office responsible, e.g. '.../offices/LWX'. Who issues the forecasts and alerts for this point."
+                },
+                "forecastZone": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "API URL of the public forecast zone, e.g. '.../zones/forecast/DCZ001'. The zone an alert would be issued against."
+                },
+                "nwr": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "NOAA Weather Radio coverage for the point - transmitter, sameCode, areaBroadcast and pointBroadcast. The SAME code is what a weather radio is programmed with."
+                },
+                "observationStations": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "API URL listing the observing stations for the grid cell. Where actual observations, as opposed to forecasts, come from."
+                },
+                "radarStation": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Nearest radar station id, e.g. 'KLWX'."
+                },
+                "relativeLocation": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The nearest named place, as a GeoJSON feature with its city, state and bearing/distance from the point. How to say where this forecast is in words."
+                },
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What the point sits on, e.g. 'land'. A marine point is served by different products, so this changes which forecasts apply."
                 }
               }
+            },
+            "@context": {
+              "type": [
+                "array",
+                "object",
+                "null"
+              ],
+              "description": "The JSON-LD context the reply declares."
+            },
+            "geometry": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The point as GeoJSON, 'type' and 'coordinates'. NWS snaps the request to its grid, so this is where the answer actually applies rather than where the caller asked."
             }
           },
           "not": {

@@ -271,9 +271,57 @@
                         }
                       }
                     }
+                  },
+                  "AssociationStatus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether Orphanet has assessed the gene-disease association, e.g. 'Assessed' or 'Not yet assessed'. An unassessed association carries much less weight."
+                  },
+                  "GeneType": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What kind of gene it is, e.g. 'gene with protein product'."
+                  },
+                  "Locus": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "The gene's cytogenetic loci, each with 'GeneLocus' and 'LocusKey', e.g. {'GeneLocus': '9q22.33', 'LocusKey': 1}."
+                  },
+                  "SourceOfValidation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "PMIDs backing the association, as an underscore-delimited STRING, e.g. '16799921[PMID]_18781618[PMID]_'. Measured on 1 of 3 genes. It must be split on '_' and stripped of the '[PMID]' suffix to be used."
                   }
                 }
               }
+            },
+            "disease_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The disease the query resolved to, e.g. 'Marfan syndrome'. An ORPHA code alone does not say what was looked up."
+            },
+            "subtype_sources": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "The disease subtypes whose gene associations were pooled into this answer, each with 'orpha_code' and 'name', e.g. 'Marfan syndrome type 2'. Without it, genes associated only with a subtype read as associated with the parent disease."
             }
           }
         }
@@ -627,6 +675,13 @@
                   },
                   "validation_status": {
                     "type": "string"
+                  },
+                  "qualification": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the prevalence figure is, e.g. 'Value and class', 'Case', 'Class only'. A 'Case' row is a count of reported cases, not a prevalence, and reading the two alike is a factor-of-millions error."
                   }
                 }
               }

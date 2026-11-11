@@ -895,11 +895,67 @@
                       },
                       "citedOrder": {
                         "type": "integer"
+                      },
+                      "citationType": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "What kind of work the reference is, e.g. 'JOURNAL ARTICLE'. Separates a paper from a book, a patent or a preprint."
+                      },
+                      "essn": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Electronic ISSN of the same journal. The two differ for most journals, and a lookup keyed on the wrong one misses."
+                      },
+                      "issn": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Print ISSN of the cited journal, e.g. '1758-0463'."
+                      },
+                      "issue": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Issue, e.g. '20'. Measured on 9 of 10 references - journals that number only by volume omit it."
+                      },
+                      "match": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "'Y' when Europe PMC resolved the reference to a record in its index, 'N' when it did not. An unmatched reference's metadata is whatever the citing paper printed, typos included."
+                      },
+                      "pageInfo": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Pages or article number, e.g. 'baq030'. For an electronic-only journal this is an article id, not a page range."
+                      },
+                      "volume": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Volume of the cited work, e.g. '2010'. A string, since volumes are not always numeric."
                       }
                     }
                   }
                 }
               }
+            },
+            "request": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The query echoed back - 'id', 'source', 'offSet' and 'pageSize'. Which article's references these are, and which page of them."
             }
           },
           "required": [

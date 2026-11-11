@@ -67,6 +67,13 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "doi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DOI of the paper the affinity was measured in, e.g. '10.1021/jm00130a020'. The citation for the measurement."
                   }
                 }
               }

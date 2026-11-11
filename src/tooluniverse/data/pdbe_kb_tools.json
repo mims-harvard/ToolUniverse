@@ -820,6 +820,20 @@
                             },
                             "is_representative": {
                               "type": "boolean"
+                            },
+                            "entity_id": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ],
+                              "description": "Entity id of the representative within its structure, e.g. 2. A structure can hold several copies of a protein, and this says which entity was superposed."
+                            },
+                            "struct_asym_id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "The representative's chain label, e.g. 'B'. Which chain of the representative structure the others were aligned onto."
                             }
                           },
                           "description": "Representative structure for this cluster"
@@ -858,6 +872,13 @@
                               },
                               "is_representative": {
                                 "type": "boolean"
+                              },
+                              "struct_asym_id": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "The structure's own chain label for the cluster member, e.g. 'B'. PDBe's label_asym_id, which is not always the author chain id a user would quote."
                               }
                             }
                           }

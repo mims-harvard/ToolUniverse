@@ -1239,6 +1239,76 @@
           },
           "end": {
             "type": "integer"
+          },
+          "assembly_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Assembly the coordinates belong to, e.g. 'GRCh38'. The same numbers mean a different place under GRCh37."
+          },
+          "canonical_transcript": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The gene's canonical transcript with version, e.g. 'ENST00000489972.1'. Which transcript a consequence should be reported against."
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The feature's description, e.g. 'non-metastatic cells 4, protein expressed in (NME4) pseudogene'. Where a pseudogene reveals itself as one."
+          },
+          "feature_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "What kind of feature the row is, e.g. 'gene', 'transcript', 'exon', 'cds'. One overlap query returns several types, and reading them as one kind double-counts."
+          },
+          "gene_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Ensembl gene id, e.g. 'ENSG00000103200'."
+          },
+          "logic_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The exact analysis that called it, e.g. 'havana_homo_sapiens'. Finer than 'source' and what separates a manually curated call from an automatic one."
+          },
+          "seq_region_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Chromosome or scaffold name, e.g. '7', without a 'chr' prefix."
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Which annotation source produced the feature, e.g. 'havana', 'ensembl', 'insdc'."
+          },
+          "strand": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "1 for the forward strand, -1 for the reverse. A reverse-strand gene's start is its higher coordinate."
+          },
+          "version": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Version of the feature's annotation, e.g. 6."
           }
         }
       }

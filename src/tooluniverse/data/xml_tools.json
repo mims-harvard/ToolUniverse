@@ -1032,6 +1032,41 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "atc_codes_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many atc_codes were skipped before this page."
+              },
+              "atc_codes_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of those atc_codes this reply contains. Equal to the total only when nothing was cut."
+              },
+              "atc_codes_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many atc_codes DrugBank holds for the drug, e.g. 21."
+              },
+              "atc_codes_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the atc_codes list was cut. The flag that separates 'the drug has this many' from 'here are some of them'."
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list, e.g. '10 Person ANSI | 217 | 222 Tablets | ...'. It runs to thousands of characters and must be split on ' | '. Measured present on 3 of 5 result rows."
               }
             }
           }
@@ -1050,6 +1085,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to all of the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }
@@ -1366,6 +1408,13 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list, e.g. '10 Person ANSI | 217 | 222 Tablets | ...'. It runs to thousands of characters and must be split on ' | '. Measured present on 3 of 5 result rows."
               }
             }
           }
@@ -1384,6 +1433,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to all of the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }
@@ -2062,6 +2118,125 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list, e.g. '10 Person ANSI | 217 | 222 Tablets | ...'. It runs to thousands of characters and must be split on ' | '. Measured present on 3 of 5 result rows."
+              },
+              "carriers_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many carriers were skipped before this page."
+              },
+              "carriers_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of those carriers this reply contains. Equal to the total only when nothing was cut."
+              },
+              "carriers_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many carriers DrugBank holds for the drug; 0 on the measured call, which means DrugBank records none rather than that the field was dropped."
+              },
+              "carriers_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the carriers list was cut. The flag that separates 'the drug has this many' from 'here are some of them'."
+              },
+              "enzymes_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many enzymes were skipped before this page."
+              },
+              "enzymes_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of those enzymes this reply contains. Equal to the total only when nothing was cut."
+              },
+              "enzymes_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many enzymes DrugBank holds for the drug, e.g. 4."
+              },
+              "enzymes_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the enzymes list was cut. The flag that separates 'the drug has this many' from 'here are some of them'."
+              },
+              "targets_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many targets were skipped before this page."
+              },
+              "targets_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of those targets this reply contains. Equal to the total only when nothing was cut."
+              },
+              "targets_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many targets DrugBank holds for the drug, e.g. 20."
+              },
+              "targets_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the targets list was cut. The flag that separates 'the drug has this many' from 'here are some of them'."
+              },
+              "transporters_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many transporters were skipped before this page."
+              },
+              "transporters_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of those transporters this reply contains. Equal to the total only when nothing was cut."
+              },
+              "transporters_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many transporters DrugBank holds for the drug, e.g. 3."
+              },
+              "transporters_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the transporters list was cut. The flag that separates 'the drug has this many' from 'here are some of them'."
               }
             }
           }
@@ -2080,6 +2255,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to all of the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }

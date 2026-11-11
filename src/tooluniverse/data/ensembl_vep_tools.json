@@ -353,12 +353,47 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "biotype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Transcript biotype, e.g. 'protein_coding'. A missense consequence on a processed_transcript or a nonsense_mediated_decay transcript is not a missense variant in the protein."
+                  },
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ensembl gene id for that transcript, e.g. 'ENSG00000148737'."
+                  },
+                  "strand": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Strand of the transcript, 1 or -1."
+                  },
+                  "transcript_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ensembl transcript the consequence was computed against, e.g. 'ENST00000277945'. A variant has one consequence per transcript - 122 of them on the measured call - and without this they cannot be told apart."
                   }
                 }
               }
             },
             "colocated_variants": {
               "type": "array"
+            },
+            "strand": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Strand of the variant's allele string, 1 or -1. VEP reports alleles on the forward strand, so a -1 here means the submitted alleles were reverse-complemented."
             }
           },
           "not": {

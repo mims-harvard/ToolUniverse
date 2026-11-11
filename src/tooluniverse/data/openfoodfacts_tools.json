@@ -1262,213 +1262,264 @@
                           "integer",
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated alcohol per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "beta-carotene_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated beta carotene per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "calcium_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated calcium per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "cholesterol_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated cholesterol per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "copper_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated copper per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "fiber_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated fiber per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "fructose_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated fructose per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "galactose_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated galactose per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "glucose_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated glucose per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "iodine_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated iodine per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "iron_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated iron per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "lactose_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated lactose per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "magnesium_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated magnesium per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "maltose_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated maltose per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "manganese_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated manganese per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "pantothenic-acid_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated pantothenic acid per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "phosphorus_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated phosphorus per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "phylloquinone_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated phylloquinone per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "polyols_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated polyols per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "potassium_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated potassium per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "selenium_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated selenium per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "starch_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated starch per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "sucrose_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated sucrose per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-a_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin a per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-b12_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin b12 per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-b1_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin b1 per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-b2_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin b2 per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-b6_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin b6 per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-b9_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin b9 per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-c_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin c per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-d_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin d per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-e_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin e per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-pp_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin pp per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "water_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated water per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "zinc_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated zinc per 100 g, modelled from the ingredient list rather than taken from the label."
                       }
+                    },
+                    "description": "Nutrient values Open Food Facts ESTIMATED from the ingredient list rather than read off the label, keyed by nutrient and basis (e.g. 'palmitic-acid_100g'). The 35 keys named below are not the whole set: measured on a hazelnut spread, the reply also carried palmitic-acid_100g, stearic-acid_100g, oleic-acid_100g, linoleic-acid_100g, alpha-linolenic-acid_100g, arachidonic-acid_100g, lauric-acid_100g, myristic-acid_100g, butyric-acid_100g, caproic-acid_100g, caprylic-acid_100g, capric-acid_100g, docosahexaenoic-acid_100g, eicosapentaenoic-acid_100g, monounsaturated-fat_100g, polyunsaturated-fat_100g, crude-ash_100g and chloride_100g -- some on 2 of 3 products, some on all 3. The key set varies per product, so this level is open by nature. These figures are MODELLED and must not be reported as declared nutrition.",
+                    "additionalProperties": {
+                      "type": [
+                        "number",
+                        "string",
+                        "null"
+                      ],
+                      "description": "An estimated value for a nutrient not named above. Numeric for a quantity; a string where Open Food Facts recorded the figure as text."
                     }
+                  },
+                  "categories": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The product's categories as a single comma-delimited STRING, not a list, e.g. 'Hazelnut spreads, Confectionary based spreads, fr:Nutella'. Entries can carry a language prefix such as 'fr:', and the string must be split on ', ' before any entry can be matched."
                   }
                 }
               }

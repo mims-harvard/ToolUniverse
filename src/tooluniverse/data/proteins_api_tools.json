@@ -152,6 +152,76 @@
               },
               "result_set_complete": {
                 "type": "boolean"
+              },
+              "accession": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt accession the variants belong to, e.g. 'P05067'."
+              },
+              "entryName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt entry name, e.g. 'A4_HUMAN'."
+              },
+              "geneName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Gene symbol, e.g. 'APP'."
+              },
+              "organismName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source organism, e.g. 'Homo sapiens'."
+              },
+              "proteinExistence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How well the protein's existence is supported, e.g. 'Evidence at protein level'. A predicted protein's variants rest on a predicted sequence."
+              },
+              "proteinName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Recommended protein name, e.g. 'Amyloid-beta precursor protein'."
+              },
+              "sequence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The full amino-acid sequence. Variant positions are indices into it, so without the sequence a position cannot be read as a residue."
+              },
+              "sequenceChecksum": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "CRC-64 of the sequence, e.g. '11614474893910294773'. Confirms the caller holds the same sequence the positions were computed against."
+              },
+              "sequenceVersion": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Which version of that sequence, e.g. 3. Positions shift between sequence versions, so a coordinate without this is ambiguous."
+              },
+              "taxid": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "NCBI taxonomy id, e.g. 9606."
               }
             },
             "additionalProperties": true

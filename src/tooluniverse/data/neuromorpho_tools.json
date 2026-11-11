@@ -348,6 +348,27 @@
             "length": {
               "type": "number",
               "description": "Total length (um)"
+            },
+            "bif_ampl_local": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Local bifurcation amplitude in degrees, e.g. 33.3799 - the angle between the two daughter branches measured at the bifurcation itself."
+            },
+            "bif_ampl_remote": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Remote bifurcation amplitude in degrees, e.g. 50.461 - the same angle measured to the next bifurcation or terminal point instead. It differs from the local value because branches curve, and the two answer different questions."
+            },
+            "pk_classic": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The Rall power ratio at bifurcations computed with the classic exponent, e.g. 1.52521. Dimensionless, and describes how parent and daughter diameters relate."
             }
           },
           "not": {

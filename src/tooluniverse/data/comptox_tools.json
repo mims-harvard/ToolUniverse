@@ -85,6 +85,53 @@
             },
             "metadata": {
               "type": "object"
+            },
+            "error_details": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Structured detail for the failure, present alongside 'error' whenever ToolUniverse itself refused the call: 'type' (e.g. 'ToolUnavailableError'), 'message', 'retriable' (false for a missing API key -- retrying will not help), 'next_steps' (what the caller can actually do) and 'details'. The error string alone does not say whether a retry is worth attempting.",
+              "properties": {
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The error class, e.g. 'ToolUnavailableError'."
+                },
+                "message": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The same text as 'error'."
+                },
+                "retriable": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "False when retrying cannot succeed, as for a missing credential."
+                },
+                "next_steps": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Concrete actions that would make the call work."
+                },
+                "details": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Any extra machine-readable context; frequently empty."
+                }
+              }
             }
           }
         },

@@ -157,6 +157,120 @@
                 },
                 "folding_verified": {
                   "const": false
+                },
+                "all_gap_row_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Rows that are nothing but gaps. They inflate the depth without adding evidence."
+                },
+                "duplicate_aligned_row_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Rows whose aligned sequence repeats another's. Duplicates inflate apparent depth, which is what coverage-based confidence is computed from."
+                },
+                "format": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Alignment format detected, e.g. 'a3m', 'fasta', 'stockholm'. a3m encodes insertions as lower case, so a reader that ignores the format miscounts columns."
+                },
+                "insertion_gap_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Gap characters inside those insertion columns."
+                },
+                "insertion_residue_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Residues in insertion columns - the lower-case positions a3m uses, which are not part of the query's coordinate frame."
+                },
+                "limitations": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "What the measurement itself does not account for, e.g. 'First record is treated as query; identity includes gaps as nonmatches'. 4 on the measured call. Without them the identity figure reads as more authoritative than it is."
+                },
+                "mean_query_site_coverage": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Mean fraction of rows covering each query position, e.g. 1.0. The usual proxy for how much evidence each position has."
+                },
+                "mean_query_site_identity": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Mean identity to the query across its positions, e.g. 1.0."
+                },
+                "nonempty_nonquery_row_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many rows other than the query carry any aligned residue. 0 means the alignment is query-only and carries no homologue information at all, however many rows it has."
+                },
+                "query_gap_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Gap characters in the query row."
+                },
+                "query_residue_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Residues in the query (first) record, e.g. 4."
+                },
+                "row_details": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Per-row figures: row_index, aligned_residue_count, query_site_coverage and identity. Where a single bad row can be found."
+                },
+                "row_details_truncated": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when row_details holds fewer rows than the alignment has, so the per-row view is a sample."
+                },
+                "source_kind": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Where the alignment came from, e.g. 'alignment_content' (supplied inline) or a file path. What was actually inspected."
+                },
+                "warnings": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "What is wrong with this alignment, e.g. 'Query-only alignment: no additional aligned sequence rows.' 2 on the measured call. The numbers above look healthy on a query-only alignment; these sentences are what say it is useless."
                 }
               }
             }
