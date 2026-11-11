@@ -357,6 +357,129 @@
         "target": "FOXA1",
         "taxid": 9606
       }
-    ]
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "One row per ReMap dataset for the target.",
+          "required": [
+            "status",
+            "data"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success' when the listing was built."
+            },
+            "data": {
+              "type": "object",
+              "required": [
+                "target",
+                "taxid",
+                "n_datasets",
+                "datasets"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string",
+                  "description": "The target as asked for, e.g. 'FOXA1'."
+                },
+                "taxid": {
+                  "type": "integer",
+                  "description": "NCBI taxonomy id the listing is for, e.g. 9606."
+                },
+                "experiment_filter": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The experiment accession the listing was filtered to, or NULL when it was not filtered. Null here means every dataset for the target."
+                },
+                "n_datasets": {
+                  "type": "integer",
+                  "description": "How many datasets are in `datasets`. Measured 241 for FOXA1 in human unfiltered and 2 filtered to GSE23852, and it equals the length of the list: nothing is truncated."
+                },
+                "datasets": {
+                  "type": "array",
+                  "description": "The datasets, one row each. A GEO SERIES IS NOT ONE DATASET: GSE23852 for FOXA1 holds two, MCF-7_ETOH and MCF-7_E2, with 60,158 and 67,736 peaks measured.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "dataset_name": {
+                        "type": "string",
+                        "description": "ReMap's dataset name, e.g. 'GSE23852.FOXA1.MCF-7_ETOH' -- experiment, target and biological condition joined by dots."
+                      },
+                      "biotype": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The cell type or tissue, e.g. 'MCF-7'."
+                      },
+                      "biotype_modification": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The treatment that distinguishes this dataset from its siblings in the same experiment, e.g. 'ETOH' or 'E2'. This is what makes two rows of one GEO series different measurements rather than duplicates."
+                      },
+                      "source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Where the experiment came from, e.g. 'GEO' or 'ENCODE'."
+                      },
+                      "bed_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Direct link to this dataset's peak BED, gzipped. The peaks themselves are not in this reply."
+                      },
+                      "peak_count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "How many peaks this dataset's BED holds. ONLY PRESENT WHEN count_peaks=true was asked for, because it means downloading the BED; absent otherwise, which is not a count of zero."
+                      }
+                    }
+                  }
+                },
+                "total_peaks_across_datasets": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "The peaks summed over every listed dataset, e.g. 127,894 for the two GSE23852 datasets. Only present with count_peaks=true, and a sum over different treatments is rarely the number a question wants."
+                },
+                "peak_count_note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Says that peak_count is per dataset and that one GEO series can hold several. Only present with count_peaks=true."
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "The request was refused or the call failed.",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "What went wrong, in words."
+            }
+          }
+        }
+      ]
+    }
   }
 ]

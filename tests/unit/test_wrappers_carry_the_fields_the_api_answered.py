@@ -583,7 +583,13 @@ def _row_props(rs):
 
 
 def _config(tool_name):
-    for path in sorted(DATA.glob("*.json")):
+    # remote_tools/ is a second catalogue directory, and a tool served by a
+    # GPU provider is a tool like any other: proteinmpnn_design was the one of
+    # 82 remote tools with no return_schema at all, and a lookup that only
+    # globbed the top level could not see it to say so.
+    for path in sorted(DATA.glob("*.json")) + sorted(
+        (DATA / "remote_tools").glob("*.json")
+    ):
         try:
             payload = json.loads(path.read_text())
         except (json.JSONDecodeError, UnicodeDecodeError):
@@ -11487,3 +11493,117 @@ def test_a_funder_carries_the_identifier_that_resolves():
     row = _row_props(_config("Crossref_list_funders")["return_schema"])
     assert "uri" in row
     assert "does not resolve" in row["uri"]["description"]
+
+
+def test_a_tool_with_no_return_schema_declares_nothing_at_all():
+    """Four tools declared no return shape whatever.
+
+    Sweeping every tool config for a missing `return_schema` turns up 69
+    names. Sixty-five are not tools -- they are the credential entries in
+    api_keys_catalog.json, each with a `name` and a `type` of "secret",
+    "api_key" or "endpoint" -- which is why an earlier count of this class was
+    wrong. The four real ones are below, and a tool with no return_schema is
+    the extreme of the axis this file measures: not one field of what it
+    answers was declared.
+    """
+    for name in (
+        "ReMap_list_datasets_for_target",
+        "PubChem_get_compound_2D_image_by_CID",
+        "geant4_depth_dose_simulation",
+        "proteinmpnn_design",
+    ):
+        rs = _config(name).get("return_schema")
+        assert isinstance(rs, dict) and rs, f"{name} declares no return shape"
+
+
+def test_a_remap_dataset_row_separates_the_treatments_in_one_series():
+    """GSE23852 is two datasets with 60,158 and 67,736 peaks.
+
+    `ReMap_list_datasets_for_target` had no return_schema at all. Its rows
+    carry biotype_modification, which is what makes two rows of one GEO series
+    different measurements rather than duplicates, and peak_count, which is
+    present ONLY when count_peaks=true was asked for -- absent, not zero.
+    """
+    rs = _config("ReMap_list_datasets_for_target")["return_schema"]
+    data = _success_branch(rs)["properties"]["data"]["properties"]
+    assert "60,158 and 67,736" in data["datasets"]["description"]
+    row = data["datasets"]["items"]["properties"]
+    assert "duplicates" in row["biotype_modification"]["description"]
+    assert "ONLY PRESENT WHEN count_peaks=true" in row["peak_count"]["description"]
+    assert "nothing is truncated" in data["n_datasets"]["description"]
+
+
+def test_a_compound_image_is_bytes_and_not_a_name():
+    """A reply whose only content is a base64 PNG, undeclared.
+
+    `PubChem_get_compound_2D_image_by_CID` carried an explicit
+    `"return_schema": null`. Nothing in its reply names the compound in text,
+    so an agent that cannot decode the image gets nothing from the call -- and
+    the pixel size is not what the parameter text implies: measured on CID
+    2244, image_size 'large' returned 300x300.
+    """
+    rs = _config("PubChem_get_compound_2D_image_by_CID")["return_schema"]
+    data = _success_branch(rs)["properties"]["data"]["properties"]
+    desc = data["image_base64"]["description"]
+    assert "89 50 4e 47" in desc, "say how to recognise the decoded bytes"
+    assert "'large' returned 300x300" in desc
+    assert data["format"]["description"].endswith("'png'.")
+
+
+def test_a_depth_dose_summary_says_which_of_its_keys_can_be_missing():
+    """Every key of geant4's summary is conditional, and none was declared.
+
+    `geant4_depth_dose_simulation` had no return_schema. Its `summary` is
+    assembled key by key -- the peak keys only when the run returned bins and
+    a bin width, last_depth_with_dose_cm only when some bin is non-zero,
+    edep_mev_per_event only when events is non-zero -- so an absent key means
+    the curve could not support it rather than a value of zero. The shape here
+    is read from the two places that write it: the RESULT_JSON block of
+    data/geant4/depth_dose.cc and the wrapper's own two additions. It is not
+    measured, because geant4-config is not installed on the machine this was
+    written on, and the commit says so.
+    """
+    rs = _config("geant4_depth_dose_simulation")["return_schema"]
+    data = _success_branch(rs)["properties"]["data"]["properties"]
+    for key in (
+        "material",
+        "particle",
+        "energy_mev",
+        "events",
+        "thickness_cm",
+        "bin_width_cm",
+        "total_edep_mev",
+        "edep_mev_per_bin",
+        "geant4_version",
+        "summary",
+    ):
+        assert key in data, f"{key} is returned and not declared"
+    summary = data["summary"]
+    assert "EVERY KEY HERE IS CONDITIONAL" in summary["description"]
+    assert "not a value of zero" in summary["description"]
+    assert (
+        "does not measure it"
+        in summary["properties"]["last_depth_with_dose_cm"]["description"]
+    ), "a range equal to the slab thickness is a floor, not a measurement"
+    assert "spurious" in summary["properties"]["peak_depth_cm"]["description"]
+
+
+def test_a_designed_sequence_carries_the_baseline_it_is_judged_against():
+    """81 remote tools declare a return shape; proteinmpnn_design did not.
+
+    Measured live on the provider's own smoke backbone (40 residues, CPU,
+    5.3 s): the reply carries native_score 1.7105 and designs whose score is
+    1.169 at seq_recovery 0.275. Without native_score declared, a score has
+    nothing to be compared with, and 27.5% identity to the natural sequence
+    reads as a failure when it is the normal result at temperature 0.1.
+    """
+    rs = _config("proteinmpnn_design")["return_schema"]
+    props = _success_branch(rs)["properties"]
+    assert "baseline" in props["native_score"]["description"]
+    design = props["designs"]["items"]["properties"]
+    assert "LOW RECOVERY IS NOT FAILURE" in design["seq_recovery"]["description"]
+    assert "lower is better" in design["score"]["description"]
+    assert (
+        "HIGH WATER MARK FOR THE WORKER'S WHOLE LIFE"
+        in props["peak_rss_gib"]["description"]
+    ), "a peak that never falls back must not be read as this request's cost"

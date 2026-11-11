@@ -20,7 +20,7 @@ def geant4_depth_dose_simulation(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Monte Carlo depth-dose simulation with GEANT4: fire a particle beam into a slab of one NIST mater...
 
@@ -49,7 +49,7 @@ def geant4_depth_dose_simulation(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

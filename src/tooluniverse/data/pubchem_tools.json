@@ -520,7 +520,59 @@
         "image_size": "large"
       }
     ],
-    "return_schema": null
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The compound's 2D structure drawing, as a base64 PNG.",
+          "required": [
+            "status",
+            "data"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success' when PubChem returned an image."
+            },
+            "data": {
+              "type": "object",
+              "required": [
+                "image_base64",
+                "encoding",
+                "format"
+              ],
+              "properties": {
+                "image_base64": {
+                  "type": "string",
+                  "description": "The PNG, base64-encoded. Decode it to get the file's bytes; it starts with the PNG signature 89 50 4e 47. NOT a URL and not an SVG -- nothing in this reply names the compound in text, so the image cannot be read without decoding it. PubChem also accepts the keywords PubChem's own API takes rather than only a WxH: measured on CID 2244, image_size 'large' returned 300x300 and the 200x200 default returned 200x200."
+                },
+                "encoding": {
+                  "type": "string",
+                  "description": "Always 'base64'."
+                },
+                "format": {
+                  "type": "string",
+                  "description": "Always 'png'."
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "The request was refused or the call failed.",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "What went wrong, in words."
+            }
+          }
+        }
+      ]
+    }
   },
   {
     "name": "PubChem_get_compound_synonyms_by_CID",
