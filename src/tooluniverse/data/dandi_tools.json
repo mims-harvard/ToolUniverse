@@ -8,14 +8,19 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["query"],
+      "required": [
+        "query"
+      ],
       "properties": {
         "query": {
           "type": "string",
           "description": "Free-text search, e.g. 'mouse visual cortex', 'patch-seq', 'calcium imaging'."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Max dandisets to return, 1-100. Default 25."
         }
       }
@@ -27,33 +32,130 @@
           "items": {
             "type": "object",
             "properties": {
-              "dandiset_id": {"type": ["string", "null"]},
-              "name": {"type": ["string", "null"], "description": "Name of the version named in 'version'"},
-              "asset_count": {"type": ["integer", "null"], "description": "Asset count of the version named in 'version'"},
-              "size_bytes": {"type": ["integer", "null"], "description": "Size of the version named in 'version'"},
-              "status": {"type": ["string", "null"], "description": "Validation status of that version (Valid, Invalid), not whether its assets can be downloaded"},
-              "version": {"type": ["string", "null"], "description": "Version the name, asset_count, size_bytes and status describe: the most recent published one when there is one, else 'draft'"},
-              "version_is_published": {"type": "boolean", "description": "False when those fields come from the draft version"},
-              "draft_asset_count": {"type": ["integer", "null"], "description": "Asset count of the draft version, which DANDI_get_dataset and DANDI_list_assets read"},
-              "draft_size_bytes": {"type": ["integer", "null"], "description": "Size of the draft version in bytes"},
-              "draft_modified": {"type": ["string", "null"], "description": "When the draft version was last modified"},
-              "created": {"type": ["string", "null"], "description": "When the dandiset was created"},
-              "modified": {"type": ["string", "null"], "description": "When the dandiset was last modified"},
-              "contact_person": {"type": ["string", "null"]},
-              "star_count": {"type": ["integer", "null"]}
+              "dandiset_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Name of the version named in 'version'"
+              },
+              "asset_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Asset count of the version named in 'version'"
+              },
+              "size_bytes": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Size of the version named in 'version'"
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Validation status of that version (Valid, Invalid), not whether its assets can be downloaded"
+              },
+              "version": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Version the name, asset_count, size_bytes and status describe: the most recent published one when there is one, else 'draft'"
+              },
+              "version_is_published": {
+                "type": "boolean",
+                "description": "False when those fields come from the draft version"
+              },
+              "draft_asset_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Asset count of the draft version, which DANDI_get_dataset and DANDI_list_assets read"
+              },
+              "draft_size_bytes": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Size of the draft version in bytes"
+              },
+              "draft_modified": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the draft version was last modified"
+              },
+              "created": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the dandiset was created"
+              },
+              "modified": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the dandiset was last modified"
+              },
+              "contact_person": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "star_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "embargo_status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the data can be downloaded: 'OPEN', 'EMBARGOED' or 'UNEMBARGOING'. NOT the same as `status`, which is the metadata's validation state -- an embargoed dandiset is listed with status 'Valid' and its files still refuse to download."
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"query": "mouse visual cortex", "limit": 5},
-      {"query": "patch-seq", "limit": 5}
+      {
+        "query": "mouse visual cortex",
+        "limit": 5
+      },
+      {
+        "query": "patch-seq",
+        "limit": 5
+      }
     ]
   },
   {
@@ -65,7 +167,9 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["dandiset_id"],
+      "required": [
+        "dandiset_id"
+      ],
       "properties": {
         "dandiset_id": {
           "type": "string",
@@ -83,30 +187,100 @@
           },
           "type": "object",
           "properties": {
-            "dandiset_id": {"type": ["string", "null"]},
-            "name": {"type": ["string", "null"]},
-            "description": {"type": ["string", "null"]},
-            "license": {"type": "array", "items": {"type": "string"}},
-            "keywords": {"type": "array", "items": {"type": "string"}},
-            "species": {"type": "array", "items": {"type": "string"}},
-            "data_standard": {"type": "array", "items": {"type": "string"}},
-            "number_of_subjects": {"type": ["integer", "null"]},
-            "number_of_files": {"type": ["integer", "null"]},
-            "size_bytes": {"type": ["integer", "null"]},
-            "date_created": {"type": ["string", "null"]},
-            "citation": {"type": ["string", "null"]}
+            "dandiset_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "license": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "keywords": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "species": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "data_standard": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "number_of_subjects": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "number_of_files": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "size_bytes": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "date_created": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "citation": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"dandiset_id": "000020"},
-      {"dandiset_id": "000037"}
+      {
+        "dandiset_id": "000020"
+      },
+      {
+        "dandiset_id": "000037"
+      }
     ]
   },
   {
@@ -118,14 +292,19 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["dandiset_id"],
+      "required": [
+        "dandiset_id"
+      ],
       "properties": {
         "dandiset_id": {
           "type": "string",
           "description": "DANDI dataset identifier, e.g. '000020'."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Max assets to return, 1-200. Default 50."
         }
       }
@@ -137,23 +316,55 @@
           "items": {
             "type": "object",
             "properties": {
-              "path": {"type": ["string", "null"]},
-              "size_bytes": {"type": ["integer", "null"]},
-              "asset_id": {"type": ["string", "null"]},
-              "created": {"type": ["string", "null"]}
+              "path": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "size_bytes": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "asset_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "created": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"dandiset_id": "000020", "limit": 5},
-      {"dandiset_id": "000037", "limit": 5}
+      {
+        "dandiset_id": "000020",
+        "limit": 5
+      },
+      {
+        "dandiset_id": "000037",
+        "limit": 5
+      }
     ]
   }
 ]

@@ -110,6 +110,13 @@ class DANDITool(BaseTool):
                     "asset_count": version.get("asset_count"),
                     "size_bytes": version.get("size"),
                     "status": version.get("status"),
+                    # Whether the data can actually be read. `status` above is
+                    # the metadata's VALIDATION state -- "Valid" means the
+                    # record is well-formed, not that the recordings are
+                    # downloadable. An embargoed dandiset is listed like any
+                    # other and its files refuse to download, so without this
+                    # the search cannot distinguish them.
+                    "embargo_status": item.get("embargo_status"),
                     # Which version the four fields above describe. DANDI
                     # publishes snapshots, so a published version's counts can
                     # be years behind the draft that get_dataset and
@@ -143,7 +150,9 @@ class DANDITool(BaseTool):
                 "expect, e.g. '000020'. name, asset_count, size_bytes and "
                 "status come from the version named in 'version' - the most "
                 "recent published one when there is one - while get_dataset "
-                "and list_assets read the draft; compare draft_asset_count.",
+                "and list_assets read the draft; compare draft_asset_count. "
+                "'status' is the metadata's validation state, NOT whether "
+                "the data can be downloaded: read 'embargo_status' for that.",
                 "source": "DANDI Archive",
             },
         }
@@ -179,9 +188,7 @@ class DANDITool(BaseTool):
                 "description": payload.get("description"),
                 "license": payload.get("license") or [],
                 "keywords": payload.get("keywords") or [],
-                "species": [
-                    s.get("name") for s in assets_summary.get("species") or []
-                ],
+                "species": [s.get("name") for s in assets_summary.get("species") or []],
                 "data_standard": [
                     s.get("name") for s in assets_summary.get("dataStandard") or []
                 ],

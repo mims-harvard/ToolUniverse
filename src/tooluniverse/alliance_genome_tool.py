@@ -1487,10 +1487,19 @@ class AllianceGenomeTool(BaseTool):
             disease_models = r.get("diseaseModels", [])
             diseases = []
             for dm in disease_models:
+                # Alliance nests the disease under two keys and fills only
+                # one. On every one of the 25 dpp model rows measured, the
+                # `disease` object is EMPTY and the name is in `diseaseModel`:
+                #     {"disease": {}, "associationType": "IS_MODEL_OF",
+                #      "diseaseModel": "amyotrophic lateral sclerosis type 15"}
+                # Reading `disease.name` alone returned null for the one thing
+                # this tool's description promises, on a row that otherwise
+                # looked complete.
+                disease = dm.get("disease") or {}
                 diseases.append(
                     {
-                        "disease_name": dm.get("disease", {}).get("name"),
-                        "disease_id": dm.get("disease", {}).get("curie"),
+                        "disease_name": disease.get("name") or dm.get("diseaseModel"),
+                        "disease_id": disease.get("curie"),
                         "association_type": dm.get("associationType"),
                     }
                 )
@@ -1504,6 +1513,17 @@ class AllianceGenomeTool(BaseTool):
                     "gene_id": gene.get("primaryExternalId"),
                     "data_provider": r.get("dataProvider"),
                     "diseases": diseases,
+                    # In which directions the model's phenotype is modified by
+                    # other alleles. Both 'ameliorated_by' and
+                    # 'exacerbated_by' are present on all 25 measured rows,
+                    # and they are what a modifier screen on the model looks
+                    # for.
+                    "modifier_relationship_types": r.get("modifierRelationshipTypes"),
+                    # Whether the model carries disease annotations, phenotype
+                    # annotations, or both. A model with no disease annotation
+                    # is in this list for its phenotype alone.
+                    "has_disease_annotations": r.get("hasDiseaseAnnotations"),
+                    "has_phenotype_annotations": r.get("hasPhenotypeAnnotations"),
                 }
             )
 

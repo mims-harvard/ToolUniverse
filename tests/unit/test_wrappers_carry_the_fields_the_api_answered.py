@@ -11219,3 +11219,57 @@ def test_a_canonical_isoform_is_the_one_coordinates_refer_to():
     alt = _config("UniProt_get_alternative_names_by_accession")["return_schema"]
     branch = (alt.get("oneOf") or [alt])[0]
     assert "RECOMMENDED name is not in this list" in branch["description"]
+
+
+def test_a_disease_model_names_the_disease_it_models():
+    """disease_name was null on every row of a tool that promises disease names.
+
+    `FlyBase_get_gene_disease_models` says it "Returns genotype-based disease
+    models with associated human disease names and Disease Ontology IDs".
+    Measured on FB:FBgn0000490 (dpp) 2026-11-11 it returned disease_name null
+    and disease_id null on every row, because Alliance nests the disease under
+    two keys and fills only one: across 25 model rows the `disease` object is
+    EMPTY and the name sits in `diseaseModel`.
+
+        {"disease": {}, "associationType": "IS_MODEL_OF",
+         "diseaseModel": "amyotrophic lateral sclerosis type 15"}
+
+    The row still looked complete -- a model id, a genotype and an association
+    type beside two nulls -- which is why nothing flagged it.
+    """
+    row = _row_props(_config("FlyBase_get_gene_disease_models")["return_schema"])
+    disease = row["diseases"]["items"]["properties"]
+    assert "diseaseModel" in disease["disease_name"]["description"], (
+        "the description must say where Alliance actually puts the name"
+    )
+    assert "empty" in disease["disease_name"]["description"].lower()
+    assert (
+        "Null on every row measured" in disease["disease_id"]["description"]
+        or "NULL on every row measured" in disease["disease_id"]["description"]
+    )
+    for name in (
+        "modifier_relationship_types",
+        "has_disease_annotations",
+        "has_phenotype_annotations",
+    ):
+        assert name in row, f"{name} is answered upstream and not returned"
+    assert "modifier screen" in row["modifier_relationship_types"]["description"]
+
+
+def test_a_dandi_search_says_whether_the_data_can_be_read():
+    """status "Valid" is about the metadata, not about access.
+
+    `DANDI_search_datasets` returned `status`, which on every row of the
+    measured search reads "Valid" -- the validation state of the dandiset's
+    METADATA. DANDI's own embargo_status is what says whether the recordings
+    can be downloaded, and it was dropped: an embargoed dandiset appeared in
+    the results exactly like an open one, with status "Valid", and its files
+    refuse to download.
+    """
+    row = _row_props(_config("DANDI_search_datasets")["return_schema"])
+    assert "embargo_status" in row, (
+        "embargo_status is answered upstream and not returned"
+    )
+    desc = row["embargo_status"]["description"]
+    assert "EMBARGOED" in desc
+    assert "NOT the same as `status`" in desc

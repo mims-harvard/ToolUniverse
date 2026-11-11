@@ -1187,13 +1187,15 @@
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "The human disease the genotype models, e.g. 'amyotrophic lateral sclerosis type 15'. Alliance supplies this under `diseaseModel` rather than inside its `disease` object, which is empty on every row measured."
                     },
                     "disease_id": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "The disease's DO curie, where Alliance populates its `disease` object. NULL on every row measured, because that object is empty and only the name is sent -- so the disease must be resolved from the name."
                     },
                     "association_type": {
                       "type": [
@@ -1203,6 +1205,34 @@
                     }
                   }
                 }
+              },
+              "modifier_relationship_types": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "In which directions the model's phenotype is modified by other alleles -- 'ameliorated_by', 'exacerbated_by', or both. Present on all 25 rows measured, and the thing a modifier screen on the model is looking for.",
+                "items": {
+                  "type": [
+                    "string",
+                    "object"
+                  ],
+                  "description": "One modifier relationship type."
+                }
+              },
+              "has_disease_annotations": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the model carries disease annotations. A model listed with this false is here for its phenotype annotations alone."
+              },
+              "has_phenotype_annotations": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the model carries phenotype annotations."
               }
             }
           }
