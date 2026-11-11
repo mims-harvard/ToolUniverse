@@ -48,7 +48,115 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "peptide": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The peptide scored."
+              },
+              "allele": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The MHC allele it was scored against. A prediction is for ONE allele; a peptide that binds HLA-A*02:01 says nothing about another."
+              },
+              "start": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Where the peptide starts in the submitted sequence, 1-based."
+              },
+              "end": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Where it ends, inclusive."
+              },
+              "length": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Its length in residues."
+              },
+              "sequence_number": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Which submitted sequence it came from, 1-based. The only field that says which protein a peptide belongs to when several were submitted."
+              },
+              "peptide_index": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "The peptide's 1-based rank within that sequence."
+              },
+              "percentile_rank": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The percentile rank the tool reports uniformly across methods -- smaller is a stronger binder. Use this, not `score`, to compare across methods."
+              },
+              "median_percentile": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The median percentile across every method run. With one method it equals that method's percentile; with several it is the consensus."
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The method's own score. Its scale and direction depend on the method, so it is NOT comparable between methods -- the percentile is."
+              },
+              "netmhcpan_el_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "NetMHCpan eluted-ligand score, 0 to 1, higher being a stronger predicted ligand. EL is trained on MASS-SPECTROMETRY eluted ligands, so it predicts PRESENTATION rather than binding affinity."
+              },
+              "netmhcpan_el_percentile": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "That score as a percentile against random peptides -- smaller is better. The comparable form."
+              },
+              "netmhcpan_el_core": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The 9-residue core NetMHCpan aligned into the groove."
+              },
+              "netmhcpan_el_icore": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The interaction core: the groove core plus any bulging residues, i.e. what a T-cell receptor would see. Differs from `core` only for peptides longer than the groove."
+              }
+            }
+          }
         },
         {
           "type": "object",
@@ -109,7 +217,108 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "peptide": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The peptide scored."
+              },
+              "allele": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The MHC allele it was scored against. A prediction is for ONE allele; a peptide that binds HLA-A*02:01 says nothing about another."
+              },
+              "start": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Where the peptide starts in the submitted sequence, 1-based."
+              },
+              "end": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Where it ends, inclusive."
+              },
+              "length": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Its length in residues."
+              },
+              "sequence_number": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Which submitted sequence it came from, 1-based. The only field that says which protein a peptide belongs to when several were submitted."
+              },
+              "peptide_index": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "The peptide's 1-based rank within that sequence."
+              },
+              "percentile_rank": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The percentile rank the tool reports uniformly across methods -- smaller is a stronger binder. Use this, not `score`, to compare across methods."
+              },
+              "median_percentile": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The median percentile across every method run. With one method it equals that method's percentile; with several it is the consensus."
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The method's own score. Its scale and direction depend on the method, so it is NOT comparable between methods -- the percentile is."
+              },
+              "netmhciipan_el_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "NetMHCIIpan eluted-ligand score, 0 to 1. Class II peptides are longer and the groove is open at both ends, so the binding core matters more here than the peptide boundaries do."
+              },
+              "netmhciipan_el_percentile": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "That score as a percentile -- smaller is better."
+              },
+              "netmhciipan_el_core": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The 9-residue binding core within the longer peptide. Two different peptides sharing a core are the same epitope presented with different flanks."
+              }
+            }
+          }
         },
         {
           "type": "object",

@@ -3428,8 +3428,152 @@
         "features": {
           "type": "array",
           "items": {
-            "type": "object"
-          }
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The feature type, 'EPITOPE'."
+              },
+              "epitopeSequence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The epitope's own sequence, e.g. 'ELPPGSTKR'."
+              },
+              "begin": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Start position in the protein, 1-based."
+              },
+              "end": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "End position, inclusive."
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What the epitope is, in words, e.g. 'ELPPGSTKR is a linear peptidic epitope ...'. States whether it is LINEAR or conformational, which decides whether the coordinates describe a contiguous stretch at all."
+              },
+              "matchScore": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "How well the epitope sequence matches this protein, as a percentage. Below 100 means the epitope was reported on a variant or a related protein and mapped here."
+              },
+              "evidences": {
+                "type": "array",
+                "description": "What the epitope annotation rests on. ECO:0000213 is a combinatorial-evidence code used for epitope mapping, so a single source is a single experiment.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The ECO evidence code."
+                    },
+                    "source": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "Where it came from.",
+                      "properties": {
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The source database, e.g. 'PubMed'."
+                        },
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its identifier there."
+                        },
+                        "url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "A link to it."
+                        },
+                        "alternativeUrl": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "A second link to the same record."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xrefs": {
+                "type": "array",
+                "description": "Where the epitope is held, normally IEDB.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The database, e.g. 'IEDB'."
+                    },
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its identifier there."
+                    },
+                    "url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "A link to it."
+                    },
+                    "properties": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "Extra fields for the cross-reference, keyed by what the database supplies.",
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "That property's value."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "description": "One entry per mapped epitope."
         },
         "sequence": {
           "type": [

@@ -272,7 +272,41 @@
     },
     "return_schema": {
       "type": "object",
-      "description": "Details of the single matching interaction record"
+      "description": "Details of the single matching interaction record",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "IntAct's identifier for the interaction, built from the two interactor accessions, e.g. 'EBI-714308-EBI-366083'."
+        },
+        "interaction_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The interaction's name, normally the two participants joined, e.g. 'TP53TG1-TP53'."
+        },
+        "interactor_descriptions": {
+          "type": "array",
+          "description": "The participants as IntAct describes them.",
+          "items": {
+            "type": [
+              "string",
+              "object"
+            ],
+            "description": "One participant."
+          }
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which IntAct dataset the record came from."
+        }
+      }
     },
     "test_examples": [
       {
@@ -459,7 +493,41 @@
       "type": "array",
       "description": "List of interactions for the organism",
       "items": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "IntAct's identifier for the interaction."
+          },
+          "interaction_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Its name."
+          },
+          "interactor_descriptions": {
+            "type": "array",
+            "description": "The participants as IntAct describes them.",
+            "items": {
+              "type": [
+                "string",
+                "object"
+              ],
+              "description": "One participant."
+            }
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Which IntAct dataset it came from."
+          }
+        }
       }
     },
     "test_examples": [

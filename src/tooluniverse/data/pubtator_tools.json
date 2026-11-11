@@ -2,7 +2,7 @@
   {
     "type": "PubTatorTool",
     "name": "PubTator3_EntityAutocomplete",
-    "description": "Provides suggestions for the best\u2010matching standardized PubTator IDs for a partial biomedical term (gene, disease, chemical, or variant). Use this tool first to convert free\u2010text names into the stable @IDs required by the other PubTator APIs.",
+    "description": "Provides suggestions for the best‐matching standardized PubTator IDs for a partial biomedical term (gene, disease, chemical, or variant). Use this tool first to convert free‐text names into the stable @IDs required by the other PubTator APIs.",
     "endpoint_path": "/entity/autocomplete/",
     "method": "GET",
     "param_map": {
@@ -15,7 +15,7 @@
       "properties": {
         "text": {
           "type": "string",
-          "description": "A few characters or the full name of the biomedical concept you are trying to look up (e.g. \u201cBRAF V6\u201d)."
+          "description": "A few characters or the full name of the biomedical concept you are trying to look up (e.g. “BRAF V6”)."
         },
         "entity_type": {
           "type": "string",
@@ -41,13 +41,68 @@
       }
     ],
     "return_schema": {
-      "type": "array"
+      "type": "array",
+      "description": "Matching entities, best match first.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "PubTator's own entity id, e.g. '@GENE_BRCA1'. This is what a PubTator search must be given, not the gene symbol."
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The entity's name, e.g. 'BRCA1'."
+          },
+          "biotype": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "What kind of entity it is, e.g. 'gene', 'disease', 'chemical'. The same text can autocomplete to several biotypes."
+          },
+          "db": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The source database for the identifier, e.g. 'ncbi_gene'."
+          },
+          "db_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The identifier in that database, e.g. '672'."
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "What distinguishes this entity from the others, e.g. 'All Species'. This is what separates the human gene from its orthologues in the list."
+          },
+          "match": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Why it matched, with the matched span marked, e.g. 'Matched on name <m>BRCA1</m>'. A match on a synonym rather than the name is a weaker hit and this is where that shows."
+          }
+        }
+      }
     }
   },
   {
     "type": "PubTatorTool",
     "name": "PubTator3_LiteratureSearch",
-    "description": "Find PubMed articles that match a keyword, a PubTator entity ID (e.g. \u201c@GENE_BRAF\u201d), or an entity-to-entity relation expression (e.g. \u201crelations:treat|@CHEMICAL_Doxorubicin|@DISEASE_Neoplasms\u201d).",
+    "description": "Find PubMed articles that match a keyword, a PubTator entity ID (e.g. “@GENE_BRAF”), or an entity-to-entity relation expression (e.g. “relations:treat|@CHEMICAL_Doxorubicin|@DISEASE_Neoplasms”).",
     "endpoint_path": "/search/",
     "method": "GET",
     "param_map": {

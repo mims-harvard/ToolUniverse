@@ -11128,3 +11128,94 @@ def test_a_reply_that_is_a_list_of_strings_is_not_declared_as_an_object():
             or [_config("NCBI_get_sequence")["return_schema"]]
         )[0]["description"]
     )
+
+
+def test_a_prediction_percentile_is_comparable_and_a_score_is_not():
+    """Two IEDB tools became measurable only on a retry.
+
+    Their first measurement failed -- a transient upstream error -- so they
+    were never in the pool and their empty success branch went unexamined.
+    Both return a method-specific `score` beside a uniform
+    `percentile_rank`: the score's scale and direction depend on the method,
+    so only the percentile compares across methods. Class II adds a binding
+    `core` within the longer peptide, which is what makes two peptides with
+    different flanks the same epitope.
+    """
+    for tool, core in (
+        ("IEDB_predict_mhci_binding", "netmhcpan_el_core"),
+        ("IEDB_predict_mhcii_binding", "netmhciipan_el_core"),
+    ):
+        row = _row_props(_config(tool)["return_schema"])
+        for name in (
+            "peptide",
+            "allele",
+            "percentile_rank",
+            "median_percentile",
+            "score",
+            "sequence_number",
+            core,
+        ):
+            assert name in row, f"{tool}: {name} is returned and not declared"
+        assert "NOT comparable between methods" in row["score"]["description"]
+        assert "ONE allele" in row["allele"]["description"]
+    row2 = _row_props(_config("IEDB_predict_mhcii_binding")["return_schema"])
+    assert "same epitope" in row2["netmhciipan_el_core"]["description"]
+
+
+def test_an_epitope_says_how_well_it_matched_the_protein():
+    """matchScore below 100 means the epitope was mapped, not observed here.
+
+    `proteins_api_get_epitopes` returns matchScore, and a value under 100
+    means the epitope was reported on a variant or a related protein and
+    then mapped onto this sequence. Its `description` also states whether
+    the epitope is LINEAR or conformational, which decides whether begin/end
+    describe a contiguous stretch at all.
+    """
+    props = _success_props(_config("proteins_api_get_epitopes")["return_schema"])
+    feature = props["features"]["items"]["properties"]
+    for name in (
+        "epitopeSequence",
+        "begin",
+        "end",
+        "matchScore",
+        "description",
+        "evidences",
+        "xrefs",
+    ):
+        assert name in feature, f"features[].{name} is returned and not declared"
+    assert "mapped" in feature["matchScore"]["description"]
+    assert "LINEAR" in feature["description"]["description"]
+    assert "sequenceChecksum" in props
+    assert "checksum" in props["sequenceChecksum"]["description"]
+
+
+def test_an_autocomplete_returns_the_id_the_search_needs():
+    """'@GENE_BRCA1' is what PubTator takes, not 'BRCA1'.
+
+    `PubTator3_EntityAutocomplete` declared `{"type": "array"}` and nothing
+    about its elements. They carry the PubTator entity id a search must be
+    given, the biotype -- the same text autocompletes to several -- and the
+    `description` that separates the human gene from its orthologues.
+    """
+    row = _row_props(_config("PubTator3_EntityAutocomplete")["return_schema"])
+    for name in ("_id", "name", "biotype", "db", "db_id", "description", "match"):
+        assert name in row, f"{name} is returned and not declared"
+    assert "@GENE_BRCA1" in row["_id"]["description"]
+    assert "orthologues" in row["description"]["description"]
+
+
+def test_a_canonical_isoform_is_the_one_coordinates_refer_to():
+    """P04637-1 is the canonical isoform; the others' coordinates do not line up.
+
+    `UniProt_get_isoform_ids_by_accession` answers a bare list of isoform
+    accessions, and which of them is canonical decides what any coordinate
+    from the parent accession means. Its sibling answers the ALTERNATIVE
+    names, which do not include the recommended one -- so a caller looking
+    for the protein's main name will not find it there.
+    """
+    iso = _config("UniProt_get_isoform_ids_by_accession")["return_schema"]
+    branch = (iso.get("oneOf") or [iso])[0]
+    assert "CANONICAL" in branch["description"]
+    alt = _config("UniProt_get_alternative_names_by_accession")["return_schema"]
+    branch = (alt.get("oneOf") or [alt])[0]
+    assert "RECOMMENDED name is not in this list" in branch["description"]
