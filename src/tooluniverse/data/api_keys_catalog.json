@@ -699,7 +699,7 @@
     "requirement": "optional",
     "type": "secret",
     "domain": "Other",
-    "register_url": "https://specstream.ai/search-api",
+    "register_url": "https://specstream.ai/signup?src=tooluniverse",
     "purpose": "Authenticate the backend='specstream' option (SpecStream Search API, https://api.specstream.ai/v1/web-search). Searches are billed against the account's balance.",
     "without": "web_search still works via DDGS/Parallel/DuckDuckGo-HTML/Wikipedia; backend='specstream' falls back to the normal DDGS chain without it.",
     "used_by": [

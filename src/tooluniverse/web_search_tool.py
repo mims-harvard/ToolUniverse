@@ -609,7 +609,7 @@ print(json.dumps(results))
         if not api_key:
             raise RuntimeError(
                 "SPECSTREAM_API_KEY environment variable is not set. "
-                "Request a key at https://specstream.ai/search-api."
+                "Request a key at https://specstream.ai/signup?src=tooluniverse."
             )
 
         params: Dict[str, Any] = {
