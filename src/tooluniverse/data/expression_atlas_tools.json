@@ -134,6 +134,13 @@
             },
             "result_set_complete": {
               "type": "boolean"
+            },
+            "page_note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Present ONLY when this page does not reach the end of the list, e.g. 'Showing 1-50 of 123. Re-run with offset=50 for the next page, or raise limit (max 500).' Its ABSENCE is the signal that the page is complete, so a caller that ignores it silently reports the first 50 of 123 experiments as if they were all of them."
             }
           },
           "required": [

@@ -181,6 +181,13 @@
                   "integer",
                   "null"
                 ]
+              },
+              "coordinate_system": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which coordinate convention the positions on this transcript allele use. Measured as '0-based interbase (half-open)' on all 65 transcript alleles of the example -- NOT the 1-based inclusive convention HGVS and genome browsers use, so a position copied out without converting is off by one. Its sibling ClinGenAllele_get_allele returns the same field."
               }
             }
           }

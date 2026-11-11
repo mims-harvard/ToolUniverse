@@ -71,6 +71,69 @@
             },
             "results": {
               "type": "array"
+            },
+            "accessible_results": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many of the matches OpenAIRE will let a caller page through: min(total_results, 10000). Measured 10000 for 'machine learning'. THIS, NOT total_results, is the size of the set that can actually be retrieved."
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when another page exists WITHIN THE ACCESSIBLE WINDOW. It goes false at the 10,000-record ceiling even when more matches exist, so false does not mean the result set was exhausted -- `upstream_truncated` is what says that."
+            },
+            "next_page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The page number to ask for next, or NULL when has_more is false. Null here plus upstream_truncated true means the rest of the matches cannot be reached at all."
+            },
+            "page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Which page this is, as OpenAIRE's own response header reports it -- not necessarily the page asked for."
+            },
+            "page_size": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records a page holds, again as the header reports it. It can differ from the max_results asked for, so paging arithmetic must use THIS number."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records are in `results` on this page. Measured 2 against total_results in the tens of thousands."
+            },
+            "total_results_is_exact": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether total_results is an exact count. IT IS HARD-CODED TRUE by this wrapper and has never been anything else, so it carries no information about the reply it appears in; it is declared here because a flag that cannot be false is worse than no flag when it is read as one that can."
+            },
+            "upstream_truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when total_results exceeds accessible_results -- more matches exist than the API will ever serve for this query. Measured TRUE for 'machine learning'. A count taken from total_results and a set built by paging will then disagree, and no amount of paging closes the gap; narrow the query instead."
+            },
+            "warning": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Present ONLY when OpenAIRE reports more than 10,000 matches: the human-readable form of upstream_truncated, saying that the API serves only the first 10,000 results for a query. It did not appear in every measured call, because whether it appears depends on the query's match count and not on the request."
             }
           },
           "required": [

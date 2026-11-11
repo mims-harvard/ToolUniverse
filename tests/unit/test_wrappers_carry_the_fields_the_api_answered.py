@@ -11607,3 +11607,99 @@ def test_a_designed_sequence_carries_the_baseline_it_is_judged_against():
         "HIGH WATER MARK FOR THE WORKER'S WHOLE LIFE"
         in props["peak_rss_gib"]["description"]
     ), "a peak that never falls back must not be read as this request's cost"
+
+
+def test_a_search_says_how_much_of_the_match_set_it_can_ever_reach():
+    """total_results in the tens of thousands, 10,000 of them reachable.
+
+    `OpenAIRE_search_publications` computes accessible_results as
+    min(total_results, 10000) and upstream_truncated as
+    total_results > accessible_results. Measured on "machine learning" both
+    fire: accessible_results 10000, upstream_truncated True. Neither was
+    declared, nor was has_more -- which goes false at that ceiling even though
+    matches remain, so reading it as "the set is exhausted" is wrong exactly
+    when it matters.
+
+    total_results_is_exact is declared here for the opposite reason: the
+    wrapper hard-codes it True and has never set it otherwise, so it carries
+    no information about the reply it appears in. A flag that cannot be false
+    is worse than no flag when a caller reads it as one that can.
+    """
+    props = _success_branch(_config("OpenAIRE_search_publications")["return_schema"])[
+        "properties"
+    ]
+    for name in (
+        "accessible_results",
+        "upstream_truncated",
+        "has_more",
+        "next_page",
+        "returned",
+        "page_size",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+    assert "THIS, NOT total_results" in props["accessible_results"]["description"]
+    assert (
+        "no amount of paging closes the gap"
+        in props["upstream_truncated"]["description"]
+    )
+    assert (
+        "does not mean the result set was exhausted" in props["has_more"]["description"]
+    )
+    assert "IT IS HARD-CODED TRUE" in props["total_results_is_exact"]["description"]
+    # `warning` appeared on a later call and not an earlier one: whether it is
+    # sent depends on the query's match count, not on the request. A field a
+    # tool returns only sometimes still has to be declared, and its
+    # description has to say what decides it.
+    assert "warning" in props
+    assert "Present ONLY when" in props["warning"]["description"]
+
+
+def test_a_gene_lookup_says_it_returned_no_scores():
+    """The one field saying the tool did not answer what its name suggests.
+
+    `EVE_get_gene_info` returns Ensembl's description and biotype and a fixed
+    eve_note: the scores are not in this reply, they come from
+    get_variant_score, and EVE covers roughly 3,000 genes. None of the three
+    was declared, so the schema described a tool that looked like it returned
+    EVE scores for a gene.
+    """
+    data = _at(_config("EVE_get_gene_info")["return_schema"], ".data")["properties"]
+    for name in ("description", "biotype", "eve_note"):
+        assert name in data, f"{name} is returned and not declared"
+    assert "THIS CALL RETURNS NO EVE SCORES" in data["eve_note"]["description"]
+    assert "no EVE score exists for the gene" in data["biotype"]["description"]
+
+
+def test_both_clingen_allele_tools_name_their_coordinate_convention():
+    """One of a pair was declared and its sibling was not.
+
+    coordinate_system reads "0-based interbase (half-open)" on all 65
+    transcript alleles of both tools' examples. `ClinGenAllele_get_allele` was
+    declared in an earlier commit of this branch from a pool that did not
+    contain `ClinGenAllele_lookup_hgvs`, which returns the same field from the
+    same upstream.
+    """
+    for tool in ("ClinGenAllele_get_allele", "ClinGenAllele_lookup_hgvs"):
+        ta = _at(_config(tool)["return_schema"], ".transcript_alleles[]")["properties"]
+        assert "coordinate_system" in ta, f"{tool} does not declare it"
+        desc = ta["coordinate_system"]["description"]
+        assert "0-based interbase" in desc
+        assert "off by one" in desc
+
+
+def test_a_page_note_is_absent_when_the_page_is_complete():
+    """50 of 123 experiments, and the field saying so was undeclared.
+
+    `ExpressionAtlas_get_baseline` adds page_note only when the page stops
+    short of the end -- "Showing 1-50 of 123. Re-run with offset=50 ...". Its
+    ABSENCE is the signal that the page is complete, which is the harder half
+    to read and the half a schema has to state, because a caller that ignores
+    it reports the first 50 as though they were all 123.
+    """
+    props = _success_branch(_config("ExpressionAtlas_get_baseline")["return_schema"])[
+        "properties"
+    ]
+    assert "page_note" in props
+    desc = props["page_note"]["description"]
+    assert "Present ONLY when" in desc
+    assert "Its ABSENCE is the signal" in desc

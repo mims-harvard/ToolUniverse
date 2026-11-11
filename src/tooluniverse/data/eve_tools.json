@@ -145,6 +145,27 @@
             },
             "eve_website": {
               "type": "string"
+            },
+            "biotype": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The Ensembl biotype, e.g. 'protein_coding'. EVE models protein substitutions, so a non-coding biotype means no EVE score exists for the gene at all."
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The gene's description from Ensembl, e.g. 'tumor protein p53 [Source:HGNC Symbol;Acc:HGNC:11998]'."
+            },
+            "eve_note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "A fixed note saying THIS CALL RETURNS NO EVE SCORES and how to get them: query specific variants with get_variant_score, and EVE covers roughly 3,000 disease-related genes. It is the same string on every reply, and it is the only thing in the reply that says the tool did not answer what its name suggests."
             }
           },
           "description": "null when the record does not exist. The query was well-formed and the upstream answered 'no such record', which this tool reports as a successful empty result rather than an error; the reason is in `message`."
