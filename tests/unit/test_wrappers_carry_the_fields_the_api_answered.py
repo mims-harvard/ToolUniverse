@@ -10542,3 +10542,88 @@ def test_a_chembl_activity_value_is_meaningless_without_its_relation():
     assert "INACTIVE" in props["standard_relation"]["description"]
     assert "CENSORED" in props["relation"]["description"]
     assert "comparable" in props["standard_flag"]["description"]
+
+
+# ---------------------------------------------------------------------------
+# axis-1: the upstream answered a field and the wrapper never passed it on.
+# Both of these were confirmed against the live upstream before anything was
+# changed -- the detector is low precision by construction, and three other
+# candidates checked the same way turned out to be false positives or already
+# fixed.
+# ---------------------------------------------------------------------------
+
+
+def test_a_transplanted_ligand_can_be_judged_for_clashes():
+    """best_local_rmsd 0.049 on a transplant whose only atom clashes.
+
+    `AlphaFill_get_transplants` aggregated by compound, kept the lowest local
+    RMSD and discarded everything else the hit carried. Measured on P00520
+    2026-11-11, its top row is a sodium ion with best_local_rmsd 0.049 -- which
+    reads as a perfect fit -- from a homolog of 46% sequence identity, at a
+    global RMSD of 3.90 angstroms, with clash_count 1 of transplant_atom_count
+    1. AlphaFill judges a transplant on those four numbers together and the
+    tool returned one of them.
+
+    They belong to a single best-fitting instance, so they are returned with it
+    rather than summarised separately, which would describe a transplant that
+    does not exist.
+    """
+    rs = _config("AlphaFill_get_transplants")["return_schema"]
+    props = _success_props(rs)
+    row = props["transplants"]["items"]["properties"]
+    assert "best_transplant" in row, (
+        "the transplant's own validation set is not declared"
+    )
+    best = row["best_transplant"]["properties"]
+    for name in (
+        "sequence_identity",
+        "alignment_length",
+        "global_rmsd",
+        "clash_score",
+        "clash_count",
+        "transplant_atom_count",
+        "pae_mean",
+        "source_pdb_id",
+    ):
+        assert name in best, f"{name} is answered upstream and not returned"
+    assert "clash" in best["clash_score"]["description"]
+    assert "FRACTION" in best["sequence_identity"]["description"]
+    # The success branch declared nothing at all before this -- a bare
+    # {"type": "object"} -- which the field audit reports as a single `.*` and
+    # then filters out, so the tool scored zero gaps while documenting zero
+    # fields.
+    for name in ("uniprot", "alphafill_version", "n_homolog_hits", "transplants"):
+        assert name in props, f"{name} is returned and not declared"
+
+
+def test_an_interaction_says_how_it_was_detected():
+    """A two-hybrid hit and a co-immunoprecipitation are not the same evidence.
+
+    `Alliance_get_molecular_interactions` built rows with seven keys while its
+    own return_schema declared thirteen, and emitted `references` as bare
+    strings where the schema declares objects carrying the PubMed id and the
+    citation. A sibling method in the same class already built the declared
+    shape.
+
+    The upstream record for MGI:97490 also carries detectionMethod -- MI:0096
+    "pull down" -- which neither implementation carried. Each MI term is
+    returned as {id, name}: the curie is stable across ontology releases and
+    the label is not.
+    """
+    row = _row_props(_config("Alliance_get_molecular_interactions")["return_schema"])
+    for name in (
+        "detection_method",
+        "interaction_source",
+        "subject_role",
+        "interactor_role",
+        "subject_type",
+        "interactor_type",
+        "relation",
+        "references",
+    ):
+        assert name in row, f"{name} is answered upstream and not returned"
+    assert "MI:0096" in row["detection_method"]["description"]
+    assert set(row["detection_method"]["properties"]) >= {"id", "name"}
+    ref = row["references"]["items"]["properties"]
+    for name in ("agr_curie", "pubmed_id", "mod_id", "citation", "cross_references"):
+        assert name in ref, f"references[].{name} is declared nowhere"

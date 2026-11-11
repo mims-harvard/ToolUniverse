@@ -312,7 +312,9 @@ def _expression_pattern(pattern: Any) -> dict:
             "stage_terms": [],
         }
     where = pattern.get("whereExpressed") or {}
-    structure = (where.get("anatomicalStructure") or {}) if isinstance(where, dict) else {}
+    structure = (
+        (where.get("anatomicalStructure") or {}) if isinstance(where, dict) else {}
+    )
     when = pattern.get("whenExpressed") or {}
     stages = []
     if isinstance(when, dict):
@@ -1187,9 +1189,8 @@ class AllianceGenomeTool(BaseTool):
             orthologs.append(
                 {
                     "relationship": relationship,
-                    "is_paralogy": bool(paralogy) and not r.get(
-                        "geneToGeneOrthologyGenerated"
-                    ),
+                    "is_paralogy": bool(paralogy)
+                    and not r.get("geneToGeneOrthologyGenerated"),
                     # Present on a paralogy row, which reports sequence
                     # similarity rather than prediction methods.
                     "similarity": paralogy.get("similarity") if paralogy else None,
@@ -1715,10 +1716,6 @@ class AllianceGenomeTool(BaseTool):
             subject = gmi.get("geneAssociationSubject", {})
             obj = gmi.get("geneGeneAssociationObject", {}) or {}
             int_type = gmi.get("interactionType") or {}
-            references = []
-            for ev in gmi.get("evidence", []):
-                if isinstance(ev, dict):
-                    references.append(ev.get("pubModID") or ev.get("curie"))
             interactions.append(
                 {
                     "subject_gene_id": subject.get("primaryExternalId"),
@@ -1733,7 +1730,25 @@ class AllianceGenomeTool(BaseTool):
                     "interaction_type": int_type.get("name")
                     if isinstance(int_type, dict)
                     else None,
-                    "references": [r for r in references if r],
+                    "relation": (gmi.get("relation") or {}).get("name"),
+                    # Bait and prey. Which molecule was treated and which was
+                    # captured is the direction of the experiment, and a
+                    # pull-down reported without it names a pair only.
+                    "subject_role": _mi_term(gmi.get("interactorARole")),
+                    "interactor_role": _mi_term(gmi.get("interactorBRole")),
+                    "subject_type": _mi_term(gmi.get("interactorAType")),
+                    "interactor_type": _mi_term(gmi.get("interactorBType")),
+                    # How the interaction was detected -- MI:0096 "pull down",
+                    # MI:0018 "two hybrid", MI:0019 "coimmunoprecipitation".
+                    # This is what separates physical evidence from a screen
+                    # artefact, and it was the one field neither this method
+                    # nor its richer sibling carried.
+                    "detection_method": _mi_term(gmi.get("detectionMethod")),
+                    "interaction_source": _mi_term(gmi.get("interactionSource")),
+                    # The schema declares these as objects with the pubmed id
+                    # and the citation; the previous code emitted bare strings,
+                    # so a caller following the declaration found the wrong type.
+                    "references": _alliance_references(gmi.get("evidence")),
                 }
             )
 

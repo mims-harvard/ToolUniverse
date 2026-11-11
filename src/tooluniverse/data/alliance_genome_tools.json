@@ -1344,37 +1344,43 @@
                 "type": [
                   "string",
                   "null"
-                ]
+                ],
+                "description": "Alliance primary id of the gene that was queried, e.g. 'MGI:97490'."
               },
               "subject_symbol": {
                 "type": [
                   "string",
                   "null"
-                ]
+                ],
+                "description": "That gene's symbol, e.g. 'Pax6'."
               },
               "interactor_gene_id": {
                 "type": [
                   "string",
                   "null"
-                ]
+                ],
+                "description": "Alliance primary id of the interaction partner, e.g. 'HGNC:15476'."
               },
               "interactor_symbol": {
                 "type": [
                   "string",
                   "null"
-                ]
+                ],
+                "description": "The partner's symbol, e.g. 'DYNLL1'."
               },
               "interactor_species": {
                 "type": [
                   "string",
                   "null"
-                ]
+                ],
+                "description": "Species the partner belongs to, e.g. 'Homo sapiens'. A cross-species row is an interaction asserted between orthologues, not one observed in the queried organism."
               },
               "interaction_type": {
                 "type": [
                   "string",
                   "null"
-                ]
+                ],
+                "description": "The MI interaction type by name, e.g. 'direct interaction'. detection_method says how it was shown; this says what was shown."
               },
               "references": {
                 "type": "array",
@@ -1536,6 +1542,29 @@
                   }
                 },
                 "description": "The database that asserted the interaction, e.g. MI:0478 flybase"
+              },
+              "detection_method": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "How the interaction was detected, as {id, name} from the MI ontology -- e.g. MI:0096 'pull down', MI:0018 'two hybrid', MI:0019 'coimmunoprecipitation'. The method is what decides how much an interaction is worth: a two-hybrid hit and a co-immunoprecipitation are not the same evidence. Measured on every row of the Pax6 example.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The MI (Molecular Interaction ontology) curie, e.g. 'MI:0096'. Stable across releases; the name is not."
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The term's label, e.g. 'pull down'."
+                  }
+                }
               }
             }
           }
