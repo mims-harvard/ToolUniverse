@@ -3164,6 +3164,223 @@
             "null"
           ],
           "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
+        },
+        "activity_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "ChEMBL's id for this single measurement, e.g. 1139592. The key for the row, not for the compound or the assay."
+        },
+        "record_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "ChEMBL's id for the underlying extracted record, e.g. 206172. One record can give rise to several activities."
+        },
+        "molecule_chembl_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The compound measured, e.g. 'CHEMBL113081'."
+        },
+        "parent_molecule_chembl_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The parent compound, e.g. 'CHEMBL113081'. Differs from molecule_chembl_id when the measured entity is a salt or mixture, so two rows that look like different compounds can be the same parent."
+        },
+        "canonical_smiles": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Structure of the measured compound as SMILES."
+        },
+        "target_chembl_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The target the activity was measured against, e.g. 'CHEMBL1806'."
+        },
+        "target_pref_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "That target's preferred name, e.g. 'DNA topoisomerase 2-alpha'."
+        },
+        "target_organism": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Organism the target comes from, e.g. 'Homo sapiens'. A potency against the rodent orthologue is not interchangeable with the human one."
+        },
+        "target_tax_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "NCBI taxon id of that organism as a STRING, e.g. '9606'."
+        },
+        "assay_chembl_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The assay the measurement came from, e.g. 'CHEMBL663853'. Values from different assays are not directly comparable."
+        },
+        "assay_description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The assay in the depositor's words, e.g. 'Inhibitory concentration against human DNA topoisomerase II, alpha mediated relaxation of pBR322; no measurable activity'. Often the only place a caveat like 'no measurable activity' is recorded."
+        },
+        "assay_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ChEMBL assay class: 'B' binding, 'F' functional, 'A' ADMET, 'T' toxicity, 'P' physicochemical, 'U' unclassified. A binding IC50 and a functional one answer different questions."
+        },
+        "relation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The relation for the raw `value`, e.g. '>', '<', '=', '~'. Anything other than '=' means the measurement is CENSORED and the number is a bound, not a result."
+        },
+        "standard_relation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The relation for `standard_value`, e.g. '>'. The measured record reads standard_value 100000.0 nM with standard_relation '>', which means the compound was INACTIVE above 100 uM. Ignoring this field turns that into an IC50 of 100 uM -- the opposite conclusion -- and it is the single most important field in this reply."
+        },
+        "standard_value": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The measurement normalised to ChEMBL's standard units, as a STRING, e.g. '100000.0'. Meaningless without standard_relation and standard_units."
+        },
+        "standard_units": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Units of standard_value, e.g. 'nM'."
+        },
+        "standard_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The normalised endpoint, e.g. 'IC50', 'Ki', 'EC50'. Comparing an IC50 with a Ki across rows is a category error."
+        },
+        "standard_flag": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "1 when ChEMBL could normalise the measurement to its standard type and units, 0 when not. A 0 row's standard_value is not comparable with other rows."
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The endpoint as the depositor named it, e.g. 'IC50'. May differ from standard_type where ChEMBL mapped it."
+        },
+        "units": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The units as deposited, e.g. 'uM' -- note the measured row is 'uM' here and 'nM' in standard_units, a thousandfold difference between the two value fields."
+        },
+        "qudt_units": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The standard units as a QUDT URI, e.g. 'http://www.openphacts.org/units/Nanomolar'."
+        },
+        "uo_units": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The standard units as a Units Ontology term, e.g. 'UO_0000065'."
+        },
+        "potential_duplicate": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "1 when ChEMBL suspects the activity duplicates another row, 0 otherwise. Averaging without excluding these double-counts a single experiment."
+        },
+        "bao_endpoint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "BioAssay Ontology term for the endpoint, e.g. 'BAO_0000190'."
+        },
+        "bao_format": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "BioAssay Ontology term for the assay format, e.g. 'BAO_0000357'."
+        },
+        "bao_label": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "That format in words, e.g. 'single protein format'. A cell-based and a single-protein assay give different numbers for the same compound."
+        },
+        "document_chembl_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The source document, e.g. 'CHEMBL1137930'."
+        },
+        "document_journal": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Journal the measurement was published in, e.g. 'Bioorg Med Chem Lett'."
+        },
+        "document_year": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Year of publication, e.g. 2004."
+        },
+        "src_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Numeric id of the ChEMBL source the data came from, e.g. 1 for scientific literature. Deposited datasets carry other ids and different curation."
+        },
+        "data_validity_comment": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ChEMBL's flag that the value is suspect, e.g. 'Outside typical range' or 'Potential author error'. Null on the measured row, and a non-null value here is reason not to use the number."
         }
       }
     },

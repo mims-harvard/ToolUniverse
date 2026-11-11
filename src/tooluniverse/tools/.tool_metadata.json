@@ -208,7 +208,7 @@
   "ChEBI_get_ontology_children": "ea504c3f95df94e4a1b6d3e0780d768b",
   "ChEBI_get_ontology_parents": "0a469cee638a523080f2df22e4ee127e",
   "ChEBI_search": "e717be1a8a14a45411ebe49f2c6579e8",
-  "ChEMBL_get_activity": "071340694d5fa5b6a115f5623800c5f8",
+  "ChEMBL_get_activity": "6453f22ab7d1518c3052e8d7d8674c1f",
   "ChEMBL_get_assay": "89bae5ddd69f5916ea21844233236863",
   "ChEMBL_get_assay_activities": "5dcad33238a2462866ea7960f9d8e452",
   "ChEMBL_get_compound_record": "7097f88c3920e84f95623aac2d91252c",

@@ -10503,3 +10503,42 @@ def test_a_genebe_consequence_distinguishes_cdna_from_cds_coordinates():
     for name in ("cdna_start", "cds_start"):
         assert name in row, f"{name} is returned and not declared"
     assert "UTR" in row["cds_start"]["description"]
+
+
+def test_a_chembl_activity_value_is_meaningless_without_its_relation():
+    """standard_value 100000.0 nM with standard_relation ">" means INACTIVE.
+
+    `ChEMBL_get_activity` was blocked through two batches by an upstream HTTP
+    500 on its own test_example; measured once that cleared, it returns 31
+    undeclared fields. The one that changes conclusions is standard_relation:
+    the measured record is an assay whose description ends "no measurable
+    activity", carrying standard_value "100000.0" nM with standard_relation
+    ">". Read the value alone and the compound acquires an IC50 of 100 uM --
+    the opposite of what the experiment found.
+
+    standard_flag says whether the row can be compared with other rows at all,
+    potential_duplicate says whether averaging would count one experiment
+    twice, and data_validity_comment is where ChEMBL records that a value is
+    suspect. None of the four was declared.
+    """
+    props = _success_props(_config("ChEMBL_get_activity")["return_schema"])
+    for name in (
+        "standard_relation",
+        "standard_value",
+        "standard_units",
+        "standard_type",
+        "standard_flag",
+        "relation",
+        "potential_duplicate",
+        "data_validity_comment",
+        "assay_type",
+        "assay_description",
+        "target_organism",
+        "bao_label",
+        "document_year",
+        "src_id",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+    assert "INACTIVE" in props["standard_relation"]["description"]
+    assert "CENSORED" in props["relation"]["description"]
+    assert "comparable" in props["standard_flag"]["description"]
