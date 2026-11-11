@@ -235,7 +235,38 @@
       "description": "List of samples with their attributes",
       "items": {
         "type": "object",
-        "description": "Sample with key-value pairs of attributes"
+        "description": "Sample with key-value pairs of attributes",
+        "properties": {
+          "No": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "The sample's row number in the experiment."
+          },
+          "age": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Donor age as recorded, with its unit inline."
+          },
+          "tissue": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Tissue the sample came from."
+          },
+          "No. of Samples": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "How many samples the row stands for, as a STRING. The key contains both a full stop and spaces, so it has to be read by explicit name."
+          }
+        }
       }
     },
     "test_examples": [

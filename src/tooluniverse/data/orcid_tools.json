@@ -458,7 +458,266 @@
     "return_schema": {
       "type": "array",
       "items": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "put_code": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "ORCID's identifier for this work entry. Needed to update or delete it; not a work identifier."
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The work's title."
+          },
+          "journal_title": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The journal or venue."
+          },
+          "type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "What kind of work, e.g. 'journal-article'."
+          },
+          "publication_date": {
+            "type": [
+              "string",
+              "object",
+              "null"
+            ],
+            "description": "Publication date; ORCID's precision varies by record.",
+            "properties": {
+              "year": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The year.",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The year as a string, e.g. '2012'."
+                  }
+                }
+              },
+              "month": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The month, or null when not recorded.",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The month as a zero-padded string, e.g. '02'."
+                  }
+                }
+              },
+              "day": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The day, or null when not recorded.",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The day as a zero-padded string."
+                  }
+                }
+              }
+            }
+          },
+          "external_ids": {
+            "type": [
+              "array",
+              "object",
+              "null"
+            ],
+            "description": "The work's identifiers -- DOI, PMID, ISSN. These are what let the entry be matched to a real publication; an entry with none cannot be verified.",
+            "items": {
+              "type": "object",
+              "description": "One identifier for the work, with its relationship to it.",
+              "properties": {
+                "external-id-type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What kind of identifier, e.g. 'doi', 'issn', 'pmid'. An ISSN identifies the JOURNAL, not the work, so it must not be used as a work key."
+                },
+                "external-id-value": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The identifier itself."
+                },
+                "external-id-normalized": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The normalised form ORCID matched on.",
+                  "properties": {
+                    "value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The normalised identifier."
+                    },
+                    "transient": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when the normalisation is not stored permanently."
+                    }
+                  }
+                },
+                "external-id-normalized-error": {
+                  "type": [
+                    "string",
+                    "object",
+                    "null"
+                  ],
+                  "description": "Why normalisation failed, where it did. A non-null value means ORCID could not match this identifier to anything."
+                },
+                "external-id-url": {
+                  "type": [
+                    "object",
+                    "string",
+                    "null"
+                  ],
+                  "description": "A resolvable URL for the identifier."
+                },
+                "external-id-relationship": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "How the identifier relates to the work: 'self' identifies the work itself, 'part-of' identifies something it belongs to. Treating a 'part-of' id as the work's own merges distinct records."
+                }
+              }
+            }
+          },
+          "group_external_ids": {
+            "type": [
+              "array",
+              "object",
+              "null"
+            ],
+            "description": "The identifiers shared by the whole group of duplicate entries for this work.",
+            "properties": {
+              "external-id": {
+                "type": "array",
+                "description": "The shared identifiers.",
+                "items": {
+                  "type": "object",
+                  "description": "One identifier for the work, with its relationship to it.",
+                  "properties": {
+                    "external-id-type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "What kind of identifier, e.g. 'doi', 'issn', 'pmid'. An ISSN identifies the JOURNAL, not the work, so it must not be used as a work key."
+                    },
+                    "external-id-value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The identifier itself."
+                    },
+                    "external-id-normalized": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "The normalised form ORCID matched on.",
+                      "properties": {
+                        "value": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The normalised identifier."
+                        },
+                        "transient": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "True when the normalisation is not stored permanently."
+                        }
+                      }
+                    },
+                    "external-id-normalized-error": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "Why normalisation failed, where it did. A non-null value means ORCID could not match this identifier to anything."
+                    },
+                    "external-id-url": {
+                      "type": [
+                        "object",
+                        "string",
+                        "null"
+                      ],
+                      "description": "A resolvable URL for the identifier."
+                    },
+                    "external-id-relationship": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "How the identifier relates to the work: 'self' identifies the work itself, 'part-of' identifies something it belongs to. Treating a 'part-of' id as the work's own merges distinct records."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "group_index": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "Which GROUP this entry belongs to. ORCID groups duplicate claims of the same work, so counting entries overstates a researcher's output -- count groups."
+          },
+          "summary_index": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "Which entry within that group this is."
+          }
+        }
       }
     },
     "test_examples": [
@@ -512,7 +771,53 @@
     "return_schema": {
       "type": "array",
       "items": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "orcid": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The ORCID iD."
+          },
+          "given_names": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Given names as recorded."
+          },
+          "family_names": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Family names as recorded."
+          },
+          "credit_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The name the researcher asks to be credited under, which can differ from the legal name."
+          },
+          "institutions": {
+            "type": [
+              "array",
+              "string",
+              "null"
+            ],
+            "description": "Institutions on the record. ORCID records are self-curated, so an absent institution means unrecorded, not unaffiliated.",
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "null"
+              ],
+              "description": "One institution on the record."
+            }
+          }
+        }
       }
     },
     "test_examples": [
@@ -554,7 +859,162 @@
     "return_schema": {
       "type": "array",
       "items": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "organization": {
+            "type": [
+              "string",
+              "object",
+              "null"
+            ],
+            "description": "The employing organisation."
+          },
+          "department": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The department."
+          },
+          "role": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The role held."
+          },
+          "start_date": {
+            "type": [
+              "string",
+              "object",
+              "null"
+            ],
+            "description": "When it started.",
+            "properties": {
+              "year": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The year.",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The year as a string, e.g. '2012'."
+                  }
+                }
+              },
+              "month": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The month, or null when not recorded.",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The month as a zero-padded string, e.g. '02'."
+                  }
+                }
+              },
+              "day": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The day, or null when not recorded.",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The day as a zero-padded string."
+                  }
+                }
+              }
+            }
+          },
+          "end_date": {
+            "type": [
+              "string",
+              "object",
+              "null"
+            ],
+            "description": "When it ended. Null means current, as ORCID records it.",
+            "properties": {
+              "year": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The year.",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The year as a string, e.g. '2012'."
+                  }
+                }
+              },
+              "month": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The month, or null when not recorded.",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The month as a zero-padded string, e.g. '02'."
+                  }
+                }
+              },
+              "day": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The day, or null when not recorded.",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The day as a zero-padded string."
+                  }
+                }
+              }
+            }
+          },
+          "country": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Country of the organisation."
+          },
+          "group_index": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "Which group the entry belongs to, where ORCID grouped duplicates."
+          }
+        }
       }
     },
     "test_examples": [

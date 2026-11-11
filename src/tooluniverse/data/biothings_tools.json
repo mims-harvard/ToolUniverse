@@ -2066,6 +2066,459 @@
             "required": [
               "error"
             ]
+          },
+          "properties": {
+            "_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "MyVariant's identifier for the variant, in HGVS genomic form, e.g. 'chr16:g.23635348A>C'."
+            },
+            "_version": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "Record version."
+            },
+            "cadd": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "CADD deleteriousness prediction.",
+              "properties": {
+                "_license": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "CADD's licence. CADD is free for academic use only, and this is where that is stated."
+                },
+                "phred": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "CADD PHRED score. 20 means the variant is in the most deleterious 1% of the genome, 30 the top 0.1%. A raw score is not comparable between CADD versions; the PHRED is."
+                },
+                "gerp": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "GERP conservation at the site.",
+                  "properties": {
+                    "rs": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "The GERP rejected-substitutions score. High means the position is conserved and a change there is more likely to matter."
+                    }
+                  }
+                }
+              }
+            },
+            "clinvar": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ClinVar's clinical interpretation.",
+              "properties": {
+                "_license": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "ClinVar's licence."
+                },
+                "rcv": {
+                  "type": "array",
+                  "description": "One entry per ClinVar submission record. SEVERAL entries with DIFFERENT significances is the normal case for a disputed variant, and reading only the first hides the dispute.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "clinical_significance": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "What that record asserts, e.g. 'Conflicting interpretations of pathogenicity' -- which is itself a verdict, not a missing one."
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "dbnsfp": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "dbNSFP's collected in-silico predictions. They are NOT independent: most are trained on overlapping data, so agreement between them is weaker evidence than it looks.",
+              "properties": {
+                "_license": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "dbNSFP's licence."
+                },
+                "sift": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "SIFT.",
+                  "properties": {
+                    "score": {
+                      "type": [
+                        "array",
+                        "number",
+                        "null"
+                      ],
+                      "description": "SIFT score per transcript -- a LIST, because the same variant has different consequences on different transcripts. Below 0.05 is called damaging.",
+                      "items": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "The score for one transcript."
+                      }
+                    },
+                    "pred": {
+                      "type": [
+                        "array",
+                        "string",
+                        "null"
+                      ],
+                      "description": "SIFT's call per transcript, 'D' damaging or 'T' tolerated.",
+                      "items": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The call for one transcript."
+                      }
+                    }
+                  }
+                },
+                "polyphen2": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "PolyPhen-2.",
+                  "properties": {
+                    "hdiv": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "The HumDiv-trained model, for rare Mendelian variants.",
+                      "properties": {
+                        "score": {
+                          "type": [
+                            "array",
+                            "number",
+                            "null"
+                          ],
+                          "description": "Score, 0 to 1.",
+                          "items": {
+                            "type": [
+                              "number",
+                              "null"
+                            ],
+                            "description": "The score for one transcript."
+                          }
+                        },
+                        "pred": {
+                          "type": [
+                            "array",
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its call: 'D' probably damaging, 'P' possibly damaging, 'B' benign.",
+                          "items": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The call for one transcript."
+                          }
+                        }
+                      }
+                    },
+                    "hvar": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "The HumVar-trained model, for distinguishing severe from milder variants.",
+                      "properties": {
+                        "score": {
+                          "type": [
+                            "array",
+                            "number",
+                            "null"
+                          ],
+                          "description": "Score, 0 to 1.",
+                          "items": {
+                            "type": [
+                              "number",
+                              "null"
+                            ],
+                            "description": "The score for one transcript."
+                          }
+                        },
+                        "pred": {
+                          "type": [
+                            "array",
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its call.",
+                          "items": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The call for one transcript."
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "alphamissense": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "AlphaMissense.",
+                  "properties": {
+                    "score": {
+                      "type": [
+                        "array",
+                        "number",
+                        "null"
+                      ],
+                      "description": "Pathogenicity score per transcript, 0 to 1.",
+                      "items": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "The score for one transcript."
+                      }
+                    },
+                    "pred": {
+                      "type": [
+                        "array",
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its call: 'P' pathogenic, 'B' benign, 'A' ambiguous.",
+                      "items": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The call for one transcript."
+                      }
+                    }
+                  }
+                },
+                "metarnn": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "MetaRNN, an ensemble that combines the other predictors.",
+                  "properties": {
+                    "score": {
+                      "type": [
+                        "array",
+                        "number",
+                        "null"
+                      ],
+                      "description": "Score, 0 to 1.",
+                      "items": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "The score for one transcript."
+                      }
+                    },
+                    "pred": {
+                      "type": [
+                        "array",
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its call, 'D' or 'T'.",
+                      "items": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The call for one transcript."
+                      }
+                    }
+                  }
+                },
+                "revel": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "REVEL, an ensemble tuned for rare missense variants.",
+                  "properties": {
+                    "score": {
+                      "type": [
+                        "array",
+                        "number",
+                        "null"
+                      ],
+                      "description": "Score, 0 to 1. Above about 0.75 is commonly treated as supporting pathogenicity.",
+                      "items": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "The score for one transcript."
+                      }
+                    }
+                  }
+                },
+                "vest4": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "VEST4.",
+                  "properties": {
+                    "score": {
+                      "type": [
+                        "array",
+                        "number",
+                        "null"
+                      ],
+                      "description": "Score, 0 to 1.",
+                      "items": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "The score for one transcript."
+                      }
+                    }
+                  }
+                },
+                "mutationtaster": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "MutationTaster.",
+                  "properties": {
+                    "pred": {
+                      "type": [
+                        "array",
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its call.",
+                      "items": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The call for one transcript."
+                      }
+                    }
+                  }
+                },
+                "phastcons": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "phastCons conservation.",
+                  "properties": {
+                    "100way_vertebrate": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "Across 100 vertebrates.",
+                      "properties": {
+                        "rankscore": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "Rank-normalised score, 0 to 1."
+                        }
+                      }
+                    }
+                  }
+                },
+                "phylop": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "phyloP conservation.",
+                  "properties": {
+                    "100way_vertebrate": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "Across 100 vertebrates.",
+                      "properties": {
+                        "rankscore": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "Rank-normalised score. phyloP can be negative for faster-than-neutral sites, which the rankscore hides."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "dbsnp": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "dbSNP.",
+              "properties": {
+                "_license": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "dbSNP's licence."
+                },
+                "rsid": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The rsID, e.g. 'rs45478192'."
+                }
+              }
+            }
           }
         },
         {

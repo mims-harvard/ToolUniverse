@@ -42,7 +42,38 @@
         {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "Gene": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The gene symbol."
+              },
+              "Gene description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What the gene is."
+              },
+              "Gene synonym": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "description": "Other symbols it is known by, which is why a search on one name finds it.",
+                "items": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "One synonym."
+                }
+              }
+            }
           }
         },
         {

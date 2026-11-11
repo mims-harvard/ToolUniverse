@@ -543,7 +543,47 @@
           "type": "array",
           "description": "Statistics data",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "domain": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "One repository's contribution to OmicsDI.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The repository's id. Measured NULL on all 28 rows, so `name` is the only usable key."
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The repository, e.g. 'Expression Atlas Experiments'."
+                  },
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its display label."
+                  },
+                  "value": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
+                    "description": "How many datasets it contributes, as a STRING of digits rather than a number."
+                  }
+                }
+              }
+            }
           }
         },
         {

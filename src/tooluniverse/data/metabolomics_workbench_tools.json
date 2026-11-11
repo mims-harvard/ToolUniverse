@@ -46,7 +46,116 @@
           "type": [
             "array",
             "string"
-          ]
+          ],
+          "properties": {
+            "study_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Metabolomics Workbench study id."
+            },
+            "study_title": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Its title."
+            },
+            "study_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The study's page."
+            },
+            "institute": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The submitting institute."
+            },
+            "species": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Species studied."
+            },
+            "analysis_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The analytical platform, e.g. MS or NMR. Results from the two are not comparable."
+            },
+            "number_of_samples": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "How many samples the study holds."
+            },
+            "submission_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When it was submitted."
+            },
+            "release_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When it became public."
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Study version."
+            },
+            "revision_no": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "Revision number."
+            },
+            "revision_datetime": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When that revision was made."
+            },
+            "revision_comment": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What changed in it."
+            },
+            "license": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Licence the data is released under -- what decides whether it can be reused."
+            },
+            "license_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "That licence's text."
+            }
+          }
         },
         {
           "type": "object",
@@ -412,7 +521,82 @@
         {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "Name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The matched compound's name."
+              },
+              "Systematic name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its systematic name."
+              },
+              "Formula": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Molecular formula."
+              },
+              "Category": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Lipid or metabolite category."
+              },
+              "Main class": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its main class."
+              },
+              "Sub class": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its subclass."
+              },
+              "Ion": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The adduct the match assumes, e.g. '[M+H]+'. The SAME measured mass matches different compounds under different adducts, so a match without its ion is not a match."
+              },
+              "Input m/z": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "The m/z that was searched."
+              },
+              "Matched m/z": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "The theoretical m/z of the match."
+              },
+              "Delta": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "The difference between them. This, against the instrument's accuracy, is what decides whether the match is credible -- the list is not ranked by it."
+              }
+            }
           }
         },
         {
@@ -472,7 +656,82 @@
           ],
           "description": "Array of matched-compound records; a raw TSV header-only string when the search returns no matches.",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "Name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The matched compound's name."
+              },
+              "Systematic name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its systematic name."
+              },
+              "Formula": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Molecular formula."
+              },
+              "Category": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Lipid or metabolite category."
+              },
+              "Main class": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its main class."
+              },
+              "Sub class": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its subclass."
+              },
+              "Ion": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The adduct the match assumes, e.g. '[M+H]+'. The SAME measured mass matches different compounds under different adducts, so a match without its ion is not a match."
+              },
+              "Input m/z": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "The m/z that was searched."
+              },
+              "Matched m/z": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "The theoretical m/z of the match."
+              },
+              "Delta": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "The difference between them. This, against the instrument's accuracy, is what decides whether the match is credible -- the list is not ranked by it."
+              }
+            }
           }
         },
         {

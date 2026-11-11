@@ -61,7 +61,74 @@
                 {
                     "type": "array",
                     "items": {
-                        "type": "object"
+                        "type": "object",
+                        "properties": {
+                            "tri_facility_id": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "EPA TRI facility identifier."
+                            },
+                            "facility_name": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The facility's name."
+                            },
+                            "street_address": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Street address."
+                            },
+                            "city": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "City."
+                            },
+                            "county": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "County."
+                            },
+                            "state": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "State."
+                            },
+                            "zip_code": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "ZIP code."
+                            },
+                            "epa_region": {
+                                "type": [
+                                    "integer",
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Which EPA region it falls in."
+                            },
+                            "closed": {
+                                "type": [
+                                    "boolean",
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Whether the facility has closed. A closed facility still has historical releases on record."
+                            }
+                        }
                     }
                 },
                 {
@@ -140,7 +207,60 @@
                 {
                     "type": "array",
                     "items": {
-                        "type": "object"
+                        "type": "object",
+                        "properties": {
+                            "registry_id": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "EPA Facility Registry Service id -- the key that joins a facility across EPA's programmes."
+                            },
+                            "facility_name": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Its name."
+                            },
+                            "address": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Street address."
+                            },
+                            "city": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "City."
+                            },
+                            "state": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "State."
+                            },
+                            "federal_facility": {
+                                "type": [
+                                    "boolean",
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Whether it is a federal facility."
+                            },
+                            "tribal_land": {
+                                "type": [
+                                    "boolean",
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Whether it sits on tribal land, which changes which authority regulates it."
+                            }
+                        }
                     }
                 },
                 {

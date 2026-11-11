@@ -10974,3 +10974,157 @@ def test_a_declaration_beside_a_oneof_belongs_to_no_branch():
     assert (
         "SIBLINGS" in props["eventOf"]["items"]["properties"]["hasEvent"]["description"]
     )
+
+
+def test_an_eu_trial_is_authorised_country_by_country():
+    """A trial can be authorised in one member state and refused in another.
+
+    The EU Clinical Trials Regulation splits an application in two: Part I is
+    the science and the product, assessed ONCE for the whole Union by the
+    Reporting Member State, and Part II is the national part -- sites,
+    investigators, consent -- which each member state concerned assesses and
+    decides SEPARATELY. `CTIS_get_trial` returns exactly that structure and
+    declared none of it, so a caller reading one decision had no way to know
+    it was one of several.
+
+    Each Part II entry carries its own recruitment period, and the measured
+    trial holds 28 superseded recruitment windows beside the active one: an
+    arbitrary entry gives an out-of-date window.
+    """
+    props = _success_props(_config("CTIS_get_trial")["return_schema"])
+    app = props["authorized_application"]["properties"]
+    assert "authorizedPartI" in app and "authorizedPartsII" in app
+    assert "PER MEMBER STATE" in app["authorizedPartsII"]["description"]
+    part2 = app["authorizedPartsII"]["items"]["properties"]
+    assert "recruitmentSubjectCount" in part2
+    assert "THIS state" in part2["recruitmentSubjectCount"]["description"]
+    msc = part2["mscInfo"]["properties"]
+    for name in (
+        "decision",
+        "trialStatus",
+        "clinicalTrialStatusHistory",
+        "activeTrialRecruitmentPeriod",
+        "trialRecruitmentPeriod",
+    ):
+        assert name in msc, f"mscInfo.{name} is returned and not declared"
+    assert "out-of-date" in msc["trialRecruitmentPeriod"]["description"]
+    part1 = app["authorizedPartI"]["properties"]
+    assert "rowSubjectCount" in part1
+    assert "OUTSIDE" in part1["rowSubjectCount"]["description"]
+    details = part1["trialDetails"]["properties"]["trialInformation"]["properties"]
+    assert "endPoint" in details and "eligibilityCriteria" in details
+    primary = details["endPoint"]["properties"]["primaryEndPoints"]
+    assert "judged on" in primary["description"]
+
+
+def test_a_measured_mass_match_declares_the_adduct_it_assumed():
+    """The same m/z matches different compounds under different adducts.
+
+    Metabolomics Workbench's m/z search returns `Ion` -- the adduct the match
+    assumes -- and `Delta`, the gap between the searched mass and the
+    theoretical one. A match read without its ion is not a match, and the list
+    is not ranked by delta, so the first row is not the closest.
+    """
+    row = _row_props(_config("MetabolomicsWorkbench_search_by_mz")["return_schema"])
+    for name in ("Ion", "Delta", "Input m/z", "Matched m/z", "Formula", "Name"):
+        assert name in row, f"{name} is returned and not declared"
+    assert "adduct" in row["Ion"]["description"]
+    assert "not ranked" in row["Delta"]["description"]
+
+
+def test_a_clingen_classification_is_for_a_gene_disease_pair():
+    """'Limited' is not a weak yes.
+
+    ClinGen classifies a GENE-DISEASE-INHERITANCE triple, not a gene, and the
+    classification values run from Definitive through Limited and Disputed to
+    Refuted. `ClinGen_get_dosage_sensitivity` is the same shape: haplo-
+    insufficiency and triplosensitivity are independent, so a duplication
+    cannot be judged on the deletion score. The field names contain spaces and
+    capitals, which is why they had to be declared by explicit key.
+    """
+    validity = _row_props(_config("ClinGen_get_gene_validity")["return_schema"])
+    for name in (
+        "CLASSIFICATION",
+        "MOI",
+        "DISEASE ID (MONDO)",
+        "SOP",
+        "CLASSIFICATION DATE",
+    ):
+        assert name in validity, f"{name!r} is returned and not declared"
+    assert "not weak yeses" in validity["CLASSIFICATION"]["description"]
+    assert "triple" in validity["MOI"]["description"]
+    dosage = _row_props(_config("ClinGen_get_dosage_sensitivity")["return_schema"])
+    for name in ("HAPLOINSUFFICIENCY", "TRIPLOSENSITIVITY"):
+        assert name in dosage, f"{name!r} is returned and not declared"
+    assert "Independent" in dosage["TRIPLOSENSITIVITY"]["description"]
+
+
+def test_a_variant_predictor_set_is_not_independent_evidence():
+    """Agreement between in-silico predictors is weaker than it looks.
+
+    `MyVariant_get_pathogenicity_scores` returns SIFT, PolyPhen-2,
+    AlphaMissense, REVEL, VEST4, MetaRNN and MutationTaster together. Most are
+    trained on overlapping data, so counting how many agree is not counting
+    independent evidence. Each score is a LIST, one entry per transcript,
+    because the same variant has different consequences on different
+    transcripts.
+
+    ClinVar's rcv is the same shape: several submissions with different
+    verdicts is the normal case for a disputed variant, and reading the first
+    hides the dispute.
+    """
+    props = _success_props(
+        _config("MyVariant_get_pathogenicity_scores")["return_schema"]
+    )
+    dbnsfp = props["dbnsfp"]["properties"]
+    assert "NOT independent" in props["dbnsfp"]["description"]
+    for name in ("sift", "polyphen2", "alphamissense", "revel", "metarnn"):
+        assert name in dbnsfp, f"dbnsfp.{name} is returned and not declared"
+    assert "transcript" in dbnsfp["sift"]["properties"]["score"]["description"]
+    assert "PHRED" in props["cadd"]["properties"]["phred"]["description"]
+    rcv = props["clinvar"]["properties"]["rcv"]
+    assert "hides the dispute" in rcv["description"]
+
+
+def test_a_reply_that_is_a_list_of_strings_is_not_declared_as_an_object():
+    """Ten tools answered a bare list and declared {"type": "object"}.
+
+    That is wrong about the TYPE, not merely silent about the fields, and the
+    field audit cannot report it: an object schema against a list value makes
+    the walker return without a finding. Six more answer a single text blob --
+    a FASTA record, a BibTeX citation, a human-readable line -- and were
+    declared the same way.
+    """
+    for tool in (
+        "ModelDB_list_models",
+        "OncoTree_list_tissues",
+        "UniBind_list_tfs",
+        "metabolights_list_studies",
+        "VEuPathDB_list_record_types",
+    ):
+        rs = _config(tool)["return_schema"]
+        branch = (rs.get("oneOf") or [rs])[0]
+        declared = branch.get("type")
+        assert declared == "array" or (
+            isinstance(declared, list) and "array" in declared
+        ), f"{tool} answers a list and must not be declared an object"
+        assert branch.get("description"), (
+            f"{tool}: the list is declared with no description"
+        )
+    for tool in ("dbfetch_fetch_entry", "NCBI_get_sequence", "BMRB_get_entry_citation"):
+        rs = _config(tool)["return_schema"]
+        branch = (rs.get("oneOf") or [rs])[0]
+        declared = branch.get("type")
+        assert declared == "string" or (
+            isinstance(declared, list) and "string" in declared
+        ), f"{tool} answers text and must not be declared an object"
+        assert branch.get("description"), (
+            f"{tool}: the text is declared with no description"
+        )
+    assert (
+        "FASTA"
+        in (
+            _config("NCBI_get_sequence")["return_schema"].get("oneOf")
+            or [_config("NCBI_get_sequence")["return_schema"]]
+        )[0]["description"]
+    )

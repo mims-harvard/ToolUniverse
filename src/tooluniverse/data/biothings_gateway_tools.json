@@ -236,7 +236,109 @@
         {
           "type": "object",
           "description": "The full record; fields vary by API",
-          "properties": {},
+          "properties": {
+            "_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The ontology term's CURIE, e.g. 'MONDO:0010329'."
+            },
+            "_version": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "Record version."
+            },
+            "label": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The term's preferred label."
+            },
+            "parents": {
+              "type": "array",
+              "description": "Direct parents in the ontology.",
+              "items": {
+                "type": "string",
+                "description": "One parent CURIE."
+              }
+            },
+            "ancestors": {
+              "type": "array",
+              "description": "ALL ancestors, not just the direct parents -- 20 on the measured term, including upper-ontology classes like 'BFO:0000016'. Counting over this double-counts the hierarchy.",
+              "items": {
+                "type": "string",
+                "description": "One ancestor CURIE."
+              }
+            },
+            "synonym": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Synonyms, split by how closely they match.",
+              "properties": {
+                "exact": {
+                  "type": "array",
+                  "description": "Exact synonyms -- safe to treat as the same term.",
+                  "items": {
+                    "type": "string",
+                    "description": "One exact synonym."
+                  }
+                },
+                "related": {
+                  "type": "array",
+                  "description": "Related synonyms, which are NOT the same term. Matching on these merges distinct concepts.",
+                  "items": {
+                    "type": "string",
+                    "description": "One related synonym."
+                  }
+                },
+                "broad": {
+                  "type": "array",
+                  "description": "Broader synonyms.",
+                  "items": {
+                    "type": "string",
+                    "description": "One broad synonym."
+                  }
+                },
+                "narrow": {
+                  "type": "array",
+                  "description": "Narrower synonyms.",
+                  "items": {
+                    "type": "string",
+                    "description": "One narrow synonym."
+                  }
+                }
+              }
+            },
+            "xrefs": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Cross-references KEYED BY TARGET DATABASE -- 'omim', 'umls', 'mesh', 'doid', 'medgen', 'gard'. Which databases appear depends on the term, so read it as a map; each value is a list of ids there.",
+              "additionalProperties": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "description": "The identifiers in that database.",
+                "items": {
+                  "type": [
+                    "string",
+                    "integer"
+                  ],
+                  "description": "One identifier."
+                }
+              }
+            }
+          },
           "not": {
             "required": [
               "error"

@@ -34,6 +34,59 @@
             "required": [
               "error"
             ]
+          },
+          "properties": {
+            "rgd_id": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "Rat Genome Database identifier."
+            },
+            "symbol": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gene symbol."
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gene name."
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the gene does."
+            },
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gene type, e.g. 'protein-coding'."
+            },
+            "ensembl_symbol": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "The symbol Ensembl uses, where it differs."
+            },
+            "refseq_status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "RefSeq's curation status for the gene, e.g. 'VALIDATED', 'PROVISIONAL'. A provisional record has not been reviewed."
+            }
           }
         },
         {

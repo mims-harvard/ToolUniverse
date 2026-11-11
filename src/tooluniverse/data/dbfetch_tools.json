@@ -18,10 +18,21 @@
           "type": "string",
           "description": "Output format (e.g., 'fasta', 'xml', 'json', 'txt'). Default: 'fasta'",
           "default": "fasta",
-          "enum": ["fasta", "xml", "json", "txt", "gff", "embl", "genbank"]
+          "enum": [
+            "fasta",
+            "xml",
+            "json",
+            "txt",
+            "gff",
+            "embl",
+            "genbank"
+          ]
         }
       },
-      "required": ["db", "id"]
+      "required": [
+        "db",
+        "id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/Tools/dbfetch/dbfetch",
@@ -56,7 +67,10 @@
           "description": "Database name"
         },
         "ids": {
-          "type": ["string", "array"],
+          "type": [
+            "string",
+            "array"
+          ],
           "description": "Comma-separated IDs or list of IDs (e.g., 'P05067,P04637' or ['P05067', 'P04637'])"
         },
         "format": {
@@ -65,7 +79,10 @@
           "default": "fasta"
         }
       },
-      "required": ["db", "ids"]
+      "required": [
+        "db",
+        "ids"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/Tools/dbfetch/dbfetch",
@@ -116,7 +133,9 @@
           "description": "Database name"
         }
       },
-      "required": ["db"]
+      "required": [
+        "db"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/Tools/dbfetch/dbfetch",

@@ -255,7 +255,51 @@
     "return_schema": {
       "type": "array",
       "items": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "library_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The library's identifier."
+          },
+          "dataset": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The dataset it belongs to."
+          },
+          "dataset_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "What kind of dataset."
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "What the library contains."
+          },
+          "assay": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The assay used."
+          },
+          "organism": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The organism."
+          }
+        }
       }
     }
   }

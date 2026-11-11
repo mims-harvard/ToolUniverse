@@ -39,7 +39,10 @@
         "array",
         "object"
       ],
-      "description": "Interactor information including names, organism, cross-references (returns array for multiple results or object for single result)"
+      "description": "Interactor information including names, organism, cross-references (returns array for multiple results or object for single result)",
+      "items": {
+        "type": "object"
+      }
     },
     "test_examples": [
       {
@@ -87,7 +90,50 @@
     },
     "return_schema": {
       "type": "array",
-      "description": "List of interactions involving the interactor"
+      "description": "List of interactions involving the interactor",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "IntAct identifier for the interaction."
+          },
+          "interaction_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The interaction's name."
+          },
+          "interactor_descriptions": {
+            "type": [
+              "string",
+              "array",
+              "null"
+            ],
+            "description": "The participants, as IntAct describes them.",
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "null"
+              ],
+              "description": "One participant, as IntAct describes it."
+            }
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Which database the interaction came from. IntAct aggregates, so the same interaction can appear from several sources."
+          }
+        }
+      }
     },
     "test_examples": [
       {
@@ -140,7 +186,50 @@
     },
     "return_schema": {
       "type": "array",
-      "description": "Search results with interactions"
+      "description": "Search results with interactions",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "IntAct identifier for the interaction."
+          },
+          "interaction_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The interaction's name."
+          },
+          "interactor_descriptions": {
+            "type": [
+              "string",
+              "array",
+              "null"
+            ],
+            "description": "The participants, as IntAct describes them.",
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "null"
+              ],
+              "description": "One participant, as IntAct describes it."
+            }
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Which database the interaction came from. IntAct aggregates, so the same interaction can appear from several sources."
+          }
+        }
+      }
     },
     "test_examples": [
       {
@@ -261,7 +350,50 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "IntAct identifier for the interaction."
+              },
+              "interaction_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The interaction's name."
+              },
+              "interactor_descriptions": {
+                "type": [
+                  "string",
+                  "array",
+                  "null"
+                ],
+                "description": "The participants, as IntAct describes them.",
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "null"
+                  ],
+                  "description": "One participant, as IntAct describes it."
+                }
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which database the interaction came from. IntAct aggregates, so the same interaction can appear from several sources."
+              }
+            }
+          }
         },
         {
           "type": "object",
@@ -325,7 +457,10 @@
     },
     "return_schema": {
       "type": "array",
-      "description": "List of interactions for the organism"
+      "description": "List of interactions for the organism",
+      "items": {
+        "type": "object"
+      }
     },
     "test_examples": [
       {
@@ -380,7 +515,149 @@
     },
     "return_schema": {
       "type": "array",
-      "description": "List of complexes matching the search. Each complex includes complexAC, complexName, organismName, description, predictedComplex, and interactors."
+      "description": "List of complexes matching the search. Each complex includes complexAC, complexName, organismName, description, predictedComplex, and interactors.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "complexAC": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Complex Portal accession, e.g. 'CPX-900'."
+          },
+          "complexName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The complex's name."
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "What the complex does."
+          },
+          "organismName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Organism and taxon id in ONE string, e.g. 'Homo sapiens; 9606'. Split on '; '."
+          },
+          "predictedComplex": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "True when the complex is PREDICTED rather than curated from experiment. A predicted complex is a hypothesis."
+          },
+          "interactors": {
+            "type": "array",
+            "description": "The complex's components.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "ac": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "IntAct accession for the interactor."
+                },
+                "identifier": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Its identifier in the source database, e.g. a UniProt accession."
+                },
+                "identifierLink": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "A resolvable link to that record."
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Its name, e.g. 'TAF12'."
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What it is."
+                },
+                "interactorType": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What kind of molecule, e.g. 'protein', 'small molecule', 'RNA'. A complex is not all protein."
+                },
+                "organismName": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Its organism, as 'Name; taxid'."
+                },
+                "stochiometry": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "How many copies are in the complex, as free text, e.g. 'minValue: 2, maxValue: 2'. Present on only 2 of the 113 components measured -- so the composition is usually qualitative."
+                },
+                "xrefs": {
+                  "type": "array",
+                  "description": "Cross-references for the interactor.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "database": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The database, e.g. 'panther'."
+                      },
+                      "identifier": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The id there."
+                      },
+                      "identifierLink": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "A link to it, where one exists."
+                      },
+                      "qualifier": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "What the cross-reference asserts, e.g. 'orthology-group'. A cross-reference without its qualifier reads as identity when it may be homology."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "test_examples": [
       {

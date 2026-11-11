@@ -426,7 +426,16 @@
           "type": "array",
           "description": "List of body part objects",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "BodyPartExamined": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "One DICOM BodyPartExamined value, e.g. 'ABDOMEN'. Free text filled in by the acquiring site, so the same anatomy appears under several spellings."
+              }
+            }
           }
         },
         {
@@ -474,7 +483,17 @@
           "type": "array",
           "description": "List of metadata key-value pairs for the series",
           "items": {
-            "type": "object"
+            "type": "object",
+            "description": "One DICOM series, keyed by the metadata field name as TCIA spells it -- 'Body Part Examined', 'Series Date', 'Number of Images'. The names contain SPACES and come from the DICOM dictionary, and which appear depends on the modality, so this is read as a map rather than by fixed attribute names.",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "The value of that DICOM field."
+            }
           }
         },
         {

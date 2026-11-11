@@ -732,7 +732,94 @@
             "object",
             "array"
           ],
-          "description": "LMSD record (single object) or list of records with lm_id, name, formula, exactmass, and cross-references (kegg_id, hmdb_id, chebi_id, pubchem_cid)."
+          "description": "LMSD record (single object) or list of records with lm_id, name, formula, exactmass, and cross-references (kegg_id, hmdb_id, chebi_id, pubchem_cid).",
+          "properties": {
+            "lm_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "LIPID MAPS identifier."
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Common name."
+            },
+            "sys_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Systematic name."
+            },
+            "core": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Core lipid category."
+            },
+            "main_class": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Main class."
+            },
+            "sub_class": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Subclass."
+            },
+            "input": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The identifier that was looked up, echoed back."
+            },
+            "regno": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "LIPID MAPS registry number."
+            },
+            "synonyms": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Other names as a single '; '-delimited STRING, not a list."
+            },
+            "chebi_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ChEBI cross-reference."
+            },
+            "hmdb_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "HMDB cross-reference."
+            },
+            "kegg_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "KEGG COMPOUND cross-reference."
+            }
+          }
         },
         {
           "type": "object",

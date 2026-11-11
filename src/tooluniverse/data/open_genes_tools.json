@@ -337,7 +337,126 @@
         {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Gene symbol."
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Gene name."
+              },
+              "ncbi_id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "NCBI Gene id."
+              },
+              "uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt accession."
+              },
+              "ensembl": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ensembl gene id."
+              },
+              "aging_mechanisms": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "description": "The aging mechanisms the gene is implicated in.",
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "null"
+                  ],
+                  "description": "One aging mechanism."
+                }
+              },
+              "functional_clusters": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "description": "The functional clusters it belongs to.",
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "null"
+                  ],
+                  "description": "One functional cluster."
+                }
+              },
+              "disease_categories": {
+                "type": [
+                  "array",
+                  "object",
+                  "string",
+                  "null"
+                ],
+                "description": "Disease categories linked to it.",
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "null"
+                  ],
+                  "description": "One disease category."
+                }
+              },
+              "diseases": {
+                "type": [
+                  "array",
+                  "object",
+                  "string",
+                  "null"
+                ],
+                "description": "The individual diseases.",
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "null"
+                  ],
+                  "description": "One disease."
+                }
+              },
+              "confidence_level": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How strongly the gene is linked to aging. The field that separates a well-established longevity gene from a single-study claim."
+              },
+              "expression_change": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ],
+                "description": "How its expression changes with age -- up, down or unchanged."
+              }
+            }
           }
         },
         {

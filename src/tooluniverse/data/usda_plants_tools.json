@@ -2,98 +2,371 @@
     {
         "name": "USDA_plants_get_profile",
         "description": "Get a USDA PLANTS Database profile for a plant by its PLANTS symbol (e.g. 'ABBA' = balsam fir): scientific name, common name, taxonomic group/rank, duration (annual/perennial), growth habits (tree/shrub/forb), and synonyms. 'native_statuses' gives region-level (e.g. 'L48', 'CAN') native/introduced status; fine-grained per-state/county FIPS distribution codes are not returned by this endpoint (fips_distribution is included for forward-compatibility but is null in the current USDA API response). Authoritative US plant taxonomy. No API key required.",
-        "parameter": {"type": "object", "properties": {
-            "symbol": {"type": "string", "description": "USDA PLANTS symbol, e.g. 'ABBA' (balsam fir), 'ACRU' (red maple), 'QUAL' (white oak)."}
-        }, "required": ["symbol"]},
-        "fields": {"timeout": 30},
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "symbol": {
+                    "type": "string",
+                    "description": "USDA PLANTS symbol, e.g. 'ABBA' (balsam fir), 'ACRU' (red maple), 'QUAL' (white oak)."
+                }
+            },
+            "required": [
+                "symbol"
+            ]
+        },
+        "fields": {
+            "timeout": 30
+        },
         "type": "USDAPlantsProfileTool",
-        "test_examples": [{"symbol": "ABBA"}, {"symbol": "ACRU"}, {"symbol": "QUAL"}],
-        "return_schema": {
-          "oneOf": [
+        "test_examples": [
             {
-              "not": {
-                "required": [
-                  "error"
-                ]
-              },
-              "type": "object",
-              "properties": {
-                "id": {"type": ["integer", "null"]},
-                "symbol": {"type": ["string", "null"], "description": "The symbol USDA answered WITH, which is not always the one asked for: a synonym symbol is redirected to the accepted taxon (symbol=AGRE2 answers ELRE4)."},
-                "queried_symbol": {"type": ["string", "null"]},
-                "synonym_note": {"type": ["string", "null"], "description": "Set when the two differ, stating the substitution"},
-                "scientific_name": {"type": ["string", "null"]},
-                "common_name": {"type": ["string", "null"]},
-                "other_common_names": {"type": "array", "items": {"type": "string"}},
-                "group": {"type": ["string", "null"]},
-                "rank": {"type": ["string", "null"]},
-                "rank_id": {"type": ["integer", "string", "null"]},
-                "duration": {"type": ["array", "string", "null"]},
-                "growth_habits": {"type": ["array", "string", "null"]},
-                "native_statuses": {"type": ["array", "null"], "description": "Native, introduced or both, per region"},
-                "synonyms": {"type": ["array", "null"]},
-                "synonym_symbol": {"type": ["string", "null"]},
-                "accepted_symbol": {"type": ["string", "null"]},
-                "accepted_id": {"type": ["integer", "null"]},
-                "accepted_scientific_name": {"type": ["string", "null"]},
-                "accepted_common_name": {"type": ["string", "null"]},
-                "ancestors": {"type": "array", "description": "The classification, Kingdom down to Genus, each ancestor with its own symbol and rank. Nine of them for balsam fir, and the profile already held them.", "items": {"type": "object", "properties": {"id": {"type": ["integer", "null"]}, "symbol": {"type": ["string", "null"]}, "scientific_name": {"type": ["string", "null"]}, "common_name": {"type": ["string", "null"]}, "rank": {"type": ["string", "null"]}, "rank_id": {"type": ["integer", "string", "null"]}}}},
-                "map_coordinates": {"type": "array", "description": "Per-state bounding boxes USDA publishes for the distribution map; fips_distribution is null on most records", "items": {"type": "object"}},
-                "distribution_results": {"type": ["array", "object", "null"]},
-                "fips_distribution": {"type": ["array", "object", "string", "null"]},
-                "subordinate_taxa": {"type": ["array", "object", "null"]},
-                "legal_statuses": {"type": ["array", "object", "null"], "description": "No other tool in the family returns these"},
-                "protected_statuses": {"type": ["array", "object", "null"]},
-                "notes": {"type": ["object", "null"], "description": "USDA's own notes: general, synonym, subordinate-taxa and legal"},
-                "fact_sheet_urls": {"type": "array", "items": {"type": "string"}},
-                "plant_guide_urls": {"type": "array", "items": {"type": "string"}},
-                "related_links": {"type": ["array", "null"]},
-                "available_data": {"type": "object", "description": "Which sibling tool will have something for this plant -- characteristics, wetland, wildlife, invasive, noxious, images -- as USDA states it per record. A caller otherwise finds out by trying."}
-              }
+                "symbol": "ABBA"
             },
             {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
+                "symbol": "ACRU"
+            },
+            {
+                "symbol": "QUAL"
             }
-          ]
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "symbol": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "The symbol USDA answered WITH, which is not always the one asked for: a synonym symbol is redirected to the accepted taxon (symbol=AGRE2 answers ELRE4)."
+                        },
+                        "queried_symbol": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "synonym_note": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Set when the two differ, stating the substitution"
+                        },
+                        "scientific_name": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "common_name": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "other_common_names": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "group": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "rank": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "rank_id": {
+                            "type": [
+                                "integer",
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "duration": {
+                            "type": [
+                                "array",
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "growth_habits": {
+                            "type": [
+                                "array",
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "native_statuses": {
+                            "type": [
+                                "array",
+                                "null"
+                            ],
+                            "description": "Native, introduced or both, per region"
+                        },
+                        "synonyms": {
+                            "type": [
+                                "array",
+                                "null"
+                            ]
+                        },
+                        "synonym_symbol": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "accepted_symbol": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "accepted_id": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "accepted_scientific_name": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "accepted_common_name": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "ancestors": {
+                            "type": "array",
+                            "description": "The classification, Kingdom down to Genus, each ancestor with its own symbol and rank. Nine of them for balsam fir, and the profile already held them.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ]
+                                    },
+                                    "symbol": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "scientific_name": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "common_name": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "rank": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "rank_id": {
+                                        "type": [
+                                            "integer",
+                                            "string",
+                                            "null"
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "map_coordinates": {
+                            "type": "array",
+                            "description": "Per-state bounding boxes USDA publishes for the distribution map; fips_distribution is null on most records",
+                            "items": {
+                                "type": "object"
+                            }
+                        },
+                        "distribution_results": {
+                            "type": [
+                                "array",
+                                "object",
+                                "null"
+                            ]
+                        },
+                        "fips_distribution": {
+                            "type": [
+                                "array",
+                                "object",
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "subordinate_taxa": {
+                            "type": [
+                                "array",
+                                "object",
+                                "null"
+                            ]
+                        },
+                        "legal_statuses": {
+                            "type": [
+                                "array",
+                                "object",
+                                "null"
+                            ],
+                            "description": "No other tool in the family returns these"
+                        },
+                        "protected_statuses": {
+                            "type": [
+                                "array",
+                                "object",
+                                "null"
+                            ]
+                        },
+                        "notes": {
+                            "type": [
+                                "object",
+                                "null"
+                            ],
+                            "description": "USDA's own notes: general, synonym, subordinate-taxa and legal"
+                        },
+                        "fact_sheet_urls": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "plant_guide_urls": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "related_links": {
+                            "type": [
+                                "array",
+                                "null"
+                            ]
+                        },
+                        "available_data": {
+                            "type": "object",
+                            "description": "Which sibling tool will have something for this plant -- characteristics, wetland, wildlife, invasive, noxious, images -- as USDA states it per record. A caller otherwise finds out by trying."
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
         }
     },
     {
         "name": "USDA_plants_get_characteristics",
         "description": "Get the USDA PLANTS morphology/physiology, growth-requirement, and reproduction characteristics for a plant by its PLANTS symbol (e.g. 'ABBA'). Returns a list of characteristic name/value/category entries (e.g. active growth period, shade tolerance, drought tolerance, mature height, bloom period). Resolves the symbol to the plant id automatically. No API key required. The response metadata carries a `plant` block naming the taxon the symbol resolved to -- scientific and common name, rank, lineage, native status per region and the states USDA has distribution data for -- because USDA redirects a synonym symbol to the accepted taxon without saying so.",
-        "parameter": {"type": "object", "properties": {
-            "symbol": {"type": "string", "description": "USDA PLANTS symbol, e.g. 'ABBA', 'ACRU'."}
-        }, "required": ["symbol"]},
-        "fields": {"timeout": 30},
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "symbol": {
+                    "type": "string",
+                    "description": "USDA PLANTS symbol, e.g. 'ABBA', 'ACRU'."
+                }
+            },
+            "required": [
+                "symbol"
+            ]
+        },
+        "fields": {
+            "timeout": 30
+        },
         "type": "USDAPlantsCharacteristicsTool",
-        "test_examples": [{"symbol": "ABBA"}, {"symbol": "ACRU"}, {"symbol": "QUAL"}],
-        "return_schema": {
-          "oneOf": [
+        "test_examples": [
             {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
+                "symbol": "ABBA"
             },
             {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
+                "symbol": "ACRU"
+            },
+            {
+                "symbol": "QUAL"
             }
-          ]
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "category": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Which characteristic group the row belongs to."
+                            },
+                            "name": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The characteristic's name."
+                            },
+                            "value": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Its value for this plant."
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
         }
     },
     {
@@ -102,8 +375,17 @@
         "parameter": {
             "type": "object",
             "properties": {
-                "searchText": {"type": "string", "description": "Plant scientific name, common name, or genus to search. Examples: 'white oak', 'red maple', 'Quercus', 'Acer rubrum'."},
-                "limit": {"type": ["integer", "null"], "description": "Maximum number of matches to return (default 25, max 200)."},
+                "searchText": {
+                    "type": "string",
+                    "description": "Plant scientific name, common name, or genus to search. Examples: 'white oak', 'red maple', 'Quercus', 'Acer rubrum'."
+                },
+                "limit": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Maximum number of matches to return (default 25, max 200)."
+                },
                 "offset": {
                     "type": [
                         "integer",
@@ -113,344 +395,476 @@
                     "description": "Zero-based offset in the complete USDA match list. Continue with metadata.next_offset."
                 }
             },
-            "required": ["searchText"]
+            "required": [
+                "searchText"
+            ]
         },
-        "fields": {"timeout": 30, "action": "search"},
+        "fields": {
+            "timeout": 30,
+            "action": "search"
+        },
         "type": "USDAPlantsProfileTool",
-        "test_examples": [{"searchText": "white oak"}, {"searchText": "red maple"}, {"searchText": "Quercus"}],
-        "return_schema": {
-          "oneOf": [
+        "test_examples": [
             {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "symbol": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "scientific_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "common_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "rank": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "rank_id": {"type": ["integer", "string", "null"]},
-                  "accepted_symbol": {"type": ["string", "null"], "description": "Set when the hit is a synonym: a genus search returns synonyms beside accepted taxa, and picking one meant the next call was silently redirected"},
-                  "synonym_symbol": {"type": ["string", "null"]},
-                  "group": {"type": ["string", "null"]},
-                  "duration": {"type": ["array", "string", "null"]},
-                  "growth_habits": {"type": ["array", "string", "null"]},
-                  "native_statuses": {"type": ["array", "null"]},
-                  "id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  }
-                }
-              }
+                "searchText": "white oak"
             },
             {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
+                "searchText": "red maple"
+            },
+            {
+                "searchText": "Quercus"
             }
-          ]
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "symbol": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "scientific_name": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "common_name": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "rank": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "rank_id": {
+                                "type": [
+                                    "integer",
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "accepted_symbol": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Set when the hit is a synonym: a genus search returns synonyms beside accepted taxa, and picking one meant the next call was silently redirected"
+                            },
+                            "synonym_symbol": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "group": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "duration": {
+                                "type": [
+                                    "array",
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "growth_habits": {
+                                "type": [
+                                    "array",
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "native_statuses": {
+                                "type": [
+                                    "array",
+                                    "null"
+                                ]
+                            },
+                            "id": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
         }
     },
     {
         "name": "USDA_plants_get_wetland_status",
         "description": "Get USACE wetland indicator status by geographic region for a plant from the USDA PLANTS Database. Returns the wetland indicator code per region: OBL (obligate wetland), FACW (facultative wetland), FAC (facultative), FACU (facultative upland), or UPL (upland). Core data for wetland delineation, restoration ecology, and Clean Water Act jurisdictional determinations. Provide a PLANTS 'symbol' (e.g. 'TYLA' = common cattail, resolved to its plant Id automatically) or a numeric 'id' directly. No API key required. The response metadata carries a `plant` block naming the taxon the symbol resolved to -- scientific and common name, rank, lineage, native status per region and the states USDA has distribution data for -- because USDA redirects a synonym symbol to the accepted taxon without saying so.",
-        "parameter": {"type": "object", "properties": {
-            "symbol": {"type": ["string", "null"], "description": "USDA PLANTS symbol, e.g. 'TYLA' (Typha latifolia / common cattail). Resolved to the plant Id automatically. Use USDA_plants_search_by_name to find a symbol from a name."},
-            "id": {"type": ["integer", "null"], "description": "Numeric USDA PLANTS Id (e.g. 27001). Use instead of 'symbol' if known."}
-        }, "required": []},
-        "fields": {"timeout": 30, "action": "wetland"},
-        "type": "USDAPlantsProfileTool",
-        "test_examples": [{"symbol": "TYLA"}, {"id": 27001}],
-        "return_schema": {
-          "oneOf": [
-            {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "symbol": {
                     "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "scientific_name": {
+                        "string",
+                        "null"
+                    ],
+                    "description": "USDA PLANTS symbol, e.g. 'TYLA' (Typha latifolia / common cattail). Resolved to the plant Id automatically. Use USDA_plants_search_by_name to find a symbol from a name."
+                },
+                "id": {
                     "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "wetland_designations": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "region": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "sub_region": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "wetland_code": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        }
-                      }
-                    }
-                  }
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Numeric USDA PLANTS Id (e.g. 27001). Use instead of 'symbol' if known."
                 }
-              }
+            },
+            "required": []
+        },
+        "fields": {
+            "timeout": 30,
+            "action": "wetland"
+        },
+        "type": "USDAPlantsProfileTool",
+        "test_examples": [
+            {
+                "symbol": "TYLA"
             },
             {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
+                "id": 27001
             }
-          ]
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ]
+                            },
+                            "scientific_name": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "wetland_designations": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "region": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "sub_region": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "wetland_code": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
         }
     },
     {
         "name": "USDA_plants_get_invasive_status",
         "description": "Get state-by-state invasive and noxious-weed legal status for a plant from the USDA PLANTS Database. Returns per-jurisdiction invasive listings (e.g. 'Invasive', 'Potentially Invasive', 'Prohibited' by state) and federal/state noxious-weed statuses. Critical for agriculture, land management, and regulatory compliance. Provide a PLANTS 'symbol' (e.g. 'PUMO' = kudzu, resolved to its plant Id automatically) or a numeric 'id' directly. No API key required. The response metadata carries a `plant` block naming the taxon the symbol resolved to -- scientific and common name, rank, lineage, native status per region and the states USDA has distribution data for -- because USDA redirects a synonym symbol to the accepted taxon without saying so.",
-        "parameter": {"type": "object", "properties": {
-            "symbol": {"type": ["string", "null"], "description": "USDA PLANTS symbol, e.g. 'PUMO' (Pueraria montana / kudzu). Resolved to the plant Id automatically. Use USDA_plants_search_by_name to find a symbol from a name."},
-            "id": {"type": ["integer", "null"], "description": "Numeric USDA PLANTS Id (e.g. 82047). Use instead of 'symbol' if known."}
-        }, "required": []},
-        "fields": {"timeout": 30, "action": "invasive"},
-        "type": "USDAPlantsProfileTool",
-        "test_examples": [{"symbol": "PUMO"}, {"id": 82047}],
-        "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "invasive": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "locality_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "common_names": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "statuses": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "symbol": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "USDA PLANTS symbol, e.g. 'PUMO' (Pueraria montana / kudzu). Resolved to the plant Id automatically. Use USDA_plants_search_by_name to find a symbol from a name."
                 },
-                "noxious": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "locality_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "common_names": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "statuses": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+                "id": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Numeric USDA PLANTS Id (e.g. 82047). Use instead of 'symbol' if known."
                 }
-              },
-              "required": [
-                "invasive"
-              ]
+            },
+            "required": []
+        },
+        "fields": {
+            "timeout": 30,
+            "action": "invasive"
+        },
+        "type": "USDAPlantsProfileTool",
+        "test_examples": [
+            {
+                "symbol": "PUMO"
             },
             {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
+                "id": 82047
             }
-          ]
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "invasive": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "locality_name": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "common_names": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "statuses": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "noxious": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "locality_name": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "common_names": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "statuses": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "invasive"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
         }
     },
     {
         "name": "USDA_plants_get_wildlife_value",
         "description": "Get wildlife food and cover value ratings for a plant from the USDA PLANTS Database. Returns forage/cover importance ratings (e.g. Minor, Low, Moderate, High) to large mammals, small mammals, water birds, and terrestrial birds, by source, plus the cited sources. Used in habitat/restoration and conservation planning. Provide a PLANTS 'symbol' (e.g. 'SANIC4' = elderberry, resolved to its plant Id automatically) or a numeric 'id' directly. No API key required. The response metadata carries a `plant` block naming the taxon the symbol resolved to -- scientific and common name, rank, lineage, native status per region and the states USDA has distribution data for -- because USDA redirects a synonym symbol to the accepted taxon without saying so.",
-        "parameter": {"type": "object", "properties": {
-            "symbol": {"type": ["string", "null"], "description": "USDA PLANTS symbol, e.g. 'SANIC4' (Sambucus nigra ssp. canadensis / elderberry). Resolved to the plant Id automatically. Use USDA_plants_search_by_name to find a symbol from a name."},
-            "id": {"type": ["integer", "null"], "description": "Numeric USDA PLANTS Id (e.g. 42834). Use instead of 'symbol' if known."}
-        }, "required": []},
-        "fields": {"timeout": 30, "action": "wildlife"},
-        "type": "USDAPlantsProfileTool",
-        "test_examples": [{"symbol": "SANIC4"}, {"id": 42834}],
-        "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "food": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "source": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "large_mammals": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "small_mammals": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "water_birds": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "terrestrial_birds": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
-                  }
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "symbol": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "USDA PLANTS symbol, e.g. 'SANIC4' (Sambucus nigra ssp. canadensis / elderberry). Resolved to the plant Id automatically. Use USDA_plants_search_by_name to find a symbol from a name."
                 },
-                "cover": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "source": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "large_mammals": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "small_mammals": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "water_birds": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "terrestrial_birds": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
-                  }
-                },
-                "sources": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
+                "id": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Numeric USDA PLANTS Id (e.g. 42834). Use instead of 'symbol' if known."
                 }
-              },
-              "required": [
-                "food"
-              ]
+            },
+            "required": []
+        },
+        "fields": {
+            "timeout": 30,
+            "action": "wildlife"
+        },
+        "type": "USDAPlantsProfileTool",
+        "test_examples": [
+            {
+                "symbol": "SANIC4"
             },
             {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
+                "id": 42834
             }
-          ]
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "food": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "source": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "large_mammals": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "small_mammals": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "water_birds": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "terrestrial_birds": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "cover": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "source": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "large_mammals": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "small_mammals": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "water_birds": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "terrestrial_birds": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "sources": {
+                            "type": "array",
+                            "items": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "required": [
+                        "food"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
         }
     }
 ]

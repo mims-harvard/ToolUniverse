@@ -32,7 +32,26 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SASBDB entry code."
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The entry's status."
+              }
+            }
+          }
         },
         {
           "type": "object",

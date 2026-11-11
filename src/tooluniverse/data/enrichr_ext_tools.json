@@ -36,7 +36,51 @@
       "required": []
     },
     "return_schema": {
-      "type": "array"
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "library_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The gene-set library's name, which is what must be passed to the enrichment call."
+          },
+          "category_id": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "Which category it belongs to."
+          },
+          "num_terms": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "How many gene sets it holds. Enrichment p-values depend on this, so a library with more terms demands a stricter correction."
+          },
+          "gene_coverage": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "How many distinct genes the library covers. A gene absent from the library cannot contribute to any enrichment."
+          },
+          "genes_per_term": {
+            "type": [
+              "number",
+              "string",
+              "null"
+            ],
+            "description": "Mean set size. Very large sets produce significant overlaps easily."
+          }
+        }
+      }
     },
     "test_examples": [
       {
@@ -102,7 +146,103 @@
       ]
     },
     "return_schema": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "library": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The library the enrichment ran against."
+        },
+        "gene_count": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "How many of the submitted genes Enrichr recognised. Lower than what was submitted means genes were silently dropped."
+        },
+        "total_terms": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "How many terms the library holds -- the multiple-testing burden behind the adjusted p-values."
+        },
+        "enriched_terms": {
+          "type": [
+            "array",
+            "object",
+            "null"
+          ],
+          "description": "The enriched terms with their statistics.",
+          "items": {
+            "type": "object",
+            "description": "One enriched term with its statistics.",
+            "properties": {
+              "term": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The term."
+              },
+              "p_value": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Nominal p-value."
+              },
+              "adjusted_p_value": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "After Benjamini-Hochberg correction across the library. The one to read."
+              },
+              "combined_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Enrichr's own ranking score. Not a probability and not comparable between libraries."
+              },
+              "overlapping_genes": {
+                "type": "array",
+                "description": "Which submitted genes are in the term.",
+                "items": {
+                  "type": "string",
+                  "description": "One overlapping gene."
+                }
+              },
+              "rank": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "The term's position in Enrichr's ranking. Ranked by combined_score, NOT by adjusted p-value, so rank 1 is not necessarily the most significant term."
+              },
+              "overlap_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of the submitted genes are in the term. A 'significant' term resting on two genes is not the same finding as one resting on twenty, and the p-value alone does not say which."
+              },
+              "z_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Deviation of the term's rank from the rank expected by chance. Enrichr's combined_score is log(p) multiplied by this, so a high combined score can come from either factor."
+              }
+            }
+          }
+        }
+      }
     },
     "test_examples": [
       {
@@ -188,7 +328,83 @@
       ]
     },
     "return_schema": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "gene_count": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "How many submitted genes Enrichr recognised."
+        },
+        "results_by_library": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The enrichment per library, KEYED BY LIBRARY NAME -- 'KEGG_2021_Human', 'GO_Biological_Process_2023'. Which keys appear depends on what was requested, so read it as a map.",
+          "additionalProperties": {
+            "type": "object",
+            "description": "The enrichment against one library.",
+            "properties": {
+              "total_terms": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "How many terms that library holds -- the correction burden behind the adjusted p-values below."
+              },
+              "top_terms": {
+                "type": "array",
+                "description": "The most enriched terms, best first.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "term": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The term, e.g. 'Breast cancer'."
+                    },
+                    "p_value": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Nominal p-value from the exact test."
+                    },
+                    "adjusted_p_value": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "After Benjamini-Hochberg correction across the library. This is the one to read; the nominal p ignores that hundreds of terms were tested."
+                    },
+                    "combined_score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Enrichr's own ranking score, log(p) times the z-score of the deviation from expected rank. Not a probability and not comparable between libraries."
+                    },
+                    "overlapping_genes": {
+                      "type": "array",
+                      "description": "Which of the submitted genes are in the term. A 'significant' term resting on two genes is not the same finding as one resting on twenty.",
+                      "items": {
+                        "type": "string",
+                        "description": "One overlapping gene."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "test_examples": [
       {

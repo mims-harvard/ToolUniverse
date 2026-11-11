@@ -813,7 +813,8 @@
                 }
               }
             ]
-          }
+          },
+          "description": "The extracted outcomes, one per entry. A 'Warning:' line appears here as an ORDINARY ELEMENT rather than as an error, so a caller treating every element as an outcome will treat the warning as one."
         },
         {
           "type": "object",
