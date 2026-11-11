@@ -3,7 +3,9 @@
     "type": "AntibodyRegistryTool",
     "name": "AntibodyRegistry_search",
     "description": "Search the Antibody Registry (antibodyregistry.org, a SciCrunch/RRID resource of 3M+ research antibodies) by target, name, or vendor keyword. Returns persistent RRIDs and scientifically useful antibody metadata. Results use one-based pagination; metadata reports the exact total, total_pages, has_more, and next_page so all matches remain reachable. For resolving a known RRID, use AntibodyRegistry_get_by_rrid instead.",
-    "fields": {"operation": "search"},
+    "fields": {
+      "operation": "search"
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -25,7 +27,9 @@
           "default": 1
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -75,14 +79,19 @@
       ]
     },
     "test_examples": [
-      {"query": "GFAP", "size": 3}
+      {
+        "query": "GFAP",
+        "size": 3
+      }
     ]
   },
   {
     "type": "AntibodyRegistryTool",
     "name": "AntibodyRegistry_get_by_rrid",
     "description": "Resolve a research-antibody RRID (e.g. 'AB_2298772', 'RRID:AB_2298772', or the bare numeric id) to its full Antibody Registry record: name, target (with UniProt/Entrez ids), clonality, clone id, host/source organism, conjugate, isotype, applications, vendor, catalog number, and defining citation. Use it to verify or expand an antibody cited by RRID in a methods section. To discover antibodies for a target, use AntibodyRegistry_search.",
-    "fields": {"operation": "get_by_rrid"},
+    "fields": {
+      "operation": "get_by_rrid"
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -91,7 +100,9 @@
           "description": "Antibody RRID, e.g. 'AB_2298772', 'RRID:AB_2298772', or a bare numeric id like '2298772'."
         }
       },
-      "required": ["rrid"]
+      "required": [
+        "rrid"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -118,6 +129,69 @@
             },
             "catalogNum": {
               "type": "string"
+            },
+            "comments": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Free-text notes, which is where the validated applications are recorded, e.g. 'Applications: Immunohistochemistry, Immunoblotting'."
+            },
+            "commercialType": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether the antibody is 'commercial' or from a non-commercial source. Decides whether it can simply be bought."
+            },
+            "definingCitation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "PubMed IDs of the papers that used this antibody, comma-separated in ONE string, e.g. '21830220, 17348015, ...'. Not a list; split on ', '."
+            },
+            "numOfCitation": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many citations the registry counts for the antibody, e.g. 214. The count can exceed the number of ids in definingCitation, which lists only the defining ones."
+            },
+            "productForm": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How the product is supplied, e.g. 'Lyophilized ascites (no preservatives)'. Bears on storage and on whether a concentration is meaningful."
+            },
+            "sourceOrganism": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Host species the antibody was raised in, e.g. 'mouse'. Determines which secondary antibody and which samples it can be used on."
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Curation status of the Antibody Registry record, e.g. 'CURATED'."
+            },
+            "targetSpecies": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Species the antibody is reported to work in, e.g. ['chicken', 'human', 'mouse', ...] (7 entries). The reactivity list -- this is what decides whether it is usable for a given experiment."
+            },
+            "vendorUrl": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Vendor web addresses, e.g. ['www.swant.com', ...] (4 entries). Bare hostnames, not always full URLs."
             }
           },
           "required": [
@@ -138,7 +212,9 @@
       ]
     },
     "test_examples": [
-      {"rrid": "AB_10000343"}
+      {
+        "rrid": "AB_10000343"
+      }
     ]
   }
 ]

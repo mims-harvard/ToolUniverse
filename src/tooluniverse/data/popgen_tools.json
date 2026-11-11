@@ -302,6 +302,20 @@
                 },
                 "interpretation": {
                   "type": "string"
+                },
+                "base_F_per_mating": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Inbreeding coefficient added by one mating of the given type, e.g. 0.125 for full sibs. The per-generation increment the cumulative figure is built from."
+                },
+                "generations": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Generations of that mating, e.g. 3."
                 }
               }
             }
@@ -387,6 +401,41 @@
                 },
                 "interpretation": {
                   "type": "string"
+                },
+                "expected_crossovers_per_gamete_per_gen": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Expected crossovers per gamete per generation, e.g. 2.0. The product of rate and intervals, shown so the inputs can be checked against the answer."
+                },
+                "generations": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Generations simulated, e.g. 3."
+                },
+                "n_intervals": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of intervals between them, e.g. 4 - one fewer than the SNP count."
+                },
+                "n_snps": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of SNPs in the window, e.g. 5."
+                },
+                "recomb_rate_per_interval": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Recombination rate assumed per interval, e.g. 0.5. An assumption, not a measurement, and the result scales with it."
                 }
               }
             }

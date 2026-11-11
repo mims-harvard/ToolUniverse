@@ -534,6 +534,65 @@
                           "string",
                           "null"
                         ]
+                      },
+                      "alias": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Other symbols the gene has been known by, e.g. ['DP2', ...]. Measured on 18 of 19 genes, and what lets an older report's symbol be matched."
+                      },
+                      "alias_name": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Former full names of the gene, e.g. ['protein phosphatase 1, regulatory subunit 46']. Measured on 7 of 19."
+                      },
+                      "biotype": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Gene biotype, e.g. 'protein_coding'."
+                      },
+                      "ensembl_genes": {
+                        "type": "object",
+                        "description": "Ensembl gene IDs by assembly"
+                      },
+                      "hgnc_date_symbol_changed": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the symbol last changed, e.g. '1986-01-01'. A recent change is why a gene may be missing from an older analysis."
+                      },
+                      "hgnc_release": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the HGNC record used here was released, e.g. '2017-11-03'."
+                      },
+                      "hgnc_symbol": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Current HGNC symbol for the gene, e.g. 'APC'."
+                      },
+                      "omim_gene": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "OMIM gene IDs"
                       }
                     }
                   },
@@ -582,6 +641,52 @@
                         "items": {
                           "type": "string"
                         }
+                      },
+                      "hash_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "PanelApp's legacy hash identifier for the panel, e.g. '596f82e88f620352d0e3eeb1'. Measured on 5 of 6 panels - older panels carry one and newer ones do not."
+                      },
+                      "stats": {
+                        "type": "object",
+                        "description": "Gene count statistics by confidence level",
+                        "properties": {
+                          "number_of_genes": {
+                            "type": "integer"
+                          },
+                          "number_of_strs": {
+                            "type": "integer"
+                          },
+                          "number_of_regions": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "status": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Panel visibility, e.g. 'public'. A non-public panel is not an agreed diagnostic panel."
+                      },
+                      "types": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "What kind of panel it is, each with 'name' and 'slug', e.g. 'GMS Rare Disease Virtual'. Separates a national diagnostic panel from a research one."
+                      },
+                      "version_created": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the panel version this gene entry belongs to was published, e.g. '2025-11-23T17:04:04.323318Z' - present on all 26 measured hits. Gene ratings change between panel versions, so a gene's confidence level cannot be reproduced without knowing which version it came from."
                       }
                     }
                   },
@@ -605,6 +710,27 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "entity_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The gene, region or STR the entry is about, e.g. 'APC'."
+                  },
+                  "mode_of_pathogenicity": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Pathogenicity mechanism (e.g., loss of function)"
+                  },
+                  "penetrance": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Penetrance level"
                   }
                 }
               }

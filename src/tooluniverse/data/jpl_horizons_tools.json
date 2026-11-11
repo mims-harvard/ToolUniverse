@@ -75,6 +75,20 @@
                   }
                 }
               }
+            },
+            "count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching objects Horizons found, e.g. 8. More than one match means the query was ambiguous, which a single returned record would hide."
+            },
+            "signature": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Which Horizons version and source produced the answer, as 'version' and 'source'. Ephemerides change between versions."
             }
           },
           "not": {

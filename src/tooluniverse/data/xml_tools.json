@@ -157,6 +157,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; ONE offset governs them all, so they page in step rather than independently. 0 means the nested lists start from their first entry."
             }
           }
         }
@@ -329,6 +336,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; ONE offset governs them all, so they page in step rather than independently. 0 means the nested lists start from their first entry."
             }
           }
         }
@@ -503,6 +517,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; ONE offset governs them all, so they page in step rather than independently. 0 means the nested lists start from their first entry."
             }
           }
         }
@@ -675,6 +696,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; ONE offset governs them all, so they page in step rather than independently. 0 means the nested lists start from their first entry."
             }
           }
         }
@@ -2913,6 +2941,13 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list. It runs to thousands of characters and must be split on ' | '."
               }
             }
           }
@@ -2931,6 +2966,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }
@@ -3650,6 +3692,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested pathway and reaction lists; one offset governs both, so they page in step."
             }
           }
         }

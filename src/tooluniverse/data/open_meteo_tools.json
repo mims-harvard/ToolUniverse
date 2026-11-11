@@ -285,6 +285,34 @@
             },
             "hourly_units": {
               "type": "object"
+            },
+            "elevation": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Elevation of the grid cell in metres, e.g. 1.0. Open-Meteo returns the forecast for its own grid cell, and temperature is elevation-dependent, so a mismatch with the requested point explains a surprising value."
+            },
+            "generationtime_ms": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "How long Open-Meteo took to compute the forecast, in milliseconds."
+            },
+            "timezone_abbreviation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Abbreviation for that timezone, e.g. 'GMT'."
+            },
+            "utc_offset_seconds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of the returned timestamps from UTC, in seconds. The hourly times are LOCAL unless this is zero, so reading them as UTC shifts the whole forecast."
             }
           },
           "not": {
@@ -411,6 +439,55 @@
                       "null"
                     ],
                     "description": "State/province"
+                  },
+                  "admin1_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "GeoNames id of the first-level administrative division, e.g. 6269131."
+                  },
+                  "admin2": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Second-level administrative division name, e.g. 'Greater London'."
+                  },
+                  "admin2_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "GeoNames id of that second-level division, e.g. 2648110."
+                  },
+                  "admin3": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Third-level administrative division name, e.g. 'London'. Present on 2 of the 3 hits -- the levels that exist differ by country, so do not assume a fixed depth."
+                  },
+                  "admin3_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "GeoNames id of that third-level division, e.g. 13680305."
+                  },
+                  "country_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "GeoNames id of the country, e.g. 2635167."
+                  },
+                  "postcodes": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Postal codes GeoNames holds for the place, e.g. ['43140']. Present on 1 of 3 hits."
                   }
                 }
               }

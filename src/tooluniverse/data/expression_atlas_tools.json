@@ -315,6 +315,20 @@
             },
             "result_set_complete": {
               "type": "boolean"
+            },
+            "page_note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What part of the matching set this reply holds and how to get the rest. Measured value: 'Showing 1-50 of 1528. Re-run with offset=50 for the next page, or raise limit (max 500).' The totals here are the only statement that the list is a page. Measured on a search with 1528 matches."
+            },
+            "warning": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Expression Atlas caveat the tool raises about its own answer. Measured value: \"'gene_mentioned' only reflects a text-search coincidence against experiment descriptions, not a measured expression result\" -- so a hit flagged gene_mentioned is NOT evidence that the gene was assayed, let alone differentially expressed."
             }
           },
           "required": [
@@ -496,6 +510,20 @@
             },
             "result_set_complete": {
               "type": "boolean"
+            },
+            "page_note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What part of the matching set this reply holds and how to get the rest. Measured value: 'Showing 1-50 of 1528. Re-run with offset=50 for the next page, or raise limit (max 500).' The totals here are the only statement that the list is a page. Measured on a search with 1651 matches."
+            },
+            "warning": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Expression Atlas caveat the tool raises about its own answer. Measured value: \"'gene_mentioned' only reflects a text-search coincidence against experiment descriptions, not a measured expression result\" -- so a hit flagged gene_mentioned is NOT evidence that the gene was assayed, let alone differentially expressed."
             }
           },
           "required": [

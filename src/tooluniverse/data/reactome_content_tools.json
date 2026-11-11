@@ -147,9 +147,65 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "compartments": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Cellular compartments the entry is annotated to, e.g. ['cytosol']. Present on 6 of the 30 results -- pathways often have none."
                   }
                 }
               }
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The page size applied, e.g. 30."
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset to pass to get the next page, e.g. 30. Null or absent when there is no next page."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset this page started at, e.g. 0."
+            },
+            "result_groups": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Per-type totals for the whole search, each {type, total, returned}, e.g. {'type': 'Pathway', 'total': 192, 'returned': 30}. This is where the TRUE hit count lives."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many results this reply contains, e.g. 30."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more results exist than were returned, e.g. true. The measured search found 192 pathways and returned 30 -- so this flag, not the result count, is what says the answer is partial."
+            },
+            "types_searched": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which Reactome object types the search covered, e.g. 'Pathway'. A hit missing from the results may simply be of a type that was not searched."
             }
           },
           "not": {
@@ -483,6 +539,27 @@
             "literature": {
               "type": "array",
               "description": "Key literature references with PubMed IDs"
+            },
+            "is_disease": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the event is a disease variant of a normal process. A disease reaction mixed into a normal pathway silently changes what the pathway describes."
+            },
+            "literature_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many references the pathway cites, e.g. 7. The weight of curation behind it."
+            },
+            "summation_characters": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Length of the pathway's prose summary in characters, e.g. 2415. Says whether the summary is a sentence or an essay before it is fetched."
             }
           },
           "not": {

@@ -134,6 +134,17 @@
                       "description": "Timestamp of the measurement"
                     }
                   }
+                },
+                "status": {
+                  "type": "string",
+                  "description": "API status: ok or error"
+                },
+                "data": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The station's reading - aqi, idx, attributions, city, dominentpol and the per-pollutant values. The payload, nested one level below the envelope's own 'data'. 'attributions' carries the licence terms the data is supplied under."
                 }
               }
             }

@@ -1316,6 +1316,30 @@
                           "string",
                           "null"
                         ]
+                      },
+                      "isEnsemblCanonical": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when the transcript is Ensembl's canonical one for the gene. A variant has one consequence per transcript - 61 on the measured variant - and reporting a non-canonical consequence as the consequence is the usual way a variant's effect gets overstated."
+                      },
+                      "target": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The gene the transcript belongs to, with its Ensembl id and approvedSymbol. The readable gene name for the consequence."
+                      },
+                      "variantConsequences": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "The consequence terms, each with a Sequence Ontology id and label, e.g. {'id': 'SO:0001632', 'label': 'downstream_gene_variant'}. A list, since one transcript can take several."
                       }
                     }
                   }
@@ -1544,9 +1568,30 @@
                               "object",
                               "null"
                             ]
+                          },
+                          "h3": {
+                            "type": [
+                              "number",
+                              "null"
+                            ],
+                            "description": "Posterior probability of hypothesis H3 -- that the two traits have DISTINCT causal variants in the region -- e.g. 0.0023. Colocalisation is only supported when h4 is high AND h3 is low; reading h4 alone overstates shared causality."
                           }
                         }
                       }
+                    },
+                    "returned": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many credible sets came back, e.g. 10."
+                    },
+                    "truncated": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when the colocalisation row list was cut, e.g. true. A colocalisation search is used to decide whether two traits share a causal variant, so a truncated list can hide the very pair being looked for."
                     }
                   }
                 }

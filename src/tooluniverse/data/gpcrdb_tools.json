@@ -328,6 +328,13 @@
             },
             "total_count": {
               "type": "integer"
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How to narrow the listing - that a family's numeric slug must be passed as 'family'. The instruction that turns an unusable whole-database listing into a targeted one."
             }
           }
         }
@@ -392,6 +399,13 @@
             },
             "count": {
               "type": "integer"
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How to narrow the listing - that a family's numeric slug must be passed as 'family'. The instruction that turns an unusable whole-database listing into a targeted one."
             }
           }
         }

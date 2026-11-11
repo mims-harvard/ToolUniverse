@@ -108,6 +108,34 @@
                                 "string",
                                 "null"
                               ]
+                            },
+                            "affiliationROR": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "ROR id of the author's affiliation as a URL, e.g. 'https://ror.org/032xfst36'. Present on all 24 author rows measured. The flat copy of affiliations[0].identifier; an author with two affiliations only shows the first here."
+                            },
+                            "affiliations": {
+                              "type": [
+                                "array",
+                                "null"
+                              ],
+                              "description": "The author's affiliations, each {organization, identifier} with the identifier being a ROR URL. This is the complete list -- affiliationROR carries only the first."
+                            },
+                            "email": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Author email address as submitted, e.g. 'name@example.org'. Present on 22 of 24 author rows."
+                            },
+                            "order": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ],
+                              "description": "The author's position in the author list, e.g. 2. Present on only 9 of 24 rows, so do NOT sort on it: the rows arrive in author order already and sorting by a mostly-missing key scrambles them."
                             }
                           }
                         }
@@ -132,6 +160,122 @@
                           "null"
                         ],
                         "description": "ISSN of the related publication journal"
+                      },
+                      "_links": {
+                        "type": "object",
+                        "description": "HAL links including stash:versions and stash:version (contains version ID for file listing)"
+                      },
+                      "curationStatus": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Where the submission stands in Dryad's curation workflow, e.g. 'Published'. A dataset not yet 'Published' may still change."
+                      },
+                      "fieldOfScience": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Dryad's broad subject class, e.g. 'Biological sciences'. Present on 4 of 5."
+                      },
+                      "funders": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "Funders of the work, each {organization, identifier, awardNumber} as supplied. Up to 5 entries on the measured records."
+                      },
+                      "hsiStatement": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Human Subjects Information statement: how consent and ethics were handled for data about people. Present on 1 of 5; its presence is the signal that the dataset involves human subjects."
+                      },
+                      "keywords": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "Submitter-supplied keywords, e.g. ['alpine flora', ...] (3 to 13 entries). Present on 3 of the 5 searched datasets -- free text, not a controlled vocabulary."
+                      },
+                      "lastModificationDate": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Date the record last changed, 'YYYY-MM-DD', e.g. '2023-12-14'. Later than publicationDate whenever a new version exists."
+                      },
+                      "license": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "SPDX licence URL for the dataset, e.g. 'https://spdx.org/licenses/CC0-1.0.html'. Dryad's default is CC0, but this is the field that says so for THIS dataset."
+                      },
+                      "methods": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The methods section as submitted, in HTML with entity escapes -- not plain text. Present on 2 of 5."
+                      },
+                      "metrics": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "Usage counts for the dataset: {views, downloads, citations}."
+                      },
+                      "publicationDate": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Date the dataset was first published, 'YYYY-MM-DD', e.g. '2021-06-15'."
+                      },
+                      "relatedWorks": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "Linked outputs, each {relationship, identifierType, identifier}. The entry with relationship 'primary_article' is the paper the dataset belongs to -- usually the thing a reader actually wants."
+                      },
+                      "sharingLink": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Human-readable Dryad page for the dataset, e.g. 'http://datadryad.org/dataset/doi:10.5061/dryad.7rh4625'."
+                      },
+                      "versionChanges": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "What changed in this version, e.g. 'files_changed' or 'metadata_changed'. 'metadata_changed' means the data files are identical to the previous version."
+                      },
+                      "versionNumber": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Which version of the dataset this record describes, e.g. 4. Dryad DOIs resolve to the latest version, so a citation without this number is ambiguous."
+                      },
+                      "versionStatus": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Status of this particular version, e.g. 'submitted'."
+                      },
+                      "visibility": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Whether the record is visible, e.g. 'public'."
                       }
                     }
                   }
@@ -243,6 +387,13 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "affiliations": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "The author's affiliations, each {organization, identifier} with the identifier being a ROR URL. This is the complete list -- affiliationROR carries only the first."
                   }
                 }
               }
@@ -271,6 +422,111 @@
             "_links": {
               "type": "object",
               "description": "HAL links including stash:versions and stash:version (contains version ID for file listing)"
+            },
+            "changedFields": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The metadata field names this version altered, e.g. ['title', 'abstract', ...] (8 entries on the measured record)."
+            },
+            "curationStatus": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Where the submission stands in Dryad's curation workflow, e.g. 'Published'. A dataset not yet 'Published' may still change."
+            },
+            "funders": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Funders of the work, each {organization, identifier, awardNumber} as supplied. Up to 5 entries on the measured records."
+            },
+            "keywords": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Submitter-supplied keywords, e.g. ['alpine flora', ...] (3 to 13 entries). Present on 3 of the 5 searched datasets -- free text, not a controlled vocabulary."
+            },
+            "lastModificationDate": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Date the record last changed, 'YYYY-MM-DD', e.g. '2023-12-14'. Later than publicationDate whenever a new version exists."
+            },
+            "license": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "SPDX licence URL for the dataset, e.g. 'https://spdx.org/licenses/CC0-1.0.html'. Dryad's default is CC0, but this is the field that says so for THIS dataset."
+            },
+            "locations": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Geographic coverage, each entry {place} and optionally coordinates, e.g. {'place': 'Africa'}."
+            },
+            "metrics": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Usage counts for the dataset: {views, downloads, citations}."
+            },
+            "publicationDate": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Date the dataset was first published, 'YYYY-MM-DD', e.g. '2021-06-15'."
+            },
+            "relatedWorks": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Linked outputs, each {relationship, identifierType, identifier}. The entry with relationship 'primary_article' is the paper the dataset belongs to -- usually the thing a reader actually wants."
+            },
+            "sharingLink": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Human-readable Dryad page for the dataset, e.g. 'http://datadryad.org/dataset/doi:10.5061/dryad.7rh4625'."
+            },
+            "versionChanges": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What changed in this version, e.g. 'files_changed' or 'metadata_changed'. 'metadata_changed' means the data files are identical to the previous version."
+            },
+            "versionNumber": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Which version of the dataset this record describes, e.g. 4. Dryad DOIs resolve to the latest version, so a citation without this number is ambiguous."
+            },
+            "versionStatus": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Status of this particular version, e.g. 'submitted'."
+            },
+            "visibility": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether the record is visible, e.g. 'public'."
             }
           },
           "not": {
@@ -399,6 +655,17 @@
                           "null"
                         ],
                         "description": "Checksum algorithm (e.g., 'md5')"
+                      },
+                      "_links": {
+                        "type": "object",
+                        "description": "HAL links including stash:versions and stash:version (contains version ID for file listing)"
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The submitter's description of the file, e.g. 'FEA model'. Present on 10 of the 20 files measured -- often the only clue to what a file contains, since Dryad filenames are free-form."
                       }
                     }
                   }

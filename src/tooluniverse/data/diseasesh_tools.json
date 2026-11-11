@@ -85,6 +85,27 @@
             "affectedCountries": {
               "type": "integer",
               "description": "Number of countries with reported cases"
+            },
+            "oneCasePerPeople": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many people there are per recorded case - 0 on the measured call, which is a sentinel for 'not computed' rather than a real ratio."
+            },
+            "oneDeathPerPeople": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "People per recorded death. Also 0, with the same caveat."
+            },
+            "oneTestPerPeople": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "People per test performed. Also 0. All three are ratios where a larger number means rarer, which is the opposite direction to a rate per million."
             }
           },
           "not": {

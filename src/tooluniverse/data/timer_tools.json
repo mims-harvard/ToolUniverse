@@ -126,6 +126,27 @@
             "max_samples": {
               "type": "integer",
               "description": "The cap in force, raisable up to 1000"
+            },
+            "method": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How the estimate was computed. Measured value: 'Marker gene expression (CD19, CD4, CD8A, FCGR3B, CD68, ITGAX) via cBioPortal TCGA data' -- six marker genes read off bulk expression, which is not a deconvolution and does not give cell fractions."
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Where the result actually came from. Measured value: 'TIMER2.0/3.0 API is unavailable; using cBioPortal TCGA expression as proxy'. The estimate is a fallback, not TIMER's own deconvolution -- read this before reporting it as a TIMER result."
+            },
+            "profile_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The expression profile used, e.g. 'brca_tcga_rna_seq_v2_mrna'. Names the study and assay behind the numbers."
             }
           },
           "required": [
@@ -214,6 +235,20 @@
             },
             "n_samples": {
               "type": "integer"
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Where the result came from. Measured value: 'TIMER2.0/3.0 API unavailable; correlation computed from cBioPortal TCGA expression'. The correlation is a fallback computed locally, not TIMER's own output."
+            },
+            "profile_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The expression profile the correlation was computed on, e.g. 'brca_tcga_rna_seq_v2_mrna'. Names the study and the assay."
             }
           },
           "required": [
@@ -300,6 +335,34 @@
             },
             "low_expression_group": {
               "type": "object"
+            },
+            "log_rank_statistic": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The log-rank test statistic, e.g. -2.1238. Signed, so it carries the direction as well as the magnitude; the p-value is reported separately."
+            },
+            "median_expression_cutoff": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The expression value patients were split into high and low groups at, e.g. 152.2146. This is a MEDIAN split, not an optimised cutpoint, so the split is cohort-specific and not transferable."
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Where the result actually came from. Measured value: 'TIMER2.0/3.0 API unavailable; survival computed from cBioPortal TCGA data' -- the tool fell back to a DIFFERENT database and recorded it only here. Read this field before attributing the result to TIMER."
+            },
+            "profile_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The expression profile the analysis ran on, e.g. 'brca_tcga_rna_seq_v2_mrna'. Names the study and the assay, which the gene name alone does not."
             }
           },
           "required": [

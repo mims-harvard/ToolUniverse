@@ -220,6 +220,58 @@
       "properties": {
         "error": {
           "type": "string"
+        },
+        "expression_unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The unit the values are in: 'nTPM (normalized Transcripts Per Million)'. nTPM values are comparable across tissues within HPA but not with raw TPM or FPKM from elsewhere."
+        },
+        "gene_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The gene the query resolved to, e.g. 'TP53'."
+        },
+        "gene_symbol": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The gene symbol, equal to gene_name in the measured reply."
+        },
+        "gene_synonym": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Other symbols for the gene, e.g. ['IDDM1', ...]. Explains why a query under a different name reached this gene."
+        },
+        "cell_line": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The cell line the comparison is for, e.g. 'hela'. Lower-cased by the wrapper, so it will not match HPA's own 'HeLa' in a string comparison."
+        },
+        "cell_line_expression": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Expression in that cell line, or 'N/A' where HPA holds none - measured 'N/A'. A string, and 'N/A' is not zero."
+        },
+        "comparison_summary": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The comparison itself, e.g. 'Insufficient data for comparison'. The field that says there is no answer; without it an absent comparison looks like no difference."
         }
       }
     }
@@ -984,6 +1036,13 @@
             },
             "functional_relevance": {
               "type": "string"
+            },
+            "expression_level_basis": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "States that expression_level is computed by ToolUniverse from expression_value and is not HPA's own classification. Without it, the level reads as an HPA call rather than a derived one."
             }
           },
           "additionalProperties": true

@@ -300,6 +300,27 @@
             },
             "description": {
               "type": "object"
+            },
+            "counts": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How many targets sit at each level, keyed by level name: {Tclin, Tchem, Tbio, Tdark}."
+            },
+            "db_version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The Pharos/TCRD release the counts come from, e.g. 'pharos319'. TDL assignments move between releases, so a count is only comparable against the same version."
+            },
+            "tdl_levels": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The Target Development Level names, e.g. ['Tclin', 'Tchem', 'Tbio', 'Tdark'] -- from targets with approved drugs down to targets with almost nothing known. Positionally parallel to the keys of `counts`."
             }
           }
         },

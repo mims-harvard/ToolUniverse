@@ -76,6 +76,13 @@
             },
             "query": {
               "type": "string"
+            },
+            "language": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Language the returned disease names are in, e.g. 'EN'. Orphanet is multilingual, so a name match depends on this."
             }
           }
         }
@@ -492,6 +499,27 @@
             },
             "exact_match": {
               "type": "boolean"
+            },
+            "search_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The name actually searched for, e.g. 'Marfan syndrome'. Echoed back so a normalised or corrected query is visible."
+            },
+            "total": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many diseases matched the search, e.g. 1."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result list was cut, e.g. false. The field that says whether `total` matches have all been returned."
             }
           }
         }
@@ -863,6 +891,30 @@
                         },
                         "association_type": {
                           "type": "string"
+                        },
+                        "association_status": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Whether Orphanet has assessed the gene-disease association, e.g. 'Not yet assessed' - on all 38 measured rows. An unassessed association presented as curated overstates the evidence."
+                        },
+                        "gene_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "What kind of gene it is, e.g. 'gene with protein product'."
+                        },
+                        "locus": {
+                          "type": [
+                            "array",
+                            "null"
+                          ],
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Cytogenetic loci for the gene, e.g. ['15q21.1']."
                         }
                       }
                     }

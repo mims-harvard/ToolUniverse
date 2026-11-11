@@ -240,6 +240,41 @@
         },
         "record": {
           "type": "object"
+        },
+        "publisher": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Publisher name, e.g. 'Springer Science and Business Media LLC'."
+        },
+        "year": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Publication year, e.g. 2013."
+        },
+        "best_oa_host_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Where the best open copy is hosted, 'publisher' or 'repository'. A publisher copy can be paywalled again later; a repository copy cannot."
+        },
+        "best_oa_version": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which version that copy is, e.g. 'publishedVersion', 'acceptedVersion' or 'submittedVersion'. An accepted manuscript is not the published paper and a submitted one is not peer-reviewed, so quoting page numbers or text from the wrong version is a citation error."
+        },
+        "journal_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Journal the article appeared in, e.g. 'Nature'."
         }
       },
       "required": [

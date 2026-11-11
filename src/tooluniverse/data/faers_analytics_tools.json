@@ -64,6 +64,66 @@
               "description": "Which of those situations this call is in, in prose."
             }
           }
+        },
+        "adverse_event": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "MedDRA Preferred Term the query was narrowed to, or null when the drug alone was queried."
+        },
+        "contingency_table": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The 2x2 case counts this arm's ROR/PRR/IC were computed from, using the same key names as FAERS_calculate_disproportionality. Null only if the underlying analysis omitted them.",
+          "properties": {
+            "a_drug_and_event": {
+              "type": "integer",
+              "description": "Reports naming both this drug and this adverse event."
+            },
+            "b_drug_no_event": {
+              "type": "integer",
+              "description": "Reports naming this drug but not this adverse event."
+            },
+            "c_no_drug_event": {
+              "type": "integer",
+              "description": "Reports naming this adverse event but not this drug."
+            },
+            "d_no_drug_no_event": {
+              "type": "integer",
+              "description": "Reports naming neither this drug nor this adverse event."
+            }
+          }
+        },
+        "drug_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The drug the rollup is for, normalised to upper case, e.g. 'IBUPROFEN'. What the query actually resolved to."
+        },
+        "metrics": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ROR, PRR and IC with 95% confidence intervals."
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the rollup stops at Preferred Term level: 'Full MedDRA hierarchy (HLT, SOC) requires MedDRA license. Showing Preferred Term (PT) level...'. Without it, the absence of System Organ Class looks like an absence of data rather than a licensing limit."
+        },
+        "signal_detection": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Whether this arm alone crosses the signal-detection threshold, and how strongly."
         }
       }
     },
@@ -658,6 +718,41 @@
               "description": "Which cohort was measured and what the split means for these figures, in prose."
             }
           }
+        },
+        "adverse_event": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "MedDRA Preferred Term the query was narrowed to, or null when the drug alone was queried."
+        },
+        "drug_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The drug the rollup is for, normalised to upper case, e.g. 'IBUPROFEN'. What the query actually resolved to."
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the rollup stops at Preferred Term level: 'Full MedDRA hierarchy (HLT, SOC) requires MedDRA license. Showing Preferred Term (PT) level...'. Without it, the absence of System Organ Class looks like an absence of data rather than a licensing limit."
+        },
+        "temporal_data": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The yearly series the trend was computed from, each {year, count}, e.g. {'year': '2004', 'count': 65} -- 23 years on the measured call. The year is a STRING. Raw FAERS report counts, which rise with total reporting volume, so a rising count is not by itself a rising rate."
+        },
+        "trend_analysis": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The summary of that series: {trend, percent_change, years_analyzed}. percent_change is computed across years_analyzed only, so it says nothing about years outside the window."
         }
       }
     },

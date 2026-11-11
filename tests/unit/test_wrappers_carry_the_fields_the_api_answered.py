@@ -528,25 +528,58 @@ def _source(module):
     return path.read_text()
 
 
-def _success_props(rs, _depth=0):
-    """The properties of the success branch, unwrapping nested oneOf.
+def _success_branch(rs, _depth=0):
+    """The success branch itself, unwrapping nested oneOf.
 
     A `properties` block beside `oneOf` belongs to no branch and the schema
     walker never reads it, so the branch has to be chosen rather than assumed
     -- and PharmGKB_get_drug_label_annotations has a oneOf whose first branch
     is itself a oneOf, so the unwrapping recurses.
+
+    An ARRAY branch keeps its fields under `items`, so scoring a branch by its
+    own `properties` reads 0 for it; that is how four AlphaFold declarations
+    once landed on the branch that requires `error`. Score arrays by their
+    items, and never pick a branch whose `required` says `error`.
     """
     branches = rs.get("oneOf") or rs.get("anyOf")
     if not branches or _depth > 6:
-        props = rs.get("properties")
-        assert isinstance(props, dict), f"no properties to read: {sorted(rs)}"
-        return props
+        return rs
     scored = []
     for b in branches:
         props = b.get("properties") or {}
-        scored.append((("error" in props) and len(props) <= 2, len(props), b))
+        if b.get("type") == "array" or "items" in b:
+            props = ((b.get("items") or {}).get("properties")) or props
+        is_error = "error" in (b.get("required") or []) or (
+            "error" in props and len(props) <= 2
+        )
+        scored.append((is_error, len(props), b))
     scored.sort(key=lambda x: (x[0], -x[1]))
-    return _success_props(scored[0][2], _depth + 1)
+    return _success_branch(scored[0][2], _depth + 1)
+
+
+def _success_props(rs, _depth=0):
+    """The properties of the success branch. See _success_branch."""
+    branch = _success_branch(rs, _depth)
+    props = branch.get("properties")
+    assert isinstance(props, dict), f"no properties to read: {sorted(branch)}"
+    return props
+
+
+def _row_props(rs):
+    """The properties of ONE ROW, where the success branch is an array.
+
+    A top-level array has no `properties` of its own, so reading it like an
+    object asserts out before it can say anything about the fields.
+    """
+    branch = _success_branch(rs)
+    node = (
+        branch.get("items")
+        if (branch.get("type") == "array" or "items" in branch)
+        else branch
+    )
+    props = (node or {}).get("properties")
+    assert isinstance(props, dict), f"no row properties to read: {sorted(branch)}"
+    return props
 
 
 def _config(tool_name):
@@ -1556,7 +1589,7 @@ UPSTREAM_KEYS = [
     ),
     (
         "fda_orange_book_tool.py",
-        "_submission_summary(result.get(\"submissions\"))",
+        '_submission_summary(result.get("submissions"))',
         "when an application was approved, in a row that answers whether a generic exists",
     ),
     (
@@ -1727,7 +1760,7 @@ UPSTREAM_KEYS = [
     ),
     (
         "alliance_genome_tool.py",
-        "para.get(\"rank\")",
+        'para.get("rank")',
         "how close a paralog is, in a list ordered by it",
     ),
     (
@@ -1776,8 +1809,7 @@ UPSTREAM_KEYS = [
     (
         "hca_tool.py",
         '"genusSpecies"',
-        "the species of a project in a catalogue that holds mouse as well as "
-        "human",
+        "the species of a project in a catalogue that holds mouse as well as human",
     ),
     (
         "hca_tool.py",
@@ -1798,8 +1830,7 @@ UPSTREAM_KEYS = [
     (
         "ndex_tool.py",
         "edgeAttributes",
-        "2,222 edge attributes on a 118-edge network, none of which reached "
-        "the caller",
+        "2,222 edge attributes on a 118-edge network, none of which reached the caller",
     ),
     (
         "interpro_ext_tool.py",
@@ -1827,8 +1858,7 @@ UPSTREAM_KEYS = [
     (
         "pdbe_kb_tool.py",
         "def _residue_row",
-        "one residue builder for the ligand and interface faces of one "
-        "endpoint family",
+        "one residue builder for the ligand and interface faces of one endpoint family",
     ),
     (
         "pdbe_kb_tool.py",
@@ -1865,8 +1895,7 @@ UPSTREAM_KEYS = [
     (
         "three_d_beacons_tool.py",
         "def _entities",
-        "which chains and bound ligands a structure holds, for a list of 375 "
-        "of them",
+        "which chains and bound ligands a structure holds, for a list of 375 of them",
     ),
     (
         "restful_tool.py",
@@ -1918,8 +1947,7 @@ UPSTREAM_KEYS = [
     (
         "nih_dsld_tool.py",
         'payload.get("percentDvFootnote")',
-        "what the percent daily values the tool already returns are a "
-        "percentage of",
+        "what the percent daily values the tool already returns are a percentage of",
     ),
     (
         "pgs_catalog_tool.py",
@@ -1988,8 +2016,7 @@ UPSTREAM_KEYS = [
     (
         "nasa_osdr_tool.py",
         'source.get("Study Description")',
-        "what each study was, in a search whose rows a caller has to choose "
-        "between",
+        "what each study was, in a search whose rows a caller has to choose between",
     ),
     (
         "smartapi_tool.py",
@@ -2016,8 +2043,7 @@ UPSTREAM_KEYS = [
     (
         "alliance_genome_tool.py",
         "def _expression_pattern",
-        "the species-specific anatomy curie, which is not among the UBERON "
-        "slim ids",
+        "the species-specific anatomy curie, which is not among the UBERON slim ids",
     ),
     (
         "proteins_api_tool.py",
@@ -2117,8 +2143,7 @@ UPSTREAM_KEYS = [
     (
         "gmrepo_tool.py",
         "def _dblinks",
-        "a species' links to other resources, which GMrepo answers as a JSON "
-        "string",
+        "a species' links to other resources, which GMrepo answers as a JSON string",
     ),
     (
         "gmrepo_tool.py",
@@ -2356,50 +2381,50 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
-    ('ENAPortal_search_runs_fastq', 'fastq_md5'),
-    ('ENAPortal_search_runs_fastq', 'fastq_bytes'),
-    ('UCSC_get_track', 'max_items_limit_reached'),
-    ('UCSC_get_track', 'truncation_note'),
-    ('NCA_fit_one_compartment', 'AUC_unit'),
-    ('metabolights_get_study_files', 'obfuscationCode'),
-    ('BioRxiv_list_recent_preprints', 'jatsxml'),
-    ('BioRxiv_list_recent_preprints', 'server'),
-    ('PGSCatalog_get_scores_by_trait', 'genome_build'),
-    ('VariantValidator_format_genomic_to_transcripts', 'vvta_version'),
-    ('UniProt_get_entry_by_accession', 'featureId'),
-    ('SwissLipids_get_lipid', 'entity_type'),
-    ('Monarch_search_gene', 'offset'),
-    ('HumanMine_search', 'wasSuccessful'),
-    ('MouseMine_search_genes', 'wasSuccessful'),
-    ('EBIProteins_get_hpp_peptides', 'next_offset'),
-    ('OpenNIH_fetch', 'url'),
-    ('ORCID_get_peer_reviews', 'subgroup_index'),
-    ('geo_search_datasets', 'translationstack'),
-    ('RNAcentral_get_by_accession', 'endpoint'),
-    ('EPMC_get_citations', 'citedOrder'),
-    ('DisGeNET_search_disease', 'gene_count'),
-    ('HuggingFace_get_model', 'safetensors'),
-    ('HuggingFace_get_model', 'usedStorage'),
-    ('IMPC_search_genes', 'total_results_is_exact'),
-    ('Metabolite_get_diseases', 'unresolved_disease_name_count'),
-    ('MouseMine_search', 'wasSuccessful'),
-    ('ORCID_get_fundings', 'group_index'),
-    ('OpenNIH_funding_growth', 'cagr_pct'),
-    ('OpenNIH_funding_growth', 'yoy_growth_pct'),
-    ('VariantValidator_gene2transcripts', 'refseq_select'),
-    ('gwas_search_associations', 'pvalue_mantissa'),
-    ('Reactome_get_pathway', 'reviewStatus'),
-    ('Reactome_get_pathway', 'summation'),
-    ('Reactome_get_participant_reference_entities', 'isSequenceChanged'),
-    ('Reactome_get_participant_reference_entities', 'checksum'),
-    ('MassBank_search_by_formula', 'license'),
-    ('MassBank_search_by_formula', 'copyright'),
-    ('AllenBrain_get_expression_datasets', 'homologene_id'),
-    ('Figshare_search_articles', 'resource_doi'),
-    ('GDC_get_clinical_data', 'days_to_birth'),
-    ('GDC_get_clinical_data', 'primary_site'),
-    ('PGSCatalog_get_performance_metrics', 'performance_comments'),
-    ('RGD_resolve_symbol_or_region', 'so_acc_id'),
+    ("ENAPortal_search_runs_fastq", "fastq_md5"),
+    ("ENAPortal_search_runs_fastq", "fastq_bytes"),
+    ("UCSC_get_track", "max_items_limit_reached"),
+    ("UCSC_get_track", "truncation_note"),
+    ("NCA_fit_one_compartment", "AUC_unit"),
+    ("metabolights_get_study_files", "obfuscationCode"),
+    ("BioRxiv_list_recent_preprints", "jatsxml"),
+    ("BioRxiv_list_recent_preprints", "server"),
+    ("PGSCatalog_get_scores_by_trait", "genome_build"),
+    ("VariantValidator_format_genomic_to_transcripts", "vvta_version"),
+    ("UniProt_get_entry_by_accession", "featureId"),
+    ("SwissLipids_get_lipid", "entity_type"),
+    ("Monarch_search_gene", "offset"),
+    ("HumanMine_search", "wasSuccessful"),
+    ("MouseMine_search_genes", "wasSuccessful"),
+    ("EBIProteins_get_hpp_peptides", "next_offset"),
+    ("OpenNIH_fetch", "url"),
+    ("ORCID_get_peer_reviews", "subgroup_index"),
+    ("geo_search_datasets", "translationstack"),
+    ("RNAcentral_get_by_accession", "endpoint"),
+    ("EPMC_get_citations", "citedOrder"),
+    ("DisGeNET_search_disease", "gene_count"),
+    ("HuggingFace_get_model", "safetensors"),
+    ("HuggingFace_get_model", "usedStorage"),
+    ("IMPC_search_genes", "total_results_is_exact"),
+    ("Metabolite_get_diseases", "unresolved_disease_name_count"),
+    ("MouseMine_search", "wasSuccessful"),
+    ("ORCID_get_fundings", "group_index"),
+    ("OpenNIH_funding_growth", "cagr_pct"),
+    ("OpenNIH_funding_growth", "yoy_growth_pct"),
+    ("VariantValidator_gene2transcripts", "refseq_select"),
+    ("gwas_search_associations", "pvalue_mantissa"),
+    ("Reactome_get_pathway", "reviewStatus"),
+    ("Reactome_get_pathway", "summation"),
+    ("Reactome_get_participant_reference_entities", "isSequenceChanged"),
+    ("Reactome_get_participant_reference_entities", "checksum"),
+    ("MassBank_search_by_formula", "license"),
+    ("MassBank_search_by_formula", "copyright"),
+    ("AllenBrain_get_expression_datasets", "homologene_id"),
+    ("Figshare_search_articles", "resource_doi"),
+    ("GDC_get_clinical_data", "days_to_birth"),
+    ("GDC_get_clinical_data", "primary_site"),
+    ("PGSCatalog_get_performance_metrics", "performance_comments"),
+    ("RGD_resolve_symbol_or_region", "so_acc_id"),
     ("GBIF_search_occurrences", "issues"),
     ("GBIF_search_occurrences", "basisOfRecord"),
     ("GBIF_search_species", "nomenclaturalStatus"),
@@ -2894,9 +2919,23 @@ DECLARED = [
 # a named test, against the text of its own declaration.
 SCHEMA_KEYWORDS = frozenset(
     {
-        "description", "type", "properties", "items", "required", "enum",
-        "oneOf", "anyOf", "allOf", "not", "default", "format", "title",
-        "additionalProperties", "minimum", "maximum", "pattern",
+        "description",
+        "type",
+        "properties",
+        "items",
+        "required",
+        "enum",
+        "oneOf",
+        "anyOf",
+        "allOf",
+        "not",
+        "default",
+        "format",
+        "title",
+        "additionalProperties",
+        "minimum",
+        "maximum",
+        "pattern",
     }
 )
 
@@ -2984,7 +3023,7 @@ def test_a_burden_p_value_comes_with_its_sample_size():
 
 
 def test_a_te_code_names_the_product_it_applies_to():
-    """"AB" for the 80 mg tablet says nothing about the oral solution.
+    """ "AB" for the 80 mg tablet says nothing about the oral solution.
 
     Therapeutic equivalence is a property of a product -- a dosage form, a
     route and a strength -- and the row carried the brand name, the code and
@@ -3024,7 +3063,7 @@ def test_usda_says_when_a_symbol_was_a_synonym():
     assert "def _plant_identity" in source
     assert "is a synonym; USDA PLANTS answered" in source
     # The resolver hands back the profile it already paid for.
-    assert "return profile.get(\"Id\"), symbol, None, profile" in source
+    assert 'return profile.get("Id"), symbol, None, profile' in source
 
 
 def test_wormbase_phenotypes_name_the_allele_they_belong_to():
@@ -3069,8 +3108,7 @@ def test_mavedb_clinical_controls_link_to_the_score_sets_own_variants():
     source = _source("mavedb_tool.py")
     assert 'entry.get("clinvarLinks")' in source
     assert 'entry.get("mappedVariants")' in source, (
-        "keep the old spelling as a fallback rather than swapping one guess "
-        "for another"
+        "keep the old spelling as a fallback rather than swapping one guess for another"
     )
 
 
@@ -3262,7 +3300,9 @@ def test_a_clingen_allele_names_its_gene_and_protein_change():
     source = _source("clingen_ar_tool.py")
     assert "TRANSCRIPTS_PER_ALLELE" in source
     assert '"mane_select_transcript": mane' in source
-    assert '"transcript_alleles_truncated": len(rows) > TRANSCRIPTS_PER_ALLELE' in source
+    assert (
+        '"transcript_alleles_truncated": len(rows) > TRANSCRIPTS_PER_ALLELE' in source
+    )
     schema = json.dumps(_config("ClinGenAR_lookup_allele").get("return_schema") or {})
     assert '"mane_refseq_hgvs"' in schema
 
@@ -3333,7 +3373,7 @@ def test_a_bgee_expression_call_reports_its_fdr():
 
 
 def test_an_itis_invalid_name_says_what_replaced_it():
-    """"invalid" without the accepted name is half an answer.
+    """ "invalid" without the accepted name is half an answer.
 
     TSN 944513 is reported `usage_rating: "invalid"`, and the same response
     says it is a "junior synonym" of Homo sapiens, TSN 180092 -- both in
@@ -3436,8 +3476,17 @@ def test_a_gbif_tree_walker_returns_the_keys_to_walk_with():
     too.
     """
     source = _source("gbif_taxonomy_tool.py")
-    for key in ("kingdomKey", "phylumKey", "classKey", "orderKey", "familyKey",
-                "genusKey", "speciesKey", "issues", "datasetKey"):
+    for key in (
+        "kingdomKey",
+        "phylumKey",
+        "classKey",
+        "orderKey",
+        "familyKey",
+        "genusKey",
+        "speciesKey",
+        "issues",
+        "datasetKey",
+    ):
         assert f'"{key}"' in source, f"_slim_usage still drops {key}"
 
 
@@ -3491,7 +3540,6 @@ def test_both_ebi_interaction_tools_return_the_intact_ids():
         "must read them too"
     )
     assert source.count('interaction.get("interactor2")') == 2
-
 
 
 def test_a_coordinate_mapping_returns_the_annotations_it_mapped():
@@ -3558,7 +3606,7 @@ def test_a_living_donor_has_demographics_too():
 
 
 def test_an_osdr_study_returns_its_protocols():
-    """"Full metadata for one OSDR study" without the methods.
+    """ "Full metadata for one OSDR study" without the methods.
 
     OSD-1 lists eight protocols with their types and their full descriptions,
     and all three fields were dropped, along with the investigator, the
@@ -3624,7 +3672,7 @@ def test_a_trial_returns_its_secondary_outcomes():
 
 
 def test_a_nutrient_value_says_how_it_was_obtained():
-    """"Calculated from value per serving size measure" is not a measurement.
+    """ "Calculated from value per serving size measure" is not a measurement.
 
     Every nutrient row carried name, value and unit, and the derivation code
     that separates an analysed value from a calculated or imputed one was
@@ -3653,7 +3701,7 @@ def test_a_cellxgene_collection_can_be_cited_and_is_not_zero_cells():
 
 
 def test_an_availability_answer_says_when_the_generic_was_approved():
-    """"A generic exists" and "a generic was approved in 2015" differ.
+    """ "A generic exists" and "a generic was approved in 2015" differ.
 
     Drugs@FDA sends the whole submission history with every search result --
     284 rows across one availability check -- and the row the search builds
@@ -3670,7 +3718,7 @@ def test_an_availability_answer_says_when_the_generic_was_approved():
 
 
 def test_a_nextstrain_coloring_is_more_than_its_key():
-    """"gt" is genotype and "num_date" is date, and the response says so.
+    """ "gt" is genotype and "num_date" is date, and the response says so.
 
     Each coloring carries its own `title` and `type`, and a categorical one
     carries the values the build covers -- zika's `country` has 36 -- paired
@@ -3730,7 +3778,7 @@ def test_an_immune_estimate_says_it_used_a_hundred_of_a_thousand_samples():
 
 
 def test_open_genes_says_how_a_gene_is_implicated_not_just_how_often():
-    """"Use to assess whether and HOW a gene is implicated in aging", and 57.
+    """ "Use to assess whether and HOW a gene is implicated in aging", and 57.
 
     `researches` holds the evidence records -- 57 longevity associations and
     14 lifespan studies for GHR -- and `_evidence_counts` reduced each list
@@ -3766,7 +3814,6 @@ def test_a_cath_domain_summary_carries_its_function_and_its_boundaries():
     assert source.count('"go_terms"') >= 2, "both handlers must carry them"
 
 
-
 def test_a_spearman_p_value_is_not_rounded_to_zero():
     """`round(p, 6)` reports every p below 5e-7 as 0.0.
 
@@ -3783,7 +3830,7 @@ def test_a_spearman_p_value_is_not_rounded_to_zero():
 
 
 def test_an_interaction_names_the_experiments_behind_it():
-    """"Evidence Datasets: complete 466" and not one of their names.
+    """ "Evidence Datasets: complete 466" and not one of their names.
 
     HumanBase answers 466 datasets for BRCA1-TP53 and 479 for TP53-MDM2,
     each with the database it is (IntAct, BioGRID), the kind of evidence it
@@ -3797,7 +3844,7 @@ def test_an_interaction_names_the_experiments_behind_it():
 
 
 def test_cbioportal_says_which_mutation_profile_it_read():
-    """"Mutations" and "Mutations (uncalled)" are different profiles.
+    """ "Mutations" and "Mutations (uncalled)" are different profiles.
 
     The resolver matched a profile by alteration type, took its id and
     discarded the record -- the name, the datatype (MAF) and the description
@@ -3819,7 +3866,7 @@ def test_cbioportal_says_which_mutation_profile_it_read():
 
 
 def test_a_trial_with_posted_results_says_so():
-    """"Get full details" read protocolSection and nothing else.
+    """ "Get full details" read protocolSection and nothing else.
 
     NCT04280705 has a results section: 43 outcome-measure results, 100
     serious adverse events with their organ system and assessment type, 10
@@ -3891,7 +3938,6 @@ def test_a_cancer_hotspot_answer_says_which_hotspot():
     assert 'canonical.get("hgvspShort")' in source
     assert '"colocated_variant_ids"' in source
     assert '"most_severe_consequence": data.get("most_severe_consequence")' in source
-
 
 
 def test_a_guideline_matched_on_a_field_comes_back_with_it():
@@ -4226,7 +4272,7 @@ def test_a_cell_line_row_says_whether_it_has_knockout_data():
 
 
 def test_a_conservation_status_names_the_authority_that_issued_it():
-    """"G4" is a NatureServe rank, and the row said only "G4".
+    """ "G4" is a NatureServe rank, and the row said only "G4".
 
     Both iNaturalist handlers reduced the status object to `cs["status"]`.
     For Danaus plexippus that is "G4" -- a NatureServe global rank, not an
@@ -4357,7 +4403,7 @@ def test_a_phenotype_annotation_carries_the_ontology_term():
 
 
 def test_a_supplement_label_carries_its_precautions():
-    """"Full label" returned the ingredient table and none of the warnings.
+    """ "Full label" returned the ingredient table and none of the warnings.
 
     NIHDSLD_get_label promises "one dietary supplement's full label". The
     audited product's label carries 23 statements, each with the type that
@@ -4538,7 +4584,7 @@ def test_a_network_search_says_what_the_networks_are_of():
 
 
 def test_a_clinvar_conflict_comes_with_its_submissions():
-    """"Conflicting classifications of pathogenicity" and nothing to weigh it.
+    """ "Conflicting classifications of pathogenicity" and nothing to weigh it.
 
     GeneBe returns BRAF V600E as ACMG Pathogenic with
     `clinvar_classification: "Conflicting classifications of pathogenicity"`.
@@ -4584,7 +4630,10 @@ def test_an_osdr_hit_carries_the_study_description():
     assert 'source.get("Study Description")' in source
     assert "DESCRIPTION_CHARACTERS" in source
     schema = json.dumps(_config("OSDR_search_studies").get("return_schema") or {})
-    assert '"description": {"type": ["string", "null"], "description": "What the study was' in schema
+    assert (
+        '"description": {"type": ["string", "null"], "description": "What the study was'
+        in schema
+    )
 
 
 def test_the_cna_path_names_its_profile_like_the_mutation_path():
@@ -4666,7 +4715,7 @@ def test_a_concept_definition_says_who_wrote_it():
 
 
 def test_an_expression_annotation_carries_its_anatomy_ids():
-    """"anal fin" at "Larval:Days 14-20", and no ontology id for either.
+    """ "anal fin" at "Larval:Days 14-20", and no ontology id for either.
 
     The record behind that row carries UBERON:0000026 and UBERON:0001062 in
     `termIds`, and ZFA:0001162 -- the species-specific anatomy term -- under
@@ -4812,7 +4861,7 @@ def test_a_region_hit_says_which_genes_the_deletion_removes():
 
 
 def test_a_phenotype_call_comes_with_the_measurement_behind_it():
-    """"competitive fitness: normal" -- on what evidence?
+    """ "competitive fitness: normal" -- on what evidence?
 
     `SGD_get_phenotypes` returned the phenotype, the mutant type, the
     experiment type and the reference, which is the call and its provenance
@@ -4959,9 +5008,9 @@ def test_a_disorder_annotation_carries_the_sentence_it_rests_on():
     # The key the API never answers is not read any more.
     assert 'region.get("method_name")' not in source
     schema = _config("DisProt_get_entry")["return_schema"]
-    rows = (schema.get("oneOf") or [schema])[0]["properties"]["regions"][
-        "items"
-    ]["properties"]
+    rows = (schema.get("oneOf") or [schema])[0]["properties"]["regions"]["items"][
+        "properties"
+    ]
     assert "method" not in rows
     assert "protein binding" in rows["interaction_partners"]["description"]
     assert "ECO:0006165" in rows["evidence_code_id"]["description"]
@@ -4997,7 +5046,7 @@ def test_a_cluster_is_its_membership():
 
 
 def test_the_tool_that_promises_factors_reports_the_factors():
-    """"Returns experiment metadata and factor information" -- 29 of them,
+    """ "Returns experiment metadata and factor information" -- 29 of them,
     as the number 29.
 
     `GxA_get_experiment_info` returned `total_conditions`, a count, and
@@ -5024,7 +5073,7 @@ def test_the_tool_that_promises_factors_reports_the_factors():
 
 
 def test_the_ndc_tool_answers_for_a_prescription_drug_too():
-    """"a drug's active ingredient ... and National Drug Code (NDC) number".
+    """ "a drug's active ingredient ... and National Drug Code (NDC) number".
 
     `FDA_get_manufacturer_name_NDC_number_by_drug_name` returned
     `active_ingredient` and `openfda.product_ndc`. Measured on the live API,
@@ -5080,9 +5129,9 @@ def test_a_parent_term_keeps_the_codes_its_record_carried():
     # The term handler and the parents handler now both report xrefs.
     assert source.count('_validated_list(data, "xrefs")') == 1
     schema = _config("DiseaseOntology_get_parents")["return_schema"]
-    rows = (schema.get("oneOf") or [schema])[0]["properties"]["parents"][
-        "items"
-    ]["properties"]
+    rows = (schema.get("oneOf") or [schema])[0]["properties"]["parents"]["items"][
+        "properties"
+    ]
     assert "ICD10CM" in rows["cross_references"]["description"]
 
 
@@ -5138,9 +5187,9 @@ def test_a_trial_search_says_which_trials_reported_results():
     assert source.count("_results_summary(") == 3
     assert "**_results_summary(s)," in source
     schema = _config("ClinicalTrials_search_by_intervention")["return_schema"]
-    rows = (schema.get("oneOf") or [schema])[0]["properties"]["studies"][
-        "items"
-    ]["properties"]
+    rows = (schema.get("oneOf") or [schema])[0]["properties"]["studies"]["items"][
+        "properties"
+    ]
     assert "hasResults" in rows["has_results"]["description"]
     assert "serious_adverse_events" in rows["results_summary"]["properties"]
 
@@ -5248,7 +5297,7 @@ def test_an_entry_with_three_gene_names_reports_three():
 
 
 def test_an_annotation_says_where_in_the_paper_it_was_found():
-    """"polysaccharides" -- in the argument, or in a supplementary .doc?
+    """ "polysaccharides" -- in the argument, or in a supplementary .doc?
 
     Europe PMC answers `section`, `provider`, `frequency`, `fileName` and a
     resolvable `id` for every annotation, and those change what the
@@ -5395,8 +5444,11 @@ def test_a_structure_search_can_reach_the_opm_record():
     classification and taxonomy behind each row.
     """
     source = _source("membrane_topology_tool.py")
-    for key in ('"opm_id": o.get("id")', '"family_id": o.get("family_id")',
-                '"species_id": o.get("species_id")'):
+    for key in (
+        '"opm_id": o.get("id")',
+        '"family_id": o.get("family_id")',
+        '"species_id": o.get("species_id")',
+    ):
         assert key in source, f"OPM search should return {key}"
     assert "opm.phar.umich.edu/proteins/" in source, (
         "the row should carry the OPM page it describes"
@@ -5492,8 +5544,7 @@ def test_a_topology_tool_says_where_the_segments_are():
         "the region legend turns a site id into 'Transmembrane Beta strand'"
     )
     assert 'payload.get("model_coordinates_url")' in source, (
-        "a structure database that returns no way to fetch the structure "
-        "is a dead end"
+        "a structure database that returns no way to fetch the structure is a dead end"
     )
     schema = json.dumps(_config("PDBTM_get_topology").get("return_schema"))
     assert '"topology_segments_truncated"' in schema, (
@@ -5538,9 +5589,13 @@ def test_a_neuron_specimen_carries_the_physiology_the_tool_advertises():
     standard proxy for excitatory versus inhibitory.
     """
     source = _source("allen_cell_types_tool.py")
-    for key in ('r.get("ef__vrest")', 'r.get("ef__threshold_i_long_square")',
-                'r.get("structure__layer")', 'r.get("tag__dendrite_type")',
-                'r.get("donor__id")'):
+    for key in (
+        'r.get("ef__vrest")',
+        'r.get("ef__threshold_i_long_square")',
+        'r.get("structure__layer")',
+        'r.get("tag__dendrite_type")',
+        'r.get("donor__id")',
+    ):
         assert key in source, f"the specimen row should carry {key}"
     schema = json.dumps(_config("AllenCellTypes_search_specimens").get("return_schema"))
     assert "tissue block" in schema, (
@@ -5621,9 +5676,7 @@ def test_a_classification_carries_the_identifiers_that_make_it_citable():
         "terms are how the classification reaches one they do"
     )
     schema = json.dumps(_config("ClassyFire_classify_by_inchikey").get("return_schema"))
-    assert '"alternative_parent_count"' in schema, (
-        "the 50-parent cap must be disclosed"
-    )
+    assert '"alternative_parent_count"' in schema, "the 50-parent cap must be disclosed"
 
 
 def test_spliceai_reports_a_string_delta_score_as_the_number_it_is():
@@ -5649,19 +5702,23 @@ def test_spliceai_reports_a_string_delta_score_as_the_number_it_is():
     tool = SpliceAITool({"fields": {"operation": "get_max_delta"}})
     upstream_shape = [
         {
-            "DS_AG": "0.045", "DS_AL": "0.827",
-            "DS_DG": "0.000", "DS_DL": "0.618",
-            "DP_AG": -32, "DP_AL": -2, "DP_DG": 66, "DP_DL": -147,
-            "g_name": "TRAPPC9", "t_id": "ENST00000438773.4",
+            "DS_AG": "0.045",
+            "DS_AL": "0.827",
+            "DS_DG": "0.000",
+            "DS_DL": "0.618",
+            "DP_AG": -32,
+            "DP_AL": -2,
+            "DP_DG": 66,
+            "DP_DL": -147,
+            "g_name": "TRAPPC9",
+            "t_id": "ENST00000438773.4",
         }
     ]
     summary = tool._max_delta(upstream_shape)
     assert summary["max_delta_score"] == 0.827, (
         "a string delta must be parsed, not skipped as a non-number"
     )
-    assert tool._interpret_score(summary["max_delta_score"]) == (
-        "high_pathogenicity"
-    )
+    assert tool._interpret_score(summary["max_delta_score"]) == ("high_pathogenicity")
     assert summary["max_delta_effect"] == "acceptor_loss", (
         "0.827 by acceptor loss is a different consequence from 0.827 by "
         "donor gain, and the score alone does not say which"
@@ -5697,7 +5754,7 @@ def test_spliceai_does_not_report_an_absent_prediction_as_benign():
 
 
 def test_a_stability_call_needs_a_number_behind_it():
-    """"destabilizing" was the else branch of a two-way if.
+    """ "destabilizing" was the else branch of a two-way if.
 
         "stabilizing" if isinstance(ddg, (int, float)) and ddg > 0
         else "destabilizing"
@@ -5808,9 +5865,17 @@ def test_a_literature_search_declares_whether_a_work_was_retracted():
     it, so it declares nothing a reader can act on.
     """
     schema = json.dumps(_config("openalex_search_works").get("return_schema"))
-    for field in ('"is_retracted"', '"is_paratext"', '"authorships"', '"ids"',
-                  '"best_oa_location"', '"mesh"', '"biblio"',
-                  '"referenced_works"', '"fwci"'):
+    for field in (
+        '"is_retracted"',
+        '"is_paratext"',
+        '"authorships"',
+        '"ids"',
+        '"best_oa_location"',
+        '"mesh"',
+        '"biblio"',
+        '"referenced_works"',
+        '"fwci"',
+    ):
         assert field in schema, f"openalex_search_works returns {field} undeclared"
     assert "ORCID" in schema, (
         "the authorship declaration should say the author carries an ORCID"
@@ -5860,9 +5925,13 @@ def test_a_dataset_record_says_whether_the_data_can_be_had():
     it belongs to; for the test article, 10.3389/fmicb.2021.669230.
     """
     schema = json.dumps(_config("Figshare_get_article").get("return_schema"))
-    for availability in ('"is_embargoed"', '"embargo_date"',
-                         '"download_disabled"', '"is_metadata_record"',
-                         '"is_confidential"'):
+    for availability in (
+        '"is_embargoed"',
+        '"embargo_date"',
+        '"download_disabled"',
+        '"is_metadata_record"',
+        '"is_confidential"',
+    ):
         assert availability in schema, f"{availability} undeclared"
     for fetchable in ('"download_url"', '"computed_md5"', '"supplied_md5"'):
         assert fetchable in schema, f"files[] item is missing {fetchable}"
@@ -5888,13 +5957,17 @@ def test_a_pathway_record_says_whether_it_was_curated_or_inferred():
     `compartment`; and `orthologousEvent`, the same event in other species.
     """
     schema = json.dumps(_config("Reactome_get_interactor").get("return_schema"))
-    for field in ('"isInferred"', '"reviewStatus"', '"summation"',
-                  '"literatureReference"', '"goBiologicalProcess"',
-                  '"orthologousEvent"'):
+    for field in (
+        '"isInferred"',
+        '"reviewStatus"',
+        '"summation"',
+        '"literatureReference"',
+        '"goBiologicalProcess"',
+        '"orthologousEvent"',
+    ):
         assert field in schema, f"Reactome returns {field} undeclared"
     assert "five stars" in schema, (
-        "reviewStatus is a rating; the declaration should show what one "
-        "looks like"
+        "reviewStatus is a rating; the declaration should show what one looks like"
     )
 
 
@@ -5914,8 +5987,14 @@ def test_a_taxon_suggestion_carries_the_keys_that_resolve_it():
     """
     schema = json.dumps(_config("GBIF_suggest_species").get("return_schema"))
     assert '"nubKey"' in schema
-    for rank in ("kingdomKey", "phylumKey", "classKey", "orderKey",
-                 "familyKey", "genusKey"):
+    for rank in (
+        "kingdomKey",
+        "phylumKey",
+        "classKey",
+        "orderKey",
+        "familyKey",
+        "genusKey",
+    ):
         assert f'"{rank}"' in schema, f"{rank} undeclared"
     # The field name was already declared as a bare object: the audit said
     # `[].higherClassificationMap.*`, meaning the level was named and its
@@ -5945,8 +6024,14 @@ def test_a_gene_lookup_declares_where_the_gene_is():
     qualifier inverts the annotation.
     """
     schema = json.dumps(_config("NCBIDatasets_get_gene_by_symbol").get("return_schema"))
-    for field in ('"assembly"', '"orientation"', '"map_value"',
-                  '"identifier"', '"evidence_code"', '"qualifier"'):
+    for field in (
+        '"assembly"',
+        '"orientation"',
+        '"map_value"',
+        '"identifier"',
+        '"evidence_code"',
+        '"qualifier"',
+    ):
         assert field in schema, f"NCBI Datasets returns {field} undeclared"
     assert "electronically" in schema or "IEA" in schema, (
         "the evidence_code declaration should say what the codes separate"
@@ -5971,8 +6056,7 @@ def test_a_paged_feature_list_declares_that_it_is_paged():
     and a value shape.
     """
     schema = json.dumps(_config("EBIProteins_get_domains_sites").get("return_schema"))
-    for paging in ('"has_more"', '"limit"', '"offset"', '"returned"',
-                   '"truncated"'):
+    for paging in ('"has_more"', '"limit"', '"offset"', '"returned"', '"truncated"'):
         assert paging in schema, f"{paging} undeclared"
     assert '"evidences"' in schema and "ECO:0000269" in schema, (
         "the evidence declaration should show what an ECO code looks like"
@@ -5998,8 +6082,14 @@ def test_a_drug_combination_carries_the_identifiers_for_both_drugs():
     model each number is from.
     """
     schema = json.dumps(_config("SYNERGxDB_search_combos").get("return_schema"))
-    for ident in ('"idCellosaurus"', '"idDrugBankA"', '"idPubChemDrugB"',
-                  '"inchikeyDrugA"', '"smilesDrugB"', '"atCodeDrugA"'):
+    for ident in (
+        '"idCellosaurus"',
+        '"idDrugBankA"',
+        '"idPubChemDrugB"',
+        '"inchikeyDrugA"',
+        '"smilesDrugB"',
+        '"atCodeDrugA"',
+    ):
         assert ident in schema, f"SYNERGxDB returns {ident} undeclared"
     for model in ('"bliss"', '"hsa"', '"loewe"', '"zip"', '"comboscore"'):
         assert model in schema, f"{model} undeclared"
@@ -6029,9 +6119,7 @@ def test_a_fluorescent_protein_search_declares_the_sequence_and_the_photophysics
         assert ident in schema, f"{ident} undeclared"
     for photophysics in ('"pka"', '"maturation"', '"lifetime"'):
         assert photophysics in schema, f"{photophysics} undeclared"
-    assert "FLIM" in schema, (
-        "the lifetime declaration should say what measures it"
-    )
+    assert "FLIM" in schema, "the lifetime declaration should say what measures it"
 
 
 def test_pdb_redo_declares_what_the_re_refinement_changed():
@@ -6081,9 +6169,15 @@ def test_an_occurrence_record_declares_whether_it_should_be_trusted():
     paging fields that say 78 records matched where 1 came back.
     """
     schema = json.dumps(_config("GBIF_search_occurrences").get("return_schema"))
-    for field in ('"issues"', '"license"', '"basisOfRecord"',
-                  '"decimalLatitude"', '"iucnRedListCategory"',
-                  '"endOfRecords"', '"isSequenced"'):
+    for field in (
+        '"issues"',
+        '"license"',
+        '"basisOfRecord"',
+        '"decimalLatitude"',
+        '"iucnRedListCategory"',
+        '"endOfRecords"',
+        '"isSequenced"',
+    ):
         assert field in schema, f"GBIF occurrence returns {field} undeclared"
     assert "COORDINATE_ROUNDED" in schema, (
         "the issues declaration should show what a flag looks like"
@@ -6121,23 +6215,32 @@ def test_the_batch_tools_declare_what_each_record_is_for():
     """
     checks = {
         "IPD_get_hla_allele": ('"allele_history"', '"sequence_status"', '"G_group"'),
-
-        "gwas_get_variants_for_trait": ('"accession_id"', '"pvalue_mantissa"', '"or_value"'),
+        "gwas_get_variants_for_trait": (
+            '"accession_id"',
+            '"pvalue_mantissa"',
+            '"or_value"',
+        ),
         "GenomeNexus_annotate_variant": ('"mutation_assessor"', '"hotspots"'),
         "EMDB_get_structure": ('"map"', '"sample"', '"structure_determination_list"'),
         "EPMC_get_references": ('"citedOrder"', '"citationType"'),
         "IMPC_get_phenotypes_by_gene": ('"total_phenotype_calls"', '"truncated"'),
         "umls_search_concepts": ('"partialSearch"', '"recCount"'),
-        "GBIF_search_species": ('"nomenclaturalStatus"', '"nubKey"', '"numOccurrences"'),
+        "GBIF_search_species": (
+            '"nomenclaturalStatus"',
+            '"nubKey"',
+            '"numOccurrences"',
+        ),
     }
     # SGD_get_sequence is checked by path, not by name: every one of its
     # field names was already declared somewhere in its own schema, and the
     # gap was that coding_dna, genomic_dna and protein did not declare them
     # as their own properties. A substring row would have passed.
-    sgd = (_config("SGD_get_sequence").get("return_schema") or {})
+    sgd = _config("SGD_get_sequence").get("return_schema") or {}
     branch = (sgd.get("oneOf") or [sgd])[0]
     for block in ("coding_dna", "genomic_dna", "protein"):
-        props = ((branch.get("properties") or {}).get(block) or {}).get("properties") or {}
+        props = ((branch.get("properties") or {}).get(block) or {}).get(
+            "properties"
+        ) or {}
         assert "residues" in props, (
             f"{block} must declare `residues` as its own property: the "
             "sequence is what a get_sequence tool is for"
@@ -6164,7 +6267,9 @@ def test_an_expression_experiment_says_whether_it_failed_qc():
     human gene, and entrez_id, which is what joins it to anything outside
     Allen.
     """
-    schema = json.dumps(_config("AllenBrain_get_expression_datasets").get("return_schema"))
+    schema = json.dumps(
+        _config("AllenBrain_get_expression_datasets").get("return_schema")
+    )
     for field in ('"failed_facet"', '"qc_date"', '"homologene_id"', '"entrez_id"'):
         assert field in schema, f"AllenBrain returns {field} undeclared"
     assert "not evidence" in schema or "failed QC" in schema, (
@@ -6181,8 +6286,14 @@ def test_a_spectrum_carries_its_licence_and_its_peaks():
     acquired, which is what makes two spectra comparable or not.
     """
     schema = json.dumps(_config("MassBank_search_by_formula").get("return_schema"))
-    for field in ('"license"', '"copyright"', '"peak"', '"mass_spectrometry"',
-                  '"acquisition"', '"compound"'):
+    for field in (
+        '"license"',
+        '"copyright"',
+        '"peak"',
+        '"mass_spectrometry"',
+        '"acquisition"',
+        '"compound"',
+    ):
         assert field in schema, f"MassBank returns {field} undeclared"
 
 
@@ -6213,13 +6324,34 @@ def test_the_second_batch_declares_what_changes_an_answer():
     so the pair cannot drift.
     """
     checks = {
-        "Reactome_get_pathway": ('"reviewStatus"', '"summation"', '"isInferred"', '"goBiologicalProcess"'),
-        "Reactome_get_participant_reference_entities": ('"checksum"', '"isSequenceChanged"', '"sequenceLength"'),
-        "GDC_get_clinical_data": ('"primary_site"', '"disease_type"', '"days_to_birth"', '"pages"'),
-        "Figshare_search_articles": ('"resource_doi"', '"timeline"', '"url_public_html"'),
+        "Reactome_get_pathway": (
+            '"reviewStatus"',
+            '"summation"',
+            '"isInferred"',
+            '"goBiologicalProcess"',
+        ),
+        "Reactome_get_participant_reference_entities": (
+            '"checksum"',
+            '"isSequenceChanged"',
+            '"sequenceLength"',
+        ),
+        "GDC_get_clinical_data": (
+            '"primary_site"',
+            '"disease_type"',
+            '"days_to_birth"',
+            '"pages"',
+        ),
+        "Figshare_search_articles": (
+            '"resource_doi"',
+            '"timeline"',
+            '"url_public_html"',
+        ),
         "RGD_resolve_symbol_or_region": ('"rgd_id"', '"so_acc_id"', '"symbol"'),
         "NCBIDatasets_get_gene": ('"evidence_code"', '"map_value"', '"identifier"'),
-        "PGSCatalog_get_performance_metrics": ('"performance_comments"', '"classification_accuracy"'),
+        "PGSCatalog_get_performance_metrics": (
+            '"performance_comments"',
+            '"classification_accuracy"',
+        ),
         "ORCID_get_profile": ('"activities_summary"', '"external_identifiers"'),
     }
     for tool, fields in checks.items():
@@ -6244,8 +6376,13 @@ def test_a_funding_series_says_what_a_missing_award_means():
     absent so the guess cannot come back.
     """
     schema = json.dumps(_config("OpenNIH_funding_growth").get("return_schema"))
-    for field in ('"yearly"', '"cagr_pct"', '"yoy_growth_pct"',
-                  '"window_start"', '"provenance"'):
+    for field in (
+        '"yearly"',
+        '"cagr_pct"',
+        '"yoy_growth_pct"',
+        '"window_start"',
+        '"provenance"',
+    ):
         assert field in schema, f"OpenNIH returns {field} undeclared"
     assert "not reported" in schema, (
         "the meta note is the part that changes a total; the declaration "
@@ -6351,9 +6488,13 @@ def test_two_data_keyed_levels_are_left_open_on_purpose():
     carry a description saying the keys are data, and the audit's two
     remaining complaints are expected.
     """
-    for tool, kept in (("geo_get_sample_info", ('"uid"', '"title"', '"n_samples"')),
-                       ("VariantValidator_format_genomic_to_transcripts",
-                        ('"mane_select"', '"refseq_select"', '"t_hgvs"', '"hgvs_t_and_p"'))):
+    for tool, kept in (
+        ("geo_get_sample_info", ('"uid"', '"title"', '"n_samples"')),
+        (
+            "VariantValidator_format_genomic_to_transcripts",
+            ('"mane_select"', '"refseq_select"', '"t_hgvs"', '"hgvs_t_and_p"'),
+        ),
+    ):
         schema = json.dumps(_config(tool).get("return_schema"))
         for field in kept:
             assert field in schema, (
@@ -6447,8 +6588,7 @@ def test_every_fda_label_tool_declares_the_window_it_quietly_applies():
                 f"{cfg['name']} can return {field} and does not declare it"
             )
         inventory = props["label_inventory"].get("properties") or {}
-        for field in ("labels_matched", "labels_shown",
-                      "routes_of_all_matched_labels"):
+        for field in ("labels_matched", "labels_shown", "routes_of_all_matched_labels"):
             assert field in inventory, (
                 f"{cfg['name']}'s label_inventory must declare {field}: "
                 "labels_matched against labels_shown is the whole point"
@@ -6500,14 +6640,18 @@ def test_an_fda_label_row_declares_the_identifiers_it_carries():
     fam = {c["name"]: c for c in _fda_label_family()}
 
     def row_props(name):
-        results = ((fam[name].get("return_schema") or {}).get("properties") or {}).get("results") or {}
+        results = ((fam[name].get("return_schema") or {}).get("properties") or {}).get(
+            "results"
+        ) or {}
         return ((results.get("items") or {}).get("properties")) or {}
 
     # measured live, one call per tool with `limit` and `skip` removed
-    for name in ("FDA_get_drug_names_by_abuse_info",
-                 "FDA_get_brand_name_generic_name",
-                 "FDA_get_drug_name_by_set_id",
-                 "FDA_get_drug_name_by_document_id"):
+    for name in (
+        "FDA_get_drug_names_by_abuse_info",
+        "FDA_get_brand_name_generic_name",
+        "FDA_get_drug_name_by_set_id",
+        "FDA_get_drug_name_by_document_id",
+    ):
         props = row_props(name)
         for field in ("id", "set_id", "openfda.route"):
             assert field in props, f"{name} returns {field} in every row, undeclared"
@@ -6542,7 +6686,9 @@ def test_an_fda_section_table_says_it_is_the_same_content():
     fam = {c["name"]: c for c in _fda_label_family()}
     found = 0
     for name, cfg in fam.items():
-        results = ((cfg.get("return_schema") or {}).get("properties") or {}).get("results") or {}
+        results = ((cfg.get("return_schema") or {}).get("properties") or {}).get(
+            "results"
+        ) or {}
         props = ((results.get("items") or {}).get("properties")) or {}
         for field, schema in props.items():
             if not field.endswith("_table"):
@@ -6586,8 +6732,11 @@ def test_a_mechanism_tool_returns_the_mechanism():
     """
     source = _source("openfda_tool.py")
     assert "PHARMACOLOGY_SECTIONS" in source
-    for field in ("openfda.pharm_class_moa", "openfda.pharm_class_epc",
-                  "openfda.pharm_class_cs"):
+    for field in (
+        "openfda.pharm_class_moa",
+        "openfda.pharm_class_epc",
+        "openfda.pharm_class_cs",
+    ):
         assert f'"{field}"' in source, f"{field} is never requested"
     gate = source.split("PHARMACOLOGY_SECTIONS")[2]
     assert "identity_fields.extend" in gate, (
@@ -6598,7 +6747,9 @@ def test_a_mechanism_tool_returns_the_mechanism():
     payload = json.loads((DATA / "fda_drug_labeling_tools.json").read_text())
     declared = 0
     for cfg in payload:
-        results = ((cfg.get("return_schema") or {}).get("properties") or {}).get("results") or {}
+        results = ((cfg.get("return_schema") or {}).get("properties") or {}).get(
+            "results"
+        ) or {}
         props = ((results.get("items") or {}).get("properties")) or {}
         if "openfda.pharm_class_moa" in props:
             declared += 1
@@ -6625,10 +6776,12 @@ def test_an_entity_search_returns_the_identifier_it_searched_by():
     for key in ("referenceIdentifier", "databaseName", "referenceURL"):
         assert key in source, f"Reactome answers with {key} and it is dropped"
     assert '_unhighlight(entry.get("referenceName"))' in source, (
-        "referenceName carries the same <span class=\"highlighting\"> markup "
+        'referenceName carries the same <span class="highlighting"> markup '
         "as name, so it has to go through the same strip"
     )
-    schema = json.dumps(_config("ReactomeInteractors_search_entity").get("return_schema"))
+    schema = json.dumps(
+        _config("ReactomeInteractors_search_entity").get("return_schema")
+    )
     for field in ('"reference_identifier"', '"reference_database"', '"reference_url"'):
         assert field in schema, f"{field} is returned and undeclared"
 
@@ -6642,8 +6795,14 @@ def test_a_grant_says_where_the_money_went():
     what primary_uei and primary_duns are for.
     """
     source = _source("nih_reporter_tool.py")
-    for key in ("org_city", "org_state", "org_country", "primary_uei",
-                "primary_duns", "dept_type"):
+    for key in (
+        "org_city",
+        "org_state",
+        "org_country",
+        "primary_uei",
+        "primary_duns",
+        "dept_type",
+    ):
         assert key in source, f"RePORTER answers with {key} and it is dropped"
     schema = json.dumps(_config("NIHReporter_search_projects").get("return_schema"))
     assert '"organization_uei"' in schema and '"organization_state"' in schema
@@ -6733,8 +6892,9 @@ def test_a_clinical_significance_names_its_condition():
     schema = json.dumps(_config("ClinVar_search_variants").get("return_schema"))
     for field in ('"conditions"', '"condition_xrefs"', '"db_source"', '"db_id"'):
         assert field in schema, f"ClinVar_search_variants returns {field} undeclared"
-    variants = (_config("ClinVar_search_variants")["return_schema"]["properties"]
-                ["variants"]["items"])
+    variants = _config("ClinVar_search_variants")["return_schema"]["properties"][
+        "variants"
+    ]["items"]
     assert variants.get("properties"), (
         'variants.items was {"type": "object"} - one of the three vacuous '
         "shapes the audit exists to catch - and has to declare its fields"
@@ -6754,8 +6914,9 @@ def test_a_gene_search_says_whether_the_symbol_is_current():
     source = _source("depmap_tool.py")
     for key in ("hgnc_status", "location", "method_of_action"):
         assert f'attrs.get("{key}")' in source, f"DepMap answers with {key}"
-    genes = (_config("DepMap_search_genes")["return_schema"]["properties"]["data"]
-             ["properties"]["genes"])
+    genes = _config("DepMap_search_genes")["return_schema"]["properties"]["data"][
+        "properties"
+    ]["genes"]
     assert genes.get("items", {}).get("properties"), (
         "genes was a bare array schema; it has to declare the row"
     )
@@ -6786,16 +6947,21 @@ def test_every_fda_label_says_when_it_was_written():
     )
     missing = []
     for cfg in _fda_label_family():
-        results = ((cfg.get("return_schema") or {}).get("properties") or {}).get("results") or {}
+        results = ((cfg.get("return_schema") or {}).get("properties") or {}).get(
+            "results"
+        ) or {}
         props = ((results.get("items") or {}).get("properties")) or {}
         schema = props.get("effective_time")
         if not schema or not schema.get("description"):
             missing.append(cfg["name"])
-    assert not missing, f"{len(missing)} tools do not declare effective_time: {missing[:5]}"
-    sample = _config("FDA_get_warnings_by_drug_name")["return_schema"]["properties"]["results"]["items"]["properties"]["effective_time"]
+    assert not missing, (
+        f"{len(missing)} tools do not declare effective_time: {missing[:5]}"
+    )
+    sample = _config("FDA_get_warnings_by_drug_name")["return_schema"]["properties"][
+        "results"
+    ]["items"]["properties"]["effective_time"]
     assert "YYYYMMDD" in sample["description"], (
-        "the format has to be stated: '20260429' is not a date any parser "
-        "guesses right"
+        "the format has to be stated: '20260429' is not a date any parser guesses right"
     )
 
 
@@ -6833,7 +6999,7 @@ def test_a_cell_line_can_reach_the_paper_that_established_it():
 
 
 def test_a_longevity_association_carries_its_statistics():
-    """"longevity" with no p-value reads the same as a GWAS hit.
+    """ "longevity" with no p-value reads the same as a GWAS hit.
 
     The evidence digest reports DISTINCT values per field, which is right for
     categories and useless for a p-value: a list of distinct p-values is
@@ -6854,8 +7020,13 @@ def test_a_longevity_association_carries_its_statistics():
     for field in ("polymorphismId", "pValue", "significance", "nOfControls"):
         assert f'"{field}"' in source, f"OpenGenes answers with {field}"
     schema = json.dumps(_config("OpenGenes_get_gene").get("return_schema"))
-    for field in ('"associations"', '"associations_truncated"', '"pValue"',
-                  '"polymorphismId"', '"studyType"'):
+    for field in (
+        '"associations"',
+        '"associations_truncated"',
+        '"pValue"',
+        '"polymorphismId"',
+        '"studyType"',
+    ):
         assert field in schema, f"{field} is returned and undeclared"
     assert "0.065" in schema or "detached from the associations" in schema, (
         "the declaration has to say why the records are there and the digest "
@@ -6908,10 +7079,18 @@ def test_mychem_declares_what_its_source_blocks_hold():
     """
     for tool in ("MyChem_get_chemical_annotation", "MyChem_query_chemicals"):
         schema = json.dumps(_config(tool).get("return_schema"))
-        for field in ('"max_phase"', '"black_box_warning"', '"first_approval"',
-                      '"drug_indications"', '"atc_classifications"',
-                      '"drugcentral"', '"bioactivity"', '"pharmacology_class"',
-                      '"inchikey"', '"topological_polar_surface_area"'):
+        for field in (
+            '"max_phase"',
+            '"black_box_warning"',
+            '"first_approval"',
+            '"drug_indications"',
+            '"atc_classifications"',
+            '"drugcentral"',
+            '"bioactivity"',
+            '"pharmacology_class"',
+            '"inchikey"',
+            '"topological_polar_surface_area"',
+        ):
             assert field in schema, f"{tool} returns {field} and does not declare it"
         assert "rather than a closed list" in schema, (
             f"{tool}'s blocks are open - the caller's `fields` argument "
@@ -6929,8 +7108,15 @@ def test_a_lineage_entry_says_which_rank_it_is():
     a synonym, in a list whose whole purpose is the hierarchy.
     """
     schema = json.dumps(_config("CoL_search_species").get("return_schema"))
-    for field in ('"classification"', '"rank"', '"status"', '"authorship"',
-                  '"total"', '"last"', '"vernacularNames"'):
+    for field in (
+        '"classification"',
+        '"rank"',
+        '"status"',
+        '"authorship"',
+        '"total"',
+        '"last"',
+        '"vernacularNames"',
+    ):
         assert field in schema, f"CoL_search_species returns {field} undeclared"
     assert "accepted name from a synonym" in schema or "synonym" in schema
 
@@ -6946,8 +7132,14 @@ def test_a_pharmacogene_says_which_build_its_coordinates_are_on():
     undeclared too.
     """
     schema = json.dumps(_config("PharmGKB_get_gene_details").get("return_schema"))
-    for field in ('"chrStartPosB37"', '"chrStartPosB38"', '"buildVersion"',
-                  '"vipTier"', '"usesStarAlleles"', '"amp"'):
+    for field in (
+        '"chrStartPosB37"',
+        '"chrStartPosB38"',
+        '"buildVersion"',
+        '"vipTier"',
+        '"usesStarAlleles"',
+        '"amp"',
+    ):
         assert field in schema, f"PharmGKB_get_gene_details returns {field} undeclared"
     assert "which build a coordinate is on" in schema, (
         "the two builds have to be told apart in the declaration"
@@ -6966,10 +7158,19 @@ def test_a_stereochemistry_verdict_can_be_checked():
     read as a validation.
     """
     schema = json.dumps(_config("PDB_check_alpha_stereochemistry").get("return_schema"))
-    for field in ('"counts_by_chain"', '"center_details"', '"determinant_A3"',
-                  '"ordered_atoms"', '"scope"', '"expected_orientation"',
-                  '"minimum_normalized_volume"', '"glycine_nonchiral_residues"'):
-        assert field in schema, f"PDB_check_alpha_stereochemistry returns {field} undeclared"
+    for field in (
+        '"counts_by_chain"',
+        '"center_details"',
+        '"determinant_A3"',
+        '"ordered_atoms"',
+        '"scope"',
+        '"expected_orientation"',
+        '"minimum_normalized_volume"',
+        '"glycine_nonchiral_residues"',
+    ):
+        assert field in schema, (
+            f"PDB_check_alpha_stereochemistry returns {field} undeclared"
+        )
     assert "sign of the determinant depends on this order" in schema, (
         "the atom order is why the determinant's sign means anything"
     )
@@ -6991,8 +7192,14 @@ def test_the_number_that_says_whether_an_interface_is_real():
     believe the interface was unreachable from the schema.
     """
     schema = json.dumps(_config("PDBePISA_get_interfaces").get("return_schema"))
-    for field in ('"pvalue"', '"symop"', '"int_solv_en"', '"int_nres"',
-                  '"ss_bonds"', '"cov_bonds"'):
+    for field in (
+        '"pvalue"',
+        '"symop"',
+        '"int_solv_en"',
+        '"int_nres"',
+        '"ss_bonds"',
+        '"cov_bonds"',
+    ):
         assert field in schema, f"PDBePISA_get_interfaces returns {field} undeclared"
     assert "crystal" in schema, (
         "the declaration has to say what a high p-value or a non-identity "
@@ -7011,8 +7218,14 @@ def test_a_mutation_row_says_what_build_and_how_many_reads():
     primary and metastasis being counted as two patients.
     """
     schema = json.dumps(_config("cBioPortal_get_mutations").get("return_schema"))
-    for field in ('"ncbiBuild"', '"tumorAltCount"', '"tumorRefCount"',
-                  '"uniquePatientKey"', '"refseqMrnaId"', '"variantType"'):
+    for field in (
+        '"ncbiBuild"',
+        '"tumorAltCount"',
+        '"tumorRefCount"',
+        '"uniquePatientKey"',
+        '"refseqMrnaId"',
+        '"variantType"',
+    ):
         assert field in schema, f"cBioPortal_get_mutations returns {field} undeclared"
     assert "variant allele fraction" in schema
     assert "two patients" in schema
@@ -7028,8 +7241,14 @@ def test_a_kinetic_law_carries_the_reaction_it_measures():
     declared.
     """
     schema = json.dumps(_config("SABIO_RK_search_reactions").get("return_schema"))
-    for field in ('"reaction_equation"', '"organism"', '"mechanism_type"',
-                  '"parameter_units"', '"tissue"', '"pubmed_id"'):
+    for field in (
+        '"reaction_equation"',
+        '"organism"',
+        '"mechanism_type"',
+        '"parameter_units"',
+        '"tissue"',
+        '"pubmed_id"',
+    ):
         assert field in schema, f"SABIO_RK_search_reactions returns {field} undeclared"
     assert "unusable" in schema or "not a human Km" in schema
 
@@ -7044,8 +7263,14 @@ def test_a_510k_record_says_what_fda_decided():
     endpoints. Sixteen fields, including the outcome and the join.
     """
     schema = json.dumps(_config("OpenFDA_search_device_510k").get("return_schema"))
-    for field in ('"decision_code"', '"clearance_type"', '"date_received"',
-                  '"openfda"', '"third_party_flag"', '"advisory_committee"'):
+    for field in (
+        '"decision_code"',
+        '"clearance_type"',
+        '"date_received"',
+        '"openfda"',
+        '"third_party_flag"',
+        '"advisory_committee"',
+    ):
         assert field in schema, f"OpenFDA_search_device_510k returns {field} undeclared"
     assert "substantially equivalent" in schema
 
@@ -7059,9 +7284,16 @@ def test_an_expression_value_can_be_attributed_to_a_named_region():
     against an integer id, and rolling values up to a coarser region needs a
     second lookup that the response had already answered.
     """
-    schema = json.dumps(_config("AllenBrain_get_structure_expression_values").get("return_schema"))
-    for field in ('"safe_name"', '"structure_id_path"', '"parent_structure_id"',
-                  '"hemisphere_id"', '"color_hex_triplet"'):
+    schema = json.dumps(
+        _config("AllenBrain_get_structure_expression_values").get("return_schema")
+    )
+    for field in (
+        '"safe_name"',
+        '"structure_id_path"',
+        '"parent_structure_id"',
+        '"hemisphere_id"',
+        '"color_hex_triplet"',
+    ):
         assert field in schema, f"AllenBrain returns {field} undeclared"
     assert "coarser region" in schema
 
@@ -7076,8 +7308,13 @@ def test_a_pangenome_reports_its_core_and_accessory_split():
     annotation quality, none of them in the schema.
     """
     schema = json.dumps(_config("MGnify_get_genome").get("return_schema"))
-    for field in ('"pangenome_core_size"', '"pangenome_accessory_size"',
-                  '"rna_16s"', '"eggnog_coverage"', '"ena_sample_accession"'):
+    for field in (
+        '"pangenome_core_size"',
+        '"pangenome_accessory_size"',
+        '"rna_16s"',
+        '"eggnog_coverage"',
+        '"ena_sample_accession"',
+    ):
         assert field in schema, f"MGnify_get_genome returns {field} undeclared"
     assert "amplicon" in schema
 
@@ -7093,8 +7330,14 @@ def test_a_download_count_says_how_much_of_it_is_robots():
     a field the schema did not mention.
     """
     schema = json.dumps(_config("PRIDE_get_project").get("return_schema"))
-    for field in ('"totalFileDownloads"', '"botCount"', '"submissionType"',
-                  '"identifiedPTMStrings"', '"sampleAttributes"', '"license"'):
+    for field in (
+        '"totalFileDownloads"',
+        '"botCount"',
+        '"submissionType"',
+        '"identifiedPTMStrings"',
+        '"sampleAttributes"',
+        '"license"',
+    ):
         assert field in schema, f"PRIDE_get_project returns {field} undeclared"
     assert "bots are the majority" in schema
 
@@ -7108,20 +7351,41 @@ def test_the_rest_of_batch_seventy_seven_declares_what_it_returns():
     shortening it.
     """
     for tool, fields, why in (
-        ("BioTools_get_tool", ('"publication"', '"lastUpdate"', '"license"'),
-         "a tool entry with no citation and no last-edited date"),
-        ("SASBDB_list_instruments", ('"detector"', '"point_source"', '"line_collimation"'),
-         "point and line collimation need different desmearing"),
-        ("MetabolomicsWorkbench_get_gene_protein", ('"summary"', '"species_long"', '"gene_synonyms"'),
-         "the summary is the only field that explains the gene"),
-        ("BiGG_get_model", ('"escher_maps"', '"last_updated"', '"genome_ref_string"'),
-         "which genome the model is built on, and whether it is current"),
-        ("Reactome_get_reaction", ('"compartment"', '"summation"', '"negativePrecedingEvent"'),
-         "a reaction with no compartment cannot be placed in a cell"),
-        ("PharmGKB_get_clinical_annotations", ('"allelePhenotypes"', '"relatedAlleles"', '"scoreDetails"'),
-         "which genotype means what is the annotation's content"),
-        ("PyPIPackageInspector", ('"requires_dist"', '"pushed_at"', '"project_urls"'),
-         "the dependencies and the last commit date"),
+        (
+            "BioTools_get_tool",
+            ('"publication"', '"lastUpdate"', '"license"'),
+            "a tool entry with no citation and no last-edited date",
+        ),
+        (
+            "SASBDB_list_instruments",
+            ('"detector"', '"point_source"', '"line_collimation"'),
+            "point and line collimation need different desmearing",
+        ),
+        (
+            "MetabolomicsWorkbench_get_gene_protein",
+            ('"summary"', '"species_long"', '"gene_synonyms"'),
+            "the summary is the only field that explains the gene",
+        ),
+        (
+            "BiGG_get_model",
+            ('"escher_maps"', '"last_updated"', '"genome_ref_string"'),
+            "which genome the model is built on, and whether it is current",
+        ),
+        (
+            "Reactome_get_reaction",
+            ('"compartment"', '"summation"', '"negativePrecedingEvent"'),
+            "a reaction with no compartment cannot be placed in a cell",
+        ),
+        (
+            "PharmGKB_get_clinical_annotations",
+            ('"allelePhenotypes"', '"relatedAlleles"', '"scoreDetails"'),
+            "which genotype means what is the annotation's content",
+        ),
+        (
+            "PyPIPackageInspector",
+            ('"requires_dist"', '"pushed_at"', '"project_urls"'),
+            "the dependencies and the last commit date",
+        ),
     ):
         schema = json.dumps(_config(tool).get("return_schema"))
         for field in fields:
@@ -7181,8 +7445,17 @@ def test_a_finemapping_result_carries_the_association():
         "with no association"
     )
     schema = json.dumps(_config("FinnGen_get_variant_finemapping").get("return_schema"))
-    for field in ('"phenostring"', '"mlogp"', '"beta"', '"n_case"', '"n_control"', '"path"'):
-        assert field in schema, f"FinnGen_get_variant_finemapping returns {field} undeclared"
+    for field in (
+        '"phenostring"',
+        '"mlogp"',
+        '"beta"',
+        '"n_case"',
+        '"n_control"',
+        '"path"',
+    ):
+        assert field in schema, (
+            f"FinnGen_get_variant_finemapping returns {field} undeclared"
+        )
     assert "not looked up" in schema
 
 
@@ -7202,15 +7475,29 @@ def test_basic_gene_information_includes_the_disease():
     involved in was narrower than basic.
     """
     source = _source("hpa_tool.py")
-    for key in ("Disease involvement", "Protein class", "Subcellular location",
-                "Antibody", "Gene description"):
-        assert f'data.get("{key}")' in source, f"HPA answers with {key!r} and dropped it"
+    for key in (
+        "Disease involvement",
+        "Protein class",
+        "Subcellular location",
+        "Antibody",
+        "Gene description",
+    ):
+        assert f'data.get("{key}")' in source, (
+            f"HPA answers with {key!r} and dropped it"
+        )
     assert '"Gene": data.get("Gene", "")' in source, (
         "the six original keys have to stay exactly as they were"
     )
-    schema = json.dumps(_config("HPA_get_gene_basic_info_by_ensembl_id").get("return_schema"))
-    for field in ('"Disease involvement"', '"Protein class"', '"Subcellular main location"',
-                  '"Antibody RRID"', '"Evidence"'):
+    schema = json.dumps(
+        _config("HPA_get_gene_basic_info_by_ensembl_id").get("return_schema")
+    )
+    for field in (
+        '"Disease involvement"',
+        '"Protein class"',
+        '"Subcellular main location"',
+        '"Antibody RRID"',
+        '"Evidence"',
+    ):
         assert field in schema, f"HPA returns {field} undeclared"
 
 
@@ -7229,10 +7516,19 @@ def test_both_stereochemistry_checks_declare_the_same_evidence():
     """
     cfg = _config("PDB_check_beta_stereochemistry")
     props = cfg["return_schema"]["oneOf"][0]["properties"]["data"]["properties"]
-    for field in ("counts_by_chain", "center_details", "scope", "matched_centers",
-                  "minimum_normalized_volume", "glycine_nonchiral_residues",
-                  "eligible_beta_residues", "beta_check_applicable"):
-        assert field in props, f"PDB_check_beta_stereochemistry returns {field} undeclared"
+    for field in (
+        "counts_by_chain",
+        "center_details",
+        "scope",
+        "matched_centers",
+        "minimum_normalized_volume",
+        "glycine_nonchiral_residues",
+        "eligible_beta_residues",
+        "beta_check_applicable",
+    ):
+        assert field in props, (
+            f"PDB_check_beta_stereochemistry returns {field} undeclared"
+        )
     assert "natural" in json.dumps(props["expected_orientation"]), (
         "beta's orientations are natural/opposite; copying alpha's L/D "
         "description would be wrong"
@@ -7241,8 +7537,12 @@ def test_both_stereochemistry_checks_declare_the_same_evidence():
         "a high residues_without_eligible_beta_center is normal and the "
         "declaration has to say so"
     )
-    alpha = _config("PDB_check_alpha_stereochemistry")["return_schema"]["oneOf"][0]["properties"]["data"]["properties"]
-    assert "L/D" in json.dumps(alpha["expected_orientation"]) or "'L'" in json.dumps(alpha["expected_orientation"])
+    alpha = _config("PDB_check_alpha_stereochemistry")["return_schema"]["oneOf"][0][
+        "properties"
+    ]["data"]["properties"]
+    assert "L/D" in json.dumps(alpha["expected_orientation"]) or "'L'" in json.dumps(
+        alpha["expected_orientation"]
+    )
 
 
 def test_the_sibling_sweep_reached_the_siblings():
@@ -7292,9 +7592,16 @@ def test_a_saxs_entry_carries_its_size_measurements():
     at all.
     """
     schema = json.dumps(_config("SASBDB_get_entry").get("return_schema"))
-    for field in ('"guinier_rg"', '"guinier_rg_error"', '"guinier_point_last"',
-                  '"pddf_dmax"', '"porod_volume"', '"experimental_mw"',
-                  '"intensity_unit"', '"pddf_software"'):
+    for field in (
+        '"guinier_rg"',
+        '"guinier_rg_error"',
+        '"guinier_point_last"',
+        '"pddf_dmax"',
+        '"porod_volume"',
+        '"experimental_mw"',
+        '"intensity_unit"',
+        '"pddf_software"',
+    ):
         assert field in schema, f"SASBDB_get_entry returns {field} undeclared"
     assert "fit range" in schema or "fit RANGE" in schema
     assert "disagreement" in schema
@@ -7312,10 +7619,20 @@ def test_a_negative_result_is_not_a_positive_one():
     "Combined *2/*2, *2/*3 and *3*3 were compared to..." - and
     `studyParameters` carries the cohort sizes and p-values behind it.
     """
-    schema = json.dumps(_config("PharmGKB_get_variant_annotations").get("return_schema"))
-    for field in ('"isAssociated"', '"polarity"', '"description"',
-                  '"studyParameters"', '"score"', '"scoreDetails"'):
-        assert field in schema, f"PharmGKB_get_variant_annotations returns {field} undeclared"
+    schema = json.dumps(
+        _config("PharmGKB_get_variant_annotations").get("return_schema")
+    )
+    for field in (
+        '"isAssociated"',
+        '"polarity"',
+        '"description"',
+        '"studyParameters"',
+        '"score"',
+        '"scoreDetails"',
+    ):
+        assert field in schema, (
+            f"PharmGKB_get_variant_annotations returns {field} undeclared"
+        )
     assert "NEGATIVE result" in schema, (
         "isAssociated false has to be flagged as a negative result, or it "
         "reads as a positive one"
@@ -7343,9 +7660,16 @@ def test_a_drug_label_annotation_says_which_agency_and_whether_to_test():
         "a properties block beside the inner oneOf belongs to no branch"
     )
     schema = json.dumps(rs)
-    for field in ('"source"', '"testing"', '"summaryMarkdown"', '"relatedGenes"',
-                  '"pediatric"'):
-        assert field in schema, f"PharmGKB_get_drug_label_annotations returns {field} undeclared"
+    for field in (
+        '"source"',
+        '"testing"',
+        '"summaryMarkdown"',
+        '"relatedGenes"',
+        '"pediatric"',
+    ):
+        assert field in schema, (
+            f"PharmGKB_get_drug_label_annotations returns {field} undeclared"
+        )
     assert "Swissmedic" in schema
 
 
@@ -7360,14 +7684,24 @@ def test_a_pseudoreaction_is_not_chemistry():
     metabolite come as parallel lists, and the charge decides the protonation
     state the model assumes.
     """
-    for tool, fields in (("BiGG_get_reaction", ('"pseudoreaction"', '"results"',
-                                                '"other_models_with_reaction"',
-                                                '"old_identifiers"')),
-                         ("BiGG_get_metabolite", ('"formulae"', '"charges"'))):
+    for tool, fields in (
+        (
+            "BiGG_get_reaction",
+            (
+                '"pseudoreaction"',
+                '"results"',
+                '"other_models_with_reaction"',
+                '"old_identifiers"',
+            ),
+        ),
+        ("BiGG_get_metabolite", ('"formulae"', '"charges"')),
+    ):
         schema = json.dumps(_config(tool).get("return_schema"))
         for field in fields:
             assert field in schema, f"{tool} returns {field} undeclared"
-    assert "modelling devices" in json.dumps(_config("BiGG_get_reaction").get("return_schema"))
+    assert "modelling devices" in json.dumps(
+        _config("BiGG_get_reaction").get("return_schema")
+    )
 
 
 def test_a_sequence_says_which_coordinate_convention_it_used():
@@ -7393,16 +7727,25 @@ def test_the_long_tail_of_the_sibling_sweep_is_declared():
     """
     for tool, fields in (
         ("Reactome_get_complex", ('"inferredTo"', '"isChimeric"', '"inDisease"')),
-        ("Reactome_query_by_ids", ('"hasEvent"', '"goBiologicalProcess"', '"hasDiagram"')),
+        (
+            "Reactome_query_by_ids",
+            ('"hasEvent"', '"goBiologicalProcess"', '"hasDiagram"'),
+        ),
         ("cBioPortal_get_molecular_profiles", ('"studyId"', '"patientLevel"')),
         ("PDBePISA_get_assemblies", ('"n_dissociable"', '"symmetry_number"')),
         ("GlyGen_get_glycan", ('"composition"', '"classification"', '"byonic"')),
         ("GlyGen_get_site", ('"start_aa"', '"all_sites_count"')),
         ("PharmGKB_search_genes", ('"cpicGene"', '"pharmVarGene"')),
-        ("PharmGKB_get_pathway", ('"pharmacokinetic"', '"pharmacodynamic"', '"gpmlLink"')),
+        (
+            "PharmGKB_get_pathway",
+            ('"pharmacokinetic"', '"pharmacodynamic"', '"gpmlLink"'),
+        ),
         ("ClinVar_get_variant_details", ('"rate_limit_info"',)),
         ("DepMap_get_gene_dependencies", ('"matched_gene"', '"note"')),
-        ("PRIDE_get_project_files", ('"fileSizeBytes"', '"publicFileLocations"', '"value"')),
+        (
+            "PRIDE_get_project_files",
+            ('"fileSizeBytes"', '"publicFileLocations"', '"value"'),
+        ),
         ("PRIDE_search_proteomics", ('"doi"', '"highlights"', '"projectFileNames"')),
         ("CoL_get_taxon", ('"combinationAuthorship"', '"nomStatus"', '"referenceIds"')),
         ("BioTools_search_by_operation", ('"credit"', '"maturity"', '"documentation"')),
@@ -7444,7 +7787,9 @@ def test_a_field_asked_for_with_the_wrong_header_was_always_null():
     )
     schema = json.dumps(_config("EnsemblCompara_get_gene_tree").get("return_schema"))
     for field in ('"branch_length"', '"protein_ids"', '"common_name"', '"taxon_id"'):
-        assert field in schema, f"EnsemblCompara_get_gene_tree returns {field} undeclared"
+        assert field in schema, (
+            f"EnsemblCompara_get_gene_tree returns {field} undeclared"
+        )
     assert "instead of `Accept`" in schema, (
         "the declaration should record why this was null, so nobody takes "
         "the old behaviour for the upstream's"
@@ -7469,7 +7814,9 @@ def test_a_list_of_drug_names_says_what_kind_each_one_is():
     """
     source = _source("rxnorm_tool.py")
     for key in ("tty", "suppress", "language"):
-        assert f'prop.get("{key}")' in source, f"RxNorm answers with {key} and dropped it"
+        assert f'prop.get("{key}")' in source, (
+            f"RxNorm answers with {key} and dropped it"
+        )
     schema = json.dumps(_config("RxNorm_get_drug_names").get("return_schema"))
     for field in ('"concepts"', '"tty"', '"suppress"'):
         assert field in schema, f"RxNorm_get_drug_names returns {field} undeclared"
@@ -7495,15 +7842,24 @@ def test_a_dataset_search_says_when_where_and_on_what():
     """
     source = _source("proteomexchange_tool.py")
     for key in ("Announce Date", "Repos", "Instrument", "Keywords"):
-        assert f'ds.get("{key}")' in source, f"ProteomeCentral sends {key!r} and it was dropped"
+        assert f'ds.get("{key}")' in source, (
+            f"ProteomeCentral sends {key!r} and it was dropped"
+        )
     assert "publication_dois" in source, (
         "Publication arrives as HTML anchors; the DOIs inside them are what "
         "makes the dataset citable"
     )
     schema = json.dumps(_config("ProteomeXchange_search_datasets").get("return_schema"))
-    for field in ('"announce_date"', '"repository"', '"instrument"', '"keywords"',
-                  '"publication_dois"'):
-        assert field in schema, f"ProteomeXchange_search_datasets returns {field} undeclared"
+    for field in (
+        '"announce_date"',
+        '"repository"',
+        '"instrument"',
+        '"keywords"',
+        '"publication_dois"',
+    ):
+        assert field in schema, (
+            f"ProteomeXchange_search_datasets returns {field} undeclared"
+        )
     assert "how the files are fetched" in schema or "how to fetch" in schema
 
 
@@ -7523,9 +7879,15 @@ def test_faers_codes_are_spelled_out():
     strongest causality signals a spontaneous report carries.
     """
     schema = json.dumps(_config("OpenFDA_search_drug_events").get("return_schema"))
-    for field in ('"patientsex"', '"duplicate"', '"safetyreportversion"',
-                  '"actiondrug"', '"drugrecurreadministration"',
-                  '"patientonsetageunit"', '"reactionmeddraversionpt"'):
+    for field in (
+        '"patientsex"',
+        '"duplicate"',
+        '"safetyreportversion"',
+        '"actiondrug"',
+        '"drugrecurreadministration"',
+        '"patientonsetageunit"',
+        '"reactionmeddraversionpt"',
+    ):
         assert field in schema, f"OpenFDA_search_drug_events returns {field} undeclared"
     assert "'1' male, '2' female" in schema, "a bare digit needs its key"
     assert "inflates every FAERS tally" in schema
@@ -7544,19 +7906,28 @@ def test_a_recall_says_why_and_which_lots():
     One declaration covers the drug, device and food endpoints, because
     openFDA gives them the same row.
     """
-    for tool in ("OpenFDA_search_drug_enforcement", "OpenFDA_search_device_enforcement",
-                 "OpenFDA_search_food_enforcement"):
+    for tool in (
+        "OpenFDA_search_drug_enforcement",
+        "OpenFDA_search_device_enforcement",
+        "OpenFDA_search_food_enforcement",
+    ):
         schema = json.dumps(_config(tool).get("return_schema"))
-        for field in ('"code_info"', '"termination_date"', '"voluntary_mandated"',
-                      '"initial_firm_notification"', '"event_id"'):
+        for field in (
+            '"code_info"',
+            '"termination_date"',
+            '"voluntary_mandated"',
+            '"initial_firm_notification"',
+            '"event_id"',
+        ):
             assert field in schema, f"{tool} returns {field} undeclared"
         assert "still open" in schema, (
-            f"{tool} must say that an absent termination_date means the "
-            "recall is live"
+            f"{tool} must say that an absent termination_date means the recall is live"
         )
     recalls = json.dumps(_config("OpenFDA_search_device_recalls").get("return_schema"))
     for field in ('"reason_for_recall"', '"root_cause_description"', '"action"'):
-        assert field in recalls, f"OpenFDA_search_device_recalls returns {field} undeclared"
+        assert field in recalls, (
+            f"OpenFDA_search_device_recalls returns {field} undeclared"
+        )
 
 
 def test_every_openfda_response_declares_its_own_disclaimer_and_date():
@@ -7568,8 +7939,12 @@ def test_every_openfda_response_declares_its_own_disclaimer_and_date():
     are the paging state, and total is what says whether the page is the
     whole answer.
     """
-    for tool in ("OpenFDA_search_drug_events", "OpenFDA_search_drug_ndc",
-                 "OpenFDA_search_food_enforcement", "OpenFDA_search_drug_enforcement"):
+    for tool in (
+        "OpenFDA_search_drug_events",
+        "OpenFDA_search_drug_ndc",
+        "OpenFDA_search_food_enforcement",
+        "OpenFDA_search_drug_enforcement",
+    ):
         cfg = _config(tool)["return_schema"]
         branch = cfg["oneOf"][0] if "oneOf" in cfg else cfg
         meta = (branch.get("properties") or {}).get("meta") or {}
@@ -7600,11 +7975,18 @@ def test_an_address_split_across_forty_five_keys_says_so():
     cfg = _config("OpenFDA_search_device_adverse_events")["return_schema"]
     branch = cfg["oneOf"][0] if "oneOf" in cfg else cfg
     row = ((branch["properties"]["results"].get("items") or {}).get("properties")) or {}
-    for field in ("product_problems", "mdr_report_key", "mfr_report_type",
-                  "date_of_event", "summary_report_flag", "reprocessed_and_reused_flag"):
-        assert field in row, f"OpenFDA_search_device_adverse_events returns {field} undeclared"
-    shared = [k for k, v in row.items()
-              if "splits across many keys" in json.dumps(v)]
+    for field in (
+        "product_problems",
+        "mdr_report_key",
+        "mfr_report_type",
+        "date_of_event",
+        "summary_report_flag",
+        "reprocessed_and_reused_flag",
+    ):
+        assert field in row, (
+            f"OpenFDA_search_device_adverse_events returns {field} undeclared"
+        )
+    shared = [k for k, v in row.items() if "splits across many keys" in json.dumps(v)]
     assert len(shared) >= 40, (
         f"the address components should carry the shared note; {len(shared)} do"
     )
@@ -7636,9 +8018,18 @@ def test_a_cadd_block_declares_more_than_four_of_its_thirty_six_fields():
     """
     for tool in ("MyVariant_get_variant_annotation", "MyVariant_query_variants"):
         schema = json.dumps(_config(tool).get("return_schema"))
-        for field in ('"rawscore"', '"phylop"', '"phast_cons"', '"gerp"',
-                      '"fitcons"', '"isknownvariant"', '"mapability"',
-                      '"annotype"', '"dbsnp_build"', '"hg19"'):
+        for field in (
+            '"rawscore"',
+            '"phylop"',
+            '"phast_cons"',
+            '"gerp"',
+            '"fitcons"',
+            '"isknownvariant"',
+            '"mapability"',
+            '"annotype"',
+            '"dbsnp_build"',
+            '"hg19"',
+        ):
             assert field in schema, f"{tool} returns {field} undeclared"
         assert "not an independent prediction" in schema, (
             "a CADD score on a training variant needs that caveat"
@@ -7662,11 +8053,19 @@ def test_a_gwas_association_carries_its_p_value():
     as a single-variant association is wrong in a way nothing else in the
     row reveals.
     """
-    for tool in ("gwas_get_associations_for_trait", "gwas_get_associations_for_snp",
-                 "gwas_get_associations_for_study"):
+    for tool in (
+        "gwas_get_associations_for_trait",
+        "gwas_get_associations_for_snp",
+        "gwas_get_associations_for_study",
+    ):
         schema = json.dumps(_config(tool).get("return_schema"))
-        for field in ('"pvalue_mantissa"', '"pvalue_exponent"', '"or_value"',
-                      '"multi_snp_haplotype"', '"snp_interaction"'):
+        for field in (
+            '"pvalue_mantissa"',
+            '"pvalue_exponent"',
+            '"or_value"',
+            '"multi_snp_haplotype"',
+            '"snp_interaction"',
+        ):
             assert field in schema, f"{tool} returns {field} undeclared"
         assert "underflow" in schema, (
             "the declaration has to say why the p-value is split, or a "
@@ -7689,9 +8088,17 @@ def test_a_literature_record_says_whether_it_was_retracted():
     awards, the open-access status and url, and the referenced works.
     """
     schema = json.dumps(_config("openalex_get_work").get("return_schema"))
-    for field in ('"is_retracted"', '"is_paratext"', '"type"', '"open_access"',
-                  '"counts_by_year"', '"authorships"', '"referenced_works"',
-                  '"awards"', '"ids"'):
+    for field in (
+        '"is_retracted"',
+        '"is_paratext"',
+        '"type"',
+        '"open_access"',
+        '"counts_by_year"',
+        '"authorships"',
+        '"referenced_works"',
+        '"awards"',
+        '"ids"',
+    ):
         assert field in schema, f"openalex_get_work returns {field} undeclared"
     assert "retracted paper as evidence" in schema
     assert "has not been peer reviewed" in schema
@@ -7710,15 +8117,24 @@ def test_the_rest_of_the_long_tail_is_declared():
     spectrum cannot be redistributed.
     """
     for tool, fields in (
-        ("get_phenotype_by_HPO_ID", ('"exact_synonym"', '"related_synonym"',
-                                     '"has_descendant_count"', '"node_hierarchy"')),
+        (
+            "get_phenotype_by_HPO_ID",
+            (
+                '"exact_synonym"',
+                '"related_synonym"',
+                '"has_descendant_count"',
+                '"node_hierarchy"',
+            ),
+        ),
         ("GBIF_get_species", ('"nubKey"', '"nameType"', '"lastInterpreted"')),
         ("MassBank_search_by_compound", ('"license"', '"date"', '"authors"')),
     ):
         schema = json.dumps(_config(tool).get("return_schema"))
         for field in fields:
             assert field in schema, f"{tool} returns {field} undeclared"
-    assert "classification error" in json.dumps(_config("get_phenotype_by_HPO_ID")["return_schema"])
+    assert "classification error" in json.dumps(
+        _config("get_phenotype_by_HPO_ID")["return_schema"]
+    )
     assert "backbone" in json.dumps(_config("GBIF_get_species")["return_schema"])
 
 
@@ -7738,9 +8154,14 @@ def test_the_fields_that_say_an_answer_is_a_page():
     per group, so the result holds more rows than the limit suggests.
     """
     for tool, fields in (
-        ("IMPC_get_gene_phenotype_hits", ("has_more", "truncated", "result_set_complete",
-                                          "total_results_is_exact")),
-        ("GTDB_search_taxon", ("pagination_supported", "limit_scope", "complete_known")),
+        (
+            "IMPC_get_gene_phenotype_hits",
+            ("has_more", "truncated", "result_set_complete", "total_results_is_exact"),
+        ),
+        (
+            "GTDB_search_taxon",
+            ("pagination_supported", "limit_scope", "complete_known"),
+        ),
         ("EBIProteins_get_structural_features", ("has_more", "returned", "truncated")),
     ):
         schema = json.dumps(_config(tool).get("return_schema"))
@@ -7761,7 +8182,11 @@ def test_a_cursor_is_the_only_way_to_page_uniprot():
     """
     schema = json.dumps(_config("UniProt_search").get("return_schema"))
     assert '"next_cursor"' in schema
-    assert "cursor, not offset" in schema or "not by offset" in schema or "pages by cursor" in schema
+    assert (
+        "cursor, not offset" in schema
+        or "not by offset" in schema
+        or "pages by cursor" in schema
+    )
 
 
 def test_a_count_of_source_records_is_not_a_count_of_sources():
@@ -7773,8 +8198,12 @@ def test_a_count_of_source_records_is_not_a_count_of_sources():
     unless the other two are there to say otherwise.
     """
     schema = json.dumps(_config("UniChem_search_compound").get("return_schema"))
-    for field in ('"source_record_count"', '"unique_source_count"',
-                  '"duplicate_source_records"', '"query_type"'):
+    for field in (
+        '"source_record_count"',
+        '"unique_source_count"',
+        '"duplicate_source_records"',
+        '"query_type"',
+    ):
         assert field in schema, f"UniChem_search_compound returns {field} undeclared"
     assert "reads as 1017 databases" in schema
 
@@ -7793,9 +8222,15 @@ def test_the_rest_of_batch_eighty_four():
     for tool, fields in (
         ("RGD_get_annotations", ('"evidence"', '"term_acc"', '"aspect"')),
         ("MyGene_get_gene_annotation", ('"type_of_gene"', '"generif"')),
-        ("EBIProteins_get_variation_by_hgvs", ('"sequence_checksum"', '"organism_name"')),
+        (
+            "EBIProteins_get_variation_by_hgvs",
+            ('"sequence_checksum"', '"organism_name"'),
+        ),
         ("GDC_search_cases", ('"success"', '"query"')),
-        ("TheraSAbDab_get_therapeutic_sequences", ('"status"', '"conditions_discontinued"')),
+        (
+            "TheraSAbDab_get_therapeutic_sequences",
+            ('"status"', '"conditions_discontinued"'),
+        ),
         ("PharmGKB_get_dosing_guidelines", ('"level"', '"literature"')),
         ("NCA_compute_parameters", ('"Vd_unit"', '"clearance_CL_unit"')),
         ("PDB_REDO_get_version_info", ('"software"',)),
@@ -7806,8 +8241,11 @@ def test_the_rest_of_batch_eighty_four():
         for field in fields:
             assert field in schema, f"{tool} returns {field} undeclared"
     assert "transferred from another species" in json.dumps(
-        _config("RGD_get_annotations").get("return_schema"))
-    assert "unusable" in json.dumps(_config("NCA_compute_parameters").get("return_schema"))
+        _config("RGD_get_annotations").get("return_schema")
+    )
+    assert "unusable" in json.dumps(
+        _config("NCA_compute_parameters").get("return_schema")
+    )
 
 
 def test_an_empty_result_says_why_it_is_empty():
@@ -7850,14 +8288,19 @@ def test_an_em_map_carries_what_it_takes_to_render_it():
     tomography, which decides what the map can be used for at all. `sample`
     is what was imaged.
     """
-    for tool, field in (("EMDB_get_map_info", '"map"'),
-                        ("EMDB_get_imaging_info", '"imaging"'),
-                        ("EMDB_get_sample_info", '"sample"')):
+    for tool, field in (
+        ("EMDB_get_map_info", '"map"'),
+        ("EMDB_get_imaging_info", '"imaging"'),
+        ("EMDB_get_sample_info", '"sample"'),
+    ):
         schema = json.dumps(_config(tool).get("return_schema"))
         assert field in schema, f"{tool} returns {field} undeclared"
-    assert "contour level" in json.dumps(_config("EMDB_get_map_info").get("return_schema"))
+    assert "contour level" in json.dumps(
+        _config("EMDB_get_map_info").get("return_schema")
+    )
     assert "single-particle from" in json.dumps(
-        _config("EMDB_get_imaging_info").get("return_schema"))
+        _config("EMDB_get_imaging_info").get("return_schema")
+    )
 
 
 def test_a_hit_the_caller_asked_for_is_marked_as_such():
@@ -7929,7 +8372,7 @@ def test_bridgedb_attributes_are_keyed_by_the_attribute_not_by_its_value():
         f"inverted: {parsed!r}"
     )
     assert "Dextrose" not in parsed, (
-        "a synonym is still being used as a key: " f"{parsed!r}"
+        f"a synonym is still being used as a key: {parsed!r}"
     )
 
 
@@ -7996,9 +8439,7 @@ def test_lotus_declares_the_organism_a_natural_product_was_found_in():
         "the keys of taxonomyReferenceObjects are DOIs with '.' rewritten as "
         "'$x$x$'; a caller that is not told cannot recover the DOI"
     )
-    assert len(row) >= 80, (
-        f"the record carries 92 keys; the schema declares {len(row)}"
-    )
+    assert len(row) >= 80, f"the record carries 92 keys; the schema declares {len(row)}"
 
 
 def test_lotus_descriptors_that_come_back_as_the_string_nan_admit_a_string():
@@ -8089,11 +8530,23 @@ def test_every_chembl_rest_tool_declares_the_envelope_it_actually_returns():
     assert len(tools) >= 27, f"expected the whole family, found {len(tools)}"
     for t in tools:
         props = t["return_schema"]["properties"]
-        for name in ("url", "page_meta", "pagination", "error", "status_code", "detail"):
+        for name in (
+            "url",
+            "page_meta",
+            "pagination",
+            "error",
+            "status_code",
+            "detail",
+        ):
             assert name in props, f"{t['name']} does not declare {name}"
         total = props["page_meta"]["properties"]["total_count"]
-        assert "match" in total["description"].lower() or "total" in total["description"].lower()
-        assert props["status"].get("description"), f"{t['name']}: status has no description"
+        assert (
+            "match" in total["description"].lower()
+            or "total" in total["description"].lower()
+        )
+        assert props["status"].get("description"), (
+            f"{t['name']}: status has no description"
+        )
 
 
 def test_drugbank_nested_lists_declare_that_they_were_cut():
@@ -8107,7 +8560,10 @@ def test_drugbank_nested_lists_declare_that_they_were_cut():
     """
     for tool, prefixes in (
         ("drugbank_get_drug_products_by_name_or_drugbank_id", ("products", "prices")),
-        ("drugbank_get_drug_name_and_description_by_pathway_name", ("pathways", "reactions")),
+        (
+            "drugbank_get_drug_name_and_description_by_pathway_name",
+            ("pathways", "reactions"),
+        ),
     ):
         cfg = _config(tool)
         rs = cfg["return_schema"]
@@ -8116,7 +8572,9 @@ def test_drugbank_nested_lists_declare_that_they_were_cut():
             for suffix in ("total_count", "shown_count", "offset", "truncated"):
                 name = f"{prefix}_{suffix}"
                 assert name in row, f"{tool} returns {name} and does not declare it"
-                assert row[name].get("description"), f"{tool}: {name} has no description"
+                assert row[name].get("description"), (
+                    f"{tool}: {name} has no description"
+                )
             assert any(
                 c.isdigit() for c in row[f"{prefix}_total_count"]["description"]
             ), (
@@ -8174,7 +8632,9 @@ def test_constrained_element_pagination_is_declared_where_it_is_returned():
     `metadata` holds only source and endpoint. The schema declared
     element_count and nothing else.
     """
-    props = _success_props(_config("EnsemblReg_get_constrained_elements")["return_schema"])
+    props = _success_props(
+        _config("EnsemblReg_get_constrained_elements")["return_schema"]
+    )
     for name in (
         "returned",
         "total",
@@ -8197,9 +8657,7 @@ def test_bmrb_alignment_coordinates_are_declared_under_their_dotted_names():
     20 residues and one over all 300.
     """
     rs = _config("BMRB_search_by_sequence")["return_schema"]
-    branch = [
-        b for b in rs["oneOf"] if "error" not in (b.get("properties") or {})
-    ][0]
+    branch = [b for b in rs["oneOf"] if "error" not in (b.get("properties") or {})][0]
     row = branch["items"]["properties"]
     for name in ("q.start", "q.end", "s.start", "s.end"):
         assert name in row, f"{name} is returned and not declared"
@@ -8307,7 +8765,9 @@ def test_open_food_facts_estimated_nutrients_are_declared_as_an_open_level():
         "the description must say these are estimates, not label values"
     )
     for name, spec in (ne.get("properties") or {}).items():
-        assert spec.get("description"), f"nutriments_estimated.{name} has no description"
+        assert spec.get("description"), (
+            f"nutriments_estimated.{name} has no description"
+        )
     assert "categories" in row, "the product's categories are returned and undeclared"
     assert "STRING" in row["categories"]["description"], (
         "categories is a comma-delimited string, not a list, and a caller has "
@@ -8358,7 +8818,7 @@ def test_a_de_identified_patient_name_is_declared_as_always_empty():
     assert "PatientName" in props
     desc = props["PatientName"]["description"]
     assert "de-identif" in desc.lower(), (
-        "the reason it is always null belongs in the description: " f"{desc!r}"
+        f"the reason it is always null belongs in the description: {desc!r}"
     )
 
 
@@ -8383,9 +8843,10 @@ def test_an_msa_inspection_declares_the_warnings_that_contradict_its_numbers():
         "row_details_truncated",
     ):
         assert name in data, f"{name} is returned and not declared"
-    assert "useless" in data["warnings"]["description"] or "query-only" in data[
-        "warnings"
-    ]["description"].lower(), "the description should say what the warnings catch"
+    assert (
+        "useless" in data["warnings"]["description"]
+        or "query-only" in data["warnings"]["description"].lower()
+    ), "the description should say what the warnings catch"
 
 
 def test_reactome_contained_events_say_how_many_reactions_were_left_out():
@@ -8396,7 +8857,9 @@ def test_reactome_contained_events_say_how_many_reactions_were_left_out():
     true. A pathway's reaction list read as complete when it is a third of one
     misstates what the pathway does.
     """
-    props = _success_props(_config("ReactomeContent_get_contained_events")["return_schema"])
+    props = _success_props(
+        _config("ReactomeContent_get_contained_events")["return_schema"]
+    )
     for name in (
         "total_reactions",
         "reactions_returned",
@@ -8420,7 +8883,9 @@ def test_a_species_comparison_declares_that_its_result_set_is_incomplete():
     whether the comparison rests on inferred orthologue annotations rather than
     curated events, which changes what the comparison means.
     """
-    props = _success_props(_config("ReactomeAnalysis_species_comparison_v2")["return_schema"])
+    props = _success_props(
+        _config("ReactomeAnalysis_species_comparison_v2")["return_schema"]
+    )
     for name in (
         "result_set_complete",
         "truncated",
@@ -8654,7 +9119,9 @@ def test_a_genetic_correlation_comes_with_its_error_and_its_intercept():
     means the rg is poorly estimated whatever its own error says. None of the
     three was declared, so the correlation stood alone.
     """
-    props = _success_props(_config("EpiGraphDB_get_genetic_correlations")["return_schema"])
+    props = _success_props(
+        _config("EpiGraphDB_get_genetic_correlations")["return_schema"]
+    )
     row = props["correlations"]["items"]["properties"]
     for name in ("h2", "h2_intercept", "rg_se"):
         assert name in row, f"{name} is returned and not declared"
@@ -8688,9 +9155,10 @@ def test_an_open_meteo_forecast_says_whether_its_times_are_local():
     props = _success_props(_config("OpenMeteo_get_weather_forecast")["return_schema"])
     for name in ("utc_offset_seconds", "timezone_abbreviation", "elevation"):
         assert name in props, f"{name} is returned and not declared"
-    assert "LOCAL" in props["utc_offset_seconds"]["description"] or "local" in props[
-        "utc_offset_seconds"
-    ]["description"]
+    assert (
+        "LOCAL" in props["utc_offset_seconds"]["description"]
+        or "local" in props["utc_offset_seconds"]["description"]
+    )
 
 
 def test_an_erddap_table_declares_the_types_of_its_untyped_rows():
@@ -8715,7 +9183,9 @@ def test_a_variant_effect_score_is_declared_as_the_comparable_one():
     damaging for some, benign for others -- so comparing them directly is
     wrong, and the rescaled figure was undeclared.
     """
-    props = _success_props(_config("OpenTargets_get_variant_effect_predictions")["return_schema"])
+    props = _success_props(
+        _config("OpenTargets_get_variant_effect_predictions")["return_schema"]
+    )
     row = props["variant"]["properties"]["variantEffect"]["items"]["properties"]
     assert "normalisedScore" in row
     assert "comparable" in row["normalisedScore"]["description"]
@@ -8780,7 +9250,7 @@ def test_tools_that_refuse_for_a_missing_key_declare_whether_a_retry_helps():
         cfg = _config(tool)
         rs = cfg["return_schema"]
         found = []
-        for branch in (rs.get("oneOf") or rs.get("anyOf") or [rs]):
+        for branch in rs.get("oneOf") or rs.get("anyOf") or [rs]:
             props = branch.get("properties") or {}
             if "error_details" in props:
                 found.append(props["error_details"])
@@ -8800,7 +9270,9 @@ def test_a_truncated_credible_set_list_says_so():
     truncation_note reads "Returned the top 0 of 2 documents matching this
     query. This is a ranked slice, not the full set."
     """
-    props = _success_props(_config("OpenTargets_get_variant_credible_sets")["return_schema"])
+    props = _success_props(
+        _config("OpenTargets_get_variant_credible_sets")["return_schema"]
+    )
     cs = props["variant"]["properties"]["credibleSets"]["properties"]
     for name in ("returned", "truncated"):
         assert name in cs, f"{name} is returned and not declared"
@@ -9109,3 +9581,925 @@ def test_a_regulomedb_variant_declares_both_of_its_coordinate_systems():
     for name in ("ref", "alt", "hgvs", "spdi", "gencode_category", "freq"):
         assert name in row, f"{name} is returned and not declared"
     assert "0-based" in row["spdi"]["description"]
+
+
+# ---------------------------------------------------------------------------
+# Batch 90: axis-2 shards 25/27/29/31, 65 tools / 455 paths, measured
+# 2026-11-10 and 2026-11-11.
+# Batch 91: a RE-AUDIT of shards 8/10/12/14, which the stored readings said
+# held 505 paths across 66 tools and which came back at 221 across 32 -- the
+# earlier batches had already closed more than half of them. Stored readings
+# cannot show progress; only re-running the audit can.
+# ---------------------------------------------------------------------------
+
+
+def test_a_nutri_score_is_ambiguous_without_the_algorithm_year():
+    """OpenFoodFacts keys Nutri-Score BY ALGORITHM YEAR, and nobody said so.
+
+    `OpenFoodFacts_get_product` returns `nutriscore` keyed '2021' and '2023'.
+    The 2023 algorithm scores many products differently from the 2021 one, so a
+    grade quoted without its year is not a fact about the product. The same
+    product block answers `languages_codes` -- the index of which '<field>_<lang>'
+    variants exist -- and `nutriments_estimated`, whose keys are nutrient names
+    and so are declared with additionalProperties rather than by naming one
+    product's nutrients as if they were the schema.
+    """
+    product = _success_props(_config("OpenFoodFacts_get_product")["return_schema"])[
+        "product"
+    ]
+    props = product["properties"]
+    for name in (
+        "nutriscore",
+        "languages_codes",
+        "nutriments_estimated",
+        "ecoscore_data",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+    assert "2023" in props["nutriscore"]["description"]
+    assert isinstance(
+        props["nutriments_estimated"].get("additionalProperties"), dict
+    ), (
+        "a level keyed by nutrient name must declare its VALUE shape, not one product's keys"
+    )
+
+
+def test_an_inspire_record_says_which_schema_and_which_date():
+    """A conference paper and a journal article are not the same evidence.
+
+    `InspireHEP_search_papers` returns `$schema` (which record type this is,
+    and so which fields may be present), `document_type`, `earliest_date` --
+    what a chronological sort should use, since the publication date can be
+    months later -- and `citation_count`. None was declared.
+    """
+    hit = _success_props(_config("InspireHEP_search_papers")["return_schema"])
+    meta = hit["hits"]["properties"]["hits"]["items"]["properties"]["metadata"][
+        "properties"
+    ]
+    for name in ("$schema", "document_type", "earliest_date", "citation_count"):
+        assert name in meta, f"{name} is returned and not declared"
+    assert "earliest" in meta["earliest_date"]["description"].lower()
+
+
+def test_a_chembl_activity_says_whether_it_can_be_compared_at_all():
+    """standard_flag 0 means standard_value is not comparable, and it was undeclared.
+
+    `ChEMBL_search_activities` returns standard_flag -- 1 when ChEMBL could
+    normalise the measurement to its standard type and units -- and
+    pchembl_value, the -log10 molar form that potencies are actually averaged
+    in. Pooling rows without reading standard_flag mixes incommensurable
+    numbers.
+    """
+    acts = _success_props(_config("ChEMBL_search_activities")["return_schema"])
+    row = acts["data"]["properties"]["activities"]["items"]["properties"]
+    for name in ("standard_flag", "pchembl_value"):
+        assert name in row, f"{name} is returned and not declared"
+    assert "comparable" in row["standard_flag"]["description"]
+
+
+def test_a_reconstructed_neuron_declares_how_damaged_it_was():
+    """physical_Integrity 'Dendrites Moderate' changes every length measurement.
+
+    `NeuroMorpho_get_neuron` returns physical_Integrity, which says how
+    complete the neuron was when reconstructed, and `note`, the curator's
+    caveat about this specific record. A moderately damaged dendritic tree
+    understates total length and surface, and nothing else in the record says
+    so.
+    """
+    props = _success_props(_config("NeuroMorpho_get_neuron")["return_schema"])
+    for name in ("physical_Integrity", "note", "soma_surface", "surface", "volume"):
+        assert name in props, f"{name} is returned and not declared"
+    assert "understates" in props["physical_Integrity"]["description"]
+
+
+def test_a_zenodo_record_declares_the_doi_that_follows_the_versions():
+    """conceptdoi resolves to the latest version; the recid pins one.
+
+    `Zenodo_search_records` returns conceptdoi and conceptrecid -- the
+    version-independent handles -- beside the record's own id, plus `stats`
+    (downloads and views, with version_* variants counting only this version)
+    and `owners`, who may change the record and are not the credited creators.
+    """
+    rows = _success_props(_config("Zenodo_search_records")["return_schema"])
+    row = rows["data"]["properties"]["hits"]["properties"]["hits"]["items"][
+        "properties"
+    ]
+    for name in ("conceptdoi", "conceptrecid", "stats", "owners"):
+        assert name in row, f"{name} is returned and not declared"
+    assert "latest version" in row["conceptdoi"]["description"]
+
+
+def test_a_worms_synonym_says_whether_the_name_is_the_accepted_one():
+    """A synonym and its accepted name counted as two taxa is the error.
+
+    `WoRMS_get_synonyms` returns status, unacceptreason, valid_AphiaID and
+    valid_name -- which together say that a returned name is NOT the one to
+    use and what to use instead -- and isMarine, an INTEGER 1/0 rather than a
+    boolean.
+    """
+    row = _row_props(_config("WoRMS_get_synonyms")["return_schema"])
+    for name in ("status", "unacceptreason", "valid_AphiaID", "valid_name", "isMarine"):
+        assert name in row, f"{name} is returned and not declared"
+    assert "INTEGER" in row["isMarine"]["description"]
+
+
+def test_a_panel_gene_entry_dates_the_panel_version_it_came_from():
+    """A gene's confidence level belongs to a panel VERSION, not to the panel.
+
+    `PanelApp_search_genes` returns panel.version_created, panel.hash_id and
+    gene_data.hgnc_symbol. Without the version date a 'green' rating cannot be
+    tied to the review that produced it.
+    """
+    props = _success_props(_config("PanelApp_search_genes")["return_schema"])
+    row = props["results"]["items"]["properties"]
+    for name in ("version_created", "hash_id"):
+        assert name in row["panel"]["properties"], (
+            f"panel.{name} is returned and not declared"
+        )
+    for name in ("hgnc_symbol", "biotype", "ensembl_genes", "hgnc_date_symbol_changed"):
+        assert name in row["gene_data"]["properties"], (
+            f"gene_data.{name} is returned and not declared"
+        )
+    assert "2025-11-23" in row["panel"]["properties"]["version_created"]["description"]
+
+
+def test_a_kegg_reaction_declares_the_record_it_did_not_break_out():
+    """The EQUATION is what makes a reaction usable in a model.
+
+    `KEGG_get_reaction` returns raw_data, the complete KEGG flat file, and
+    raw_fields, the same record split by KEGG's own field names. The broken-out
+    fields above them cover only part of the record, so these two are where
+    anything the wrapper did not parse still lives.
+    """
+    props = _success_props(_config("KEGG_get_reaction")["return_schema"])
+    for name in ("raw_data", "raw_fields"):
+        assert name in props, f"{name} is returned and not declared"
+    assert "EQUATION" in props["raw_fields"]["description"]
+
+
+def test_a_drugbank_brand_list_is_one_string_not_a_list():
+    """Thousands of characters of brand names, pipe-delimited, in a single field.
+
+    `drugbank_get_safety_by_drug_name_or_drugbank_id` returns brand_names as
+    ONE ' | '-delimited string. Iterating it yields characters. The same reply
+    answers search_parameters.nested_offset, the single offset that pages every
+    nested list in a result row together.
+    """
+    props = _success_props(
+        _config("drugbank_get_safety_by_drug_name_or_drugbank_id")["return_schema"]
+    )
+    row = props["results"]["items"]["properties"]
+    assert "brand_names" in row, "brand_names is returned and not declared"
+    assert "STRING" in row["brand_names"]["description"]
+    assert "nested_offset" in props["search_parameters"]["properties"], (
+        "nested_offset is returned and not declared"
+    )
+
+
+def test_a_lipid_abbreviation_distinguishes_its_isomers():
+    """abbrev gives the total composition; abbrev_chains gives the breakdown.
+
+    `LipidMaps_search_by_formula` returns abbrev_chains -- the shorthand with
+    the individual acyl chains spelled out, which is what separates two
+    isomers of identical total composition -- plus synonyms as a single
+    '; '-delimited STRING, and the hmdb_id / kegg_id / lipidbank_id
+    cross-references.
+    """
+    row = _row_props(_config("LipidMaps_search_by_formula")["return_schema"])
+    for name in ("abbrev_chains", "synonyms", "hmdb_id", "kegg_id", "lipidbank_id"):
+        assert name in row, f"{name} is returned and not declared"
+    assert "isomers" in row["abbrev_chains"]["description"]
+
+
+def test_an_iedb_processing_row_declares_its_dotted_property_names():
+    """'binding.netmhcpan.ic50' is ONE property, not three levels.
+
+    `IEDB_predict_antigen_processing` returns four fields whose names contain
+    literal dots. Declaring them meant writing the key verbatim; walking the
+    path instead creates three nested objects that never match anything. The
+    row also answers percentile_rank -- the PROCESSING percentile, which is not
+    the binding percentile beside it -- and sequence_number, the only field
+    that says which submitted protein a peptide came from.
+    """
+    row = _row_props(_config("IEDB_predict_antigen_processing")["return_schema"])
+    for name in (
+        "binding.netmhcpan.core",
+        "binding.netmhcpan.icore",
+        "binding.netmhcpan.ic50",
+        "binding.netmhcpan.percentile",
+        "percentile_rank",
+        "sequence_number",
+        "length",
+        "peptide_index",
+    ):
+        assert name in row, f"{name} is returned and not declared"
+    assert "NOT the binding percentile" in row["percentile_rank"]["description"]
+
+
+def test_a_pdb_link_comparison_declares_the_tolerance_it_judged_against():
+    """A 2.57 angstrom error means nothing until the threshold is stated.
+
+    `PDB_compare_declared_links` returns max_length_error_angstrom beside
+    max_allowed_length_error_angstrom -- the verdict is just those two numbers
+    compared -- the two file checksums that prove which files were compared,
+    and `limitations`, which says the check covers declared LINK distances only.
+    """
+    props = _success_props(_config("PDB_compare_declared_links")["return_schema"])
+    data = props["data"]["properties"]
+    for name in (
+        "max_length_error_angstrom",
+        "max_allowed_length_error_angstrom",
+        "observed_sha256",
+        "reference_sha256",
+        "limitations",
+    ):
+        assert name in data, f"{name} is returned and not declared"
+    assert "0.3" in data["max_allowed_length_error_angstrom"]["description"]
+
+
+def test_github_watchers_is_the_stargazer_count_and_says_so():
+    """14938 'watchers' against 241 actual subscribers, measured.
+
+    `GitHub_get_repository` returns `watchers` -- which GitHub populates with
+    the STARGAZER count -- next to subscribers_count, the real number of
+    accounts watching. Reading the first as 'people watching' overstated it
+    sixtyfold on the measured repository, and neither field was declared.
+    """
+    props = _success_props(_config("GitHub_get_repository")["return_schema"])
+    for name in ("watchers", "subscribers_count"):
+        assert name in props, f"{name} is returned and not declared"
+    assert "STARGAZER" in props["watchers"]["description"]
+    assert "241" in props["subscribers_count"]["description"]
+
+
+def test_a_github_url_template_is_declared_as_a_template():
+    """23 of GitHub's 41 *_url fields carry a '{...}' placeholder; 18 do not.
+
+    Measured, not classified from memory: `archive_url` ends
+    '{archive_format}{/ref}' and 404s if fetched unexpanded, while
+    `subscribers_url` is a plain URL. Declaring them all as 'a URL' is what
+    makes the first class fail silently.
+    """
+    props = _success_props(_config("GitHub_get_repository")["return_schema"])
+    for name in ("archive_url", "blobs_url", "branches_url", "collaborators_url"):
+        assert name in props, f"{name} is returned and not declared"
+        assert "TEMPLATE" in props[name]["description"], (
+            f"{name} is a URI template and must not be documented as a URL"
+        )
+
+
+def test_a_who_gho_reply_declares_the_keys_that_contain_a_dot():
+    """'@odata.count' is one property name, and it holds the real total.
+
+    `WHOGHO_get_indicator_data` returns @odata.count -- the rows matching
+    upstream BEFORE the `top` cap -- and @odata.context. Both had to be
+    declared by explicit key, because the '.' is part of the name and a path
+    walk splits it into levels that do not exist.
+    """
+    props = _success_props(_config("WHOGHO_get_indicator_data")["return_schema"])
+    for name in ("@odata.context", "@odata.count"):
+        assert name in props, f"{name} is returned and not declared"
+    assert "truncation" in props["@odata.count"]["description"]
+
+
+def test_a_bmrb_reply_keyed_by_entry_id_declares_its_value_shape():
+    """The reply's top-level key IS the entry id, so no fixed name can cover it.
+
+    `BMRB_get_entry` answers {"15000": {...}}. Declaring '15000' as a property
+    would document one query's id as the schema. The honest form is
+    additionalProperties with the per-entry shape, which is the one open level
+    that actually declares something.
+    """
+    branch = _success_props(
+        _config("BMRB_get_entry")["return_schema"],
+    )
+    cfg = _config("BMRB_get_entry")["return_schema"]
+    success = (cfg.get("oneOf") or [cfg])[0]
+    assert isinstance(success.get("additionalProperties"), dict), (
+        "a reply keyed by entry id must declare its value shape via additionalProperties"
+    )
+    assert "entry_id" in branch or "entry_id" in (success.get("properties") or {})
+
+
+def test_an_hpa_cell_line_comparison_says_when_there_is_no_comparison():
+    """'Insufficient data for comparison' is the answer, and it was undeclared.
+
+    `HPA_get_comparative_expression_by_gene_and_cellline` returns
+    comparison_summary, which can say there is no answer; cell_line_expression,
+    which is the STRING 'N/A' rather than zero where HPA holds nothing;
+    expression_unit, since nTPM is not comparable with another resource's TPM;
+    and cell_line, lower-cased by the wrapper so it will not match HPA's own
+    spelling in a string comparison.
+    """
+    props = _success_props(
+        _config("HPA_get_comparative_expression_by_gene_and_cellline")["return_schema"]
+    )
+    for name in (
+        "comparison_summary",
+        "cell_line_expression",
+        "expression_unit",
+        "cell_line",
+        "gene_synonym",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+    assert "not zero" in props["cell_line_expression"]["description"]
+
+
+def test_a_suppressed_ena_entry_still_answers_a_lookup():
+    """statusDescription 'suppressed' is the only sign not to use the entry.
+
+    `ena_get_entry_summary` returns status and statusDescription -- a
+    suppressed or killed entry answers a lookup exactly like a public one --
+    plus dataClass, where 'CON' means a constructed contig with no sequence of
+    its own, and firstPublic/lastUpdated in ENA's DD-MON-YYYY format rather
+    than ISO 8601.
+    """
+    props = _success_props(_config("ena_get_entry_summary")["return_schema"])
+    row = props["data"]["properties"]["summaries"]["items"]["properties"]
+    for name in (
+        "status",
+        "statusDescription",
+        "dataClass",
+        "dataType",
+        "firstPublic",
+        "lastUpdated",
+    ):
+        assert name in row, f"{name} is returned and not declared"
+    assert "suppressed" in row["statusDescription"]["description"]
+    assert "DD-MON-YYYY" in row["firstPublic"]["description"]
+
+
+def test_a_haplotype_count_declares_the_recombination_rate_it_assumed():
+    """The result scales with an assumed rate, which was not declared.
+
+    `PopGen_haplotype_count` returns recomb_rate_per_interval -- an
+    ASSUMPTION, not a measurement -- with n_snps, n_intervals (one fewer than
+    the SNPs), generations and expected_crossovers_per_gamete_per_gen, which
+    lets the inputs be checked against the answer.
+    """
+    props = _success_props(_config("PopGen_haplotype_count")["return_schema"])
+    data = props["data"]["properties"]
+    for name in (
+        "recomb_rate_per_interval",
+        "n_snps",
+        "n_intervals",
+        "generations",
+        "expected_crossovers_per_gamete_per_gen",
+    ):
+        assert name in data, f"{name} is returned and not declared"
+    assert "assumption" in data["recomb_rate_per_interval"]["description"].lower()
+
+
+def test_an_nhanes_hit_says_which_variable_matched():
+    """A dataset returned for one variable out of hundreds, and which was undeclared.
+
+    `nhanes_search_datasets` returns matching_variable and
+    variable_description -- the NHANES question text, which carries interviewer
+    substitutions like '{was SP/were you}' -- plus `component`, since
+    self-reported questionnaire data and measured laboratory data must not be
+    treated alike.
+    """
+    props = _success_props(_config("nhanes_search_datasets")["return_schema"])
+    row = props["datasets"]["items"]["properties"]
+    for name in (
+        "matching_variable",
+        "variable_description",
+        "component",
+        "file_description",
+    ):
+        assert name in row, f"{name} is returned and not declared"
+    assert "search_term" in props, "search_term is returned and not declared"
+    assert "Questionnaire" in row["component"]["description"]
+
+
+def test_a_crystal_density_check_reports_the_magnitude_not_just_a_verdict():
+    """A 'valid' label without the discrepancy cannot be judged.
+
+    `CrystalStructure_validate` returns difference_g_cm3, the actual gap
+    between computed and reported density, with Z -- formula units per cell,
+    which the density scales linearly in, so a wrong Z is a whole-number-factor
+    error -- the formula weight and the cell parameters it used.
+    """
+    props = _success_props(_config("CrystalStructure_validate")["return_schema"])
+    data = props["data"]["properties"]
+    for name in ("difference_g_cm3", "Z", "mw", "cell_params"):
+        assert name in data, f"{name} is returned and not declared"
+    assert "linearly" in data["Z"]["description"]
+
+
+def test_a_bayesian_test_result_declares_the_inputs_it_is_conditional_on():
+    """The same posterior formula gives a very different answer for a negative test.
+
+    `Epidemiology_bayesian` returns test_result -- which result the posterior
+    is conditioned on -- with prevalence, sensitivity and specificity, all
+    inputs. At low prevalence the specificity dominates the posterior, which is
+    exactly why it has to be visible.
+    """
+    props = _success_props(_config("Epidemiology_bayesian")["return_schema"])
+    data = props["data"]["properties"]
+    for name in ("test_result", "prevalence", "sensitivity", "specificity"):
+        assert name in data, f"{name} is returned and not declared"
+    assert "specificity dominates" in data["specificity"]["description"]
+
+
+# ---------------------------------------------------------------------------
+# Batch 92: axis-2 shards 32-39, the last pool -- 159 tools / 1,076 paths,
+# measured 2026-11-10 and declared 2026-11-11. 244 of the descriptions came
+# from the sibling index; the rest were written against their own measurement.
+# ---------------------------------------------------------------------------
+
+
+def test_a_genome_record_declares_the_fields_its_own_sentence_promises():
+    """ "all assembly, quality, CheckM, accession, sequencing, host, and isolation fields" -- 13 of 86 declared.
+
+    `BVBRC_get_genome` says that in its own description and then declared
+    genome_length, gc_content and eleven others. The CheckM scores, every
+    accession, the whole taxonomic lineage and the entire host/isolation block
+    the sentence names came back undocumented.
+    """
+    props = _success_props(_config("BVBRC_get_genome")["return_schema"])
+    for name in (
+        "checkm_completeness",
+        "checkm_contamination",
+        "assembly_accession",
+        "biosample_accession",
+        "refseq_accessions",
+        "taxon_lineage_ids",
+        "taxon_lineage_names",
+        "host_scientific_name",
+        "isolation_comments",
+        "sequencing_centers",
+        "contig_n50",
+        "refseq_cds",
+        "patric_cds",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+    assert "5" in props["checkm_contamination"]["description"], (
+        "a contamination percentage needs the threshold that makes it actionable"
+    )
+    assert "differ" in props["refseq_cds"]["description"]
+
+
+def test_a_neurovault_collection_declares_how_the_maps_were_made():
+    """Two collections cannot be compared without the acquisition and model block.
+
+    `NeuroVault_get_collection` returns the whole COBIDAS-style provenance
+    record -- TR, TE, the registration software, the normalisation type, the
+    smoothing, the group model -- and declared none of it. Most fields read
+    null because NeuroVault leaves the form optional, which is itself worth
+    declaring: absence means 'not reported', never 'not done'.
+    """
+    props = _success_props(_config("NeuroVault_get_collection")["return_schema"])
+    for name in (
+        "repetition_time",
+        "echo_time",
+        "coordinate_space",
+        "target_template_image",
+        "intersubject_transformation_type",
+        "intersubject_registration_software",
+        "used_smoothing",
+        "smoothing_type",
+        "group_model_type",
+        "autocorrelation_model",
+        "inclusion_exclusion_criteria",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+    assert "not reported" in props["autocorrelation_model"]["description"]
+    assert "Template" in props["target_template_image"]["description"]
+
+
+def test_a_statistic_map_declares_what_makes_it_unusable():
+    """perc_voxels_outside 26% is the standard sign of a misregistered map.
+
+    `NeuroVault_get_image` returns perc_voxels_outside, perc_bad_voxels,
+    is_thresholded, number_of_subjects and statistic_parameters. A thresholded
+    map must not enter a meta-analysis as a statistic image, and without
+    statistic_parameters the map cannot be converted to z or p at all.
+    """
+    props = _success_props(_config("NeuroVault_get_image")["return_schema"])
+    for name in (
+        "perc_voxels_outside",
+        "perc_bad_voxels",
+        "is_thresholded",
+        "number_of_subjects",
+        "contrast_definition",
+        "reduced_representation",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+    assert "misregistered" in props["perc_voxels_outside"]["description"]
+    assert (
+        "do not use it for inference" in props["reduced_representation"]["description"]
+    )
+
+
+def test_klifs_declares_the_binding_sites_its_description_promises():
+    """ "Type I/II/III inhibitor binding sites" -- and not one subpocket flag declared.
+
+    `KLIFS_get_structures` says that in its own description. The 15 flags that
+    ARE that answer (front/gate/back, fp_I, fp_II and the ten bp_*), the three
+    G-rich loop descriptors and the two pocket RMSDs were all returned
+    undeclared. Field meanings come from KLIFS's own swagger definition.
+    """
+    row = _row_props(_config("KLIFS_get_structures")["return_schema"])
+    for name in (
+        "front",
+        "gate",
+        "back",
+        "fp_I",
+        "fp_II",
+        "bp_I_A",
+        "bp_I_B",
+        "bp_II_in",
+        "bp_II_A_in",
+        "bp_II_B_in",
+        "bp_II_out",
+        "bp_II_B",
+        "bp_III",
+        "bp_IV",
+        "bp_V",
+        "Grich_distance",
+        "Grich_angle",
+        "Grich_rotation",
+        "rmsd1",
+        "rmsd2",
+    ):
+        assert name in row, f"{name} is returned and not declared"
+    assert "DFG" in row["bp_II_out"]["description"]
+    assert "FULL pocket" in row["rmsd2"]["description"]
+
+
+def test_a_klifs_allosteric_ligand_of_zero_is_not_absence():
+    """The field is documented as a 3-letter PDB code and comes back as the integer 0.
+
+    Measured 0 on all 85 rows of `KLIFS_get_structures_by_pdb`'s sibling query.
+    A caller testing `if row["allosteric_ligand"]` gets the right answer by
+    accident and one testing `is None` gets the wrong one, so the declaration
+    has to say which.
+    """
+    row = _row_props(_config("KLIFS_get_structures_by_pdb")["return_schema"])
+    assert "allosteric_ligand" in row, "allosteric_ligand is returned and not declared"
+    assert "0" in row["allosteric_ligand"]["description"]
+    assert "alt" in row, "alt is returned and not declared"
+    assert "pdb+chain+alt" in row["alt"]["description"]
+
+
+def test_an_hgnc_record_declares_the_mane_select_transcript():
+    """MANE Select is the one transcript NCBI and EMBL-EBI agreed on, and it was undeclared.
+
+    `HGNC_fetch_gene_by_symbol` returns mane_select as BOTH identifiers in one
+    list -- the versioned Ensembl transcript and the matching RefSeq -- plus
+    the ucsc/vega/mgd/rgd cross-references and date_symbol_changed, which is
+    what explains why an older dataset's symbol no longer resolves.
+    """
+    props = _success_props(_config("HGNC_fetch_gene_by_symbol")["return_schema"])
+    for name in (
+        "mane_select",
+        "ucsc_id",
+        "vega_id",
+        "mgd_id",
+        "rgd_id",
+        "agr",
+        "lsdb",
+        "orphanet",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+    assert "RefSeq" in props["mane_select"]["description"]
+    assert "|" in props["lsdb"]["description"], (
+        "lsdb packs Name|URL into one string and must say so"
+    )
+
+
+def test_a_similarity_hit_declares_that_minus_one_is_not_a_no():
+    """ChEMBL's -1 means UNKNOWN and reads as false to anything testing truthiness.
+
+    `ChEMBL_search_similarity` returns chirality, prodrug, orphan, veterinary,
+    first_in_class, inorganic_flag and natural_product as three-state flags
+    where -1 is UNKNOWN. chirality read -1 on all 9 measured hits, so a
+    similarity list gives no basis for assuming a defined stereoisomer.
+    """
+    mol = _success_props(_config("ChEMBL_search_similarity")["return_schema"])
+    row = mol["data"]["properties"]["molecules"]["items"]["properties"]
+    for name in (
+        "chirality",
+        "prodrug",
+        "orphan",
+        "veterinary",
+        "first_in_class",
+        "inorganic_flag",
+        "natural_product",
+        "availability_type",
+        "black_box_warning",
+        "withdrawn_flag",
+        "molecule_hierarchy",
+    ):
+        assert name in row, f"{name} is returned and not declared"
+    assert "-1 unknown" in row["chirality"]["description"]
+    assert "SALT" in row["molecule_hierarchy"]["description"]
+
+
+def test_an_ewas_effect_size_declares_the_units_that_make_it_comparable():
+    """M values and beta values are different scales and must not be pooled.
+
+    `EWASCatalog_search_by_cpg` returns outcome_units ('M Values' or 'Beta
+    Values'), covariates -- whether cell composition was adjusted for decides
+    whether the association is about methylation at all -- and `analysis`,
+    which distinguishes the several model rows one study contributes per CpG.
+    """
+    row = _row_props(_config("EWASCatalog_search_by_cpg")["return_schema"])
+    for name in (
+        "outcome_units",
+        "covariates",
+        "analysis",
+        "methylation_array",
+        "n_cohorts",
+        "type",
+    ):
+        assert name in row, f"{name} is returned and not declared"
+    assert "MUST NOT" in row["outcome_units"]["description"]
+    assert "cell composition" in row["covariates"]["description"]
+
+
+def test_an_ewas_date_column_declares_that_its_format_varies():
+    """'2019-09-25' from one query and '25/01/2021' from another, measured the same day.
+
+    Both come from `date` in the EWAS Catalog. One format string parses one and
+    throws on the other, so the declaration has to say the format is not
+    uniform rather than pick one.
+    """
+    for tool in ("EWASCatalog_search_by_cpg", "EWASCatalog_search_by_gene"):
+        row = _row_props(_config(tool)["return_schema"])
+        assert "date" in row, f"{tool}: date is returned and not declared"
+        assert "not uniform" in row["date"]["description"]
+
+
+def test_a_dryad_record_declares_which_version_it_describes():
+    """A Dryad DOI resolves to the latest version, so a citation without the number is ambiguous.
+
+    `Dryad_get_dataset` returns versionNumber, versionStatus, versionChanges
+    ('metadata_changed' means the data files are identical), curationStatus
+    and `license`. relatedWorks carries the primary_article -- usually the
+    thing a reader actually wants.
+    """
+    props = _success_props(_config("Dryad_get_dataset")["return_schema"])
+    for name in (
+        "versionNumber",
+        "versionStatus",
+        "versionChanges",
+        "curationStatus",
+        "license",
+        "relatedWorks",
+        "funders",
+        "metrics",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+    assert "identical" in props["versionChanges"]["description"]
+    assert "primary_article" in props["relatedWorks"]["description"]
+
+
+def test_an_omim_synopsis_declares_the_body_systems_it_returned():
+    """ "structured clinical features organized by body system" -- four names declared.
+
+    `OMIM_get_clinical_synopsis` says that in its own description. The
+    thirteen body-system fields the measured entry carried -- the whole
+    synopsis of cystic fibrosis -- were undeclared, as was `prefix`, the single
+    character that says whether an entry is a gene, a phenotype, or both.
+    """
+    rs = _config("OMIM_get_clinical_synopsis")["return_schema"]
+    data = _success_props(rs)["data"]["properties"]
+    for name in (
+        "prefix",
+        "preferredTitle",
+        "molecularBasis",
+        "laboratoryAbnormalities",
+        "respiratoryAirways",
+        "abdomenGastrointestinal",
+        "cardiovascularHeart",
+        "miscellaneous",
+    ):
+        assert name in data, f"{name} is returned and not declared"
+    assert "SINGLE string" in data["respiratoryAirways"]["description"]
+    assert "#" in data["prefix"]["description"]
+
+
+def test_appris_declares_that_two_of_its_columns_are_gtf_placeholders():
+    """score and frame come back as '.', which is not a number and not null.
+
+    `APPRIS_get_isoforms` returns the GTF columns, two of which APPRIS does not
+    use. The `tag` string is where the APPRIS verdict itself lives --
+    'appris_principal_1' alongside CCDS and the mRNA_end_NF incompleteness flag
+    -- on a tool whose whole purpose is to report that verdict.
+    """
+    row = _row_props(_config("APPRIS_get_isoforms")["return_schema"])
+    for name in (
+        "score",
+        "frame",
+        "tag",
+        "strand",
+        "seqname",
+        "start",
+        "end",
+        "source",
+        "type",
+    ):
+        assert name in row, f"{name} is returned and not declared"
+    assert "placeholder" in row["score"]["description"]
+    assert "appris_principal" in row["tag"]["description"]
+
+
+def test_a_monarch_association_declares_whether_a_human_asserted_it():
+    """knowledge_level and agent_type are how much weight an association deserves.
+
+    `Monarch_get_associations` returns knowledge_level
+    ('knowledge_assertion' versus a prediction), agent_type ('manual_agent'),
+    the aggregator chain, and original_subject/original_object -- the ids as
+    the SOURCE recorded them, which is the only trace of which vocabulary the
+    claim was actually made in.
+    """
+    row = _row_props(_config("Monarch_get_associations")["return_schema"])
+    for name in (
+        "knowledge_level",
+        "agent_type",
+        "aggregator_knowledge_source",
+        "original_subject",
+        "original_object",
+        "evidence_count",
+        "subject_taxon",
+    ):
+        assert name in row, f"{name} is returned and not declared"
+    assert "prediction" in row["knowledge_level"]["description"]
+    assert "Zero is common" in row["evidence_count"]["description"]
+
+
+def test_timer_declares_that_it_answered_from_cbioportal_instead():
+    """ "TIMER2.0/3.0 API unavailable; survival computed from cBioPortal TCGA data".
+
+    All three TIMER tools return that sentence in `note`, and none declared it.
+    A caller reading the declared fields alone cannot tell which database the
+    answer came from. TIMER2_immune_estimation goes further: `method` says the
+    estimate is six marker genes read off bulk expression, which is not a
+    deconvolution and gives no cell fractions.
+    """
+    for tool in (
+        "TIMER2_survival_association",
+        "TIMER2_immune_estimation",
+        "TIMER2_gene_correlation",
+    ):
+        props = _success_props(_config(tool)["return_schema"])
+        assert "note" in props, f"{tool}: note is returned and not declared"
+        assert "cBioPortal" in props["note"]["description"]
+        assert "profile_id" in props, f"{tool}: profile_id is returned and not declared"
+    props = _success_props(_config("TIMER2_immune_estimation")["return_schema"])
+    assert "deconvolution" in props["method"]["description"]
+
+
+def test_openaire_declares_that_most_of_its_matches_are_unreachable():
+    """total_results 338854, accessible_results 10000, and a warning saying so.
+
+    `OpenAIRE_search_projects` returns accessible_results, upstream_truncated
+    and a `warning` reading "OpenAIRE reports more than 10,000 matches, but its
+    API only allows the first 10,000 results for a query." Reading
+    total_results as the number of projects that can be retrieved overstates it
+    thirtyfold on the measured query, and none of the three was declared.
+
+    The first measurement of this tool was a read timeout, which recorded only
+    `.error` and `.reason`; the ten real fields appeared only when it was
+    re-measured on a call that worked.
+    """
+    props = _success_props(_config("OpenAIRE_search_projects")["return_schema"])
+    for name in (
+        "accessible_results",
+        "upstream_truncated",
+        "warning",
+        "total_results_is_exact",
+        "has_more",
+        "next_page",
+        "page",
+        "page_size",
+    ):
+        assert name in props, f"{name} is returned and not declared"
+    assert "10000" in props["accessible_results"]["description"]
+    assert "10,000" in props["warning"]["description"]
+
+
+def test_an_expression_atlas_hit_declares_that_a_mention_is_not_a_measurement():
+    """ "only reflects a text-search coincidence against experiment descriptions".
+
+    Both Expression Atlas search tools return that `warning`, and a `page_note`
+    saying they showed 50 of 1528 and 1651 matches. A hit flagged
+    gene_mentioned is not evidence that the gene was assayed, let alone
+    differentially expressed.
+    """
+    for tool in (
+        "ExpressionAtlas_search_differential",
+        "ExpressionAtlas_search_experiments",
+    ):
+        props = _success_props(_config(tool)["return_schema"])
+        for name in ("warning", "page_note"):
+            assert name in props, f"{tool}: {name} is returned and not declared"
+        assert "coincidence" in props["warning"]["description"]
+        assert (
+            "ranked" in props["page_note"]["description"]
+            or "Showing" in props["page_note"]["description"]
+        )
+
+
+def test_the_survival_tools_declare_the_conventions_their_numbers_rest_on():
+    """A hazard ratio without its direction, and a censoring column that is not a total.
+
+    `Survival_cox_regression` returns `note` stating that HR > 1 is worse
+    survival, and a low_epv_warning whose ABSENCE is the signal that the fit is
+    adequately powered. `Survival_kaplan_meier` returns ci_method -- intervals
+    from different methods are not interchangeable -- and a note saying the
+    'censored' column counts only subjects censored at observed event times, so
+    summing it does not give the number censored overall.
+    """
+    cox = _success_props(_config("Survival_cox_regression")["return_schema"])
+    for name in ("note", "low_epv_warning"):
+        assert name in cox, f"{name} is returned and not declared"
+    assert "HR > 1" in cox["note"]["description"]
+    assert "ABSENCE" in cox["low_epv_warning"]["description"]
+    km = _success_props(_config("Survival_kaplan_meier")["return_schema"])
+    for name in ("ci_method", "km_censored_convention_note"):
+        assert name in km, f"{name} is returned and not declared"
+    assert "interchangeable" in km["ci_method"]["description"]
+
+
+def test_a_cai_of_one_is_declared_as_an_artefact_of_the_algorithm():
+    """CAI = 1.0 because the tool picked the top codon every time, not because it worked.
+
+    `DNA_codon_optimize` returns cai_note saying exactly that. Reported without
+    it, a CAI of 1.0 reads as a quality score. `DrugSynergy_calculate_zip` is
+    the same shape: its `note` carries the thresholds (>10 synergy, <-10
+    antagonism) without which a delta cannot be classified at all.
+    """
+    cai = _success_props(_config("DNA_codon_optimize")["return_schema"])
+    assert "cai_note" in cai, "cai_note is returned and not declared"
+    assert "expected" in cai["cai_note"]["description"]
+    zip_ = _success_props(_config("DrugSynergy_calculate_zip")["return_schema"])
+    assert "note" in zip_, "note is returned and not declared"
+    assert "antagonism" in zip_["note"]["description"]
+
+
+def test_a_colocalisation_row_declares_the_hypothesis_that_contradicts_it():
+    """h4 high is only colocalisation when h3 is also low.
+
+    `OpenTargets_get_credible_set_colocalisation` returns h3 -- the posterior
+    that the two traits have DISTINCT causal variants -- and `truncated`,
+    which says the row list was cut. Reading h4 alone overstates shared
+    causality, and a truncated list can hide the pair being looked for.
+    """
+    props = _success_props(
+        _config("OpenTargets_get_credible_set_colocalisation")["return_schema"]
+    )
+    coloc = props["credibleSet"]["properties"]["colocalisation"]["properties"]
+    assert "truncated" in coloc, "truncated is returned and not declared"
+    row = coloc["rows"]["items"]["properties"]
+    assert "h3" in row, "h3 is returned and not declared"
+    assert "DISTINCT" in row["h3"]["description"]
+
+
+def test_a_gathered_disease_profile_declares_an_approximate_match():
+    """'approximate' means that section may describe a neighbouring disease.
+
+    `gather_disease_profile` records how well the name matched in each source
+    and nothing else in the reply flags it, so a profile assembled from an
+    approximate Orphanet hit reads exactly like one assembled from an exact
+    hit.
+    """
+    props = _success_props(_config("gather_disease_profile")["return_schema"])
+    orphanet = props["per_source"]["properties"]["orphanet"]["properties"]
+    assert "match" in orphanet, "per_source.orphanet.match is returned and not declared"
+    assert "NEIGHBOURING" in orphanet["match"]["description"]
+
+
+def test_a_string_enrichment_declares_the_branch_the_api_actually_answers_on():
+    """Two success branches, and the live reply is the array one.
+
+    `STRING_ppi_enrichment` declares both an object and an array success
+    branch. average_node_degree was first written on the object branch -- the
+    one with more properties -- and the audit went on flagging it, because the
+    API answers with the array. A branch with more properties is not the branch
+    the API uses.
+    """
+    rs = _config("STRING_ppi_enrichment")["return_schema"]
+    arrays = [b for b in rs["oneOf"] if b.get("type") == "array"]
+    assert arrays, "the array success branch is gone"
+    for b in arrays:
+        assert "average_node_degree" in b["items"]["properties"], (
+            "average_node_degree is returned on the array branch and not declared there"
+        )
+
+
+def test_a_genebe_consequence_distinguishes_cdna_from_cds_coordinates():
+    """cdna_start includes the 5' UTR; cds_start does not, and they differ by it.
+
+    Measured over 128 consequence rows: cdna_start present on 105, cds_start on
+    80, because a UTR or non-coding consequence has a cDNA position and no CDS
+    one. Neither was in the measured pool at all -- the re-audit found them.
+    """
+    props = _success_props(_config("GeneBe_classify_variants_batch")["return_schema"])
+    row = props["variants"]["items"]["properties"]["consequences"]["items"][
+        "properties"
+    ]
+    for name in ("cdna_start", "cds_start"):
+        assert name in row, f"{name} is returned and not declared"
+    assert "UTR" in row["cds_start"]["description"]

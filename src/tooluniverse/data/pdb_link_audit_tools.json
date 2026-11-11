@@ -162,6 +162,44 @@
                 },
                 "links": {
                   "type": "array"
+                },
+                "limitations": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "What the comparison does not cover - 2 entries, starting 'Explicit LINK distance comparison only...'. It checks declared LINK records against coordinates and nothing else, so a clean result is not a validated structure."
+                },
+                "max_allowed_length_error_angstrom": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "The tolerance the comparison used, e.g. 0.3 angstroms. The verdict is just these two numbers compared, so without the threshold a 2.57 cannot be read as a pass or a failure."
+                },
+                "max_length_error_angstrom": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "The largest discrepancy found between a declared LINK distance and the coordinates, e.g. 2.57 angstroms."
+                },
+                "observed_sha256": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Checksum of the coordinate file compared. Two different checksums are the only proof the comparison was between the files the caller meant."
+                },
+                "reference_sha256": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Checksum of the reference file used."
                 }
               }
             }

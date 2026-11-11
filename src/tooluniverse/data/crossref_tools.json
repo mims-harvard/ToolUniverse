@@ -691,6 +691,346 @@
               }
             }
           }
+        },
+        "ISSN": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "ISSNs of the container journal, e.g. ['0022-3913']. Print and electronic together, with no indication of which is which - issn-type below separates them."
+        },
+        "URL": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The work's canonical DOI URL, e.g. 'https://doi.org/10.1067/mpr.2000.110262'. The link to give a reader; the bare DOI is not one."
+        },
+        "alternative-id": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "The publisher's own identifiers for the work, e.g. ['S002239130074011X'] - a PII here. How the work is found in the publisher's own system."
+        },
+        "content-domain": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Where the publisher asserts the content may be hosted - 'domain' and 'crossmark-restriction'. A restriction here means a copy elsewhere is not the publisher's version of record."
+        },
+        "created": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "When the DOI record was first created as Crossref's structured date: 'date-parts' (a nested [[year, month, day]] array, where a month or day may simply be absent), plus 'date-time' and a unix 'timestamp' on most. The nesting is one level deeper than it looks - date-parts[0] is the date.",
+          "properties": {
+            "date-parts": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "[[year, month, day]], truncated where the precision is lower."
+            },
+            "date-time": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ISO 8601 form of the same date."
+            },
+            "timestamp": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Unix milliseconds."
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Crossref's indexing version, on 'indexed' only."
+            }
+          }
+        },
+        "deposited": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "When the metadata was last deposited as Crossref's structured date: 'date-parts' (a nested [[year, month, day]] array, where a month or day may simply be absent), plus 'date-time' and a unix 'timestamp' on most. The nesting is one level deeper than it looks - date-parts[0] is the date.",
+          "properties": {
+            "date-parts": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "[[year, month, day]], truncated where the precision is lower."
+            },
+            "date-time": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ISO 8601 form of the same date."
+            },
+            "timestamp": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Unix milliseconds."
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Crossref's indexing version, on 'indexed' only."
+            }
+          }
+        },
+        "indexed": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "When Crossref last indexed the record as Crossref's structured date: 'date-parts' (a nested [[year, month, day]] array, where a month or day may simply be absent), plus 'date-time' and a unix 'timestamp' on most. The nesting is one level deeper than it looks - date-parts[0] is the date.",
+          "properties": {
+            "date-parts": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "[[year, month, day]], truncated where the precision is lower."
+            },
+            "date-time": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ISO 8601 form of the same date."
+            },
+            "timestamp": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Unix milliseconds."
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Crossref's indexing version, on 'indexed' only."
+            }
+          }
+        },
+        "issn-type": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "The same ISSNs typed, each {'value', 'type'} with type 'print' or 'electronic'. The only way to pick the right one for a lookup."
+        },
+        "issue": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Issue, e.g. '5'. A string."
+        },
+        "issued": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The earliest publication date of any form as Crossref's structured date: 'date-parts' (a nested [[year, month, day]] array, where a month or day may simply be absent), plus 'date-time' and a unix 'timestamp' on most. The nesting is one level deeper than it looks - date-parts[0] is the date.",
+          "properties": {
+            "date-parts": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "[[year, month, day]], truncated where the precision is lower."
+            },
+            "date-time": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ISO 8601 form of the same date."
+            },
+            "timestamp": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Unix milliseconds."
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Crossref's indexing version, on 'indexed' only."
+            }
+          }
+        },
+        "journal-issue": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The issue the work belongs to, with its 'issue' number and 'published-print' date. The issue's own date, which can differ from the work's."
+        },
+        "language": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Language of the work, e.g. 'en'."
+        },
+        "link": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "Full-text links, each with 'URL', 'content-type', 'content-version' and 'intended-application' ('text-mining' or 'similarity-checking'). A text-mining link is not a reader link and often needs an API key."
+        },
+        "member": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Crossref member id of the depositing publisher, e.g. '78'. A string, not a number."
+        },
+        "page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Page range, e.g. '492-498'. Needed to cite the work at all."
+        },
+        "prefix": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The DOI's registrant prefix, e.g. '10.1067'. Identifies the publisher without parsing the DOI."
+        },
+        "published-print": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The print publication date as Crossref's structured date: 'date-parts' (a nested [[year, month, day]] array, where a month or day may simply be absent), plus 'date-time' and a unix 'timestamp' on most. The nesting is one level deeper than it looks - date-parts[0] is the date.",
+          "properties": {
+            "date-parts": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "[[year, month, day]], truncated where the precision is lower."
+            },
+            "date-time": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ISO 8601 form of the same date."
+            },
+            "timestamp": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Unix milliseconds."
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Crossref's indexing version, on 'indexed' only."
+            }
+          }
+        },
+        "reference-count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many references the work declares, e.g. 66."
+        },
+        "references-count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The same count under Crossref's other spelling; both are returned and they agree. Declared so a caller reading one is not left wondering about the other."
+        },
+        "resource": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The primary resource, under 'primary' with its URL - where the DOI actually resolves to, which can differ from the doi.org link."
+        },
+        "score": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Relevance score for the hit, e.g. 5.1680684. Results are ordered by it, so without it a weak match cannot be told from a strong one and the ranking cannot be reproduced."
+        },
+        "short-container-title": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Abbreviated journal title, e.g. ['The Journal of Prosthetic Dentistry']. What a citation style abbreviates to."
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Where the metadata came from, 'Crossref'."
+        },
+        "volume": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Volume, e.g. '84'. A string."
+        },
+        "published-online": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Online publication date as {date-parts: [[yyyy, mm, dd]]} -- a nested LIST of integers, not a string. Can precede published-print by months, so which one counts as 'the' publication date depends on the question."
         }
       }
     },
@@ -744,6 +1084,38 @@
         },
         "flags": {
           "type": "object"
+        },
+        "breakdowns": {
+          "type": "object",
+          "description": "dois-by-issued-year"
+        },
+        "counts": {
+          "type": "object",
+          "description": "current-dois, backfile-dois, total-dois"
+        },
+        "issn-type": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "The same ISSNs typed, each {'value', 'type'} with type 'print' or 'electronic'. The only way to pick the right one for a lookup."
+        },
+        "coverage-type": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Metadata coverage split by record type, each {all, backfile, current} -- the fraction of the journal's deposits carrying each metadata element. Coverage, not counts."
+        },
+        "last-status-check-time": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "When Crossref last checked the journal's status, a UNIX epoch MILLISECOND count, e.g. 1794337639505. Divide by 1000 before converting."
         }
       }
     },
@@ -873,6 +1245,41 @@
         },
         "hierarchy": {
           "type": "object"
+        },
+        "descendant-work-count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Works attributed to this funder OR any funder below it in the hierarchy, e.g. 569553. The larger of the two and the right one for 'how much did this agency fund'."
+        },
+        "descendants": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Funder ids below this one in the Crossref funder hierarchy, e.g. ['100000076', ...] (84 entries)."
+        },
+        "hierarchy-names": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Map of funder id to name for the funders in this hierarchy, e.g. {'100000081': 'Directorate for Education and Human Resources', ...}. Keyed by id, so look names up rather than iterating positionally."
+        },
+        "tokens": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The funder's name broken into lowercase search tokens, e.g. ['national', 'science', 'foundation', ...] (21 entries). Crossref's own index terms, not a list of alternative names."
+        },
+        "work-count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Works attributed to this funder itself, e.g. 463347."
         }
       }
     },
@@ -990,6 +1397,48 @@
           },
           "coverage": {
             "type": "object"
+          },
+          "prefix": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The DOI's registrant prefix, e.g. '10.1067'. Identifies the publisher without parsing the DOI."
+          },
+          "counts-type": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Deposit counts split by record type, each {all, backfile, current}."
+          },
+          "coverage-type": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Metadata coverage split by record type, each {all, backfile, current} -- the fraction of deposits carrying each element."
+          },
+          "last-status-check-time": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "When Crossref last checked the member's status, a UNIX epoch MILLISECOND count, e.g. 1794352273565."
+          },
+          "names": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "description": "Every name this member is known by, e.g. ['Public Library of Science (PLoS)', ...]."
+          },
+          "tokens": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "description": "The member's names broken into lowercase search tokens, e.g. ['public', 'library', 'science', ...]."
           }
         }
       }
@@ -1057,6 +1506,48 @@
             },
             "coverage": {
               "type": "object"
+            },
+            "prefix": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The DOI's registrant prefix, e.g. '10.1067'. Identifies the publisher without parsing the DOI."
+            },
+            "counts-type": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Deposit counts split by record type, each as {all, backfile, current}. 'current' is roughly the last two years, 'backfile' everything older."
+            },
+            "coverage-type": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Metadata coverage split by record type, each as {all, backfile, current}, giving the fraction of records carrying each metadata element. This is how complete the member's deposits are, not how many there are."
+            },
+            "last-status-check-time": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "When Crossref last checked the member's status, as a UNIX epoch MILLISECOND count, e.g. 1794352239165 -- divide by 1000 before converting."
+            },
+            "names": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Every name the member is known by, e.g. ['Elsevier BV', ...] (33 entries). `primary-name` gives the main one."
+            },
+            "tokens": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The member's names broken into lowercase search tokens, e.g. ['elsevier']."
             }
           },
           "not": {

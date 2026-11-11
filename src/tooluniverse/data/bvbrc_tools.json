@@ -116,6 +116,517 @@
                 "string",
                 "null"
               ]
+            },
+            "assembly_accession": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "INSDC assembly accession for this genome, e.g. 'GCA_000195955.2'. The '.2' is the assembly version, so two BV-BRC genomes of the same strain can differ here."
+            },
+            "bioproject_accession": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "NCBI BioProject the genome was submitted under, e.g. 'PRJNA224'."
+            },
+            "biosample_accession": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "NCBI BioSample for the physical sample sequenced, e.g. 'SAMEA3138326'. This is what links the genome to the isolate's own metadata."
+            },
+            "genbank_accessions": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GenBank accession(s) for the sequence records, comma-separated in ONE string, e.g. 'AL123456'. A multi-replicon genome puts every accession in this single field."
+            },
+            "refseq_accessions": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "RefSeq accession(s), comma-separated in one string, e.g. 'NC_000962'."
+            },
+            "ncbi_project_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "NCBI project id as a string, e.g. '224'."
+            },
+            "refseq_project_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "RefSeq project id as a string, e.g. '57777'."
+            },
+            "p2_genome_id": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Internal PATRIC-2 numeric id, e.g. 87468. Legacy; use genome_id for anything citable."
+            },
+            "cgmlst_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "cgMLST genome identifier, e.g. '83332.12'."
+            },
+            "mlst": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "MLST scheme and sequence type, e.g. 'MLST.mycobacteria_2.874' -- scheme name, scheme version, then ST."
+            },
+            "publication": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "PubMed IDs for the genome's publications, comma-separated in ONE string, e.g. '9634230,12368430'. Not a list; split on ','."
+            },
+            "checkm_completeness": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "CheckM completeness as a percentage, e.g. 100. Below ~90 the gene counts in this record understate the real genome."
+            },
+            "checkm_contamination": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "CheckM contamination as a percentage, e.g. 0. Above ~5 the assembly probably mixes more than one organism."
+            },
+            "coarse_consistency": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Coarse functional consistency score from RASTtk annotation, e.g. 99.9 -- how well the called roles agree with closely related genomes."
+            },
+            "fine_consistency": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Fine functional consistency score, e.g. 99.9. Lower than coarse_consistency when individual roles disagree even though the broad set is right."
+            },
+            "genome_quality": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "BV-BRC's own overall verdict, e.g. 'Good'. Derived from the CheckM and consistency scores in this same record."
+            },
+            "chromosomes": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of chromosome replicons, e.g. 1."
+            },
+            "plasmids": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of plasmid replicons, e.g. 0."
+            },
+            "contig_n50": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Contig N50 in bases, e.g. 4411532 -- half the assembly sits in contigs at least this long. For this complete genome it equals the chromosome length."
+            },
+            "contig_l50": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Contig L50: how many contigs it takes to reach half the assembly, e.g. 1."
+            },
+            "cds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Protein-coding genes called, e.g. 4367."
+            },
+            "cds_ratio": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Coding density: the fraction of the genome inside CDS features, e.g. 0.99."
+            },
+            "patric_cds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "CDS called by BV-BRC's own (PATRIC/RASTtk) annotation, e.g. 4367."
+            },
+            "refseq_cds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "CDS in the RefSeq annotation of the same genome, e.g. 3989. It differs from patric_cds because the two pipelines call genes differently; comparing them is the point of carrying both."
+            },
+            "hypothetical_cds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "CDS annotated only as 'hypothetical protein', e.g. 1021."
+            },
+            "hypothetical_cds_ratio": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Hypothetical CDS as a fraction of all CDS, e.g. 0.23 -- how much of the gene content is uncharacterised."
+            },
+            "partial_cds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "CDS running off the end of a contig, e.g. 0. A high count means the assembly is fragmented."
+            },
+            "partial_cds_ratio": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Partial CDS as a fraction of all CDS, e.g. 0."
+            },
+            "plfam_cds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "CDS assigned to a PATRIC local protein family (PLfam), e.g. 4364."
+            },
+            "plfam_cds_ratio": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Fraction of CDS with a PLfam assignment, e.g. 1."
+            },
+            "rrna": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "rRNA genes called, e.g. 2."
+            },
+            "trna": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "tRNA genes called, e.g. 45."
+            },
+            "superkingdom": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Superkingdom/domain, e.g. 'Bacteria'."
+            },
+            "kingdom": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Kingdom, e.g. 'Bacillati'."
+            },
+            "phylum": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Phylum, e.g. 'Actinomycetota'."
+            },
+            "class": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Class, e.g. 'Actinomycetes'."
+            },
+            "order": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Order, e.g. 'Mycobacteriales'."
+            },
+            "family": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Family, e.g. 'Mycobacteriaceae'."
+            },
+            "genus": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Genus, e.g. 'Mycobacterium'."
+            },
+            "species": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Species binomial, e.g. 'Mycobacterium tuberculosis'."
+            },
+            "strain": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Strain designation, e.g. 'H37Rv'."
+            },
+            "common_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "BV-BRC's underscored display name, e.g. 'Mycobacterium_tuberculosis_H37Rv'."
+            },
+            "taxon_lineage_ids": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "NCBI taxon ids from root to this genome, 11 entries on the measured record, starting '131567' (cellular organisms). Positionally parallel to taxon_lineage_names."
+            },
+            "taxon_lineage_names": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The same lineage as names, 11 entries starting 'cellular organisms'. Parallel to taxon_lineage_ids, so zip the two."
+            },
+            "cgmlst_hc0": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "cgMLST hierarchical cluster at 0 allele differences, e.g. '27109' -- effectively identical genomes. HC0 through HC100 are a nested outbreak-clustering ladder: two genomes sharing an HC code differ by at most that many cgMLST alleles."
+            },
+            "cgmlst_hc2": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "cgMLST cluster at up to 2 allele differences, e.g. '27109'. See cgmlst_hc0 for how the ladder works."
+            },
+            "cgmlst_hc5": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "cgMLST cluster at up to 5 allele differences, e.g. '27109'."
+            },
+            "cgmlst_hc10": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "cgMLST cluster at up to 10 allele differences, e.g. '27109'."
+            },
+            "cgmlst_hc20": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "cgMLST cluster at up to 20 allele differences, e.g. '27028'."
+            },
+            "cgmlst_hc50": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "cgMLST cluster at up to 50 allele differences, e.g. '26882'."
+            },
+            "cgmlst_hc100": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "cgMLST cluster at up to 100 allele differences, e.g. '26882' -- the loosest rung, roughly a lineage rather than an outbreak."
+            },
+            "cell_shape": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cell morphology, e.g. 'Rod'."
+            },
+            "gram_stain": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gram reaction as a sign, e.g. '+'."
+            },
+            "motility": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether the organism is motile, e.g. 'No'."
+            },
+            "sporulation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether the organism forms spores, e.g. 'No'."
+            },
+            "oxygen_requirement": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Oxygen requirement, e.g. 'Aerobic'."
+            },
+            "optimal_temperature": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Optimal growth temperature in Celsius, as a STRING, e.g. '37'."
+            },
+            "temperature_range": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Growth temperature class, e.g. 'Mesophilic'."
+            },
+            "habitat": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Habitat class, e.g. 'Host-associated'."
+            },
+            "host_common_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Host in common terms, e.g. 'Human'."
+            },
+            "host_scientific_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Host binomial, e.g. 'Homo sapiens'."
+            },
+            "host_group": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Broad host grouping, e.g. 'Human'."
+            },
+            "isolation_source": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Where the isolate came from, e.g. 'derived from the original human-lung H37 isolate'."
+            },
+            "isolation_comments": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Free-text isolation history; on H37Rv it records the 1934 derivation from the original human-lung H37 isolate and the passaging since. This is the field that says whether a 'reference' strain is lab-adapted."
+            },
+            "comments": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Free-text submitter comments, one string per entry. On H37Rv the single entry is the strain-history note."
+            },
+            "sequencing_centers": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Centre that produced the sequence, e.g. 'Wellcome Trust Sanger Institute'."
+            },
+            "sequencing_status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Sequencing completeness, e.g. 'Complete'."
+            },
+            "reference_genome": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether BV-BRC treats this as a reference or representative genome, e.g. 'Reference'. Empty on ordinary genomes."
+            },
+            "owner": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Owning group of the record, e.g. 'PATRIC'."
+            },
+            "public": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the genome is public, e.g. true. A private genome is visible only to its owner."
+            },
+            "date_inserted": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When BV-BRC first loaded the record, ISO-8601 UTC, e.g. '2014-12-08T22:12:10.274Z'."
+            },
+            "date_modified": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the record was last changed, e.g. '2015-03-16T03:17:09.594Z'. Older than date_inserted is impossible; a recent value means the annotation moved."
+            },
+            "_version_": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Solr's internal optimistic-concurrency stamp, e.g. 1865149608110325800. Not a genome version and not comparable between records -- use date_modified to tell which copy is newer."
             }
           },
           "not": {
@@ -307,6 +818,20 @@
                   "array",
                   "null"
                 ]
+              },
+              "gc_content": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "GC content as a PERCENTAGE, e.g. 65.4 -- not a fraction."
+              },
+              "isolation_country": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Country the isolate came from, e.g. 'Peru'. Present on only 1 of the 5 hits measured, so it cannot be used to filter a search result without losing most of it."
               }
             }
           }
@@ -448,6 +973,16 @@
                   "string",
                   "null"
                 ]
+              },
+              "taxon_id": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "integer"
+                },
+                "description": "NCBI taxonomy ids for the structure's source organisms, e.g. [2697049] (SARS-CoV-2). A list, since a complex can span organisms."
               }
             }
           }
@@ -597,6 +1132,13 @@
                   "string",
                   "null"
                 ]
+              },
+              "genome_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "BV-BRC genome the feature belongs to, e.g. '208199.11'. A feature search spans genomes, so this is what says which one each row came from."
               }
             }
           }
@@ -740,6 +1282,16 @@
                   "string",
                   "null"
                 ]
+              },
+              "taxon_id": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "integer"
+                },
+                "description": "NCBI taxonomy ids for the structure's source organisms, e.g. [2697049] (SARS-CoV-2). A list, since a complex can span organisms."
               }
             }
           }
@@ -1198,6 +1750,97 @@
               "items": {
                 "type": "integer"
               }
+            },
+            "feature_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "BV-BRC feature id for this record, e.g. \"RefSeq.83332.12.NC_000962.CDS.2448160.2449962.fwd\"."
+            },
+            "_version_": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Solr's internal concurrency stamp. Not a version of the structure and not comparable between records."
+            },
+            "alignments": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "How the PDB chains map onto the protein sequence, one string per chain, e.g. 'A:1-1208,P0DTC2:1-1208' -- chain range, then the sequence range it aligns to. This is what says which part of the protein the structure actually resolves."
+            },
+            "authors": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Authors of the structure, 'Surname, I.' per entry, e.g. 'Wang, N.'."
+            },
+            "date_inserted": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When BV-BRC loaded the record, e.g. '2021-12-21T11:58:37.044Z'."
+            },
+            "date_modified": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the record last changed, e.g. '2021-12-21T11:58:37.044Z'."
+            },
+            "file_path": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the coordinate file inside BV-BRC's store, e.g. 'pdb/6VSB.pdb'. A path, not a URL."
+            },
+            "genome_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "BV-BRC genome the protein belongs to, e.g. '2697049.107626'."
+            },
+            "patric_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "BV-BRC feature id of the protein the structure covers, e.g. 'fig|2697049.107626.CDS.3'."
+            },
+            "sequence": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The full amino-acid sequence(s) of the modelled protein, one string per distinct chain sequence."
+            },
+            "sequence_md5": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "MD5 of each entry in `sequence`, positionally parallel to it, e.g. '4c35f09aac2f7be4f3cffd30c6aecac8'. BV-BRC's own cross-reference key for an identical sequence elsewhere."
+            },
+            "taxon_lineage_ids": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "NCBI taxon ids from root to the source organism, 13 entries starting '10239' (Viruses). Parallel to taxon_lineage_names."
+            },
+            "taxon_lineage_names": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The same lineage as names, starting 'Viruses'. Parallel to taxon_lineage_ids."
             }
           },
           "required": [
@@ -1431,6 +2074,48 @@
                 "array",
                 "null"
               ]
+            },
+            "_version_": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Solr's internal concurrency stamp; not a taxonomy version."
+            },
+            "division": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GenBank division of the taxon, e.g. 'Viruses'."
+            },
+            "genetic_code": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "NCBI translation table number for this taxon, e.g. 1 (the standard code). Translating a CDS with the wrong table silently produces the wrong protein."
+            },
+            "lineage": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The full lineage as ONE comma-separated string, e.g. 'Viruses,Riboviria,Orthornavirae,...'. Not a list; split on ','."
+            },
+            "lineage_ranks": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The rank name for each step of the lineage, 13 entries starting 'acellular root'. Positionally parallel to the comma-split `lineage`, which is the only way to tell which element is the species."
+            },
+            "parent_id": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "NCBI taxon id of the parent node, e.g. 3418604. Walk this to climb the tree one rank at a time."
             }
           },
           "not": {

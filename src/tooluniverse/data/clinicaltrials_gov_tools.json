@@ -395,6 +395,16 @@
                 },
                 "type": {
                   "type": "string"
+                },
+                "interventionNames": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "The interventions given in this arm, e.g. ['Other: Change of time of administration...']. Measured on 1 of 2 arms. The type prefix ('Other:', 'Drug:', 'Placebo:') is part of the string, and without it an arm cannot be matched to its intervention - so a placebo arm reads like a treatment arm."
                 }
               }
             }
@@ -936,6 +946,34 @@
                         "string",
                         "null"
                       ]
+                    },
+                    "otherNumAffected": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many participants in the arm had a non-serious event, e.g. 23."
+                    },
+                    "otherNumAtRisk": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many were at risk in that arm, e.g. 24. The DENOMINATOR: 23 of 24 and 23 of 2400 are different findings, and a count without it cannot be turned into a rate."
+                    },
+                    "seriousNumAffected": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many had a serious event, e.g. 0."
+                    },
+                    "seriousNumAtRisk": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many were at risk for the serious-event tally, e.g. 24. It can differ from otherNumAtRisk, so the two tallies have different denominators."
                     }
                   }
                 }
@@ -956,6 +994,30 @@
                         "string",
                         "null"
                       ]
+                    },
+                    "assessmentType": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "How events were collected, e.g. 'NON_SYSTEMATIC_ASSESSMENT' or 'SYSTEMATIC_ASSESSMENT'. Non-systematic collection undercounts, so comparing a non-systematic arm with a systematic one is not a comparison of safety."
+                    },
+                    "sourceVocabulary": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Which dictionary coded the terms, e.g. 'MedDRA v25.1'. Term names shift between MedDRA versions, so pooling across versions needs care."
+                    },
+                    "stats": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "items": {
+                        "type": "object"
+                      },
+                      "description": "Per-arm counts for the event, each with its groupId, numAffected and numAtRisk - 28 arms on the measured event. The event's own total hides which arm it occurred in."
                     }
                   }
                 }

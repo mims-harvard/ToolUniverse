@@ -45,6 +45,32 @@
             "required": [
               "error"
             ]
+          },
+          "additionalProperties": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The entry itself, with its 'entry_id' and 'saveframes'. BMRB keys the reply BY THE ENTRY ID, so the property name is the id that was requested ('15000') rather than a fixed name - the level is data-keyed and cannot be enumerated. A caller that looks for a field called 'entry' finds nothing.",
+            "properties": {
+              "entry_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The entry id, repeated inside the record."
+              },
+              "saveframes": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "object"
+                },
+                "description": "The NMR-STAR saveframes making up the entry - the assignments, conditions and metadata, each a block with its own category."
+              }
+            }
           }
         },
         {

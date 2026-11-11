@@ -94,6 +94,13 @@
         },
         "data": {
           "type": "object"
+        },
+        "compound_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A human-usable Enamine store page for the requested compound id, e.g. 'https://enamine.net/compound/Z1234567890'. This tool is DEPRECATED -- the Enamine Store API it called has been withdrawn -- so it returns an error together with this URL, which is the only part of the reply that can still be acted on."
         }
       }
     },
@@ -200,6 +207,13 @@
         },
         "data": {
           "type": "object"
+        },
+        "main_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The Enamine compound-collections page, 'https://enamine.net/compound-collections'. This tool is DEPRECATED -- the API it called has been withdrawn -- so it returns an error together with this URL for browsing by hand."
         }
       }
     },

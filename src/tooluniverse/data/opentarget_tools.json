@@ -1899,6 +1899,13 @@
                                 "type": "string"
                               }
                             }
+                          },
+                          "phenotypeEFO": {
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "description": "The phenotype's EFO term, with its id and name. Measured on 6 of 12 rows - the ontology id, without which the phenotype label cannot be joined to anything."
                           }
                         }
                       }
@@ -2383,6 +2390,21 @@
                           }
                         }
                       }
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Total number of significant adverse-event signals for this drug across all pages — NOT the number of rows in this response."
+                    },
+                    "returned": {
+                      "type": "integer",
+                      "description": "Number of drugs and clinical candidates actually present in `rows` for this page."
+                    },
+                    "truncated": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when more indications exist than were returned. The flag that stops a partial indication list being read as the drug's full label."
                     }
                   }
                 }
@@ -2465,6 +2487,13 @@
                           },
                           "name": {
                             "type": "string"
+                          },
+                          "label": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The GO term's human-readable name, e.g. 'protein binding'. Present on all 826 annotations measured; the id alone is not readable, and this is the field a report actually prints."
                           }
                         }
                       }
@@ -3777,6 +3806,13 @@
                 },
                 "isTherapeuticArea": {
                   "type": "boolean"
+                },
+                "obsoleteTerms": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "EFO ids that have been merged into this disease, e.g. ['EFO_0000384']. An older dataset annotated with one of these ids refers to this same disease, so they must be resolved before counting."
                 }
               }
             }
@@ -4890,6 +4926,13 @@
               }
             }
           }
+        },
+        "target": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The gene the variant sits in, with its Ensembl 'id' and 'approvedSymbol'. The readable gene name, which targetFromSourceId only gives as an accession."
         }
       }
     }
@@ -5367,6 +5410,13 @@
                       }
                     }
                   }
+                },
+                "mechanismsOfAction": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The drug's mechanisms, under 'rows' - the target and action type for each."
                 }
               }
             }
@@ -5562,6 +5612,13 @@
               }
             }
           }
+        },
+        "search": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The search result, with 'total' matches and the 'hits' themselves. The payload, and `total` is what says whether the hits are all of them."
         }
       }
     }
@@ -5769,6 +5826,27 @@
                       },
                       "score": {
                         "type": "number"
+                      },
+                      "upperBin": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Which decile bin the constraint upper bound falls in, e.g. 1. Measured on 1 of 3 constraint records."
+                      },
+                      "upperBin6": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "The same bound binned into 6 groups, e.g. 0. Two different binnings of one number; using them interchangeably gives different answers."
+                      },
+                      "upperRank": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "The gene's rank by that bound across all genes, e.g. 2437. The rank is what makes a constraint value interpretable - a LOEUF of 0.5 means little without knowing where it sits."
                       }
                     }
                   }

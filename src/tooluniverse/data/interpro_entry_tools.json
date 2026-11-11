@@ -385,6 +385,25 @@
                   }
                 }
               }
+            },
+            "page_size": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Entries requested per page"
+            },
+            "pagination_stalled": {
+              "type": "boolean",
+              "description": "True when the cursor stopped advancing"
+            },
+            "result_set_complete": {
+              "type": "boolean",
+              "description": "True only when every entry was returned"
+            },
+            "truncated": {
+              "type": "boolean",
+              "description": "True when entries is not the whole set"
             }
           },
           "required": [

@@ -85,7 +85,10 @@
           "default": "netmhciipan_el"
         },
         "length": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Sliding-window peptide length scored within 'sequence' (11-30, default 15). Cannot exceed the sequence length; omit to use 15, or the sequence's own length when that is shorter."
         }
       },
@@ -270,28 +273,113 @@
                 "type": "string"
               },
               "start": {
-                "type": ["number", "string"]
+                "type": [
+                  "number",
+                  "string"
+                ]
               },
               "end": {
-                "type": ["number", "string"]
+                "type": [
+                  "number",
+                  "string"
+                ]
               },
               "allele": {
                 "type": "string"
               },
               "cleavage_prediction_score": {
-                "type": ["number", "string", "null"]
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
               },
               "tap_prediction_score": {
-                "type": ["number", "string", "null"]
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
               },
               "mhc_prediction": {
-                "type": ["number", "string", "null"]
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
               },
               "combined_prediction_score": {
-                "type": ["number", "string", "null"]
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
               },
               "median_percentile": {
-                "type": ["number", "string", "null"]
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "sequence_number": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Which submitted sequence this peptide came from, 1-based (1 on all 23 rows of the single-sequence example). Several sequences can be submitted at once and the rows are returned interleaved in score order, so this is the only thing that says which protein a peptide belongs to."
+              },
+              "length": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Peptide length in residues (9 on all 23 rows of the example, which asked for 9-mers). A run that asks for several lengths returns them mixed together in one score-ordered list."
+              },
+              "peptide_index": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "The peptide's 1-based rank within this sequence, 1 for the best-scoring (1..23 over the 23 rows). The rows arrive sorted by combined_prediction_score, so this is the rank the sorting produced."
+              },
+              "percentile_rank": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "The PROCESSING percentile rank from NetCTLpan: where this peptide's combined cleavage+TAP+binding score falls among random peptides, so smaller is better. Coarse-grained -- 2.0, 3.0, 6.0, 16.0, 32.0, 50.0 over the 23 rows, capped at 50. This is NOT the binding percentile; binding.netmhcpan.percentile ran 0.41 to 96.0 on the same rows."
+              },
+              "binding.netmhcpan.core": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The 9-residue binding core NetMHCpan aligned into the MHC groove. ONE property whose name contains dots -- it is not a nested object. Equal to the peptide on all 23 rows of the example because they are all 9-mers; for a longer peptide it is the sub-sequence that actually sits in the groove."
+              },
+              "binding.netmhcpan.icore": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The 'interaction core': the core plus any residues NetMHCpan judged to bulge out of the groove, i.e. the stretch a T-cell receptor would see. A dotted NAME, not a path. Equal to core on all 23 example rows; it differs when the peptide is longer than the groove."
+              },
+              "binding.netmhcpan.ic50": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "NetMHCpan's predicted binding affinity in nM, ranging 46.5 to 45779.76 over the 23 example rows; under ~500 nM is the usual binder threshold. A dotted NAME, not a path. The tool's own description promises the binding method's IC50 and this is it -- mhc_prediction is the method's rescaled score, not an affinity."
+              },
+              "binding.netmhcpan.percentile": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "NetMHCpan's BINDING percentile rank, 0.41 to 96.0 over the 23 example rows, smaller being a stronger binder. A dotted NAME, not a path. Identical to median_percentile on all 23 rows because only one binding method ran; with several methods the median is taken across them and the two part."
               }
             }
           }

@@ -151,6 +151,34 @@
                 },
                 "Vc_achievable": {
                   "type": "boolean"
+                },
+                "R0": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "The basic reproduction number used, e.g. 3.0. The herd-immunity threshold follows directly from it, so the answer is only as good as this input."
+                },
+                "PCV": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Proportion of cases that are vaccinated, e.g. 0.06."
+                },
+                "PPV": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Proportion of the population vaccinated, e.g. 0.35. Effectiveness is computed from these two, and without them a screening-method estimate cannot be rechecked."
+                },
+                "herd_threshold_perfect": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "The herd-immunity threshold for a PERFECT vaccine, e.g. 0.666667. A floor, not an achievable target - a real vaccine needs higher coverage than this."
                 }
               }
             }
@@ -237,6 +265,27 @@
                 },
                 "OR": {
                   "type": "number"
+                },
+                "RRR": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Relative risk reduction, e.g. 0.333333. The same data as a relative rather than an absolute measure - a large RRR on a small control rate is a large NNT."
+                },
+                "control_rate": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Event rate in the control arm, e.g. 0.3."
+                },
+                "treatment_rate": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Event rate in the treatment arm, e.g. 0.2. The NNT is the reciprocal of the difference, so these two are what it rests on."
                 }
               }
             }
@@ -474,6 +523,34 @@
                 },
                 "pre_test_odds": {
                   "type": "number"
+                },
+                "prevalence": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Prevalence in the sample, e.g. 0.11. Predictive values depend on it, so the same sensitivity means something different in another population - and this is the figure the reported PPV and NPV were computed at."
+                },
+                "sensitivity": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Test sensitivity used, e.g. 0.95. An input, and the posterior is only as good as it."
+                },
+                "specificity": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Test specificity used, e.g. 0.9. At a low prevalence the specificity dominates the posterior, which is why it has to be visible."
+                },
+                "test_result": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which result the posterior is conditioned on, e.g. 'positive'. The same inputs give a very different answer for a negative test."
                 }
               }
             }

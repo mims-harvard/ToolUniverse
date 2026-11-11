@@ -656,6 +656,20 @@
             "modules": {
               "type": "object",
               "description": "Parent module IDs to names"
+            },
+            "raw_data": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The complete KEGG flat-file record as text, starting 'ENTRY       R00200                      Reaction'. Everything KEGG returned, including fields this reply does not break out."
+            },
+            "raw_fields": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The same record split by its KEGG field names - ENTRY, NAME, DEFINITION, EQUATION, RCLASS, ENZYME and the rest. EQUATION carries the stoichiometry with KEGG compound ids, which is what makes the reaction usable in a model; DEFINITION gives it in words only."
             }
           }
         },

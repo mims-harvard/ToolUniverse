@@ -543,6 +543,139 @@
               },
               "valid_name": {
                 "type": "string"
+              },
+              "citation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How WoRMS asks the record to be cited, e.g. 'Froese, R. and D. Pauly. Editors. (2026). FishBase...'. Attribution to the source database rather than to WoRMS."
+              },
+              "class": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Class, e.g. 'Teleostei'. The property name shadows a Python keyword, so it has to be read by subscript."
+              },
+              "family": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Family, e.g. 'Pleuronectidae'."
+              },
+              "genus": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Genus, e.g. 'Pleuronectes'."
+              },
+              "isBrackish": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "1 when classed as brackish-water. Also an integer."
+              },
+              "isFreshwater": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "1 when classed as freshwater."
+              },
+              "isMarine": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "1 when WoRMS classes the taxon as marine, 0 when not. An INTEGER, not a boolean."
+              },
+              "isTerrestrial": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "1 when classed as terrestrial. The four flags together catch a record placed in the wrong environment, and more than one can be 1."
+              },
+              "kingdom": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Kingdom, e.g. 'Animalia'."
+              },
+              "lsid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The taxon's Life Science Identifier, e.g. 'urn:lsid:marinespecies.org:taxname:163034'. The globally resolvable form of the AphiaID."
+              },
+              "match_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the name was matched, e.g. 'exact', 'like', 'phonetic'. A fuzzy match may be a different species altogether, and the row otherwise looks identical."
+              },
+              "modified": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the record last changed, e.g. '2008-02-28T13:41:07.550Z'. Synonymy is revised, so this says how current the answer is."
+              },
+              "order": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Order, e.g. 'Pleuronectiformes'."
+              },
+              "originalNameUsageID": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "AphiaID of the name as originally published, e.g. 163034. Which name this record is a synonym OF."
+              },
+              "parentNameUsageID": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "AphiaID of the parent taxon, e.g. 126120. How the tree is walked upward."
+              },
+              "phylum": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Phylum, e.g. 'Chordata'."
+              },
+              "taxonRankID": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Numeric code for the rank, e.g. 220. Sorts correctly where the rank name does not."
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The taxon's page on marinespecies.org."
+              },
+              "valid_authority": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Author and year of the ACCEPTED name, e.g. '(Linnaeus, 1758)'. Brackets mean the species was moved to another genus since it was described."
               }
             }
           }

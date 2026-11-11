@@ -85,6 +85,51 @@
                           },
                           "description": {
                             "type": "string"
+                          },
+                          "relations": {
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "description": "How this record relates to its siblings, under 'version' - each entry giving the index of this version, whether it is the latest, and the parent concept. The only statement of whether a newer version exists."
+                          },
+                          "resource_type": {
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "description": "What kind of deposit it is: 'type' (e.g. 'publication'), 'subtype' (e.g. 'article') and a human 'title'. The subtype is what separates a journal article from a preprint or a thesis."
+                          },
+                          "access_right": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Access level, e.g. 'open', 'embargoed', 'restricted', 'closed'. A closed record still appears in search results with full metadata and no downloadable files."
+                          },
+                          "license": {
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "description": "The licence, under 'id'. What governs reuse, and nothing else in the record says."
+                          },
+                          "related_identifiers": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "Links to related works, each with its identifier and relation, e.g. a GitHub repository. Where the software or the paper behind a deposit is named."
+                          },
+                          "version": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The depositor's version label, e.g. '1.0'. Free text, not a number."
                           }
                         }
                       },
@@ -93,6 +138,114 @@
                       },
                       "links": {
                         "type": "object"
+                      },
+                      "conceptrecid": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Zenodo's id for the record's concept - the version-independent handle that always points at the latest version, e.g. '1234566'. Citing recid pins one version; citing conceptrecid does not."
+                      },
+                      "created": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the licence record was created in Zenodo, e.g. '2023-10-12T17:24:19.712198+00:00'."
+                      },
+                      "doi": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The DOI itself, without the resolver prefix, e.g. '10.1175/2010mwr3413.1'."
+                      },
+                      "doi_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Resolvable DOI URL for the record, e.g. 'https://doi.org/10.1175/2010mwr3413.1'. Note it can be a DOI minted elsewhere, not a Zenodo one, when the deposit records an externally published work."
+                      },
+                      "modified": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the record was last changed, e.g. '2024-08-02T16:40:10.039329+00:00'. A Zenodo record is editable after publication, so this is what says whether the metadata has moved."
+                      },
+                      "owners": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "The Zenodo accounts that own the record, each as {'id': ...}. Who may change it - not the same as the creators who are credited."
+                      },
+                      "recid": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Zenodo's id for this exact version of the record, e.g. '1234567'. A string, not a number."
+                      },
+                      "revision": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "How many times the record has been revised, e.g. 8."
+                      },
+                      "state": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Deposit state, e.g. 'done', 'inprogress', 'error'. Anything but 'done' means the files may not be retrievable."
+                      },
+                      "stats": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "Usage counts for the record: downloads, unique_downloads, views, unique_views and the version_* variants of each. The version_* figures count this one version, the plain ones the whole concept, so the two answer different questions."
+                      },
+                      "submitted": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True once the deposit has been submitted and published; false for an unpublished draft."
+                      },
+                      "title": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Record title, e.g. 'Environment and Early Evolution of the 8 May 2009 Derecho-Producing Convective System'. Present at the top level as well as inside metadata."
+                      },
+                      "updated": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When it was last changed."
+                      },
+                      "conceptdoi": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The version-independent DOI for the record's concept, e.g. '10.5281/zenodo.13235112'. Citing it always resolves to the latest version, where the record's own DOI pins one."
+                      },
+                      "status": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Record status, e.g. 'published'. Anything else means the files may not be retrievable."
                       }
                     }
                   }
@@ -101,6 +254,20 @@
                   "type": "integer"
                 }
               }
+            },
+            "links": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "API links for the record, under 'self'. The address to fetch the licence on its own."
+            },
+            "aggregations": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Facet counts over the whole result set - publication_date, access_status, resource_type and the rest. How the matches break down beyond the page returned."
             }
           }
         },

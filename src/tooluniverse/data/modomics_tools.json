@@ -67,6 +67,55 @@
               },
               "reference_moiety": {
                 "type": "array"
+              },
+              "lc_elution_comment": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Note on where it elutes relative to other nucleosides, e.g. 'before C (Kellner 2014)'. Measured on 1 of 13."
+              },
+              "lc_elution_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reported LC retention, with its source, e.g. '0,34 (Kellner 2014); 0,37 (Kellner 2014)'. Note the decimal COMMA and the embedded citation; measured on 1 of 13."
+              },
+              "mass_monoiso": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Monoisotopic mass of the nucleoside, e.g. 359.1329. Measured on 6 of 13 results - the figure a mass spectrum is matched against."
+              },
+              "mass_prot": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Monoisotopic mass of the protonated species, e.g. 360.1407. What appears in a positive-mode spectrum; using the neutral mass there is off by a proton."
+              },
+              "new_abbrev": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "MODOMICS' current short code for the modification, e.g. 'α'. Single characters, often Greek or symbolic, and what modern MODOMICS sequences use."
+              },
+              "product_ions": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Diagnostic product ions for the modification, e.g. '228'. How it is confirmed in MS/MS. Measured on 6 of 13."
+              },
+              "smiles": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SMILES for the modified nucleoside, e.g. 'C[n]1c(=O)[n](CCC(C(=O)O)N)c(=O)c(...)c1'."
               }
             }
           }

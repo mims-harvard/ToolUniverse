@@ -98,6 +98,41 @@
         "deprecated": {
           "type": "boolean",
           "description": "True if this ontology term is obsolete. Obsolete terms remain queryable but carry no annotations."
+        },
+        "association_counts": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "How many associations the entity has in each category, each {label, category, count}, 13 entries e.g. {'label': 'Gene to Phenotype', 'category': 'biolink:GeneToPhenotypicFeatureAssociation', ...}. Read this before paging associations, to know what is there."
+        },
+        "causes_disease": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Diseases this entity causes, each {id, name, category}, e.g. {'id': 'MONDO:0016419', 'name': 'hereditary breast carcinoma'} -- 7 entries for TP53."
+        },
+        "has_phenotype": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "HPO ids of the phenotypes associated with the entity, e.g. 'HP:0006572' (41 entries for TP53). Positionally parallel to has_phenotype_label."
+        },
+        "has_phenotype_label": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The same phenotypes by name, e.g. 'Pure red cell aplasia'. Parallel to has_phenotype -- zip the two; neither is ordered by relevance."
+        },
+        "node_relationships": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Typed relationships from this node, each {relation, relation_label, ...}, e.g. {'relation': 'RO:0004003', 'relation_label': 'has material basis in germline mutation in'}. The relation is what makes a gene-disease pair mean something specific."
         }
       }
     }
@@ -210,6 +245,83 @@
               "string",
               "null"
             ]
+          },
+          "agent_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Who or what produced the claim, e.g. 'manual_agent' (a human curator) versus an automated or text-mining agent."
+          },
+          "aggregator_knowledge_source": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "description": "Infores ids of the aggregators the claim passed through, e.g. ['infores:monarchinitiative']. The primary source is in primary_knowledge_source; this is the chain after it."
+          },
+          "association_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Monarch's id for this association, e.g. 'uuid:a769ddb6-bed6-11f1-9774-6045bd00b3c3'. A fresh UUID per build, so do not store it as a stable key."
+          },
+          "evidence_count": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "How many pieces of evidence Monarch holds for the association, e.g. 0. Zero is common and does NOT mean the assertion is unsupported -- a manually curated assertion often carries no separate evidence rows."
+          },
+          "knowledge_level": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Biolink knowledge level, e.g. 'knowledge_assertion' -- a curated claim -- as opposed to 'prediction' or 'statistical_association'. The single best field for deciding how much weight an association deserves."
+          },
+          "object_category": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Biolink category of the object, e.g. 'biolink:Disease'."
+          },
+          "original_object": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The object id as the source recorded it, e.g. 'Orphanet:251579'. Monarch's `object` is usually the MONDO equivalent, so this is the only trace of which source vocabulary the claim was actually made in."
+          },
+          "original_subject": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The subject id as the SOURCE recorded it, before Monarch normalised it, e.g. 'NCBIGene:7157'. Compare with `subject` to see what the normalisation changed."
+          },
+          "subject_category": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Biolink category of the subject, e.g. 'biolink:Gene'."
+          },
+          "subject_taxon": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Taxon of the subject, e.g. 'NCBITaxon:9606'. A non-human taxon means the association is a model-organism finding."
+          },
+          "subject_taxon_label": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The same taxon by name, e.g. 'Homo sapiens'."
           }
         }
       }

@@ -197,6 +197,62 @@
                   }
                 }
               }
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when pathways remain beyond this page."
+            },
+            "next_page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The page number to request next, e.g. 2, or null on the last page."
+            },
+            "page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Which page of pathways this is, e.g. 1."
+            },
+            "page_size": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Pathways per page, e.g. 3."
+            },
+            "pagination_stalled": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when paging stopped making progress - the next page returned nothing new. Without it, a loop that pages until it sees no more results can spin or quietly stop early."
+            },
+            "result_set_complete": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True only when this reply holds every matching pathway. False on the measured call, so a species comparison read from it alone is partial."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many came back, e.g. 3."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result set was cut - true on the measured call."
             }
           }
         },
@@ -400,6 +456,62 @@
                   }
                 }
               }
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when pathways remain beyond this page."
+            },
+            "next_page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The page number to request next, e.g. 2, or null on the last page."
+            },
+            "page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Which page of pathways this is, e.g. 1."
+            },
+            "page_size": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Pathways per page, e.g. 3."
+            },
+            "pagination_stalled": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when paging stopped making progress - the next page returned nothing new. Without it, a loop that pages until it sees no more results can spin or quietly stop early."
+            },
+            "result_set_complete": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True only when this reply holds every matching pathway. False on the measured call, so a species comparison read from it alone is partial."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many came back, e.g. 3."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result set was cut - true on the measured call."
             }
           }
         },

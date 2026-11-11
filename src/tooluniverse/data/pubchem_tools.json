@@ -130,11 +130,35 @@
                                 "properties": {
                                   "ExternalTableName": {
                                     "type": "string"
+                                  },
+                                  "StringWithMarkup": {
+                                    "type": [
+                                      "array",
+                                      "null"
+                                    ],
+                                    "items": {
+                                      "type": "object"
+                                    },
+                                    "description": "The block's text, each entry with a 'String' and any markup. Where the actual value lives, two levels below the field that names it."
                                   }
                                 }
+                              },
+                              "Name": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "Label of the information block, e.g. 'Co-Occurrence Panel'. PubChem's record is a nested tree of generic Sections and Information entries, and this is the only field that says what a given block holds."
                               }
                             }
                           }
+                        },
+                        "URL": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Link to the external resource for the section, e.g. 'https://www.wipo.int/patentscope/en/'. Measured on 2 of 7 sections."
                         }
                       }
                     }
@@ -616,6 +640,13 @@
         },
         "detail": {
           "type": "string"
+        },
+        "InformationList": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "PubChem's wrapper around the result, holding a single 'Information' list. The assay ids are one level further in than the field name suggests."
         }
       }
     }

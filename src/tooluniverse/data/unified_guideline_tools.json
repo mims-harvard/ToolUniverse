@@ -384,6 +384,13 @@
                 },
                 "source": {
                   "type": "string"
+                },
+                "truncation_note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Plain-language statement of how much of the result set came back, measured here as 'Returned the top 1 of 9780 documents matching this query. This is a ranked slice, not the full set.' The sentence that stops a ranked slice being read as the complete answer -- the measured call returned 1 of 9780."
                 }
               },
               "required": [
@@ -660,6 +667,13 @@
                 },
                 "source": {
                   "type": "string"
+                },
+                "truncation_note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Plain-language statement of how much of the result set came back, measured here as 'Returned the top 2 of 110672 documents matching this query. This is a ranked slice, not the full set.' The sentence that stops a ranked slice being read as the complete answer -- the measured call returned 2 of 110672."
                 }
               },
               "required": [

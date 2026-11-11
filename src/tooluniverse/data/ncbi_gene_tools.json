@@ -274,6 +274,13 @@
                   }
                 }
               }
+            },
+            "header": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "NCBI's response header, with the response 'type' and API 'version'. Which E-utilities version answered, which bears on whether a field is expected to be present."
             }
           },
           "not": {
@@ -403,6 +410,13 @@
                   }
                 }
               }
+            },
+            "header": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "NCBI's response header, with the response 'type' and API 'version'."
             }
           },
           "not": {

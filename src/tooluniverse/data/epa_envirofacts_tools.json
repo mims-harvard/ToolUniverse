@@ -5,10 +5,22 @@
         "parameter": {
             "type": "object",
             "properties": {
-                "state": {"type": "string", "description": "2-letter US state code, e.g. 'CA', 'TX'."},
-                "city": {"type": ["string", "null"], "description": "Optional city name filter, e.g. 'Los Angeles'."},
+                "state": {
+                    "type": "string",
+                    "description": "2-letter US state code, e.g. 'CA', 'TX'."
+                },
+                "city": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Optional city name filter, e.g. 'Los Angeles'."
+                },
                 "limit": {
-                    "type": ["integer", "null"],
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
                     "description": "Max facilities per page (default 10, max 100)."
                 },
                 "offset": {
@@ -21,31 +33,49 @@
                     "description": "Zero-based row offset; continue with metadata.next_offset."
                 }
             },
-            "required": ["state"]
+            "required": [
+                "state"
+            ]
         },
-        "fields": {"timeout": 30},
+        "fields": {
+            "timeout": 30
+        },
         "type": "EPATRIFacilitiesTool",
-        "test_examples": [{"state": "CA", "city": "Sacramento", "limit": 5}, {"state": "TX", "limit": 3}, {"state": "NY", "limit": 3}],
-        "return_schema": {
-          "oneOf": [
+        "test_examples": [
             {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
+                "state": "CA",
+                "city": "Sacramento",
+                "limit": 5
             },
             {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
+                "state": "TX",
+                "limit": 3
+            },
+            {
+                "state": "NY",
+                "limit": 3
             }
-          ]
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
         }
     },
     {
@@ -54,10 +84,22 @@
         "parameter": {
             "type": "object",
             "properties": {
-                "state": {"type": "string", "description": "2-letter US state code, e.g. 'MA', 'CA'."},
-                "city": {"type": ["string", "null"], "description": "Optional city name filter."},
+                "state": {
+                    "type": "string",
+                    "description": "2-letter US state code, e.g. 'MA', 'CA'."
+                },
+                "city": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Optional city name filter."
+                },
                 "limit": {
-                    "type": ["integer", "null"],
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
                     "description": "Max facilities per page (default 10, max 100)."
                 },
                 "offset": {
@@ -70,31 +112,49 @@
                     "description": "Zero-based row offset; continue with metadata.next_offset."
                 }
             },
-            "required": ["state"]
+            "required": [
+                "state"
+            ]
         },
-        "fields": {"timeout": 30},
+        "fields": {
+            "timeout": 30
+        },
         "type": "EPAFRSFacilitiesTool",
-        "test_examples": [{"state": "MA", "limit": 5}, {"state": "CA", "city": "Oakland", "limit": 3}, {"state": "WA", "limit": 3}],
-        "return_schema": {
-          "oneOf": [
+        "test_examples": [
             {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
+                "state": "MA",
+                "limit": 5
             },
             {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
+                "state": "CA",
+                "city": "Oakland",
+                "limit": 3
+            },
+            {
+                "state": "WA",
+                "limit": 3
             }
-          ]
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
         }
     },
     {
@@ -103,9 +163,15 @@
         "parameter": {
             "type": "object",
             "properties": {
-                "tri_facility_id": {"type": "string", "description": "EPA TRI facility identifier, e.g. '15902CCKRN75BRI'. Obtain from EPA_search_tri_facilities."},
+                "tri_facility_id": {
+                    "type": "string",
+                    "description": "EPA TRI facility identifier, e.g. '15902CCKRN75BRI'. Obtain from EPA_search_tri_facilities."
+                },
                 "limit": {
-                    "type": ["integer", "null"],
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
                     "description": "Max reporting forms per page (default 10, max 100)."
                 },
                 "offset": {
@@ -118,69 +184,117 @@
                     "description": "Zero-based row offset; continue with metadata.next_offset."
                 }
             },
-            "required": ["tri_facility_id"]
+            "required": [
+                "tri_facility_id"
+            ]
         },
-        "fields": {"timeout": 30, "table": "tri_reporting_form", "lookup_column": "tri_facility_id", "lookup_param": "tri_facility_id", "row_kind": "reporting_form"},
+        "fields": {
+            "timeout": 30,
+            "table": "tri_reporting_form",
+            "lookup_column": "tri_facility_id",
+            "lookup_param": "tri_facility_id",
+            "row_kind": "reporting_form"
+        },
         "type": "EPATRIFacilitiesTool",
-        "test_examples": [{"tri_facility_id": "15902CCKRN75BRI", "limit": 3}],
-        "return_schema": {
-          "oneOf": [
+        "test_examples": [
             {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "tri_facility_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "tri_chem_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "chemical_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "reporting_year": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "form_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "max_amount_code": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
+                "tri_facility_id": "15902CCKRN75BRI",
+                "limit": 3
             }
-          ]
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "tri_facility_id": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "tri_chem_id": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "chemical_name": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "reporting_year": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "form_type": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "max_amount_code": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "doc_ctrl_num": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "EPA's document control number for the submitted TRI form, e.g. '1300140000011'. The key back to the filing itself."
+                            },
+                            "federal_facility": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "'1' when the site is a federal facility, '0' otherwise -- a STRING, not a boolean."
+                            },
+                            "one_time_release_qty": {
+                                "type": [
+                                    "number",
+                                    "null"
+                                ],
+                                "description": "Quantity released in a one-off event, in the form's units, e.g. 0. Separate from routine releases, so a spill does not inflate the annual trend."
+                            },
+                            "production_ratio": {
+                                "type": [
+                                    "number",
+                                    "null"
+                                ],
+                                "description": "This year's production or activity divided by last year's, e.g. 1.25. Releases must be read against it: a rise of 25% in releases alongside a production_ratio of 1.25 is flat intensity, not a worsening."
+                            },
+                            "trade_secret": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "'1' when the submitter claimed trade secret protection, '0' otherwise, as a STRING. A claimed trade secret means the reported quantities may be withheld or sanitised."
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
         }
     }
 ]

@@ -631,6 +631,20 @@
                   "string",
                   "null"
                 ]
+              },
+              "canonicalName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The name without authorship, e.g. 'Animalia'. `scientificName` includes the author and year; this is the form to match on."
+              },
+              "taxonomicStatus": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "GBIF's status for the name, e.g. 'ACCEPTED'. A parent chain containing a SYNONYM or DOUBTFUL entry is not a clean classification."
               }
             }
           }
@@ -964,6 +978,13 @@
                   "string",
                   "null"
                 ]
+              },
+              "rank": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Taxonomic rank of the synonym, e.g. 'SPECIES'. A synonym at a different rank from the queried name is a reclassification, not just a renaming."
               }
             }
           }

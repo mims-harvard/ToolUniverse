@@ -568,6 +568,13 @@
               "items": {
                 "type": "string"
               }
+            },
+            "admin": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Record administration dates - 'created' and 'last_modified', each with a date and the ROR schema version. How current the organisation record is."
             }
           },
           "not": {

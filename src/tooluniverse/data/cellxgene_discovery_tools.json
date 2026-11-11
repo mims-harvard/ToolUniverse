@@ -284,6 +284,37 @@
                   "datasets_with_cell_count": {
                     "type": "integer",
                     "description": "How many of the datasets report a cell count. The listing endpoint reports none, which is why total_cells is null rather than 0."
+                  },
+                  "contact_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who to contact about the collection, e.g. 'Walid Khaled'."
+                  },
+                  "consortia": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Consortia the collection belongs to, e.g. ['CZI Cell Science']. Measured on 2 of 5 collections - collections from one consortium share protocols and are not independent."
+                  },
+                  "created_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the collection was created, e.g. '2026-06-09T23:02:06+00:00'."
+                  },
+                  "curator_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who curated the collection, e.g. 'Jennifer Yu-Sheng Chien'. Who to ask about the annotations."
                   }
                 }
               }

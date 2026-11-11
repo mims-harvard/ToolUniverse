@@ -136,10 +136,14 @@
           "type": "string",
           "description": "Must be 'projects' for this tool.",
           "default": "projects",
-          "enum": ["projects"]
+          "enum": [
+            "projects"
+          ]
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -247,9 +251,79 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which aggregator the row came from, e.g. 'OpenAIRE'."
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The kind of OpenAIRE entity the row is, e.g. 'projects'. Constant for this tool; it exists because the same row shape is used for publications and datasets."
                   }
                 }
               }
+            },
+            "accessible_results": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many of the matches OpenAIRE will actually serve, e.g. 10000 -- against total_results of 338854 on the measured query. OpenAIRE's API caps deep paging, so this, not total_results, is the number of projects that can be retrieved."
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when a further page exists, e.g. true."
+            },
+            "next_page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The page number to request next, e.g. 2. Null when there is none."
+            },
+            "page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Which page this reply is, 1-based, e.g. 1."
+            },
+            "page_size": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many results per page were requested, e.g. 1."
+            },
+            "total_results_is_exact": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when total_results is an exact count rather than a lower bound, e.g. true."
+            },
+            "upstream_truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when OpenAIRE itself cut the result set, e.g. true. Set when total_results exceeds accessible_results."
+            },
+            "warning": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The limit OpenAIRE discloses about the query. Measured value: 'OpenAIRE reports more than 10,000 matches, but its API only allows the first 10,000 results for a query.' Any count derived by paging this search is bounded by that cap, not by the real total."
             }
           },
           "required": [
@@ -260,7 +334,15 @@
           "type": "object",
           "properties": {
             "error": {
-              "type": "string"
+              "type": "string",
+              "description": "Short description of what went wrong, e.g. 'Network/API error calling OpenAIRE'. Present only on this branch; the success branch has no `error` key at all."
+            },
+            "reason": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The underlying exception text behind `error`, e.g. \"HTTPSConnectionPool(host='api.openaire.eu', port=443): Read timed out. (read timeout=20)\". This is what distinguishes a transient timeout, which is worth retrying, from a rejected query, which is not."
             }
           },
           "required": [

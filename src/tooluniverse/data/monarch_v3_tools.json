@@ -1215,6 +1215,20 @@
                       "number",
                       "null"
                     ]
+                  },
+                  "match_subsumer": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The ontology term that subsumes both phenotypes in the match, e.g. 'HP:0012638'. The semantic similarity score rests on this common ancestor -- a very general subsumer means a weak match however high the score looks."
+                  },
+                  "match_subsumer_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "That common ancestor by name, e.g. 'Abnormal nervous system physiology'. Reading the label is the quickest check of whether a match is specific."
                   }
                 }
               }
@@ -1277,6 +1291,20 @@
                       "number",
                       "null"
                     ]
+                  },
+                  "match_subsumer": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Common-ancestor term for the object-side match, e.g. 'UPHENO:0000543'. UPHENO terms are the cross-species upper ontology, used when the two phenotypes come from different species' vocabularies."
+                  },
+                  "match_subsumer_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "That common ancestor by name, e.g. 'delayed biological_process'."
                   }
                 }
               }

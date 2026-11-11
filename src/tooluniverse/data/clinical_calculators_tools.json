@@ -83,6 +83,13 @@
               "items": {
                 "type": "string"
               }
+            },
+            "max_score": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The highest score the scale can give, 3. A score of 2 means nothing until the scale's range is known."
             }
           },
           "required": [
@@ -178,6 +185,13 @@
             },
             "components": {
               "type": "object"
+            },
+            "max_score": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The highest score the scale can give, 3. A score of 2 means nothing until the scale's range is known."
             }
           },
           "required": [
@@ -259,6 +273,13 @@
             },
             "components": {
               "type": "object"
+            },
+            "max_score": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The highest score the scale can give, 3. A score of 2 means nothing until the scale's range is known."
             }
           },
           "required": [
@@ -445,6 +466,13 @@
             },
             "child_pugh_class": {
               "type": "string"
+            },
+            "max_score": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The highest score the scale can give, 3. A score of 2 means nothing until the scale's range is known."
             }
           },
           "required": [
@@ -718,6 +746,13 @@
             },
             "components": {
               "type": "object"
+            },
+            "max_score": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The highest score the scale can give, 3. A score of 2 means nothing until the scale's range is known."
             }
           },
           "required": [

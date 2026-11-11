@@ -799,6 +799,13 @@
                         "number",
                         "null"
                       ]
+                    },
+                    "sd_age": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "The spread behind mean_age. A cohort with mean age 52 and SD 3 is not the one with SD 20, and an EWAS is read against age."
                     }
                   }
                 }

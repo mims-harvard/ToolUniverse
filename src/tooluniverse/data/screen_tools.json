@@ -154,6 +154,34 @@
                       "number",
                       "null"
                     ]
+                  },
+                  "ctcf_max": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Maximum CTCF signal, e.g. 1.40. High CTCF marks an insulator, which is a different element class again. The three maxima together are what the element's classification rests on, and the class label alone does not show the evidence."
+                  },
+                  "k27ac_max": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Maximum H3K27ac signal, e.g. 1.78. The active-enhancer mark."
+                  },
+                  "k4me3_max": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Maximum H3K4me3 signal over the element, e.g. 3.67. High K4me3 with low K27ac marks a promoter rather than an enhancer."
+                  },
+                  "length": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Length of the candidate element in base pairs, e.g. 312."
                   }
                 }
               }

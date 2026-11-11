@@ -56,6 +56,31 @@
                   },
                   "contributing_variants": {
                     "type": "array"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Homology type"
+                  },
+                  "diffs": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "The amino-acid differences from the reference, each carrying its own prediction scores -- {sift_score, sift_prediction, polyphen_score, polyphen_prediction, diff}. Present on 10 of the 11 haplotypes; the one without is the reference itself. This is where the functional consequence of the haplotype lives."
+                  },
+                  "hex": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MD5 hash of this protein haplotype's sequence, e.g. '1870f5d8fe49074d6723ae84c96712f9'. Ensembl's identity key for the haplotype -- two samples with the same hex carry the same protein."
+                  },
+                  "other_hexes": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Other haplotype hashes that reduce to this same protein, keyed BY HASH with the count as the value. Keyed by data, so look values up by hash rather than iterating positions."
                   }
                 }
               }
@@ -156,6 +181,62 @@
         "seq_region_name": {
           "type": "string",
           "description": "Chromosome name"
+        },
+        "assembly_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Assembly the coordinates belong to, e.g. 'GRCh38'. The same numbers mean a different place under GRCh37."
+        },
+        "canonical_transcript": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The gene's canonical transcript with version, e.g. 'ENST00000489972.1'. Which transcript a consequence should be reported against."
+        },
+        "logic_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact analysis that called it, e.g. 'havana_homo_sapiens'. Finer than 'source' and what separates a manually curated call from an automatic one."
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which annotation source produced the feature, e.g. 'havana', 'ensembl', 'insdc'."
+        },
+        "version": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Version of the feature's annotation, e.g. 6."
+        },
+        "db_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which Ensembl database the object came from, e.g. 'core'. 'otherfeatures' and 'rnaseq' hold different annotation sets."
+        },
+        "object_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "What kind of Ensembl object was returned, e.g. 'Gene'. The same lookup endpoint answers Transcript and Translation too, so this says which fields to expect."
+        },
+        "species": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Species the object belongs to, e.g. 'homo_sapiens'. Ensembl's underscored production name."
         }
       }
     },
@@ -315,6 +396,41 @@
           "consequence_type": {
             "type": "string",
             "description": "Variant consequence (e.g., 'missense_variant', 'synonymous_variant')"
+          },
+          "assembly_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Assembly the coordinates belong to, e.g. 'GRCh38'. The same numbers mean a different place under GRCh37."
+          },
+          "feature_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "What kind of feature the row is, e.g. 'gene', 'transcript', 'exon', 'cds'. One overlap query returns several types, and reading them as one kind double-counts."
+          },
+          "seq_region_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Chromosome or scaffold name, e.g. '7', without a 'chr' prefix."
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Which annotation source produced the feature, e.g. 'havana', 'ensembl', 'insdc'."
+          },
+          "alleles": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "description": "The variant's alleles, reference first, e.g. ['CATCCACAACCACACACCGACCACTCTA', '-'] for a deletion. Present on all 500 variants measured; indel alleles can be long and '-' denotes the empty allele."
           }
         }
       }
@@ -395,6 +511,47 @@
         "phenotypes": {
           "type": "array",
           "description": "Phenotype associations (if phenotypes=1)"
+        },
+        "clinical_significance": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Clinical significance: pathogenic, likely pathogenic, benign, likely benign, uncertain significance"
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which annotation source produced the feature, e.g. 'havana', 'ensembl', 'insdc'."
+        },
+        "synonyms": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Other names for the term, e.g. ['ectoplasm', ...]. Measured on 2 of 4 ancestors."
+        },
+        "ambiguity": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "IUPAC ambiguity code for the variant's alleles, e.g. 'R' for A/G."
+        },
+        "evidence": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Evidence attributes Ensembl holds for the variant, e.g. ['Frequency', '1000Genomes', ...] (8 entries). A variant with only 'Multiple_observations' is weaker evidence than one with a population project."
         }
       }
     },
@@ -458,9 +615,111 @@
               "association_type": {
                 "type": "string",
                 "description": "Type of association"
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which annotation source produced the feature, e.g. 'havana', 'ensembl', 'insdc'."
+              },
+              "beta_coefficient": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Effect size as free TEXT including its direction and unit, e.g. '0.021 unit decrease' -- not a signed number. Present on 14 of 18 rows."
+              },
+              "genes": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Gene(s) the source attributed the association to, comma-separated in one string, e.g. 'AGT'. Present on 7 of 18 rows."
+              },
+              "ontology_accessions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Ontology terms for the trait, e.g. ['EFO:0000275', ...] (3 entries). Present on 15 of 18 rows; these are what let the phenotype text be matched across studies."
+              },
+              "pvalue": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reported p-value as a STRING, e.g. '1.00e-9'. Present on 14 of 18 rows; parse with float()."
+              },
+              "risk_allele": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The allele the association is reported for, e.g. 'A'. Present on all 18 phenotype rows -- without it the direction of effect is meaningless."
+              },
+              "variants": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The variant id as the source reported it, e.g. 'rs699'. Present on 14 of 18 rows; it can differ from the queried id when the source used a different rsID."
               }
             }
           }
+        },
+        "clinical_significance": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Clinical significance: pathogenic, likely pathogenic, benign, likely benign, uncertain significance"
+        },
+        "mappings": {
+          "type": "array",
+          "description": "Genomic mappings"
+        },
+        "most_severe_consequence": {
+          "type": "string",
+          "description": "Most severe consequence"
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which annotation source produced the feature, e.g. 'havana', 'ensembl', 'insdc'."
+        },
+        "synonyms": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Other names for the term, e.g. ['ectoplasm', ...]. Measured on 2 of 4 ancestors."
+        },
+        "var_class": {
+          "type": "string",
+          "description": "Variant class: CNV, deletion, duplication, inversion, insertion, gain, loss, tandem_duplication, complex_structural_alteration"
+        },
+        "ambiguity": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "IUPAC ambiguity code for the variant's alleles, e.g. 'R' for A/G."
+        },
+        "evidence": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Evidence attributes Ensembl holds for the variant, e.g. ['Frequency', '1000Genomes', 'ESP', ...] (8 entries). 'Frequency' and a population project mean the variant is observed, not merely submitted."
         }
       }
     },
@@ -529,6 +788,30 @@
           "info_type": {
             "type": "string",
             "description": "Information type"
+          },
+          "synonyms": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Other names for the term, e.g. ['ectoplasm', ...]. Measured on 2 of 4 ancestors."
+          },
+          "version": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Version of the feature's annotation, e.g. 6."
+          },
+          "info_text": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "How the cross-reference was made, e.g. 'Generated via ensembl_manual'. Present on 28 of the 56 xrefs measured. This is what separates a manually asserted mapping from an automatically projected one."
           }
         }
       }
@@ -582,6 +865,45 @@
           "display_id": {
             "type": "string",
             "description": "Display ID"
+          },
+          "db_display_name": {
+            "type": "string",
+            "description": "Display name of database"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The feature's description, e.g. 'non-metastatic cells 4, protein expressed in (NME4) pseudogene'. Where a pseudogene reveals itself as one."
+          },
+          "info_type": {
+            "type": "string",
+            "description": "Information type"
+          },
+          "synonyms": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Other names for the term, e.g. ['ectoplasm', ...]. Measured on 2 of 4 ancestors."
+          },
+          "version": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Version of the feature's annotation, e.g. 6."
+          },
+          "info_text": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "How the cross-reference was made, e.g. \"Generated via Database of aberrant 5' splice sites.\" Present on only 2 of the 25 xrefs measured, so most mappings here come with no provenance."
           }
         }
       }
@@ -653,6 +975,27 @@
           "description": {
             "type": "string",
             "description": "Feature description"
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Which annotation source produced the feature, e.g. 'havana', 'ensembl', 'insdc'."
+          },
+          "extended_end": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "End of that region, e.g. 1001148. Ensembl calls a core region and a wider bound; using the extended coordinates as the feature overstates it by hundreds of bases, and the two pairs look alike."
+          },
+          "extended_start": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Start of the feature's extended (flanking) region, e.g. 999971."
           }
         }
       }
@@ -937,6 +1280,41 @@
           },
           "rank": {
             "type": "string"
+          },
+          "children": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "object"
+            },
+            "description": "The term's direct children, each with its ontology, name and accession. How the subtree below a term is walked; an ancestors call alone only goes upward."
+          },
+          "name": {
+            "type": "string",
+            "description": "Supporting variant accession (nssv/essv)"
+          },
+          "leaf": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "1 when the taxon has no children in Ensembl's tree, 0 otherwise -- an INTEGER, not a boolean, e.g. 0."
+          },
+          "parent": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The parent taxon as a nested object {id, scientific_name, name, tags, leaf}. One level only; walk repeatedly to climb the tree."
+          },
+          "tags": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The taxon's name variants, keyed by kind: {scientific_name, common_name, name, authority}. The authority entry carries the naming authority and year."
           }
         }
       }
@@ -985,6 +1363,65 @@
               },
               "assembly": {
                 "type": "string"
+              },
+              "display_name": {
+                "type": "string",
+                "description": "Gene symbol"
+              },
+              "accession": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Assembly accession, e.g. 'GCA_000523025.1'. Measured on 343 of 356 species. Which assembly the coordinates belong to - the species name alone does not pin it."
+              },
+              "aliases": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Other names for the species, e.g. ['astyanax mexicanus', ...]. Measured on 68 of 356, and what lets a common name resolve."
+              },
+              "division": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which Ensembl division serves it, e.g. 'EnsemblVertebrates', 'EnsemblPlants'. Divisions have separate REST endpoints, so a query to the wrong one simply finds nothing."
+              },
+              "groups": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Which databases exist for the species, e.g. ['otherfeatures', ...]. Says whether variation or regulation data exists before it is requested."
+              },
+              "release": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Ensembl release the species was added in, e.g. 116."
+              },
+              "strain": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Strain or breed, e.g. 'whiteleghornlayer'. Measured on 113 of 356 species - several strains of one species are separate entries, and the species name alone does not distinguish them."
+              },
+              "taxon_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "NCBI taxonomy id, e.g. '244447'. A string."
               }
             }
           }
@@ -1204,6 +1641,33 @@
         },
         "synonyms": {
           "type": "array"
+        },
+        "ontology": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which ontology the ancestor belongs to, e.g. 'GO'. One ancestor chain can cross ontologies."
+        },
+        "subsets": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Ontology slims the term belongs to, e.g. ['goslim_candida', ...]. Measured on 1 of 4. Which curated subset a term is in decides whether it appears in a slim-based summary."
+        },
+        "children": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "The term's direct children, each with its ontology, name and accession. How the subtree below a term is walked; an ancestors call alone only goes upward."
         }
       }
     },
@@ -1467,6 +1931,53 @@
           },
           "transcript_consequences": {
             "type": "array"
+          },
+          "assembly_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Assembly the coordinates belong to, e.g. 'GRCh38'. The same numbers mean a different place under GRCh37."
+          },
+          "end": {
+            "type": "integer",
+            "description": "End coordinate (GRCh38)"
+          },
+          "id": {
+            "type": "string",
+            "description": "Structural variant accession (nsv or esv ID from DGVa/dbVar)"
+          },
+          "seq_region_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Chromosome or scaffold name, e.g. '7', without a 'chr' prefix."
+          },
+          "start": {
+            "type": "integer",
+            "description": "Start coordinate (GRCh38)"
+          },
+          "strand": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "1 for the forward strand, -1 for the reverse. A reverse-strand gene's start is its higher coordinate."
+          },
+          "colocated_variants": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "description": "Known variants at the same position, each with its own allele_string and phenotype_or_disease flag, e.g. {'allele_string': 'HGMD_MUTATION', 'phenotype_or_disease': 1, ...}. An entry with phenotype_or_disease 1 means a disease association is already recorded there -- the strongest single signal in a VEP row."
+          },
+          "input": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The input line VEP parsed, echoed back, e.g. '21 25891796 25891796 C/T 1'. The only way to tie a result row back to the request when several variants were sent."
           }
         }
       }
@@ -1719,6 +2230,14 @@
             },
             "additionalProperties": true
           }
+        },
+        "mappings": {
+          "type": "array",
+          "description": "Genomic mappings"
+        },
+        "study": {
+          "type": "string",
+          "description": "Study name"
         }
       },
       "additionalProperties": true

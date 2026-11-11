@@ -633,6 +633,13 @@
             },
             "keyInfoJudgementType": {
               "type": "string"
+            },
+            "enableDA": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the guideline has decision aids enabled in MAGICapp, e.g. true."
             }
           },
           "required": [
@@ -2323,6 +2330,20 @@
                           }
                         }
                       }
+                    },
+                    "setting": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Clinical setting the PICO applies to. Measured null on all 3 PICOs -- absence means unstated, so the PICO should not be assumed to be setting-general."
+                    },
+                    "showPicots": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when the PICO is displayed in full PICOT form (adding timing), e.g. false. A display flag, not a property of the evidence."
                     }
                   }
                 }
@@ -2858,6 +2879,27 @@
                     "number"
                   ]
                 }
+              },
+              "showAdaptation": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the recommendation is displayed as an adaptation of another guideline, e.g. false."
+              },
+              "statusComment": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What that status means in words, e.g. 'Evidence search updated through November 26, 2025'. This is the field that dates the EVIDENCE rather than the document -- a recommendation published in 2026 on a 2025 evidence search is current only up to that search."
+              },
+              "statusDate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Date of the recommendation's current status, 'YYYY-MM-DD', e.g. '2026-03-02'. Present on 4 of the 6 recommendations measured."
               }
             }
           }

@@ -522,6 +522,13 @@
             },
             "opticalActivity": {
               "type": "string"
+            },
+            "atropisomerism": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether the substance shows atropisomerism, e.g. 'No'. Atropisomers are separable stereoisomers arising from hindered rotation, so a 'Yes' means the SMILES alone does not identify the substance."
             }
           },
           "required": [

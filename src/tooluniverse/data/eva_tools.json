@@ -419,9 +419,30 @@
                   "result": {
                     "type": "array",
                     "description": "Array of study objects with studyId, studyName, and filesCount"
+                  },
+                  "dbTime": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Milliseconds EVA spent in its database for this query, e.g. 2427."
+                  },
+                  "time": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Milliseconds for the whole response, e.g. 0."
                   }
                 }
               }
+            },
+            "queryOptions": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The query as EVA executed it: 'metadata', 'limit', 'skip' and 'count'. The limit and skip that were actually applied, which the request alone does not pin down once defaults are in play."
             }
           },
           "not": {

@@ -103,21 +103,74 @@
           "items": {
             "type": "object",
             "properties": {
-              "iri": {"type": "string"},
-              "ontologyName": {"type": "string"},
-              "shortForm": {"type": "string"},
-              "label": {"type": "string"},
-              "oboId": {"type": ["string", "null"]},
-              "isObsolete": {"type": ["boolean", "null"]},
+              "iri": {
+                "type": "string"
+              },
+              "ontologyName": {
+                "type": "string"
+              },
+              "shortForm": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "oboId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "isObsolete": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
               "description": {
-                "type": ["array", "null"],
-                "items": {"type": "string"},
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
                 "description": "The term's definition, which the search hit already carries. This is also where OLS records a merge: ZFA:0009046 says 'CL:0000804 and CL:0000812 were merged in the cell ontology into CL:0000084'."
               },
-              "synonyms": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Exact synonyms, which can be substituted for the label"},
-              "related_synonyms": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Related synonyms, which cannot"},
-              "ontologyPrefix": {"type": ["string", "null"], "description": "Ontology prefix as used in the CURIE, e.g. ZFA"},
-              "type": {"type": ["string", "null"], "description": "class, property or individual"}
+              "synonyms": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Exact synonyms, which can be substituted for the label"
+              },
+              "related_synonyms": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related synonyms, which cannot"
+              },
+              "ontologyPrefix": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ontology prefix as used in the CURIE, e.g. ZFA"
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "class, property or individual"
+              }
             }
           }
         },
@@ -146,7 +199,10 @@
           "type": "object",
           "properties": {
             "ontology": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "The ontology the search was restricted to, or null when it searched all of them -- which is what the tool echoes when no ontology was given."
             },
             "exact_match": {
@@ -232,27 +288,45 @@
           "type": "string"
         },
         "title": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Ontology name. Null for the four ontologies OLS gives no title under any key -- medgen, oio, schemaorg_http and schemaorg_https. Declaring it a required string made this tool answer a validation error for 16 of the 287 ontologies and made ols_search_ontologies drop all 16 while still reporting total_items: 287."
         },
         "version": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Ontology release, read from the OWL versionInfo annotation. Null for 116 of the 287 ontologies OLS lists."
         },
         "description": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Null for the ontologies OLS carries no description for, e.g. 'skos'."
         },
         "domain": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Subject domain, e.g. 'biological systems'. Measured for 'go'. Null for ontologies whose config does not set one."
         },
         "homepage": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Null for 25 of the 287 ontologies OLS lists."
         },
         "preferredPrefix": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Null for 30 of the 287 ontologies OLS lists."
         },
         "number_of_terms": {
@@ -263,19 +337,94 @@
           "type": "integer"
         },
         "repository": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Source repository URL. Measured for 'go'. Null for ontologies whose config does not set one."
         },
-        "importsFrom": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Ontologies this one imports terms from; EFO imports from 40."},
-        "exportsTo": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Ontologies that import terms from this one; 36 import from EFO."},
-        "linksTo": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Property and term IRIs from other ontologies that this one uses."},
-        "creators": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Authors, from dc:creator."},
-        "languages": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Language codes the ontology carries labels in. EFO has eight, so a label search can miss a term labelled only in one."},
-        "license": {"type": ["string", "null"], "description": "Licence the ontology is published under."},
-        "loaded": {"type": ["string", "null"], "description": "When OLS last loaded the ontology, so how current this answer is."},
-        "mailingList": {"type": ["string", "null"]},
-        "numberOfProperties": {"type": ["integer", "null"]},
-        "numberOfIndividuals": {"type": ["integer", "null"]}
+        "importsFrom": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Ontologies this one imports terms from; EFO imports from 40."
+        },
+        "exportsTo": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Ontologies that import terms from this one; 36 import from EFO."
+        },
+        "linksTo": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Property and term IRIs from other ontologies that this one uses."
+        },
+        "creators": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Authors, from dc:creator."
+        },
+        "languages": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Language codes the ontology carries labels in. EFO has eight, so a label search can miss a term labelled only in one."
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Licence the ontology is published under."
+        },
+        "loaded": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When OLS last loaded the ontology, so how current this answer is."
+        },
+        "mailingList": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "numberOfProperties": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "numberOfIndividuals": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
       }
     },
     "fields": {
@@ -361,24 +510,42 @@
                 "type": "string"
               },
               "title": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "description": "Null for the four ontologies OLS gives no title under any key."
               },
               "version": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "description": "Null for 116 of the 287 ontologies OLS lists."
               },
               "description": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "domain": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "homepage": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "preferredPrefix": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "number_of_terms": {
                 "type": "integer"
@@ -387,10 +554,83 @@
                 "type": "integer"
               },
               "repository": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "exportsTo": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Ontologies that import terms from this one; 36 import from EFO."
+              },
+              "importsFrom": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Ontologies this one imports terms from; EFO imports from 40."
+              },
+              "languages": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Language codes the ontology carries labels in. EFO has eight, so a label search can miss a term labelled only in one."
+              },
+              "license": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Licence the ontology is published under."
+              },
+              "linksTo": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Property and term IRIs from other ontologies that this one uses."
+              },
+              "loaded": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When OLS last loaded the ontology, so how current this answer is."
+              },
+              "numberOfIndividuals": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Count of individuals (instances) in the ontology, e.g. 0."
+              },
+              "numberOfProperties": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Count of properties, e.g. 258. With the term count this says how much of the ontology is relations rather than classes."
               }
             },
-            "required": ["ontologyId"]
+            "required": [
+              "ontologyId"
+            ]
           }
         },
         "pagination": {
@@ -422,7 +662,10 @@
               "type": "boolean"
             },
             "next_page": {
-              "type": ["integer", "null"]
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           }
         },
@@ -463,7 +706,7 @@
         },
         "term_id": {
           "type": "string",
-          "description": "Alias for id \u2014 ontology term ID (e.g. HP:0001903)"
+          "description": "Alias for id — ontology term ID (e.g. HP:0001903)"
         },
         "term_iri": {
           "type": "string",
@@ -522,12 +765,56 @@
         "synonyms": {
           "type": "array"
         },
-        "related_synonyms": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Related synonyms, which OBO distinguishes from exact ones"},
-        "ontologyPrefix": {"type": ["string", "null"], "description": "Ontology prefix as used in the CURIE"},
-        "type": {"type": ["string", "null"], "description": "class, property or individual"},
-        "alternative_ids": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Other ids this term is known by, including ids merged into it"},
-        "synonym_scopes": {"type": ["array", "null"], "items": {"type": "object"}, "description": "Each synonym with the OBO scope assigned to it"},
-        "lang": {"type": ["string", "null"]}
+        "related_synonyms": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Related synonyms, which OBO distinguishes from exact ones"
+        },
+        "ontologyPrefix": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ontology prefix as used in the CURIE"
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "class, property or individual"
+        },
+        "alternative_ids": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Other ids this term is known by, including ids merged into it"
+        },
+        "synonym_scopes": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "Each synonym with the OBO scope assigned to it"
+        },
+        "lang": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     },
     "fields": {
@@ -537,7 +824,7 @@
   {
     "type": "OLSTool",
     "name": "ols_get_term_children",
-    "description": "Get child terms of a specific term in an ontology. Use `term_id` with CURIE format (e.g., 'HP:0001928') \u2014 the ontology is auto-inferred from the prefix. Or supply `term_iri` + `ontology` explicitly.",
+    "description": "Get child terms of a specific term in an ontology. Use `term_id` with CURIE format (e.g., 'HP:0001928') — the ontology is auto-inferred from the prefix. Or supply `term_iri` + `ontology` explicitly.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -615,21 +902,74 @@
           "items": {
             "type": "object",
             "properties": {
-              "iri": {"type": "string"},
-              "ontologyName": {"type": "string"},
-              "shortForm": {"type": "string"},
-              "label": {"type": "string"},
-              "oboId": {"type": ["string", "null"]},
-              "isObsolete": {"type": ["boolean", "null"]},
+              "iri": {
+                "type": "string"
+              },
+              "ontologyName": {
+                "type": "string"
+              },
+              "shortForm": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "oboId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "isObsolete": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
               "description": {
-                "type": ["array", "null"],
-                "items": {"type": "string"},
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
                 "description": "The term's definition, which the search hit already carries. This is also where OLS records a merge: ZFA:0009046 says 'CL:0000804 and CL:0000812 were merged in the cell ontology into CL:0000084'."
               },
-              "synonyms": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Exact synonyms, which can be substituted for the label"},
-              "related_synonyms": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Related synonyms, which cannot"},
-              "ontologyPrefix": {"type": ["string", "null"], "description": "Ontology prefix as used in the CURIE, e.g. ZFA"},
-              "type": {"type": ["string", "null"], "description": "class, property or individual"}
+              "synonyms": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Exact synonyms, which can be substituted for the label"
+              },
+              "related_synonyms": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related synonyms, which cannot"
+              },
+              "ontologyPrefix": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ontology prefix as used in the CURIE, e.g. ZFA"
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "class, property or individual"
+              }
             }
           }
         },
@@ -665,7 +1005,7 @@
   {
     "type": "OLSTool",
     "name": "ols_get_term_ancestors",
-    "description": "Get ancestor terms of a specific term in an ontology. Use `term_id` with CURIE format (e.g., 'HP:0001928') \u2014 the ontology is auto-inferred from the prefix. Or supply `term_iri` + `ontology` explicitly.",
+    "description": "Get ancestor terms of a specific term in an ontology. Use `term_id` with CURIE format (e.g., 'HP:0001928') — the ontology is auto-inferred from the prefix. Or supply `term_iri` + `ontology` explicitly.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -742,21 +1082,74 @@
           "items": {
             "type": "object",
             "properties": {
-              "iri": {"type": "string"},
-              "ontologyName": {"type": "string"},
-              "shortForm": {"type": "string"},
-              "label": {"type": "string"},
-              "oboId": {"type": ["string", "null"]},
-              "isObsolete": {"type": ["boolean", "null"]},
+              "iri": {
+                "type": "string"
+              },
+              "ontologyName": {
+                "type": "string"
+              },
+              "shortForm": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "oboId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "isObsolete": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
               "description": {
-                "type": ["array", "null"],
-                "items": {"type": "string"},
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
                 "description": "The term's definition, which the search hit already carries. This is also where OLS records a merge: ZFA:0009046 says 'CL:0000804 and CL:0000812 were merged in the cell ontology into CL:0000084'."
               },
-              "synonyms": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Exact synonyms, which can be substituted for the label"},
-              "related_synonyms": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Related synonyms, which cannot"},
-              "ontologyPrefix": {"type": ["string", "null"], "description": "Ontology prefix as used in the CURIE, e.g. ZFA"},
-              "type": {"type": ["string", "null"], "description": "class, property or individual"}
+              "synonyms": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Exact synonyms, which can be substituted for the label"
+              },
+              "related_synonyms": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Related synonyms, which cannot"
+              },
+              "ontologyPrefix": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ontology prefix as used in the CURIE, e.g. ZFA"
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "class, property or individual"
+              }
             }
           }
         },
@@ -870,22 +1263,80 @@
           "type": "object",
           "description": "The term the similar ones are similar to. The tool fetches this whole record to read its label and nothing else -- including whether the term is obsolete, which the tool's own test example is: EFO:0000384 is obsolete_Crohn's disease.",
           "properties": {
-            "iri": {"type": "string"},
-            "label": {"type": ["string", "null"]},
-            "curie": {"type": ["string", "null"]},
-            "definition": {"type": ["array", "null"], "items": {"type": "string"}},
-            "synonyms": {"type": ["array", "null"], "items": {"type": "string"}},
-            "is_obsolete": {"type": ["boolean", "null"], "description": "True when the source term has been retired, in which case the similar terms are probably not what was wanted"},
-            "curated_from_sources": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Which data sources annotated with this term"},
+            "iri": {
+              "type": "string"
+            },
+            "label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "curie": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "definition": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              }
+            },
+            "synonyms": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              }
+            },
+            "is_obsolete": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the source term has been retired, in which case the similar terms are probably not what was wanted"
+            },
+            "curated_from_sources": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Which data sources annotated with this term"
+            },
             "curated_from": {
               "type": "array",
               "description": "The text each source annotated with the term, capped at 25",
               "items": {
                 "type": "object",
                 "properties": {
-                  "text": {"type": ["string", "null"]},
-                  "source": {"type": ["string", "null"]},
-                  "subject_categories": {"type": "array", "items": {"type": "string"}}
+                  "text": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "subject_categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
@@ -921,7 +1372,7 @@
   {
     "type": "OLSTool",
     "name": "ols_get_term_xrefs",
-    "description": "Get the cross-references (obo_xref) of an ontology term in OLS \u2014 the canonical OxO-replacement ID-mapping tool. Translates any OLS term (EFO, MONDO, UBERON, CL, MAXO, GO, CHEBI, ORDO, etc.) to its equivalent identifiers in external vocabularies such as DOID, ICD10CM/ICD10WHO, OMIM, UMLS, MeSH, NCIt, SNOMED/SCTID, MedGen, and MedDRA. Pass a CURIE-style term ID (e.g. 'EFO:0004611' or 'MONDO:0005148'); the ontology is auto-inferred from the prefix. Each xref includes the source database, local id, a combined CURIE, and a resolver URL.",
+    "description": "Get the cross-references (obo_xref) of an ontology term in OLS — the canonical OxO-replacement ID-mapping tool. Translates any OLS term (EFO, MONDO, UBERON, CL, MAXO, GO, CHEBI, ORDO, etc.) to its equivalent identifiers in external vocabularies such as DOID, ICD10CM/ICD10WHO, OMIM, UMLS, MeSH, NCIt, SNOMED/SCTID, MedGen, and MedDRA. Pass a CURIE-style term ID (e.g. 'EFO:0004611' or 'MONDO:0005148'); the ontology is auto-inferred from the prefix. Each xref includes the source database, local id, a combined CURIE, and a resolver URL.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -937,15 +1388,15 @@
         },
         "term_id": {
           "type": "string",
-          "description": "Alias for id \u2014 ontology term CURIE (e.g. 'MONDO:0005148')."
+          "description": "Alias for id — ontology term CURIE (e.g. 'MONDO:0005148')."
         },
         "obo_id": {
           "type": "string",
-          "description": "Alias for id \u2014 OBO-style term identifier (e.g. 'EFO:0004611')."
+          "description": "Alias for id — OBO-style term identifier (e.g. 'EFO:0004611')."
         },
         "term_iri": {
           "type": "string",
-          "description": "Alias for id \u2014 may also pass a full IRI/short-form term identifier."
+          "description": "Alias for id — may also pass a full IRI/short-form term identifier."
         },
         "ontology": {
           "type": "string",

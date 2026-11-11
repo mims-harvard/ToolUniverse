@@ -769,6 +769,13 @@
                   }
                 }
               }
+            },
+            "expression_assays": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The assay types the expression evidence comes from, e.g. ['in situ reporter']. A reporter construct and an antibody stain support very different claims, so this qualifies every pattern in the reply."
             }
           },
           "not": {

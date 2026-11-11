@@ -186,6 +186,20 @@
               },
               "annotation": {
                 "type": "string"
+              },
+              "query": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which queried identifier this row answers, e.g. 'TP53'. Several identifiers are resolved in one call, so this is the only safe join back to the request."
+              },
+              "rank": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "The partner's rank for that query, e.g. 1. Rows come back ordered by it, and a reordered subset silently loses the ranking."
               }
             }
           }

@@ -598,6 +598,41 @@
               "string",
               "null"
             ]
+          },
+          "hmdb_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "HMDB accession, e.g. 'HMDB0002183'."
+          },
+          "kegg_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "KEGG COMPOUND id, e.g. 'C06429'."
+          },
+          "lipidbank_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "LipidBank id, e.g. 'DFA0224'."
+          },
+          "synonyms": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Other names as a single '; '-delimited STRING, e.g. 'Cervonic acid; Docosahexaenoic acid; C22:6n-3,6,9,12,15,18'. Not a list; the shorthand notation is in here too."
+          },
+          "abbrev_chains": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The lipid's shorthand with its individual acyl chains spelled out, e.g. 'WE 8:0/8:0'. Measured on only 1 of 34 hits. The plain `abbrev` gives the total chain composition; this gives the per-chain breakdown, which is what distinguishes two isomers with the same total."
           }
         }
       }

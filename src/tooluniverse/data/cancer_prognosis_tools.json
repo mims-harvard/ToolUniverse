@@ -93,6 +93,13 @@
                           },
                           "event": {
                             "type": "integer"
+                          },
+                          "age": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Patient age at diagnosis as a STRING, e.g. '55'. Convert before using it as a covariate."
                           }
                         }
                       }
@@ -105,6 +112,13 @@
                         "integer",
                         "null"
                       ]
+                    },
+                    "total_patients_with_os_data": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many patients in the study have overall-survival data, e.g. 1096 -- against the 50 patient rows this reply carries. Any survival estimate computed from the returned rows alone uses a sample of the cohort."
                     }
                   }
                 },
@@ -125,8 +139,26 @@
                         "integer",
                         "null"
                       ]
+                    },
+                    "patients": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Per-patient disease-free survival rows, each {patient_id, dfs_months, dfs_status, ...}; dfs_status is cBioPortal's coded string such as '1:Recurred/Progressed'. 50 rows returned."
+                    },
+                    "total_patients_with_dfs_data": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many patients have disease-free-survival data, e.g. 1004. Smaller than the overall-survival count, so the two endpoints are not computed on the same patients."
                     }
                   }
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Description of profile and any warnings (e.g., duplicate aliquot warning)"
                 }
               }
             },
@@ -298,6 +330,20 @@
                     },
                     "message": {
                       "type": "string"
+                    },
+                    "detection_scope": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "What the duplicate check covered, e.g. 'all_fetched_samples'. A scope narrower than the whole study means duplicates outside it were not looked for."
+                    },
+                    "n_samples_checked": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many samples were checked for duplicate aliquots, e.g. 495."
                     }
                   }
                 },
@@ -319,8 +365,29 @@
                     "string",
                     "null"
                   ]
+                },
+                "study_note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which study was used and whether the tool chose it, e.g. \"Auto-selected study_id='brca_tcga'. Use CancerPrognosis_search_studies to find alternatives\". When the study was auto-selected the result answers a question the caller did not quite ask."
                 }
               }
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the reply holds fewer samples than the study has, e.g. true. The measured call returned 50 of 495."
+            },
+            "truncation_note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What was cut and how to get the rest, e.g. 'Returning 50 of 495 samples. Pass max_samples=495 (up to 2000) to retrieve the full dataset.' Any statistic computed on the returned samples alone is computed on a fraction of the cohort."
             }
           },
           "not": {
@@ -729,6 +796,20 @@
                 },
                 "description_truncated": {
                   "type": "boolean"
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Cut at 1000 characters, which description_truncated discloses; it used to be cut at 200 in silence"
+                },
+                "total_clinical_attributes": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many clinical attributes the study records, e.g. 106. The summary names only a few of them, so this is the count of what else could be requested."
                 }
               }
             },

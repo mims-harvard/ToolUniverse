@@ -207,6 +207,20 @@
               },
               "public": {
                 "type": "integer"
+              },
+              "AvgID": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "GeneNetwork's internal averaging-method id for the dataset, e.g. 1. Says how probe values were summarised, which matters when comparing two datasets of the same tissue."
+              },
+              "confidentiality": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "1 when the dataset is confidential, 0 when open, e.g. 0. All 410 datasets measured were 0."
               }
             }
           }

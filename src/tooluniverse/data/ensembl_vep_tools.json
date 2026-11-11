@@ -176,6 +176,27 @@
                       "number",
                       "null"
                     ]
+                  },
+                  "strand": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Strand of the variant's allele string, 1 or -1. VEP reports alleles on the forward strand, so a -1 here means the submitted alleles were reverse-complemented."
+                  },
+                  "protein_end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "End of that range. Equal to protein_start for a single-residue change, and larger for an indel."
+                  },
+                  "protein_start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Start of the affected residue range in the protein, e.g. 640. Measured on 13 of 24 consequences - absent for non-coding ones."
                   }
                 }
               }
@@ -196,6 +217,13 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "frequencies": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Population allele frequencies for the co-located variant, keyed by ALLELE, e.g. {'A': {...}}. Measured on 1 of 5 co-located variants. A frequency attached to the wrong allele inverts the interpretation, which is why the level is keyed by allele."
                   }
                 }
               }

@@ -120,6 +120,48 @@
             },
             "format": {
               "type": "string"
+            },
+            "endpoint": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The CIViC GraphQL endpoint the data came from, e.g. 'https://civicdb.org/api/graphql'."
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when further pages exist, e.g. true."
+            },
+            "next_cursor": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Opaque cursor for the next page, e.g. 'NQ'. CIViC pages by cursor, not by offset, so this value must be passed through verbatim."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many rows this reply contains, e.g. 5."
+            },
+            "total_results": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many genes match the query in total, e.g. 754 -- against the 5 rows returned. This is the field that says the reply is a page."
+            },
+            "total_results_is_exact": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when total_results is an exact count rather than a lower bound, e.g. true."
             }
           }
         }
@@ -511,6 +553,46 @@
                       ]
                     }
                   }
+                },
+                "clinvarIds": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "ClinVar variation ids for the variant, e.g. ['12624']. The join to clinical significance assertions outside CIViC."
+                },
+                "hgvsDescriptions": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "HGVS strings for the variant, e.g. ['NM_007313.2:c.1001C>T', ...] - 4 of them, across transcripts and at protein level. Which transcript each is on decides whether a caller's own HGVS matches."
+                },
+                "variantAliases": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Other names for the variant, e.g. ['THR334ILE', ...]. Non-HGVS forms that appear in papers, which is how a literature mention is matched."
+                },
+                "variantTypes": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "The variant's classes, each with id and name, e.g. 'Missense Variant'. A list, since one variant can be several things at once."
                 }
               }
             }
@@ -589,6 +671,13 @@
                     "hasNextPage": {
                       "type": "boolean",
                       "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                    },
+                    "endCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Cursor for the next page of results. Required to page a GraphQL connection; a page count will not do it."
                     }
                   }
                 },
@@ -602,6 +691,19 @@
                       },
                       "name": {
                         "type": "string"
+                      },
+                      "feature": {
+                        "type": "object",
+                        "description": "Parent gene feature",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Gene name"
+                          }
+                        }
                       }
                     }
                   }
@@ -1109,6 +1211,13 @@
                     "hasNextPage": {
                       "type": "boolean",
                       "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                    },
+                    "endCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Cursor for the next page of results. Required to page a GraphQL connection; a page count will not do it."
                     }
                   }
                 },
@@ -1319,6 +1428,20 @@
               }
             }
           }
+        },
+        "normalization_note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "What the tool changed about the query before running it, e.g. \"Input auto-normalized: therapy 'imatinib' -> ...\". The search that ran is not the search that was asked for, and this is the only record of the difference."
+        },
+        "status_note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which evidence items were included, e.g. 'Showing 5 ACCEPTED (peer-reviewed) evidence items...'. CIViC also holds submitted and rejected items; a count read without this reads as the whole evidence base."
         }
       }
     },

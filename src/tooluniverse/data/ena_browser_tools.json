@@ -131,6 +131,13 @@
         "data": {
           "type": "object",
           "description": "Entry metadata"
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Content type ENA served, e.g. 'application/json'. ENA answers some requests as EMBL flat file or XML, and this is what distinguishes them."
         }
       }
     },
@@ -200,6 +207,48 @@
                   },
                   "publications": {
                     "type": "array"
+                  },
+                  "dataClass": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ENA data class, e.g. 'STD' for a standard entry, 'CON' for a constructed contig, 'WGS', 'TSA'. A CON entry has no sequence of its own, only instructions for assembling one."
+                  },
+                  "dataType": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the entry holds, e.g. 'SEQUENCE'."
+                  },
+                  "firstPublic": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the entry was first released, e.g. '23-FEB-2006'. ENA's own DD-MON-YYYY format, not ISO 8601."
+                  },
+                  "lastUpdated": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When it was last changed, e.g. '16-FEB-2025'. Same format."
+                  },
+                  "status": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "ENA's numeric status code, e.g. 4."
+                  },
+                  "statusDescription": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "That code in words, e.g. 'public', 'suppressed', 'killed'. A suppressed entry still answers a lookup and should not be used."
                   }
                 }
               }
@@ -209,6 +258,13 @@
             }
           },
           "description": "Comprehensive entry summary"
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Content type ENA served, e.g. 'application/json'. ENA answers some requests as EMBL flat file or XML, and this is what distinguishes them."
         }
       }
     },

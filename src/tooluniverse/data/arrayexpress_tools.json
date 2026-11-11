@@ -118,7 +118,9 @@
           "description": "ArrayExpress experiment ID (e.g., 'E-MTAB-1234')"
         }
       },
-      "required": ["experiment_id"]
+      "required": [
+        "experiment_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/arrayexpress/json/v3/experiments/{experiment_id}",
@@ -136,6 +138,23 @@
         "section": {
           "type": "object",
           "description": "Experiment metadata and sections"
+        },
+        "attributes": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "The experiment's metadata as name/value pairs, e.g. {'name': 'Title', 'value': 'Epigen...'}. The title, design and protocols all live in here rather than as named fields."
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "What kind of record it is, e.g. 'submission'."
         }
       }
     },
@@ -157,7 +176,9 @@
           "description": "ArrayExpress experiment ID"
         }
       },
-      "required": ["experiment_id"]
+      "required": [
+        "experiment_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/arrayexpress/files/{experiment_id}",
@@ -200,7 +221,9 @@
           "description": "ArrayExpress experiment ID"
         }
       },
-      "required": ["experiment_id"]
+      "required": [
+        "experiment_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/arrayexpress/experiments/{experiment_id}/samples",

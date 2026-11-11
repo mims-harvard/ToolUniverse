@@ -6,10 +6,19 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "taxon": {"type": "string", "description": "Taxon name"},
-        "limit": {"type": "integer", "default": 20, "description": "Number of results"}
+        "taxon": {
+          "type": "string",
+          "description": "Taxon name"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "description": "Number of results"
+        }
       },
-      "required": ["taxon"]
+      "required": [
+        "taxon"
+      ]
     },
     "fields": {
       "endpoint": "https://paleobiodb.org/data1.2/occs/list.json?taxon_name={taxon}&limit={limit}",
@@ -23,69 +32,263 @@
           "items": {
             "type": "object",
             "properties": {
-              "occurrence_no": {"type": "string"},
-              "record_type": {"type": "string"},
-              "reid_no": {"type": "string"},
-              "flags": {"type": "string"},
-              "collection_no": {"type": "string"},
-              "identified_name": {"type": "string"},
-              "identified_rank": {"type": "string"},
-              "identified_no": {"type": "string"},
-              "accepted_name": {"type": "string"},
-              "accepted_rank": {"type": "string"},
-              "accepted_no": {"type": "string"},
-              "early_interval": {"type": "string"},
-              "late_interval": {"type": "string"},
-              "early_age": {"type": "number"},
-              "late_age": {"type": "number"},
-              "reference_no": {"type": "string"},
-              "is_representative": {"type": "string"},
-              "formation": {"type": "string"},
-              "member": {"type": "string"},
-              "lithology": {"type": "string"},
-              "lithology1": {"type": "string"},
-              "lithology2": {"type": "string"},
-              "environment": {"type": "string"},
-              "taphonomy": {"type": "string"},
-              "preservation": {"type": "string"},
-              "lithadj1": {"type": "string"},
-              "lithadj2": {"type": "string"},
-              "geogscale": {"type": "string"},
-              "geogname": {"type": "string"},
-              "state": {"type": "string"},
-              "county": {"type": "string"},
-              "lat": {"type": "number"},
-              "lng": {"type": "number"},
-              "geogcomments": {"type": "string"},
-              "collection_name": {"type": "string"},
-              "collection_aka": {"type": "string"},
-              "collection_type": {"type": "string"},
-              "collection_comments": {"type": "string"},
-              "stratscale": {"type": "string"},
-              "stratcomments": {"type": "string"},
-              "lithadjcomments": {"type": "string"},
-              "geogcomments": {"type": "string"},
+              "occurrence_no": {
+                "type": "string"
+              },
+              "record_type": {
+                "type": "string"
+              },
+              "reid_no": {
+                "type": "string"
+              },
+              "flags": {
+                "type": "string"
+              },
+              "collection_no": {
+                "type": "string"
+              },
+              "identified_name": {
+                "type": "string"
+              },
+              "identified_rank": {
+                "type": "string"
+              },
+              "identified_no": {
+                "type": "string"
+              },
+              "accepted_name": {
+                "type": "string"
+              },
+              "accepted_rank": {
+                "type": "string"
+              },
+              "accepted_no": {
+                "type": "string"
+              },
+              "early_interval": {
+                "type": "string"
+              },
+              "late_interval": {
+                "type": "string"
+              },
+              "early_age": {
+                "type": "number"
+              },
+              "late_age": {
+                "type": "number"
+              },
+              "reference_no": {
+                "type": "string"
+              },
+              "is_representative": {
+                "type": "string"
+              },
+              "formation": {
+                "type": "string"
+              },
+              "member": {
+                "type": "string"
+              },
+              "lithology": {
+                "type": "string"
+              },
+              "lithology1": {
+                "type": "string"
+              },
+              "lithology2": {
+                "type": "string"
+              },
+              "environment": {
+                "type": "string"
+              },
+              "taphonomy": {
+                "type": "string"
+              },
+              "preservation": {
+                "type": "string"
+              },
+              "lithadj1": {
+                "type": "string"
+              },
+              "lithadj2": {
+                "type": "string"
+              },
+              "geogscale": {
+                "type": "string"
+              },
+              "geogname": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "county": {
+                "type": "string"
+              },
+              "lat": {
+                "type": "number"
+              },
+              "lng": {
+                "type": "number"
+              },
+              "geogcomments": {
+                "type": "string"
+              },
+              "collection_name": {
+                "type": "string"
+              },
+              "collection_aka": {
+                "type": "string"
+              },
+              "collection_type": {
+                "type": "string"
+              },
+              "collection_comments": {
+                "type": "string"
+              },
+              "stratscale": {
+                "type": "string"
+              },
+              "stratcomments": {
+                "type": "string"
+              },
+              "lithadjcomments": {
+                "type": "string"
+              },
               "taxonomy": {
                 "type": "object",
                 "properties": {
-                  "phylum": {"type": "string"},
-                  "class": {"type": "string"},
-                  "order": {"type": "string"},
-                  "family": {"type": "string"},
-                  "genus": {"type": "string"},
-                  "species": {"type": "string"}
+                  "phylum": {
+                    "type": "string"
+                  },
+                  "class": {
+                    "type": "string"
+                  },
+                  "order": {
+                    "type": "string"
+                  },
+                  "family": {
+                    "type": "string"
+                  },
+                  "genus": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": "string"
+                  }
                 }
+              },
+              "cid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Collection identifier, e.g. 'col:49523'. Occurrences from one collection share a locality and are not independent observations."
+              },
+              "eag": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Early age bound in millions of years, e.g. 72.2."
+              },
+              "eid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reidentification identifier, e.g. 'rei:28454'. Measured on 1 of 5 records: present when the occurrence has been reidentified since publication, which is why idn and tna can differ."
+              },
+              "idn": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The name AS IDENTIFIED, e.g. '? Tyrannosaurus sp.' - with the original qualifiers. The leading '?' means the identification is uncertain and 'sp.' that it is not to species; tna silently drops both, so counting on tna alone turns a doubtful record into a firm one."
+              },
+              "lag": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Late age bound in millions of years, e.g. 66. The occurrence is dated to the RANGE between them, not to a point; using one bound as the age is a several-million-year error."
+              },
+              "oei": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The geological interval the occurrence is placed in, e.g. 'Late Maastrichtian'."
+              },
+              "oid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Occurrence identifier, e.g. 'occ:490995'. PBDB prefixes every id with its type, so the prefix must be kept."
+              },
+              "oli": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The late interval where the occurrence spans two, e.g. 'Late Campanian'. Measured on 1 of 5 records."
+              },
+              "rid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reference identifier, e.g. 'ref:13266'. The publication the occurrence was taken from."
+              },
+              "rnk": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Numeric rank of the accepted taxon, e.g. 5. Sorts correctly where rank names do not."
+              },
+              "tid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Accepted taxon identifier, e.g. 'txn:38613'."
+              },
+              "tna": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Accepted taxon name, e.g. 'Tyrannosaurus'."
               }
             }
           }
         },
-        "count": {"type": "integer"},
-        "status": {"type": "string"}
+        "count": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "elapsed_time": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Seconds the PBDB query took, e.g. 0.00383."
+        }
       }
     },
     "test_examples": [
-      {"taxon": "Tyrannosaurus", "limit": 5},
-      {"taxon": "Trilobita", "limit": 10}
+      {
+        "taxon": "Tyrannosaurus",
+        "limit": 5
+      },
+      {
+        "taxon": "Trilobita",
+        "limit": 10
+      }
     ]
   }
 ]

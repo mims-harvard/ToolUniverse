@@ -150,6 +150,461 @@
                   },
                   "default_branch": {
                     "type": "string"
+                  },
+                  "events_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for the account's events, e.g. with a '{/...}' placeholder in it. An RFC 6570 URI TEMPLATE, not a URL - requesting it unexpanded returns 404."
+                  },
+                  "node_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The account's GraphQL node id, e.g. 'MDQ6VXNlcjEwMjQwMjU='. Required by the GraphQL API, where the numeric id is not accepted."
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "API URL for the account, e.g. 'https://api.github.com/users/torvalds'. The API address, not the html_url a person would open."
+                  },
+                  "allow_forking": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when forking is permitted."
+                  },
+                  "archive_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a source archive - an RFC 6570 URI TEMPLATE ending in '{archive_format}{/ref}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "archived": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the repository is archived - read-only, no longer maintained. Nothing else in the record says the project is dead."
+                  },
+                  "assignees_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for assignable users - an RFC 6570 URI TEMPLATE ending in '{/user}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "blobs_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a git blob - an RFC 6570 URI TEMPLATE ending in '{/sha}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "branches_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a branch - an RFC 6570 URI TEMPLATE ending in '{/branch}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "clone_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HTTPS git clone URL for the repository. A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "collaborators_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a collaborator - an RFC 6570 URI TEMPLATE ending in '{/collaborator}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "comments_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a commit comment - an RFC 6570 URI TEMPLATE ending in '{/number}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "commits_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a commit - an RFC 6570 URI TEMPLATE ending in '{/sha}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "compare_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a comparison between two refs - an RFC 6570 URI TEMPLATE ending in '{base}...{head}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "contents_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a path in the tree - an RFC 6570 URI TEMPLATE ending in '{+path}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "contributors_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "API URL listing contributors. A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "deployments_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "API URL listing deployments. A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "disabled": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when GitHub has disabled the repository, e.g. for a terms violation. Its contents are not retrievable."
+                  },
+                  "downloads_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "API URL listing downloads (a legacy endpoint). A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "fork": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the repository is a fork. A fork's stars and issues belong to the fork, not to the upstream project."
+                  },
+                  "forks": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Fork count, e.g. 2963. The same number as forks_count; both are returned."
+                  },
+                  "forks_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "API URL listing forks. A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "git_commits_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a raw git commit - an RFC 6570 URI TEMPLATE ending in '{/sha}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "git_refs_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a git ref - an RFC 6570 URI TEMPLATE ending in '{/sha}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "git_tags_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a git tag - an RFC 6570 URI TEMPLATE ending in '{/sha}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "git_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "git:// protocol URL, which carries no authentication. A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "has_discussions": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when Discussions is enabled."
+                  },
+                  "has_downloads": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the legacy downloads feature is enabled."
+                  },
+                  "has_issues": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the issue tracker is enabled. open_issues is 0 for a repository with issues disabled, which is not the same as a repository with no open issues."
+                  },
+                  "has_pages": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when GitHub Pages is enabled."
+                  },
+                  "has_projects": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when project boards are enabled."
+                  },
+                  "has_pull_requests": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when pull requests are accepted."
+                  },
+                  "has_wiki": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the wiki is enabled."
+                  },
+                  "homepage": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The project's own home page, e.g. 'https://arxiv.org/abs/2609.00065'. Measured on 4 of 5 repositories - for a research repository this is usually the paper."
+                  },
+                  "hooks_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "API URL listing webhooks. A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "is_template": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the repository is a template rather than a project."
+                  },
+                  "issue_comment_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for an issue comment - an RFC 6570 URI TEMPLATE ending in '{/number}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "issue_events_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for an issue event - an RFC 6570 URI TEMPLATE ending in '{/number}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "issues_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for an issue - an RFC 6570 URI TEMPLATE ending in '{/number}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "keys_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a deploy key - an RFC 6570 URI TEMPLATE ending in '{/key_id}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "labels_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a label - an RFC 6570 URI TEMPLATE ending in '{/name}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "languages_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "API URL giving the byte count per language. A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "merges_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "API URL for creating a merge. A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "milestones_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a milestone - an RFC 6570 URI TEMPLATE ending in '{/number}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "notifications_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for notifications - an RFC 6570 URI TEMPLATE ending in '{?since,all,participating}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "open_issues": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Open issue count, e.g. 311. GitHub counts pull requests as issues here, so it is not the number of bug reports."
+                  },
+                  "owner": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The account that owns the repository, with its login, id, type and URLs. Whether the owner is a User or an Organization changes how permissions work."
+                  },
+                  "private": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True for a private repository. A token with access returns private repositories from a search, so a result set can mix them with public ones."
+                  },
+                  "pull_request_creation_policy": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who may open pull requests, e.g. 'all'."
+                  },
+                  "pulls_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a pull request - an RFC 6570 URI TEMPLATE ending in '{/number}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "releases_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a release - an RFC 6570 URI TEMPLATE ending in '{/id}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Search relevance score for the hit, e.g. 1.0. Results are ordered by it."
+                  },
+                  "ssh_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SSH git URL, the one that works with a deploy key. A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "stargazers_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "API URL listing who starred the repository. A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "statuses_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for commit statuses - an RFC 6570 URI TEMPLATE ending in '{sha}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "subscribers_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "API URL listing watchers. A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "subscription_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "API URL for the caller's own watch state. A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "svn_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Subversion-compatible URL. A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "tags_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "API URL listing tags. A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "teams_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "API URL listing teams with access. A plain URL, unlike the templated *_url fields beside it."
+                  },
+                  "trees_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GitHub API template for a git tree - an RFC 6570 URI TEMPLATE ending in '{/sha}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+                  },
+                  "visibility": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Visibility, e.g. 'public', 'private', 'internal'. Finer than the `private` boolean, which cannot express 'internal'."
+                  },
+                  "watchers": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "GitHub returns the STARGAZER count here, not the number of watchers - 14938 against 241 actual subscribers on the measured repository. Reading it as 'people watching' overstates it by a factor of sixty."
+                  },
+                  "watchers_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "The same stargazer count under the other name. Neither field is the watcher count; subscribers_count is."
+                  },
+                  "web_commit_signoff_required": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the repository requires a sign-off on web commits."
                   }
                 }
               }
@@ -302,6 +757,440 @@
             },
             "fork": {
               "type": "boolean"
+            },
+            "events_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for the account's events, e.g. with a '{/...}' placeholder in it. An RFC 6570 URI TEMPLATE, not a URL - requesting it unexpanded returns 404."
+            },
+            "node_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The account's GraphQL node id, e.g. 'MDQ6VXNlcjEwMjQwMjU='. Required by the GraphQL API, where the numeric id is not accepted."
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL for the account, e.g. 'https://api.github.com/users/torvalds'. The API address, not the html_url a person would open."
+            },
+            "allow_forking": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when forking is permitted."
+            },
+            "archive_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a source archive - an RFC 6570 URI TEMPLATE ending in '{archive_format}{/ref}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "assignees_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for assignable users - an RFC 6570 URI TEMPLATE ending in '{/user}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "blobs_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a git blob - an RFC 6570 URI TEMPLATE ending in '{/sha}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "branches_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a branch - an RFC 6570 URI TEMPLATE ending in '{/branch}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "clone_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "HTTPS git clone URL for the repository. A plain URL, unlike the templated *_url fields beside it."
+            },
+            "collaborators_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a collaborator - an RFC 6570 URI TEMPLATE ending in '{/collaborator}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "comments_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a commit comment - an RFC 6570 URI TEMPLATE ending in '{/number}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "commits_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a commit - an RFC 6570 URI TEMPLATE ending in '{/sha}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "compare_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a comparison between two refs - an RFC 6570 URI TEMPLATE ending in '{base}...{head}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "contents_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a path in the tree - an RFC 6570 URI TEMPLATE ending in '{+path}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "contributors_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL listing contributors. A plain URL, unlike the templated *_url fields beside it."
+            },
+            "custom_properties": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Organisation-defined properties set on the repository, keyed by property name. Governance metadata an organisation attaches, which exists nowhere else in the record."
+            },
+            "deployments_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL listing deployments. A plain URL, unlike the templated *_url fields beside it."
+            },
+            "disabled": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when GitHub has disabled the repository, e.g. for a terms violation. Its contents are not retrievable."
+            },
+            "downloads_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL listing downloads (a legacy endpoint). A plain URL, unlike the templated *_url fields beside it."
+            },
+            "forks": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Fork count, e.g. 2963. The same number as forks_count; both are returned."
+            },
+            "forks_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL listing forks. A plain URL, unlike the templated *_url fields beside it."
+            },
+            "git_commits_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a raw git commit - an RFC 6570 URI TEMPLATE ending in '{/sha}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "git_refs_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a git ref - an RFC 6570 URI TEMPLATE ending in '{/sha}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "git_tags_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a git tag - an RFC 6570 URI TEMPLATE ending in '{/sha}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "git_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "git:// protocol URL, which carries no authentication. A plain URL, unlike the templated *_url fields beside it."
+            },
+            "has_discussions": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when Discussions is enabled."
+            },
+            "has_downloads": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the legacy downloads feature is enabled."
+            },
+            "has_issues": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the issue tracker is enabled. open_issues is 0 for a repository with issues disabled, which is not the same as a repository with no open issues."
+            },
+            "has_projects": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when project boards are enabled."
+            },
+            "has_pull_requests": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when pull requests are accepted."
+            },
+            "hooks_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL listing webhooks. A plain URL, unlike the templated *_url fields beside it."
+            },
+            "is_template": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the repository is a template rather than a project."
+            },
+            "issue_comment_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for an issue comment - an RFC 6570 URI TEMPLATE ending in '{/number}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "issue_events_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for an issue event - an RFC 6570 URI TEMPLATE ending in '{/number}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "issues_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for an issue - an RFC 6570 URI TEMPLATE ending in '{/number}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "keys_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a deploy key - an RFC 6570 URI TEMPLATE ending in '{/key_id}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "labels_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a label - an RFC 6570 URI TEMPLATE ending in '{/name}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "languages_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL giving the byte count per language. A plain URL, unlike the templated *_url fields beside it."
+            },
+            "merges_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL for creating a merge. A plain URL, unlike the templated *_url fields beside it."
+            },
+            "milestones_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a milestone - an RFC 6570 URI TEMPLATE ending in '{/number}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "network_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Size of the fork network, e.g. 2963."
+            },
+            "notifications_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for notifications - an RFC 6570 URI TEMPLATE ending in '{?since,all,participating}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "open_issues": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Open issue count, e.g. 311. GitHub counts pull requests as issues here, so it is not the number of bug reports."
+            },
+            "organization": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The owning organisation, where there is one. Present in addition to `owner` for an org-owned repository."
+            },
+            "owner": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The account that owns the repository, with its login, id, type and URLs. Whether the owner is a User or an Organization changes how permissions work."
+            },
+            "private": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True for a private repository. A token with access returns private repositories from a search, so a result set can mix them with public ones."
+            },
+            "pull_request_creation_policy": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Who may open pull requests, e.g. 'all'."
+            },
+            "pulls_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a pull request - an RFC 6570 URI TEMPLATE ending in '{/number}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "releases_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a release - an RFC 6570 URI TEMPLATE ending in '{/id}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "ssh_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "SSH git URL, the one that works with a deploy key. A plain URL, unlike the templated *_url fields beside it."
+            },
+            "stargazers_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL listing who starred the repository. A plain URL, unlike the templated *_url fields beside it."
+            },
+            "statuses_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for commit statuses - an RFC 6570 URI TEMPLATE ending in '{sha}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "subscribers_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The real number of accounts watching the repository, e.g. 241. This is what `watchers` is commonly mistaken for."
+            },
+            "subscribers_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL listing watchers. A plain URL, unlike the templated *_url fields beside it."
+            },
+            "subscription_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL for the caller's own watch state. A plain URL, unlike the templated *_url fields beside it."
+            },
+            "svn_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Subversion-compatible URL. A plain URL, unlike the templated *_url fields beside it."
+            },
+            "tags_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL listing tags. A plain URL, unlike the templated *_url fields beside it."
+            },
+            "teams_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL listing teams with access. A plain URL, unlike the templated *_url fields beside it."
+            },
+            "trees_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub API template for a git tree - an RFC 6570 URI TEMPLATE ending in '{/sha}', not a URL. Fetched unexpanded it returns 404; the placeholder must be substituted or stripped."
+            },
+            "visibility": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Visibility, e.g. 'public', 'private', 'internal'. Finer than the `private` boolean, which cannot express 'internal'."
+            },
+            "watchers": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "GitHub returns the STARGAZER count here, not the number of watchers - 14938 against 241 actual subscribers on the measured repository. Reading it as 'people watching' overstates it by a factor of sixty."
+            },
+            "web_commit_signoff_required": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the repository requires a sign-off on web commits."
             }
           },
           "not": {

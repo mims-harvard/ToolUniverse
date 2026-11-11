@@ -95,6 +95,13 @@
               },
               "n_programs": {
                 "type": "integer"
+              },
+              "pan_cancer_num": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "In how many cancer types the miRNA-target pair was observed, e.g. 5. The breadth of support."
               }
             }
           }
@@ -229,6 +236,48 @@
               },
               "strand": {
                 "type": "string"
+              },
+              "cell_tissue": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Where the interaction was observed, e.g. 'HeLa'. An interaction seen only in one cell line should not be reported as general."
+              },
+              "clip_experiments": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many CLIP experiments support the RBP-site association, e.g. 5. The evidence weight; one experiment and six are not the same claim."
+              },
+              "gene_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Biotype of the target gene, e.g. 'protein_coding'. An RBP binding a lncRNA and binding an mRNA are different claims."
+              },
+              "narrow_end": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "End of the narrow peak, e.g. 7663089. The narrow interval is the binding site; the broad coordinates around it are not."
+              },
+              "narrow_start": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Start of the narrow peak, e.g. 7663050."
+              },
+              "pancancer_num": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "In how many cancer types the interaction was observed, e.g. 22. One cancer type and twenty-two are very different support."
               }
             }
           }
@@ -354,6 +403,20 @@
                   "string",
                   "null"
                 ]
+              },
+              "gene_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ensembl gene id of the target gene, e.g. 'ENSG00000136997'. The symbol beside it is ambiguous; this is not."
+              },
+              "partner_gene_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Biotype of the partner gene, e.g. 'protein_coding'. A ceRNA relationship between two mRNAs and one involving a lncRNA are different claims."
               }
             }
           }
