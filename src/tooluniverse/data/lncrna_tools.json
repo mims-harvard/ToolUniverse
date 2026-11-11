@@ -399,6 +399,15 @@
                   },
                   "expert_db": {
                     "type": "boolean"
+                  },
+                  "pub_id": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "string",
+                      "null"
+                    ],
+                    "description": "LNCipedia's OWN publication id, e.g. 546614. An internal key: it is not a PubMed id and does not resolve anywhere outside LNCipedia, so it cannot be used to cite the paper."
                   }
                 }
               }
@@ -570,7 +579,10 @@
                     "type": "boolean"
                   },
                   "expert_db_url": {
-                    "type": ["string", "null"]
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "mirbase_mature_products": {
                     "type": [

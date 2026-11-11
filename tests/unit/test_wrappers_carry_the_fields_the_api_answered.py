@@ -11273,3 +11273,217 @@ def test_a_dandi_search_says_whether_the_data_can_be_read():
     desc = row["embargo_status"]["description"]
     assert "EMBARGOED" in desc
     assert "NOT the same as `status`" in desc
+
+
+def _at(rs, path):
+    """The schema node at an audit path: `.molecules[].chains[].name`.
+
+    The audit prints the exact path it could not account for, and the first
+    attempt at this batch guessed the level instead of walking that path --
+    which put a row's fields on the envelope and left every leaf still
+    undeclared. Navigating by the audit's own path language is the check that
+    the declaration went where the field actually is.
+    """
+    node = _success_branch(rs)
+    for raw in path.lstrip(".").split("."):
+        depth = 0
+        while raw.endswith("[]"):
+            depth += 1
+            raw = raw[:-2]
+        if raw:
+            node = _success_branch(node["properties"][raw])
+        for _ in range(depth):
+            node = _success_branch(node["items"])
+    return node
+
+
+def test_a_splice_prediction_says_what_the_change_does_to_the_protein():
+    """Four delta scores, and nothing saying where or what they do.
+
+    `SpliceAI_predict_splice` returns the four SpliceAI deltas as flat
+    numbers, and passes the predictor's own reply through as raw_response.
+    Inside it, sai10kPredictions.aberrations is the consequence call -- exon
+    skipping, frameshift, premature stop -- and the four geo_* offsets that
+    say WHERE each delta acts. None of the seventeen fields was declared, so
+    a caller reading the schema sees scores with no consequence attached.
+    """
+    ab = _at(
+        _config("SpliceAI_predict_splice")["return_schema"],
+        ".data.raw_response.sai10kPredictions.aberrations[]",
+    )["properties"]
+    for name in (
+        "delta_type",
+        "frameshift",
+        "affects_coding",
+        "stop_codon_introduced",
+        "geo_ag",
+        "geo_al",
+        "geo_dg",
+        "geo_dl",
+        "wt_protein_window",
+        "altered_protein_window",
+    ):
+        assert name in ab, f"{name} is returned and not declared"
+    assert "cannot be placed on a transcript" in ab["geo_dl"]["description"]
+    assert "FALSE IS NOT BENIGN" in ab["affects_coding"]["description"]
+    assert "nonsense-mediated decay" in ab["stop_codon_introduced"]["description"]
+
+
+def test_a_works_search_says_which_copy_is_the_published_one():
+    """Every location of the measured work is a preprint, and none said so.
+
+    `openalex_search_works` returns a `locations` list per work -- every known
+    copy, including repository deposits. is_published was FALSE on all 16
+    locations of the measured work, so a caller picking the first location and
+    citing it as the paper cites a preprint. Neither that flag nor the copy's
+    own id or DOI was declared.
+    """
+    loc = _at(
+        _config("openalex_search_works")["return_schema"], ".results[].locations[]"
+    )["properties"]
+    for name in ("id", "doi", "is_published", "is_accepted", "raw_source_name"):
+        assert name in loc, f"{name} is returned and not declared"
+    assert "FALSE on all 16 locations" in loc["is_published"]["description"]
+    author = _at(
+        _config("openalex_search_works")["return_schema"],
+        ".results[].authorships[].author",
+    )["properties"]
+    assert "observed_orcids" in author
+    assert "MERGED RECORDS" in author["observed_orcids"]["description"], (
+        "more than one ORCID on one author is a disambiguation warning"
+    )
+
+
+def test_an_allele_says_which_coordinate_convention_its_positions_use():
+    """0-based interbase on all 65 transcript alleles, and HGVS is 1-based.
+
+    `ClinGenAllele_get_allele` returns coordinate_system on every transcript
+    allele and the schema never declared it. It reads "0-based interbase
+    (half-open)" on all 65 of the example's transcript alleles -- not the
+    1-based inclusive convention HGVS and genome browsers use -- so a start
+    position copied out without converting is off by one.
+    """
+    ta = _at(
+        _config("ClinGenAllele_get_allele")["return_schema"], ".transcript_alleles[]"
+    )["properties"]
+    assert "coordinate_system" in ta
+    desc = ta["coordinate_system"]["description"]
+    assert "0-based interbase" in desc
+    assert "off by one" in desc
+
+
+def test_an_outlier_carries_the_residue_number_a_paper_would_print():
+    """The author numbering and the sequence index are different numbers.
+
+    `PDBeValidation_get_outlier_residues` returned author_residue_number on
+    all 568 outlier residues of the measured entry and declared only the
+    sequence index beside it. They differ whenever the construct has tags,
+    gaps or a non-1 start, so an outlier reported by the index is looked up
+    at the wrong residue in every viewer and every figure.
+    """
+    res = _at(
+        _config("PDBeValidation_get_outlier_residues")["return_schema"],
+        ".molecules[].chains[].outlier_residues[]",
+    )["properties"]
+    assert "author_residue_number" in res
+    assert "AS THE AUTHORS NUMBERED IT" in res["author_residue_number"]["description"]
+
+
+def test_an_antibody_row_says_what_it_reacts_with():
+    """A reagent search without the reactivity list or the clone.
+
+    `AntibodyRegistry_search` returns targetSpecies -- the species the
+    antibody is reported to work in, which decides whether it is usable at
+    all -- and cloneId, which is what collapses the many catalogue numbers
+    reselling one antibody into distinct reagents. Neither was declared.
+    """
+    row = _row_props(_config("AntibodyRegistry_search")["return_schema"])
+    for name in ("targetSpecies", "cloneId", "productConjugate", "productIsotype"):
+        assert name in row, f"{name} is returned and not declared"
+    assert "reactivity list" in row["targetSpecies"]["description"]
+    assert "not interchangeable" in row["productConjugate"]["description"]
+
+
+def test_an_internal_publication_id_is_not_a_pubmed_id():
+    """pub_id 546614 resolves nowhere outside LNCipedia.
+
+    `LNCipedia_get_lncrna_publications` returned pub_id on all 5 publications
+    measured and never declared it. It looks like a PubMed id and is not one,
+    which is the kind of field that gets cited by mistake.
+    """
+    pub = _at(
+        _config("LNCipedia_get_lncrna_publications")["return_schema"],
+        ".publications[]",
+    )["properties"]
+    assert "pub_id" in pub
+    assert "not a PubMed id" in pub["pub_id"]["description"]
+
+
+def test_supporting_evidence_keeps_the_submitting_study_s_own_call():
+    """The merged record's coordinates are not the ones the study reported.
+
+    `ensembl_get_sv_detail` returns each supporting call's `alias`, e.g.
+    'DUP_gs_CNV_22_27408610_27415111_A2' -- the type and breakpoints as that
+    study called them, which can differ from the merged structural variant's.
+    The alias and the supporting mappings' coord_system and strand were all
+    undeclared.
+    """
+    ev = _at(
+        _config("ensembl_get_sv_detail")["return_schema"], ".supporting_evidence[]"
+    )["properties"]
+    assert "alias" in ev
+    assert "AS THAT STUDY CALLED THEM" in ev["alias"]["description"]
+    mapping = _at(
+        _config("ensembl_get_sv_detail")["return_schema"],
+        ".supporting_evidence[].mappings[]",
+    )["properties"]
+    for name in ("coord_system", "strand"):
+        assert name in mapping, f"{name} is returned and not declared"
+    assert "not on the primary assembly" in mapping["coord_system"]["description"]
+
+
+def test_an_empty_structural_alert_list_is_the_good_outcome():
+    """A field whose absence is a finding, undeclared either way.
+
+    `ChEMBL_search_compound_structural_alerts` returns
+    compound_structural_alerts -- the toxicity and assay-interference
+    substructures matched on the compound -- and the schema declared no such
+    property, so nothing said whether an absent value meant "nothing flagged"
+    or "not checked".
+    """
+    data = _at(
+        _config("ChEMBL_search_compound_structural_alerts")["return_schema"], ".data"
+    )["properties"]
+    assert "compound_structural_alerts" in data
+    assert (
+        "AN EMPTY RESULT IS THE GOOD OUTCOME"
+        in data["compound_structural_alerts"]["description"]
+    )
+
+
+def test_an_ontology_descendant_says_what_the_term_means():
+    """Accessions and names, and nothing saying what the terms are.
+
+    `ensembl_get_ontology_descendants` returned definition, ontology, subsets
+    and synonyms on all 4 descendants measured and declared none of them. GO
+    sibling terms often have near-identical names, so the accession and the
+    name together do not distinguish them; the definition does.
+    """
+    row = _row_props(_config("ensembl_get_ontology_descendants")["return_schema"])
+    for name in ("definition", "ontology", "subsets", "synonyms"):
+        assert name in row, f"{name} is returned and not declared"
+    assert "goslim_generic" in row["subsets"]["description"]
+    assert "Ensembl serves several" in row["ontology"]["description"]
+
+
+def test_a_funder_carries_the_identifier_that_resolves():
+    """The numeric funder id does not resolve; the URI does.
+
+    `Crossref_list_funders` returned `uri` on all 5 funders measured -- the
+    Crossref Funder Registry DOI, e.g.
+    'https://doi.org/10.13039/501100001711' -- and declared only the bare
+    numeric id beside it.
+    """
+    row = _row_props(_config("Crossref_list_funders")["return_schema"])
+    assert "uri" in row
+    assert "does not resolve" in row["uri"]["description"]

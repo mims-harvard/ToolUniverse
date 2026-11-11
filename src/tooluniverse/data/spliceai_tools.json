@@ -507,6 +507,137 @@
                             ],
                             "description": "Which exon or intron is affected and how far the variant is from its boundary",
                             "additionalProperties": true
+                          },
+                          "aa_change": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The resulting amino-acid change, where one is predicted."
+                          },
+                          "affects_coding": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when the aberration falls in coding sequence. FALSE IS NOT BENIGN -- a splice change in a UTR or an intron can still abolish a transcript."
+                          },
+                          "altered_protein_window": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The predicted altered sequence over the same window. Comparing it with wt_protein_window shows the consequence directly."
+                          },
+                          "cds_size": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "string",
+                              "null"
+                            ],
+                            "description": "Size of the coding sequence the prediction is made against."
+                          },
+                          "delta_type": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Which of the four SpliceAI deltas this aberration follows from -- acceptor gain, acceptor loss, donor gain or donor loss. A delta score on its own does not say which splice site it moved."
+                          },
+                          "description": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The predicted aberration in words, e.g. 'exon skipping'."
+                          },
+                          "frameshift": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when the change shifts the reading frame. An in-frame exon skip and a frameshifting one are very different consequences for the same delta score."
+                          },
+                          "geo_ag": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "string",
+                              "null"
+                            ],
+                            "description": "Position of the predicted acceptor GAIN, relative to the variant."
+                          },
+                          "geo_al": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "string",
+                              "null"
+                            ],
+                            "description": "Position of the predicted acceptor LOSS, relative to the variant."
+                          },
+                          "geo_dg": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "string",
+                              "null"
+                            ],
+                            "description": "Position of the predicted donor GAIN, relative to the variant."
+                          },
+                          "geo_dl": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "string",
+                              "null"
+                            ],
+                            "description": "Position of the predicted donor LOSS, relative to the variant. The four geo_* offsets say WHERE each delta acts; a delta score without its position cannot be placed on a transcript."
+                          },
+                          "size": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "string",
+                              "null"
+                            ],
+                            "description": "How large the change is, in the unit `size_type` names."
+                          },
+                          "size_type": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "What `size` counts, e.g. bases or residues. The size is meaningless without it."
+                          },
+                          "start_codon_lost": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when the start codon is lost."
+                          },
+                          "stop_codon_introduced": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when a premature stop is introduced -- the usual route to nonsense-mediated decay, which removes the transcript rather than altering the protein."
+                          },
+                          "stop_codon_lost": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when the stop codon is lost, so translation reads through and extends the protein."
+                          },
+                          "wt_protein_window": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The wild-type protein sequence around the site."
                           }
                         },
                         "additionalProperties": true

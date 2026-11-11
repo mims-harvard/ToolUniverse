@@ -1048,6 +1048,48 @@
                       ],
                       "description": "The journal or repository",
                       "additionalProperties": true
+                    },
+                    "doi": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "DOI of this copy, where it has one of its own. Present on 12 of the 16 locations measured -- a repository copy often has none."
+                    },
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Identifier for this copy of the work, e.g. 'pmh:oai:arXiv.org:1706.03762'. Present on all 16 locations measured."
+                    },
+                    "is_accepted": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when this copy is at least the accepted manuscript. False together with is_published false means a submitted preprint."
+                    },
+                    "is_published": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when this copy is the published version. FALSE on all 16 locations of the measured work: every known copy is a preprint or repository deposit, so citing any of them as the published paper misstates the record."
+                    },
+                    "raw_source_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The venue exactly as the record gave it, e.g. 'arXiv (Cornell University)'. Present on 4 of 16 measured; the matched, normalised `source` is separate and can disagree with it."
+                    },
+                    "raw_type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The record type as the source gave it, e.g. 'text'."
                     }
                   },
                   "additionalProperties": true
@@ -1128,6 +1170,17 @@
                             "null"
                           ],
                           "description": "ORCID, when known"
+                        },
+                        "observed_orcids": {
+                          "type": [
+                            "array",
+                            "null"
+                          ],
+                          "description": "Every ORCID seen on works attributed to this author. MORE THAN ONE MEANS THE DISAMBIGUATION MERGED RECORDS that may belong to different people, which `orcid` alone does not reveal.",
+                          "items": {
+                            "type": "string",
+                            "description": "One entry."
+                          }
                         }
                       },
                       "additionalProperties": true
@@ -1195,6 +1248,20 @@
                       "description": "Country codes for this author's institutions",
                       "items": {
                         "type": "string"
+                      }
+                    },
+                    "affiliations": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "The affiliation lines as printed on the work, each with the institution ids OpenAlex matched them to. The author-level `institutions` list is the matched result; this is what the paper said.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "string"
+                        ],
+                        "description": "One affiliation line, with its matched institution ids."
                       }
                     }
                   },

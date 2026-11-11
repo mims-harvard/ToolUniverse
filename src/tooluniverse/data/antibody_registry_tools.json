@@ -61,6 +61,84 @@
               },
               "definingCitation": {
                 "type": "string"
+              },
+              "cloneId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The antibody clone, e.g. 'clone REA335'. Two catalogue numbers sharing a clone are the same antibody resold, so this is what collapses a vendor-wide search into distinct reagents."
+              },
+              "comments": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Free-text notes, which is where validated applications are recorded, e.g. 'Applications: WB, FC, IHC'."
+              },
+              "commercialType": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the antibody is 'commercial' or from a non-commercial source."
+              },
+              "numOfCitation": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many citations the registry counts for this antibody, e.g. 0. Zero means no recorded published use."
+              },
+              "productConjugate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What the antibody is conjugated to, e.g. 'PE'. A conjugated and an unconjugated version of the same clone are different products and not interchangeable."
+              },
+              "productIsotype": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The antibody's isotype, e.g. 'IgG1'. Decides which secondary antibody and which isotype control are correct."
+              },
+              "sourceOrganism": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Host species the antibody was raised in, e.g. 'Mouse'."
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Curation status of the REGISTRY RECORD, e.g. 'CURATED'. It describes the catalogue entry, not the antibody's validation."
+              },
+              "targetSpecies": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Species the antibody is reported to react with. This is the reactivity list -- what decides whether the antibody can be used in a given model organism at all.",
+                "items": {
+                  "type": "string",
+                  "description": "One entry."
+                }
+              },
+              "vendorUrl": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Vendor web addresses for the product. Some rows carry a bare hostname rather than a full URL.",
+                "items": {
+                  "type": "string",
+                  "description": "One entry."
+                }
               }
             }
           }

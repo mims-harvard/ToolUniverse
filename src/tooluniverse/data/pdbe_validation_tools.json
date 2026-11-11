@@ -182,6 +182,15 @@
                                   "type": "string"
                                 },
                                 "description": "Types of outliers (e.g., RAMACHANDRAN, SIDECHAIN, BOND_ANGLES)"
+                              },
+                              "author_residue_number": {
+                                "type": [
+                                  "integer",
+                                  "number",
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "The residue number AS THE AUTHORS NUMBERED IT -- what a paper, a figure and a structure viewer show. It is not the sequence index also returned here, and the two differ whenever the construct has tags, gaps or a non-1 start, so an outlier located by the index alone is read off at the wrong residue."
                               }
                             }
                           }

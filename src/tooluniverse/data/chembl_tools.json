@@ -6595,6 +6595,14 @@
                   "description": "Path of the previous page, or null on the first one."
                 }
               }
+            },
+            "compound_structural_alerts": {
+              "type": [
+                "array",
+                "object",
+                "null"
+              ],
+              "description": "The structural alerts matched on the compound: substructures associated with toxicity or with assay interference. AN EMPTY RESULT IS THE GOOD OUTCOME, so an absent or empty value here is a finding rather than a gap -- it means ChEMBL flagged nothing, not that nothing was checked."
             }
           }
         },

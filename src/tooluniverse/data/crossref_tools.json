@@ -1187,6 +1187,13 @@
           },
           "tokens": {
             "type": "array"
+          },
+          "uri": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The funder's canonical URI in the Crossref Funder Registry, e.g. 'https://doi.org/10.13039/501100001711'. This is the identifier to record for the funder; the numeric id alone does not resolve."
           }
         }
       }
