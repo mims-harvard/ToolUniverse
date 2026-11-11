@@ -123,7 +123,93 @@
         {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "uuid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "iDigBio's identifier for the record."
+              },
+              "occurrence_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The provider's own occurrence identifier, usually a URN or URI."
+              },
+              "catalog_number": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Catalogue number in the holding collection, e.g. '19822'."
+              },
+              "collection_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Code of the collection holding the specimen, e.g. 'ALTA-VP'."
+              },
+              "scientific_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The determination, LOWER-CASED by iDigBio's indexing -- 'quercus macrocarpa michx.' -- so it will not match a properly capitalised name in a string comparison. The original capitalisation is in data['dwc:scientificName']."
+              },
+              "family": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Family, likewise lower-cased."
+              },
+              "genus": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Genus, likewise lower-cased."
+              },
+              "taxon_rank": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Rank of the determination, e.g. 'species'. A record determined only to genus is not a species occurrence."
+              },
+              "recorded_by": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who collected the specimen."
+              },
+              "country": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Country, lower-cased."
+              },
+              "state_province": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "State or province, lower-cased."
+              },
+              "county": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "County, lower-cased."
+              }
+            }
           }
         },
         {
@@ -178,7 +264,121 @@
               "error"
             ]
           },
-          "type": "object"
+          "type": "object",
+          "properties": {
+            "uuid": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "iDigBio's identifier for the record."
+            },
+            "occurrence_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The provider's own occurrence identifier, usually a URN or URI."
+            },
+            "catalog_number": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Catalogue number in the holding collection, e.g. '19822'."
+            },
+            "collection_code": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Code of the collection holding the specimen, e.g. 'ALTA-VP'."
+            },
+            "scientific_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The determination, LOWER-CASED by iDigBio's indexing -- 'quercus macrocarpa michx.' -- so it will not match a properly capitalised name in a string comparison. The original capitalisation is in data['dwc:scientificName']."
+            },
+            "family": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Family, likewise lower-cased."
+            },
+            "genus": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Genus, likewise lower-cased."
+            },
+            "taxon_rank": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Rank of the determination, e.g. 'species'. A record determined only to genus is not a species occurrence."
+            },
+            "recorded_by": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Who collected the specimen."
+            },
+            "country": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Country, lower-cased."
+            },
+            "state_province": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "State or province, lower-cased."
+            },
+            "county": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "County, lower-cased."
+            },
+            "data": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The provider's ORIGINAL record, keyed by Darwin Core and Dublin Core term -- 'dwc:scientificName', 'dwc:decimalLatitude', 'dwc:coordinateUncertaintyInMeters', 'dcterms:license'. Which terms are present depends on what the provider published, so read it as a map rather than expecting fixed names. This is where the un-normalised values live, including the coordinate uncertainty and the licence, neither of which has a flattened field above.",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                }
+              }
+            }
+          }
         },
         {
           "type": "object",

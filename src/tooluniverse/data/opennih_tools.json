@@ -369,7 +369,79 @@
                     "type": [
                       "string",
                       "object"
-                    ]
+                    ],
+                    "properties": {
+                      "file": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The manifest file, e.g. 'official_sidecars_fy1985_manifest.json'."
+                      },
+                      "fiscal_year": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "The fiscal year it describes."
+                      },
+                      "source_fiscal_year": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "The fiscal year of the source data, which can differ from the file's own year."
+                      },
+                      "requested_project_count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "How many projects were asked for, e.g. 36890."
+                      },
+                      "official_detail_count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "How many detail records came back, e.g. 49744."
+                      },
+                      "official_publication_count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "How many publication records came back."
+                      },
+                      "missing_project_count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Projects with no detail record, e.g. 3. Those return null official_* fields for a data reason, not because the grant is unusual."
+                      },
+                      "unresolved_project_count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Projects the fetch could not resolve at all."
+                      },
+                      "publication_cache_fetch_limit": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "The cap applied when fetching publications, where one was applied. Non-null means the publication counts are bounded by it."
+                      },
+                      "retrieved_at": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the sidecar was fetched, e.g. '2026-07-02T08:17:11Z'. How stale this year's copy is."
+                      }
+                    }
                   }
                 },
                 "valid_files": {
@@ -971,6 +1043,17 @@
                       ],
                       "description": "The same point in words, e.g. 'There is no collaborator data for any fiscal year in the requested window'."
                     }
+                  },
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                   }
                 },
                 "multi_pi_ids_loaded": {
@@ -1898,6 +1981,17 @@
                       ],
                       "description": "The same point in words, e.g. 'There is no collaborator data for any fiscal year in the requested window'."
                     }
+                  },
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                   }
                 },
                 "multi_pi_ids_loaded": {
@@ -2248,7 +2342,62 @@
                       "object",
                       "null"
                     ],
-                    "description": "The components of that composite score, so a rank can be explained rather than just read."
+                    "description": "The components of that composite score, so a rank can be explained rather than just read.",
+                    "items": {
+                      "type": [
+                        "string",
+                        "object",
+                        "integer",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either.",
+                      "properties": {
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The dimension, e.g. 'Funding Scale'."
+                        },
+                        "raw_value": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "Its raw value before scoring, e.g. 1030304828."
+                        },
+                        "score": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "That value scaled to 0-100 across the ranked set, so it is relative to the other institutions in THIS ranking."
+                        },
+                        "weight": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "The dimension's nominal weight, e.g. 0.4."
+                        },
+                        "weight_effective": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "The weight actually applied. Differs from `weight` when another dimension was inactive and its weight was redistributed."
+                        },
+                        "active": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "False when the dimension was not used -- its weight then went elsewhere, which is why the composite can be built from fewer dimensions than are listed."
+                        }
+                      }
+                    }
                   },
                   "grant_count": {
                     "type": [
@@ -2641,6 +2790,17 @@
                       ],
                       "description": "The same point in words, e.g. 'There is no collaborator data for any fiscal year in the requested window'."
                     }
+                  },
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                   }
                 },
                 "multi_pi_ids_loaded": {
@@ -3614,6 +3774,17 @@
                       ],
                       "description": "The same point in words, e.g. 'There is no collaborator data for any fiscal year in the requested window'."
                     }
+                  },
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                   }
                 },
                 "multi_pi_ids_loaded": {
@@ -3948,7 +4119,49 @@
                     "object",
                     "null"
                   ],
-                  "description": "Funding by year. Its scope is provenance.funding_trend_scope, which can be narrower than the rest of the reply."
+                  "description": "Funding by year. Its scope is provenance.funding_trend_scope, which can be narrower than the rest of the reply.",
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either.",
+                    "properties": {
+                      "fiscal_year": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "The year."
+                      },
+                      "grant_count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Project-year rows that year -- not a number of awards."
+                      },
+                      "distinct_awards": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Distinct awards that year. This is the figure to quote as 'grants'."
+                      },
+                      "total_funding": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ],
+                        "description": "Reported funding that year, in nominal dollars."
+                      }
+                    }
+                  }
                 },
                 "mechanism_mix": {
                   "type": [
@@ -3956,7 +4169,63 @@
                     "object",
                     "null"
                   ],
-                  "description": "Breakdown by award mechanism. Its scope is provenance.mechanism_mix_scope -- usually the WHOLE portfolio, wider than funding_trend, so the two must not be divided into each other."
+                  "description": "Breakdown by award mechanism. Its scope is provenance.mechanism_mix_scope -- usually the WHOLE portfolio, wider than funding_trend, so the two must not be divided into each other.",
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either.",
+                    "properties": {
+                      "label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The mechanism class, e.g. 'RPG single-PI research (R01 baseline)'."
+                      },
+                      "comparability_group": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Which comparability group it belongs to. Only classes in the same group should be compared."
+                      },
+                      "activity_codes": {
+                        "type": "array",
+                        "description": "The NIH activity codes in the class.",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "grant_count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Project-year rows in it."
+                      },
+                      "distinct_awards": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Distinct awards in it."
+                      },
+                      "total_funding": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ],
+                        "description": "Reported funding in it."
+                      }
+                    }
+                  }
                 },
                 "top_pis": {
                   "type": [
@@ -3964,7 +4233,49 @@
                     "object",
                     "null"
                   ],
-                  "description": "The institution's largest principal investigators, limited to meta.top_n."
+                  "description": "The institution's largest principal investigators, limited to meta.top_n.",
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either.",
+                    "properties": {
+                      "pi_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The investigator, 'SURNAME, FORENAME'. A name, not an id -- two investigators sharing one are not separated here."
+                      },
+                      "grant_count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Project-year rows for them."
+                      },
+                      "distinct_awards": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Distinct awards."
+                      },
+                      "total_funding": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ],
+                        "description": "Reported funding."
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -4078,7 +4389,29 @@
                     "array",
                     "object",
                     "null"
-                  ]
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                  }
+                },
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                 }
               }
             },
@@ -4105,7 +4438,29 @@
                     "array",
                     "object",
                     "null"
-                  ]
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                  }
+                },
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                 }
               }
             },
@@ -4141,8 +4496,41 @@
                       "array",
                       "object",
                       "null"
-                    ]
+                    ],
+                    "items": {
+                      "type": [
+                        "string",
+                        "object",
+                        "integer",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                    }
+                  },
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                   }
+                },
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                 }
               }
             }
@@ -4484,6 +4872,17 @@
                       ],
                       "description": "The same point in words, e.g. 'There is no collaborator data for any fiscal year in the requested window'."
                     }
+                  },
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                   }
                 },
                 "multi_pi_ids_loaded": {
@@ -4928,7 +5327,29 @@
                     "array",
                     "object",
                     "null"
-                  ]
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                  }
+                },
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                 }
               }
             },
@@ -4955,7 +5376,29 @@
                     "array",
                     "object",
                     "null"
-                  ]
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                  }
+                },
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                 }
               }
             },
@@ -4982,7 +5425,29 @@
                     "array",
                     "object",
                     "null"
-                  ]
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                  }
+                },
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                 }
               }
             }
@@ -5315,6 +5780,17 @@
                       ],
                       "description": "The same point in words, e.g. 'There is no collaborator data for any fiscal year in the requested window'."
                     }
+                  },
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                   }
                 },
                 "multi_pi_ids_loaded": {
@@ -5686,7 +6162,18 @@
                       "object",
                       "null"
                     ],
-                    "description": "The components of that composite score, so a rank can be explained rather than just read."
+                    "description": "The components of that composite score, so a rank can be explained rather than just read.",
+                    "items": {
+                      "type": [
+                        "string",
+                        "object",
+                        "integer",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                    }
                   },
                   "grant_count": {
                     "type": [
@@ -6079,6 +6566,17 @@
                       ],
                       "description": "The same point in words, e.g. 'There is no collaborator data for any fiscal year in the requested window'."
                     }
+                  },
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                   }
                 },
                 "multi_pi_ids_loaded": {
@@ -6823,6 +7321,17 @@
                       ],
                       "description": "The same point in words, e.g. 'There is no collaborator data for any fiscal year in the requested window'."
                     }
+                  },
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                   }
                 },
                 "multi_pi_ids_loaded": {
@@ -7215,7 +7724,18 @@
                 "object",
                 "null"
               ],
-              "description": "What the other matching strategy would have found, where computed. The size of the disagreement between strategies."
+              "description": "What the other matching strategy would have found, where computed. The size of the disagreement between strategies.",
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             },
             "top_institutions": {
               "type": [
@@ -7260,7 +7780,18 @@
                       "object",
                       "null"
                     ],
-                    "description": "The components of that composite score, so a rank can be explained rather than just read."
+                    "description": "The components of that composite score, so a rank can be explained rather than just read.",
+                    "items": {
+                      "type": [
+                        "string",
+                        "object",
+                        "integer",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                    }
                   },
                   "grant_count": {
                     "type": [
@@ -7435,7 +7966,18 @@
                     "array",
                     "object",
                     "null"
-                  ]
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                  }
                 }
               }
             },
@@ -7492,8 +8034,41 @@
                       "array",
                       "object",
                       "null"
-                    ]
+                    ],
+                    "items": {
+                      "type": [
+                        "string",
+                        "object",
+                        "integer",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                    }
+                  },
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                   }
+                },
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                 }
               }
             },
@@ -7529,8 +8104,41 @@
                       "array",
                       "object",
                       "null"
-                    ]
+                    ],
+                    "items": {
+                      "type": [
+                        "string",
+                        "object",
+                        "integer",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                    }
+                  },
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                   }
+                },
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                 }
               }
             }
@@ -7543,7 +8151,18 @@
               "array",
               "object",
               "null"
-            ]
+            ],
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+            }
           }
         },
         {
@@ -7736,7 +8355,29 @@
                     "array",
                     "object",
                     "null"
-                  ]
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                  }
+                },
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                 }
               }
             },

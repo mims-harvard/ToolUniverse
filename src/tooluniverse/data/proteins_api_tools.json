@@ -3003,7 +3003,18 @@
         },
         {
           "type": "array",
-          "description": "List of protein results (when multiple accessions provided in batch). Each item contains 'accession', 'status', 'data', and 'url' fields."
+          "description": "List of protein results (when multiple accessions provided in batch). Each item contains 'accession', 'status', 'data', and 'url' fields.",
+          "items": {
+            "type": [
+              "string",
+              "object",
+              "integer",
+              "number",
+              "boolean",
+              "null"
+            ],
+            "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+          }
         }
       ]
     },
@@ -3441,6 +3452,17 @@
           ],
           "description": "NCBI taxonomy id of the source organism, e.g. 9606 for human. The accession alone does not state the species."
         }
+      },
+      "items": {
+        "type": [
+          "string",
+          "object",
+          "integer",
+          "number",
+          "boolean",
+          "null"
+        ],
+        "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
       }
     },
     "test_examples": [

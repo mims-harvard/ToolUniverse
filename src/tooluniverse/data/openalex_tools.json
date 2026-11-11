@@ -156,7 +156,18 @@
                   "array",
                   "string"
                 ],
-                "description": "List of keywords/concepts associated with the paper, or 'Keywords not available' if none"
+                "description": "List of keywords/concepts associated with the paper, or 'Keywords not available' if none",
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                }
               },
               "article_type": {
                 "type": "string",
@@ -419,7 +430,18 @@
                       "array",
                       "object",
                       "null"
-                    ]
+                    ],
+                    "items": {
+                      "type": [
+                        "string",
+                        "object",
+                        "integer",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                    }
                   }
                 },
                 "url": {
@@ -694,7 +716,18 @@
                         "array",
                         "object",
                         "null"
-                      ]
+                      ],
+                      "items": {
+                        "type": [
+                          "string",
+                          "object",
+                          "integer",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                      }
                     }
                   },
                   "id": {
@@ -902,7 +935,18 @@
                         "array",
                         "object",
                         "null"
-                      ]
+                      ],
+                      "items": {
+                        "type": [
+                          "string",
+                          "object",
+                          "integer",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                      }
                     }
                   },
                   "id": {
@@ -1096,7 +1140,51 @@
                       "description": "Institutions for this author on this work",
                       "items": {
                         "type": "object",
-                        "additionalProperties": true
+                        "additionalProperties": true,
+                        "properties": {
+                          "id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "OpenAlex institution id."
+                          },
+                          "display_name": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Institution name, e.g. 'Google (United States)'. OpenAlex appends the country to disambiguate same-named bodies."
+                          },
+                          "ror": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Its ROR id -- the identifier to use outside OpenAlex."
+                          },
+                          "country_code": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Two-letter country code."
+                          },
+                          "type": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Institution type, e.g. 'company', 'education', 'government'."
+                          },
+                          "lineage": {
+                            "type": "array",
+                            "description": "The institution and its parents, from itself upward. A department and its university both appear, so counting over this double-counts.",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
                       }
                     },
                     "countries": {
@@ -1656,6 +1744,20 @@
                   "null"
                 ],
                 "description": "Volume, where OpenAlex sets it outside biblio"
+              },
+              "display_name_acronyms": {
+                "type": "array",
+                "description": "Acronyms the institution is known by, e.g. ['MIT'].",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "alternate_titles": {
+                "type": "array",
+                "description": "Other titles the source has been published under.",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -1737,7 +1839,8 @@
             "null"
           ],
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {}
           },
           "description": "Each author with their position (first/middle/last), institutions, country and whether they are a corresponding author. The authorship record, which a citation needs."
         },
@@ -2047,7 +2150,16 @@
               "string",
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ]
+            },
+            "description": "One identifier, or a list of them where the namespace allows several (a source has more than one ISSN, an author more than one observed ORCID)."
           }
         },
         "title": {
@@ -2148,7 +2260,30 @@
                   "object",
                   "null"
                 ],
-                "description": "The disambiguated author, by name or as an object with the OpenAlex author id."
+                "description": "The disambiguated author, by name or as an object with the OpenAlex author id.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex author id -- DISAMBIGUATED, so it can merge or split between releases."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The author's name as OpenAlex prefers it."
+                  },
+                  "orcid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Their ORCID, where known. Null is common and is not evidence they have none."
+                  }
+                }
               },
               "raw_author_name": {
                 "type": [
@@ -2188,7 +2323,51 @@
                   "type": [
                     "string",
                     "object"
-                  ]
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "OpenAlex institution id."
+                    },
+                    "display_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Institution name, e.g. 'Google (United States)'. OpenAlex appends the country to disambiguate same-named bodies."
+                    },
+                    "ror": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its ROR id -- the identifier to use outside OpenAlex."
+                    },
+                    "country_code": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Two-letter country code."
+                    },
+                    "type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Institution type, e.g. 'company', 'education', 'government'."
+                    },
+                    "lineage": {
+                      "type": "array",
+                      "description": "The institution and its parents, from itself upward. A department and its university both appear, so counting over this double-counts.",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 }
               },
               "affiliations": {
@@ -2201,7 +2380,23 @@
                   "type": [
                     "string",
                     "object"
-                  ]
+                  ],
+                  "properties": {
+                    "raw_affiliation_string": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The affiliation line exactly as printed on the work, e.g. 'Google Inc'."
+                    },
+                    "institution_ids": {
+                      "type": "array",
+                      "description": "The OpenAlex institutions that line was matched to. More than one means the line named several; an empty list means the matcher could not place it at all.",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 }
               },
               "raw_affiliation_strings": {
@@ -3608,7 +3803,1319 @@
                     "number",
                     "boolean",
                     "null"
-                  ]
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either.",
+                    "items": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                  "additionalProperties": {
+                    "type": [
+                      "object",
+                      "array",
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                    "items": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either.",
+                  "items": {
+                    "type": [
+                      "object",
+                      "array",
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                    "items": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "object",
+                      "array",
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                    "items": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -3658,7 +5165,16 @@
                     "string",
                     "array",
                     "null"
-                  ]
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "description": "One identifier, or a list of them where the namespace allows several (a source has more than one ISSN, an author more than one observed ORCID)."
                 }
               },
               "display_name": {
@@ -3801,7 +5317,51 @@
                         "object",
                         "null"
                       ],
-                      "description": "The institution."
+                      "description": "The institution.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex institution id."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Institution name, e.g. 'Google (United States)'. OpenAlex appends the country to disambiguate same-named bodies."
+                        },
+                        "ror": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its ROR id -- the identifier to use outside OpenAlex."
+                        },
+                        "country_code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Two-letter country code."
+                        },
+                        "type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Institution type, e.g. 'company', 'education', 'government'."
+                        },
+                        "lineage": {
+                          "type": "array",
+                          "description": "The institution and its parents, from itself upward. A department and its university both appear, so counting over this double-counts.",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
                     },
                     "years": {
                       "type": [
@@ -4179,6 +5739,27 @@
                   "null"
                 ],
                 "description": "When it was last changed."
+              },
+              "relevance_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "How well this hit matched the search text. Present ONLY on search results, never on a direct lookup, and comparable only WITHIN one result set -- 40 in one query and 40 in another say nothing about each other."
+              },
+              "display_name_acronyms": {
+                "type": "array",
+                "description": "Acronyms the institution is known by, e.g. ['MIT'].",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "alternate_titles": {
+                "type": "array",
+                "description": "Other titles the source has been published under.",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -4188,7 +5769,18 @@
             "array",
             "null"
           ],
-          "description": "Group counts, when the query asked for them; an empty list otherwise."
+          "description": "Group counts, when the query asked for them; an empty list otherwise.",
+          "items": {
+            "type": [
+              "string",
+              "object",
+              "integer",
+              "number",
+              "boolean",
+              "null"
+            ],
+            "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+          }
         }
       }
     },
@@ -4271,7 +5863,16 @@
               "string",
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ]
+            },
+            "description": "One identifier, or a list of them where the namespace allows several (a source has more than one ISSN, an author more than one observed ORCID)."
           }
         },
         "display_name": {
@@ -4414,7 +6015,51 @@
                   "object",
                   "null"
                 ],
-                "description": "The institution."
+                "description": "The institution.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex institution id."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Institution name, e.g. 'Google (United States)'. OpenAlex appends the country to disambiguate same-named bodies."
+                  },
+                  "ror": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its ROR id -- the identifier to use outside OpenAlex."
+                  },
+                  "country_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Two-letter country code."
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Institution type, e.g. 'company', 'education', 'government'."
+                  },
+                  "lineage": {
+                    "type": "array",
+                    "description": "The institution and its parents, from itself upward. A department and its university both appear, so counting over this double-counts.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
               },
               "years": {
                 "type": [
@@ -4945,7 +6590,1319 @@
                     "number",
                     "boolean",
                     "null"
-                  ]
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either.",
+                    "items": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                  "additionalProperties": {
+                    "type": [
+                      "object",
+                      "array",
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                    "items": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either.",
+                  "items": {
+                    "type": [
+                      "object",
+                      "array",
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                    "items": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "object",
+                      "array",
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                    "items": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -4985,7 +7942,16 @@
                     "string",
                     "array",
                     "null"
-                  ]
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "description": "One identifier, or a list of them where the namespace allows several (a source has more than one ISSN, an author more than one observed ORCID)."
                 }
               },
               "display_name": {
@@ -5630,6 +8596,27 @@
                   "null"
                 ],
                 "description": "When it was last changed."
+              },
+              "relevance_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "How well this hit matched the search text. Present ONLY on search results, never on a direct lookup, and comparable only WITHIN one result set -- 40 in one query and 40 in another say nothing about each other."
+              },
+              "display_name_acronyms": {
+                "type": "array",
+                "description": "Acronyms the institution is known by, e.g. ['MIT'].",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "alternate_titles": {
+                "type": "array",
+                "description": "Other titles the source has been published under.",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -5639,7 +8626,18 @@
             "array",
             "null"
           ],
-          "description": "Group counts, when the query asked for them; an empty list otherwise."
+          "description": "Group counts, when the query asked for them; an empty list otherwise.",
+          "items": {
+            "type": [
+              "string",
+              "object",
+              "integer",
+              "number",
+              "boolean",
+              "null"
+            ],
+            "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+          }
         }
       }
     },
@@ -5712,7 +8710,16 @@
               "string",
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ]
+            },
+            "description": "One identifier, or a list of them where the namespace allows several (a source has more than one ISSN, an author more than one observed ORCID)."
           }
         },
         "display_name": {
@@ -6510,7 +9517,1319 @@
                     "number",
                     "boolean",
                     "null"
-                  ]
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either.",
+                    "items": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                  "additionalProperties": {
+                    "type": [
+                      "object",
+                      "array",
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                    "items": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either.",
+                  "items": {
+                    "type": [
+                      "object",
+                      "array",
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                    "items": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "object",
+                      "array",
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                    "items": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "object",
+                        "array",
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                      "items": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "object",
+                          "array",
+                          "string",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                        "items": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "object",
+                            "array",
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "A clause, a value, or a list of either -- the parse tree nests as deep as the query did.",
+                          "items": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": [
+                              "object",
+                              "array",
+                              "string",
+                              "number",
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -6543,7 +10862,16 @@
                     "string",
                     "array",
                     "null"
-                  ]
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "description": "One identifier, or a list of them where the namespace allows several (a source has more than one ISSN, an author more than one observed ORCID)."
                 }
               },
               "display_name": {
@@ -7110,6 +11438,27 @@
                   "null"
                 ],
                 "description": "When it was last changed."
+              },
+              "relevance_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "How well this hit matched the search text. Present ONLY on search results, never on a direct lookup, and comparable only WITHIN one result set -- 40 in one query and 40 in another say nothing about each other."
+              },
+              "display_name_acronyms": {
+                "type": "array",
+                "description": "Acronyms the institution is known by, e.g. ['MIT'].",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "alternate_titles": {
+                "type": "array",
+                "description": "Other titles the source has been published under.",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -7119,7 +11468,18 @@
             "array",
             "null"
           ],
-          "description": "Group counts, when the query asked for them; an empty list otherwise."
+          "description": "Group counts, when the query asked for them; an empty list otherwise.",
+          "items": {
+            "type": [
+              "string",
+              "object",
+              "integer",
+              "number",
+              "boolean",
+              "null"
+            ],
+            "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+          }
         }
       }
     },
@@ -7189,7 +11549,16 @@
               "string",
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ]
+            },
+            "description": "One identifier, or a list of them where the namespace allows several (a source has more than one ISSN, an author more than one observed ORCID)."
           }
         },
         "display_name": {

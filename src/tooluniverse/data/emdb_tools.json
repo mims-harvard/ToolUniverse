@@ -55,7 +55,18 @@
           "type": "string"
         },
         "authors": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "object",
+              "integer",
+              "number",
+              "boolean",
+              "null"
+            ],
+            "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+          }
         },
         "journal": {
           "type": "string"
@@ -143,8 +154,41 @@
                   "array",
                   "object",
                   "null"
-                ]
+                ],
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                }
+              },
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
               }
+            },
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
             }
           }
         },
@@ -180,8 +224,41 @@
                   "array",
                   "object",
                   "null"
-                ]
+                ],
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                }
+              },
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
               }
+            },
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
             }
           }
         },
@@ -199,7 +276,18 @@
               "array",
               "object",
               "null"
-            ]
+            ],
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+            }
           }
         },
         "interpretation": {
@@ -234,8 +322,41 @@
                   "array",
                   "object",
                   "null"
-                ]
+                ],
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                }
+              },
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
               }
+            },
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
             }
           }
         },
@@ -280,9 +401,53 @@
                     "array",
                     "object",
                     "null"
-                  ]
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                  }
+                },
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                 }
+              },
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
               }
+            },
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
             }
           }
         },
@@ -318,8 +483,41 @@
                   "array",
                   "object",
                   "null"
-                ]
+                ],
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                }
+              },
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
               }
+            },
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
             }
           }
         },
@@ -416,7 +614,18 @@
           }
         },
         "facets": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "object",
+              "integer",
+              "number",
+              "boolean",
+              "null"
+            ],
+            "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+          }
         }
       }
     },
@@ -467,7 +676,18 @@
             "type": "string"
           },
           "authors": {
-            "type": "array"
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+            }
           },
           "journal": {
             "type": "string"
@@ -637,10 +857,32 @@
           "type": "string"
         },
         "components": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "object",
+              "integer",
+              "number",
+              "boolean",
+              "null"
+            ],
+            "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+          }
         },
         "ligands": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "object",
+              "integer",
+              "number",
+              "boolean",
+              "null"
+            ],
+            "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+          }
         },
         "buffer": {
           "type": "string"
@@ -766,7 +1008,1187 @@
         "null"
       ],
       "description": "Validation metrics keyed by EMDB ID (e.g., {'1234': {...}}).",
-      "additionalProperties": true
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "resolution": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The reported resolution of the map.",
+            "properties": {
+              "value": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Resolution in angstroms, e.g. 14.5. The AUTHOR's claim, not an independent measurement -- rotationally_averaged_power_spectrum is the check on it."
+              }
+            }
+          },
+          "recommended_contour_level": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The contour level the depositor recommends for viewing. Displaying a map at the wrong contour makes features appear or vanish.",
+            "properties": {
+              "recl": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The level itself, e.g. 611.0, in the map's own density units."
+              },
+              "sigma": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The same level in standard deviations above the mean, e.g. 0.309. This is the form that is comparable BETWEEN maps; the raw level is not."
+              }
+            }
+          },
+          "predicated_contour_level": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "A contour level EMDB computes from the density itself, for comparison with the depositor's.",
+            "properties": {
+              "primary": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The computed level and what it encloses.",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The level, e.g. 2546.5. A large gap from recommended_contour_level.recl is worth looking at."
+                  },
+                  "volume": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The volume enclosed at that level."
+                  }
+                }
+              }
+            }
+          },
+          "density_distribution": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The map's density histogram -- what both contour levels are chosen against.",
+            "properties": {
+              "mode": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The modal density, e.g. -87.35. For a well-formed map this is the solvent peak, so a mode far from zero means the map is not zero-centred."
+              },
+              "x": {
+                "type": "array",
+                "description": "Density values, the histogram's bins.",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "y": {
+                "type": "array",
+                "description": "Counts in each bin, positionally parallel to `x`.",
+                "items": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "volume_estimate": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Enclosed volume as a function of contour level -- the curve the contour choice is made on.",
+            "properties": {
+              "estvolume": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Estimated volume at the recommended contour, e.g. 88060. Compare with the expected molecular volume: far too large means the contour is too low."
+              },
+              "level": {
+                "type": "array",
+                "description": "The contour levels sampled.",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "volume": {
+                "type": "array",
+                "description": "The enclosed volume at each of those levels, positionally parallel to `level`.",
+                "items": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "central_slice": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The central slice of the map, as images and as indices.",
+            "properties": {
+              "indices": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The slice index taken on each axis, as {x, y, z}.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Index on x."
+                  },
+                  "y": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Index on y."
+                  },
+                  "z": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Index on z."
+                  }
+                }
+              },
+              "original": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The slice image at the map's own contrast. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              },
+              "scaled": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The same slice contrast-scaled for viewing. Features visible here and not in `original` are a product of the scaling. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              }
+            }
+          },
+          "largest_variance_slice": {
+            "type": [
+              "integer",
+              "number",
+              "object",
+              "null"
+            ],
+            "description": "The slice with the most variation -- where the structure is, which is not always the centre. Carries the same {indices, original, scaled} shape as central_slice when rendered.",
+            "properties": {
+              "indices": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The slice index on each axis.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Index on x."
+                  },
+                  "y": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Index on y."
+                  },
+                  "z": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Index on z."
+                  }
+                }
+              },
+              "original": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The slice image. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              },
+              "scaled": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The contrast-scaled slice image. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              }
+            }
+          },
+          "rotationally_averaged_power_spectrum": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The map's power as a function of spatial frequency. It falls away past the real resolution, so plotted against `resolution.value` it is the independent check on the claimed resolution.",
+            "properties": {
+              "x": {
+                "type": "array",
+                "description": "Spatial frequency, in inverse angstroms.",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "y": {
+                "type": "array",
+                "description": "Power at each of those frequencies, positionally parallel to `x`.",
+                "items": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "symmetry": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The symmetry imposed during reconstruction. Imposed symmetry the specimen does not have averages real asymmetry away, which no resolution figure will reveal.",
+            "properties": {
+              "symmetry_info": {
+                "type": [
+                  "boolean",
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "What symmetry was applied, or true/false when only its presence is recorded."
+              }
+            }
+          },
+          "map_surface": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Rendered surface of the map at the recommended contour. Returned per AXIS as {x, y, z}, not as a single file.",
+            "properties": {
+              "x": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The x-axis view."
+              },
+              "y": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The y-axis view."
+              },
+              "z": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The z-axis view."
+              }
+            }
+          },
+          "orthogonal_projection": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Orthogonal projection through the map. Rendered per axis and at two contrasts: {original: {x,y,z}, scaled: {x,y,z}}.",
+            "properties": {
+              "original": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "At the map's own contrast. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              },
+              "scaled": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Contrast-scaled for viewing. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              }
+            }
+          },
+          "orthogonal_max": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Maximum-value projection. Rendered per axis and at two contrasts: {original: {x,y,z}, scaled: {x,y,z}}.",
+            "properties": {
+              "original": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "At the map's own contrast. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              },
+              "scaled": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Contrast-scaled for viewing. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              }
+            }
+          },
+          "orthogonal_min": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Minimum-value projection. Rendered per axis and at two contrasts: {original: {x,y,z}, scaled: {x,y,z}}.",
+            "properties": {
+              "original": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "At the map's own contrast. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              },
+              "scaled": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Contrast-scaled for viewing. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              }
+            }
+          },
+          "orthogonal_median": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Median projection. Rendered per axis and at two contrasts: {original: {x,y,z}, scaled: {x,y,z}}.",
+            "properties": {
+              "original": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "At the map's own contrast. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              },
+              "scaled": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Contrast-scaled for viewing. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              }
+            }
+          },
+          "orthogonal_std": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Standard-deviation projection -- where the map varies most. Rendered per axis and at two contrasts: {original: {x,y,z}, scaled: {x,y,z}}.",
+            "properties": {
+              "original": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "At the map's own contrast. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              },
+              "scaled": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Contrast-scaled for viewing. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              }
+            }
+          },
+          "orthogonal_glow_projection": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Glow-rendered projection. Rendered per axis and at two contrasts: {original: {x,y,z}, scaled: {x,y,z}}.",
+            "properties": {
+              "original": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "At the map's own contrast. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              },
+              "scaled": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Contrast-scaled for viewing. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              }
+            }
+          },
+          "orthogonal_glow_max": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Glow-rendered maximum projection. Rendered per axis and at two contrasts: {original: {x,y,z}, scaled: {x,y,z}}.",
+            "properties": {
+              "original": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "At the map's own contrast. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              },
+              "scaled": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Contrast-scaled for viewing. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              }
+            }
+          },
+          "orthogonal_glow_std": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Glow-rendered standard-deviation image, with EMDB's own saturation check beside it.",
+            "properties": {
+              "original": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "At the map's own contrast. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              },
+              "scaled": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Contrast-scaled for viewing. Returned per AXIS as {x, y, z}, not as a single file.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The x-axis view."
+                  },
+                  "y": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The y-axis view."
+                  },
+                  "z": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The z-axis view."
+                  }
+                }
+              },
+              "green_percentage": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "How much of each rendered view is saturated green, per axis. A high percentage means the glow rendering is clipping, so the image understates the real variation.",
+                "properties": {
+                  "x": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The x view.",
+                    "properties": {
+                      "percentage": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Percent of the view saturated, e.g. 13.94."
+                      },
+                      "diff_horizontal": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Horizontal asymmetry of that saturation."
+                      },
+                      "diff_vertical": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Vertical asymmetry of it."
+                      }
+                    }
+                  },
+                  "y": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The y view.",
+                    "properties": {
+                      "percentage": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Percent of the view saturated, e.g. 13.94."
+                      },
+                      "diff_horizontal": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Horizontal asymmetry of that saturation."
+                      },
+                      "diff_vertical": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Vertical asymmetry of it."
+                      }
+                    }
+                  },
+                  "z": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The z view.",
+                    "properties": {
+                      "percentage": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Percent of the view saturated, e.g. 13.94."
+                      },
+                      "diff_horizontal": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Horizontal asymmetry of that saturation."
+                      },
+                      "diff_vertical": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Vertical asymmetry of it."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "data_validation": {
+            "type": [
+              "object",
+              "array",
+              "null"
+            ],
+            "description": "EMDB's own file-level validation, where it has been run. Null means NOT RUN, not passed.",
+            "properties": {
+              "map_data_validation": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "One entry per map FILE, keyed by the filename ('emd_1234.map'). The key is data, so read it as a map.",
+                "additionalProperties": {
+                  "type": "object",
+                  "description": "What the validator found for that file.",
+                  "properties": {
+                    "exists": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when the file was found."
+                    },
+                    "valid": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when it passed. Measured FALSE on the example entry -- the map exists and does not validate, which `exists` alone would not say."
+                    },
+                    "file": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Path the validator looked at."
+                    },
+                    "messages": {
+                      "type": [
+                        "string",
+                        "array",
+                        "null"
+                      ],
+                      "description": "What it reported, in words.",
+                      "items": {
+                        "type": [
+                          "string",
+                          "object",
+                          "integer",
+                          "number",
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                      }
+                    },
+                    "error": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The error, where it failed outright rather than failing validation."
+                    }
+                  }
+                }
+              }
+            },
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+            }
+          },
+          "validation_json": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The validation report on the record itself -- whether EMDB's own checks passed.",
+            "properties": {
+              "status": {
+                "type": [
+                  "boolean",
+                  "string",
+                  "null"
+                ],
+                "description": "Whether validation passed. Measured FALSE on the example entry."
+              },
+              "errors": {
+                "type": "array",
+                "description": "What failed, e.g. \"$: 'map_surface' is a required property\" -- the validator saying the record is incomplete. An empty list is the only clean result.",
+                "items": {
+                  "type": [
+                    "string",
+                    "object"
+                  ]
+                }
+              },
+              "schema_version": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Version of the validation schema, e.g. '0.0.1.dev137'. A dev version means these verdicts may change."
+              }
+            }
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Version of the validation pipeline, e.g. '0.0.1.dev137'."
+          }
+        }
+      }
     },
     "test_examples": [
       {

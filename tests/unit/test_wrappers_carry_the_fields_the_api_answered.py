@@ -10914,3 +10914,63 @@ def test_an_openalex_count_is_declared_against_the_right_denominator():
             "description"
         ]
     )
+
+
+def test_the_audit_sees_an_array_whose_type_is_a_list():
+    """A nullable array was never descended into, and that was silent.
+
+    scripts/audit_declared_return_fields.py decided whether a schema node was
+    an array with `type == "array"`, an exact comparison. JSON Schema allows
+    `type` to be a LIST, and a nullable array is normally written
+    ["array", "null"] -- so the walker neither descended into such an array
+    nor reported it, and every field inside was invisible. A tool scored zero
+    undeclared paths for levels that were never looked at.
+
+    Found on Reactome_get_pathway_reactions, whose eventOf[] items were fully
+    declared and still reported `.*`. Fixing the test turned up nine real gaps
+    across OpenAlex, OpenNIH and ISRCTN that had been hidden the same way.
+    """
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "field_audit", REPO / "scripts" / "audit_declared_return_fields.py"
+    )
+    audit = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(audit)
+    assert audit._is_array({"type": "array"})
+    assert audit._is_array({"type": ["array", "null"]}), (
+        "a nullable array is still an array, and treating it otherwise hides "
+        "everything inside it"
+    )
+    assert not audit._is_array({"type": "object"})
+    assert not audit._is_array({"type": ["string", "null"]})
+    value = [{"inner": 1}]
+    schema = {"type": ["array", "null"], "items": {"type": "object", "properties": {}}}
+    assert audit.undeclared(value, schema, "", []) == [".[].*"] or audit.undeclared(
+        value, schema, "", []
+    ) == ["[].*"], "the walker must now descend and report the item level"
+
+
+def test_a_declaration_beside_a_oneof_belongs_to_no_branch():
+    """Reactome's reaction rows are a oneOf of {integer, object}.
+
+    A reply lists sibling events as bare dbIds and the queried one as the full
+    record, so the row schema is a oneOf. Fourteen properties written as a
+    SIBLING of that oneOf -- rather than inside its object branch -- are never
+    read by the schema walker, so they documented nothing while looking like
+    they documented everything. The fields must sit in the branch.
+    """
+    rs = _config("Reactome_get_pathway_reactions")["return_schema"]
+    branch = (rs.get("oneOf") or [rs])[0]
+    row = branch["items"]
+    assert "oneOf" in row, "the row is a oneOf of a bare id and the full record"
+    objects = [b for b in row["oneOf"] if b.get("type") == "object"]
+    assert objects, "the object branch is gone"
+    props = objects[0]["properties"]
+    for name in ("stId", "stIdVersion", "category", "isInferred", "eventOf"):
+        assert name in props, f"{name} must be declared INSIDE the object branch"
+    ev = props["eventOf"]["items"]["properties"]
+    assert "hasEvent" in ev, "the parent pathway's own event list is not declared"
+    assert (
+        "SIBLINGS" in props["eventOf"]["items"]["properties"]["hasEvent"]["description"]
+    )

@@ -74,6 +74,25 @@ def branches(schema):
     return [schema]
 
 
+def _is_array(node):
+    """Does this schema node declare an array?
+
+    JSON Schema allows `type` to be a LIST, and a nullable array is normally
+    written `["array", "null"]`. An exact `== "array"` test misses that, and
+    the miss is silent in the worst way: the walker neither descends into the
+    array nor reports it, so every field inside it is invisible and the tool
+    scores zero undeclared paths for a level that was never looked at. Found
+    2026-11-11 on Reactome_get_pathway_reactions, whose eventOf[] items were
+    fully declared and still reported `.*`.
+    """
+    if not isinstance(node, dict):
+        return False
+    declared = node.get("type")
+    if isinstance(declared, list):
+        return "array" in declared
+    return declared == "array"
+
+
 def undeclared(value, schema, path="", found=None):
     """Paths in `value` that no branch of `schema` declares.
 
@@ -88,11 +107,11 @@ def undeclared(value, schema, path="", found=None):
         # `"items" in b`, not a truthiness test: `items: {}` is present and
         # declares nothing, which is a finding about the item level rather
         # than about the array.
-        items = [b["items"] for b in bs if b.get("type") == "array" and "items" in b]
+        items = [b["items"] for b in bs if _is_array(b) and "items" in b]
         if items:
             for item in value[:SAMPLE_PER_LIST]:
                 undeclared(item, items[0], path + "[]", found)
-        elif value and any(b.get("type") == "array" for b in bs):
+        elif value and any(_is_array(b) for b in bs):
             # An array declared without items: everything under it is undeclared.
             found.append(path + "[]" + UNDECLARED_LEVEL)
         return found
@@ -132,9 +151,7 @@ def undeclared(value, schema, path="", found=None):
         best_score = coverage(best_branch)
         tied = [b for b in object_bs if coverage(b) == best_score]
         if len(tied) > 1:
-            best_branch = min(
-                tied, key=lambda b: len(undeclared(value, b, path, []))
-            )
+            best_branch = min(tied, key=lambda b: len(undeclared(value, b, path, [])))
         found.extend(undeclared(value, best_branch, path, []))
         return found
     declared = {}

@@ -82,7 +82,239 @@
                   "type": [
                     "integer",
                     "object"
-                  ]
+                  ],
+                  "properties": {
+                    "stId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Stable identifier of the parent pathway."
+                    },
+                    "stIdVersion": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "That identifier with its version."
+                    },
+                    "dbId": {
+                      "type": [
+                        "integer",
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its internal id, which is build-specific."
+                    },
+                    "displayName": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its name."
+                    },
+                    "name": {
+                      "type": "array",
+                      "description": "All its names.",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "className": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its class, e.g. 'Pathway'."
+                    },
+                    "schemaClass": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its data-model class."
+                    },
+                    "speciesName": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Species it is annotated in."
+                    },
+                    "isInferred": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when inferred by orthology rather than curated here."
+                    },
+                    "isInDisease": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when part of a disease pathway."
+                    },
+                    "maxDepth": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Its depth in the hierarchy."
+                    },
+                    "hasDiagram": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when it has a drawn diagram."
+                    },
+                    "hasEHLD": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when it has an illustrated overview."
+                    },
+                    "lastUpdatedDate": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "When it last changed."
+                    },
+                    "releaseDate": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "When it was released."
+                    },
+                    "hasEvent": {
+                      "type": "array",
+                      "description": "The events inside that parent -- the queried event's SIBLINGS. A reply about one reaction therefore carries its whole parent pathway.",
+                      "items": {
+                        "type": [
+                          "integer",
+                          "object"
+                        ],
+                        "description": "A sibling event, as its numeric dbId or as the full record. The record has the same shape as its parent, and its own eventOf/hasEvent nest the same way, so the structure is recursive and is declared one level deep here.",
+                        "properties": {
+                          "stId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Stable identifier of the sibling event."
+                          },
+                          "stIdVersion": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "That identifier with its version."
+                          },
+                          "dbId": {
+                            "type": [
+                              "integer",
+                              "string",
+                              "null"
+                            ],
+                            "description": "Its internal id."
+                          },
+                          "displayName": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Its name."
+                          },
+                          "name": {
+                            "type": "array",
+                            "description": "All its names.",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "className": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Its class, e.g. 'Reaction'."
+                          },
+                          "schemaClass": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Its data-model class."
+                          },
+                          "category": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "For a reaction, what kind it is: 'binding', 'dissociation', 'transition', 'omitted'."
+                          },
+                          "definition": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "A regulation's type where the event is one, e.g. 'Inhibition'."
+                          },
+                          "speciesName": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Species it is annotated in."
+                          },
+                          "isInferred": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when inferred by orthology."
+                          },
+                          "isInDisease": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when part of a disease pathway."
+                          },
+                          "maxDepth": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ],
+                            "description": "Its depth in the hierarchy."
+                          },
+                          "releaseDate": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "When it was released."
+                          },
+                          "eventOf": {
+                            "type": "array",
+                            "description": "The parents of THIS sibling. The nesting repeats from here.",
+                            "items": {
+                              "type": [
+                                "integer",
+                                "object",
+                                "string"
+                              ],
+                              "description": "A parent event, as its dbId or as the record."
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 },
                 "description": "Parent events (can be IDs or objects)"
               },
@@ -224,7 +456,18 @@
                 "array",
                 "object",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             }
           },
           "description": "Cellular compartments the pathway takes place in"
@@ -275,7 +518,18 @@
                 "array",
                 "object",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             }
           },
           "description": "Figures illustrating the pathway"
@@ -349,7 +603,18 @@
                 "string",
                 "null"
               ],
-              "description": "Term name or names"
+              "description": "Term name or names",
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             },
             "className": {
               "type": [
@@ -480,7 +745,18 @@
                       "array",
                       "object",
                       "null"
-                    ]
+                    ],
+                    "items": {
+                      "type": [
+                        "string",
+                        "object",
+                        "integer",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                    }
                   }
                 }
               },
@@ -499,7 +775,18 @@
                   "string",
                   "null"
                 ],
-                "description": "Event name or names"
+                "description": "Event name or names",
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                }
               },
               "releaseDate": {
                 "type": "string"
@@ -551,7 +838,18 @@
                 "array",
                 "object",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             }
           },
           "description": "The same pathway in other species, where Reactome inferred it"
@@ -634,7 +932,18 @@
                       "array",
                       "object",
                       "null"
-                    ]
+                    ],
+                    "items": {
+                      "type": [
+                        "string",
+                        "object",
+                        "integer",
+                        "number",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                    }
                   }
                 }
               },
@@ -662,7 +971,18 @@
                   "string",
                   "null"
                 ],
-                "description": "Event name or names"
+                "description": "Event name or names",
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                }
               },
               "releaseDate": {
                 "type": "string"
@@ -704,7 +1024,18 @@
                 "array",
                 "object",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             }
           },
           "description": "Sub-events of the pathway"
@@ -751,7 +1082,18 @@
                 "string",
                 "null"
               ],
-              "description": "The rating as a name list"
+              "description": "The rating as a name list",
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             },
             "className": {
               "type": [
@@ -816,7 +1158,18 @@
                 "array",
                 "object",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             }
           }
         },
@@ -867,7 +1220,18 @@
                 "array",
                 "object",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             }
           }
         },
@@ -924,7 +1288,141 @@
         "type": "array",
         "items": {
           "type": "object",
-          "description": "Parent pathway objects"
+          "description": "Parent pathway objects",
+          "properties": {
+            "stId": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reactome stable identifier, e.g. 'R-HSA-111289'. The one to cite."
+            },
+            "stIdVersion": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "That identifier with its version, e.g. 'R-HSA-111289.5'. The version changes when the annotation does, so a claim is only reproducible against it."
+            },
+            "oldStId": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "A previous stable id for the same event, where it was renumbered."
+            },
+            "dbId": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "Reactome's internal numeric id. Build-specific -- never store it."
+            },
+            "displayName": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The event's name, e.g. 'Dissociation of phosphoribosyl pyrophosphate synthetase'."
+            },
+            "name": {
+              "type": [
+                "array",
+                "string",
+                "null"
+              ],
+              "description": "All names for the event; displayName is the preferred one.",
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
+            },
+            "schemaClass": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reactome data-model class. Says which other fields to expect -- a Pathway and a Reaction carry different ones."
+            },
+            "speciesName": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Species the event is annotated in, e.g. 'Homo sapiens'."
+            },
+            "inferred": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "The same flag under Reactome's other spelling."
+            },
+            "inDisease": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "The same flag under Reactome's other spelling."
+            },
+            "hasDiagram": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when a drawn diagram exists."
+            },
+            "hasEHLD": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when an Enhanced High Level Diagram exists -- the illustrated overview, which only top-level pathways have."
+            },
+            "diagramWidth": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Width of that diagram in pixels."
+            },
+            "diagramHeight": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Height of it."
+            },
+            "doi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "DOI of the pathway's own publication, where it has one."
+            },
+            "releaseDate": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the event was first released, e.g. '2004-07-06'."
+            },
+            "releaseStatus": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Its release status, e.g. 'UPDATED', 'NEW'."
+            }
+          }
         }
       }
     }
@@ -1439,7 +1937,18 @@
                 "array",
                 "object",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             }
           }
         },
@@ -1499,7 +2008,18 @@
                 "string",
                 "null"
               ],
-              "description": "The name or names Reactome records"
+              "description": "The name or names Reactome records",
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             },
             "schemaClass": {
               "type": [
@@ -1517,7 +2037,18 @@
               "array",
               "object",
               "null"
-            ]
+            ],
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+            }
           }
         },
         "summation": {
@@ -1567,7 +2098,18 @@
                 "array",
                 "object",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             }
           }
         },
@@ -1618,7 +2160,18 @@
                 "array",
                 "object",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             }
           }
         },
@@ -1691,7 +2244,18 @@
                 "string",
                 "null"
               ],
-              "description": "The name or names Reactome records"
+              "description": "The name or names Reactome records",
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             },
             "url": {
               "type": [
@@ -1709,7 +2273,18 @@
               "array",
               "object",
               "null"
-            ]
+            ],
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+            }
           }
         },
         "species": {
@@ -1759,7 +2334,18 @@
                 "array",
                 "object",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             }
           }
         },
@@ -1810,7 +2396,18 @@
                 "array",
                 "object",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             }
           }
         },
@@ -1861,7 +2458,18 @@
                 "array",
                 "object",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             }
           }
         },
@@ -1926,7 +2534,18 @@
                 "array",
                 "object",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
             }
           }
         },
@@ -2198,7 +2817,18 @@
                   "type": "boolean"
                 },
                 "inferredFrom": {
-                  "type": "array"
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                  }
                 },
                 "isInDisease": {
                   "type": "boolean"
@@ -2210,7 +2840,18 @@
                   "type": "integer"
                 },
                 "name": {
-                  "type": "array"
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                  }
                 },
                 "releaseDate": {
                   "type": "string"
@@ -2393,7 +3034,141 @@
       "items": {
         "type": "array",
         "items": {
-          "type": "object"
+          "type": "object",
+          "properties": {
+            "stId": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reactome stable identifier, e.g. 'R-HSA-111289'. The one to cite."
+            },
+            "stIdVersion": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "That identifier with its version, e.g. 'R-HSA-111289.5'. The version changes when the annotation does, so a claim is only reproducible against it."
+            },
+            "oldStId": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "A previous stable id for the same event, where it was renumbered."
+            },
+            "dbId": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "Reactome's internal numeric id. Build-specific -- never store it."
+            },
+            "displayName": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The event's name, e.g. 'Dissociation of phosphoribosyl pyrophosphate synthetase'."
+            },
+            "name": {
+              "type": [
+                "array",
+                "string",
+                "null"
+              ],
+              "description": "All names for the event; displayName is the preferred one.",
+              "items": {
+                "type": [
+                  "string",
+                  "object",
+                  "integer",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+              }
+            },
+            "schemaClass": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reactome data-model class. Says which other fields to expect -- a Pathway and a Reaction carry different ones."
+            },
+            "speciesName": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Species the event is annotated in, e.g. 'Homo sapiens'."
+            },
+            "inferred": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "The same flag under Reactome's other spelling."
+            },
+            "inDisease": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "The same flag under Reactome's other spelling."
+            },
+            "hasDiagram": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when a drawn diagram exists."
+            },
+            "hasEHLD": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when an Enhanced High Level Diagram exists -- the illustrated overview, which only top-level pathways have."
+            },
+            "diagramWidth": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Width of that diagram in pixels."
+            },
+            "diagramHeight": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Height of it."
+            },
+            "doi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "DOI of the pathway's own publication, where it has one."
+            },
+            "releaseDate": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the event was first released, e.g. '2004-07-06'."
+            },
+            "releaseStatus": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Its release status, e.g. 'UPDATED', 'NEW'."
+            }
+          }
         },
         "description": "Each element is an array of ancestor events (hierarchy path)"
       }
@@ -2764,7 +3539,18 @@
               "string",
               "null"
             ],
-            "description": "Gene names for the entity"
+            "description": "Gene names for the entity",
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+            }
           },
           "description": {
             "type": [
@@ -2772,7 +3558,18 @@
               "string",
               "null"
             ],
-            "description": "Description of the entity"
+            "description": "Description of the entity",
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+            }
           },
           "sequenceLength": {
             "type": [
@@ -2801,7 +3598,18 @@
               "string",
               "null"
             ],
-            "description": "Chain information for the reference sequence"
+            "description": "Chain information for the reference sequence",
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+            }
           },
           "moleculeType": {
             "type": [
@@ -2823,7 +3631,18 @@
               "string",
               "null"
             ],
-            "description": "Other identifiers for the entity"
+            "description": "Other identifiers for the entity",
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+            }
           },
           "keyword": {
             "type": [
@@ -2831,7 +3650,18 @@
               "string",
               "null"
             ],
-            "description": "Keywords from the source database"
+            "description": "Keywords from the source database",
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+            }
           },
           "comment": {
             "type": [
@@ -2839,7 +3669,18 @@
               "string",
               "null"
             ],
-            "description": "Curator comments"
+            "description": "Curator comments",
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+            }
           },
           "url": {
             "type": [
@@ -2880,7 +3721,127 @@
       "type": "array",
       "items": {
         "type": "object",
-        "description": "Low-level pathway objects"
+        "description": "Low-level pathway objects",
+        "properties": {
+          "stId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Reactome stable identifier, e.g. 'R-HSA-111289'. The one to cite."
+          },
+          "stIdVersion": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "That identifier with its version, e.g. 'R-HSA-111289.5'. The version changes when the annotation does, so a claim is only reproducible against it."
+          },
+          "dbId": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "Reactome's internal numeric id. Build-specific -- never store it."
+          },
+          "displayName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The event's name, e.g. 'Dissociation of phosphoribosyl pyrophosphate synthetase'."
+          },
+          "name": {
+            "type": [
+              "array",
+              "string",
+              "null"
+            ],
+            "description": "All names for the event; displayName is the preferred one.",
+            "items": {
+              "type": [
+                "string",
+                "object",
+                "integer",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+            }
+          },
+          "className": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Human-readable class, e.g. 'Reaction', 'Pathway'."
+          },
+          "schemaClass": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Reactome data-model class. Says which other fields to expect -- a Pathway and a Reaction carry different ones."
+          },
+          "speciesName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Species the event is annotated in, e.g. 'Homo sapiens'."
+          },
+          "isInferred": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "True when the event was INFERRED by orthology from another species rather than curated here. An inferred human pathway rests on the source species' evidence."
+          },
+          "isInDisease": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "True when the event is part of a disease variant pathway rather than normal biology."
+          },
+          "maxDepth": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "How deep the event sits in the hierarchy below the query."
+          },
+          "hasDiagram": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "True when a drawn diagram exists."
+          },
+          "hasEHLD": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "True when an Enhanced High Level Diagram exists -- the illustrated overview, which only top-level pathways have."
+          },
+          "releaseDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "When the event was first released, e.g. '2004-07-06'."
+          },
+          "lastUpdatedDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "When it was last changed. A pathway unchanged for a decade may simply be stable, or unreviewed."
+          }
+        }
       }
     }
   },
@@ -3087,7 +4048,18 @@
               "type": "object",
               "properties": {
                 "children": {
-                  "type": "array"
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "object",
+                      "integer",
+                      "number",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                  }
                 },
                 "diagram": {
                   "type": "boolean"
