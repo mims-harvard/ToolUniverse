@@ -2020,7 +2020,1443 @@
         "null"
       ],
       "description": "OpenAlex work data from DOI lookup.",
-      "additionalProperties": true
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "OpenAlex work id, e.g. 'https://openalex.org/W2163605009'."
+        },
+        "doi": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "DOI as a URL, e.g. 'https://doi.org/10.1145/3065386'. Null for works with no DOI, which includes much grey literature."
+        },
+        "ids": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The same work in other namespaces: openalex, doi, mag, pmid, pmcid. Use these to join to another database.",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "array",
+              "null"
+            ]
+          }
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The work's title."
+        },
+        "display_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "OpenAlex's display title, normally identical to `title`."
+        },
+        "publication_year": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Year of publication, e.g. 2017."
+        },
+        "publication_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Full publication date, 'YYYY-MM-DD'. For AlexNet this is 2017-05-24, the CACM reprint -- not the 2012 original, which is a separate work."
+        },
+        "language": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Two-letter language code of the work, e.g. 'en'. Detected, not declared."
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Work type, e.g. 'article', 'preprint', 'book-chapter', 'dataset'. A preprint and an article are counted separately."
+        },
+        "is_retracted": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when OpenAlex knows the work has been retracted. False means 'no retraction recorded', not 'confirmed sound'."
+        },
+        "is_paratext": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True for front matter, errata and editorial apparatus rather than a research work. Paratext inflates a count if not excluded."
+        },
+        "is_traditional": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True for a conventionally published work."
+        },
+        "is_xpac": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "OpenAlex internal classification flag."
+        },
+        "abstract_inverted_index": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The abstract as an INVERTED INDEX: each key is a WORD and its value is the list of positions that word occupies. It is not readable text -- reconstruct it by placing each word at each of its positions. Keyed by the paper's own vocabulary, so the key set is data, not schema. Null where OpenAlex has no abstract.",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        "authorships": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "One entry per author, in author order.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "author": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The disambiguated author, by name or as an object with the OpenAlex author id."
+              },
+              "raw_author_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The name exactly as printed on this work, before disambiguation."
+              },
+              "raw_orcid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ORCID as given on the work, where it was given."
+              },
+              "author_position": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "'first', 'middle' or 'last'. First and last authorship carry different meaning in most fields."
+              },
+              "is_corresponding": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when this author is marked corresponding. False is common even where a corresponding author exists, because many records do not say."
+              },
+              "institutions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "The author's institutions on this work.",
+                "items": {
+                  "type": [
+                    "string",
+                    "object"
+                  ]
+                }
+              },
+              "affiliations": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Affiliation entries as matched by OpenAlex.",
+                "items": {
+                  "type": [
+                    "string",
+                    "object"
+                  ]
+                }
+              },
+              "raw_affiliation_strings": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Affiliation lines exactly as printed, e.g. 'Google Inc'. These are what the matching above was derived from.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "countries": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Country codes of the author's institutions, e.g. ['CA', 'US'].",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "countries_distinct_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many distinct countries the authors' institutions span."
+        },
+        "institutions_distinct_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many distinct institutions the authors span."
+        },
+        "primary_location": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Where the work was primarily published -- normally the journal version.",
+          "properties": {
+            "id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Identifier for this location, e.g. 'doi:10.1145/3065386'."
+            },
+            "source": {
+              "type": [
+                "string",
+                "object",
+                "null"
+              ],
+              "description": "The venue hosting it, e.g. 'Communications of the ACM', inlined as a summary of the source record. Null on a location with no registered source, such as a bare repository copy.",
+              "properties": {
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "OpenAlex source id for the venue."
+                },
+                "display_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Its name."
+                },
+                "issn_l": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The linking ISSN -- the one ISSN that stands for the title. Match on this, not on `issn`."
+                },
+                "issn": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Every ISSN for the title, print and electronic.",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What kind of venue: 'journal', 'repository', 'conference', 'book series'."
+                },
+                "host_organization": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "OpenAlex id of the publisher or hosting body."
+                },
+                "host_organization_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Its name, e.g. 'Association for Computing Machinery'."
+                },
+                "host_organization_lineage": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "That organisation and its parents, by id -- an imprint inside a group.",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "host_organization_lineage_names": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "The same lineage by name.",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "is_oa": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when the venue is fully open access today. This is about the VENUE; the location's own is_oa says whether this copy is readable."
+                },
+                "is_in_doaj": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when the venue is listed in the Directory of Open Access Journals."
+                },
+                "is_core": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when OpenAlex counts the venue in its CORE set of serious scholarly venues."
+                },
+                "listed_in": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "External indexes that include the venue, e.g. ['scopus'].",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "raw_source_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The venue name exactly as the record gave it, before OpenAlex matched it to a source."
+            },
+            "landing_page_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL of the record's page at this location."
+            },
+            "pdf_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Direct URL to the PDF, when one is known. Null does NOT mean no PDF exists, only that OpenAlex has no link."
+            },
+            "is_oa": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when this particular copy is openly accessible. A work can be OA at one location and not another."
+            },
+            "is_published": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when this is the published version rather than a preprint or accepted manuscript."
+            },
+            "is_accepted": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when this is at least the accepted manuscript."
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which version this copy is: 'publishedVersion', 'acceptedVersion', 'submittedVersion'. A citation to a preprint and to the published paper are not interchangeable."
+            },
+            "license": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Licence of this copy, e.g. 'cc-by'. Null means no licence was stated, which is NOT the same as permission to reuse."
+            },
+            "license_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "OpenAlex's id for that licence."
+            },
+            "doi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "DOI of this copy, when it has its own."
+            },
+            "raw_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The record type as the source gave it, e.g. 'journal-article'."
+            }
+          }
+        },
+        "best_oa_location": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The best openly accessible copy, by version then licence. Null when no OA copy is known.",
+          "properties": {
+            "id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Identifier for this location, e.g. 'doi:10.1145/3065386'."
+            },
+            "source": {
+              "type": [
+                "string",
+                "object",
+                "null"
+              ],
+              "description": "The venue hosting it, e.g. 'Communications of the ACM', inlined as a summary of the source record. Null on a location with no registered source, such as a bare repository copy.",
+              "properties": {
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "OpenAlex source id for the venue."
+                },
+                "display_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Its name."
+                },
+                "issn_l": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The linking ISSN -- the one ISSN that stands for the title. Match on this, not on `issn`."
+                },
+                "issn": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Every ISSN for the title, print and electronic.",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What kind of venue: 'journal', 'repository', 'conference', 'book series'."
+                },
+                "host_organization": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "OpenAlex id of the publisher or hosting body."
+                },
+                "host_organization_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Its name, e.g. 'Association for Computing Machinery'."
+                },
+                "host_organization_lineage": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "That organisation and its parents, by id -- an imprint inside a group.",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "host_organization_lineage_names": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "The same lineage by name.",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "is_oa": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when the venue is fully open access today. This is about the VENUE; the location's own is_oa says whether this copy is readable."
+                },
+                "is_in_doaj": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when the venue is listed in the Directory of Open Access Journals."
+                },
+                "is_core": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when OpenAlex counts the venue in its CORE set of serious scholarly venues."
+                },
+                "listed_in": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "External indexes that include the venue, e.g. ['scopus'].",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "raw_source_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The venue name exactly as the record gave it, before OpenAlex matched it to a source."
+            },
+            "landing_page_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL of the record's page at this location."
+            },
+            "pdf_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Direct URL to the PDF, when one is known. Null does NOT mean no PDF exists, only that OpenAlex has no link."
+            },
+            "is_oa": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when this particular copy is openly accessible. A work can be OA at one location and not another."
+            },
+            "is_published": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when this is the published version rather than a preprint or accepted manuscript."
+            },
+            "is_accepted": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when this is at least the accepted manuscript."
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which version this copy is: 'publishedVersion', 'acceptedVersion', 'submittedVersion'. A citation to a preprint and to the published paper are not interchangeable."
+            },
+            "license": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Licence of this copy, e.g. 'cc-by'. Null means no licence was stated, which is NOT the same as permission to reuse."
+            },
+            "license_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "OpenAlex's id for that licence."
+            },
+            "doi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "DOI of this copy, when it has its own."
+            },
+            "raw_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The record type as the source gave it, e.g. 'journal-article'."
+            }
+          }
+        },
+        "locations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Every known copy of the work, including repository and preprint copies. locations_count says how many.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Identifier for this location, e.g. 'doi:10.1145/3065386'."
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The venue hosting it, e.g. 'Communications of the ACM', inlined as a summary of the source record. Null on a location with no registered source, such as a bare repository copy.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex source id for the venue."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  },
+                  "issn_l": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The linking ISSN -- the one ISSN that stands for the title. Match on this, not on `issn`."
+                  },
+                  "issn": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Every ISSN for the title, print and electronic.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What kind of venue: 'journal', 'repository', 'conference', 'book series'."
+                  },
+                  "host_organization": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the publisher or hosting body."
+                  },
+                  "host_organization_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name, e.g. 'Association for Computing Machinery'."
+                  },
+                  "host_organization_lineage": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "That organisation and its parents, by id -- an imprint inside a group.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "host_organization_lineage_names": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "The same lineage by name.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "is_oa": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the venue is fully open access today. This is about the VENUE; the location's own is_oa says whether this copy is readable."
+                  },
+                  "is_in_doaj": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the venue is listed in the Directory of Open Access Journals."
+                  },
+                  "is_core": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when OpenAlex counts the venue in its CORE set of serious scholarly venues."
+                  },
+                  "listed_in": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "External indexes that include the venue, e.g. ['scopus'].",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "raw_source_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The venue name exactly as the record gave it, before OpenAlex matched it to a source."
+              },
+              "landing_page_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "URL of the record's page at this location."
+              },
+              "pdf_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Direct URL to the PDF, when one is known. Null does NOT mean no PDF exists, only that OpenAlex has no link."
+              },
+              "is_oa": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when this particular copy is openly accessible. A work can be OA at one location and not another."
+              },
+              "is_published": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when this is the published version rather than a preprint or accepted manuscript."
+              },
+              "is_accepted": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when this is at least the accepted manuscript."
+              },
+              "version": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which version this copy is: 'publishedVersion', 'acceptedVersion', 'submittedVersion'. A citation to a preprint and to the published paper are not interchangeable."
+              },
+              "license": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Licence of this copy, e.g. 'cc-by'. Null means no licence was stated, which is NOT the same as permission to reuse."
+              },
+              "license_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex's id for that licence."
+              },
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DOI of this copy, when it has its own."
+              },
+              "raw_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The record type as the source gave it, e.g. 'journal-article'."
+              }
+            }
+          }
+        },
+        "locations_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many locations are listed."
+        },
+        "open_access": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Open-access status of the work as a whole.",
+          "properties": {
+            "is_oa": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when at least one free-to-read copy is known."
+            },
+            "oa_status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which kind: 'gold' (OA journal), 'hybrid' (paid OA in a subscription journal), 'bronze' (free to read with no licence), 'green' (repository copy), 'closed'. 'bronze' is free today and may not be tomorrow, because no licence grants it."
+            },
+            "oa_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL of the best free copy."
+            },
+            "any_repository_has_fulltext": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when a repository holds the full text, which is the durable form of access."
+            }
+          }
+        },
+        "apc_list": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The article processing charge as LISTED by the venue, {value, currency, value_usd, provenance}. Null when unknown."
+        },
+        "apc_paid": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The APC actually paid, where known. Usually null -- absence is not evidence that nothing was paid."
+        },
+        "biblio": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Volume, issue and page range.",
+          "properties": {
+            "volume": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Volume, as a string."
+            },
+            "issue": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Issue, as a string."
+            },
+            "first_page": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "First page."
+            },
+            "last_page": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Last page."
+            }
+          }
+        },
+        "volume": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Volume at the top level, mirroring biblio.volume. Often null even when biblio.volume is set."
+        },
+        "cited_by_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Total citations OpenAlex has recorded, e.g. 114678."
+        },
+        "counts_by_year": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Yearly activity, most recent first. The current year is partial, so its counts are not comparable with completed years.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "year": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "The calendar year."
+              },
+              "works_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Works published that year."
+              },
+              "cited_by_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Citations received that year."
+              },
+              "oa_works_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Of those works, how many are open access."
+              }
+            }
+          }
+        },
+        "cited_by_percentile_year": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Where the work's citation count falls among works of the same year, as a percentile RANGE {min, max}.",
+          "properties": {
+            "min": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Lower bound of the percentile range."
+            },
+            "max": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Upper bound."
+            }
+          }
+        },
+        "citation_normalized_percentile": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Field- and year-normalised citation percentile.",
+          "properties": {
+            "value": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The percentile, 0 to 1."
+            },
+            "is_in_top_1_percent": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the work is in the top 1% for its field and year."
+            },
+            "is_in_top_10_percent": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when in the top 10%."
+            }
+          }
+        },
+        "fwci": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Field-Weighted Citation Impact: citations relative to the world average for the same field, year and type. 1.0 is average. The right statistic for comparing across fields, which cited_by_count is not."
+        },
+        "referenced_works": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "OpenAlex ids of the works this one cites.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "referenced_works_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many works it cites."
+        },
+        "related_works": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "OpenAlex ids of works it resembles, computed from shared concepts -- not citations and not author-chosen.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "primary_topic": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The single best-matching topic.",
+          "properties": {
+            "id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "OpenAlex topic id, e.g. 'https://openalex.org/T10036'."
+            },
+            "display_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The topic's name, e.g. 'Advanced Neural Network Applications'."
+            },
+            "subfield": {
+              "type": [
+                "string",
+                "object",
+                "null"
+              ],
+              "description": "The subfield it sits in, e.g. 'Computer Vision and Pattern Recognition'.",
+              "properties": {
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "OpenAlex id of the referenced entity."
+                },
+                "display_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Its name."
+                }
+              }
+            },
+            "field": {
+              "type": [
+                "string",
+                "object",
+                "null"
+              ],
+              "description": "The field above that, e.g. 'Computer Science'.",
+              "properties": {
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "OpenAlex id of the referenced entity."
+                },
+                "display_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Its name."
+                }
+              }
+            },
+            "domain": {
+              "type": [
+                "string",
+                "object",
+                "null"
+              ],
+              "description": "The domain above that, e.g. 'Physical Sciences'. Topic, subfield, field and domain are OpenAlex's four-level classification, from most to least specific.",
+              "properties": {
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "OpenAlex id of the referenced entity."
+                },
+                "display_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Its name."
+                }
+              }
+            },
+            "score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "How strongly the entity matches the topic, 0 to 1. Assigned by a classifier, not by the authors."
+            },
+            "count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many of the entity's works fall under this topic."
+            }
+          }
+        },
+        "topics": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "All topics matched to the work, best first. Assigned by a classifier.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex topic id, e.g. 'https://openalex.org/T10036'."
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The topic's name, e.g. 'Advanced Neural Network Applications'."
+              },
+              "subfield": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The subfield it sits in, e.g. 'Computer Vision and Pattern Recognition'.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "field": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The field above that, e.g. 'Computer Science'.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "domain": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The domain above that, e.g. 'Physical Sciences'. Topic, subfield, field and domain are OpenAlex's four-level classification, from most to least specific.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "How strongly the entity matches the topic, 0 to 1. Assigned by a classifier, not by the authors."
+              },
+              "count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of the entity's works fall under this topic."
+              }
+            }
+          }
+        },
+        "concepts": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The legacy Wikidata-based concept tags. DEPRECATED upstream in favour of `topics`; `level` is depth in the concept tree, 0 being broadest.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex concept id."
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The concept's name, e.g. 'Softmax function'."
+              },
+              "level": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Depth in the concept hierarchy, 0 (broadest) to 5."
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Classifier confidence, 0 to 1."
+              },
+              "wikidata": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The matching Wikidata entity."
+              }
+            }
+          }
+        },
+        "keywords": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Keywords OpenAlex extracted, each with a confidence score. Extracted, not author-supplied.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex keyword id."
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The keyword, e.g. 'ImageNet'."
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Confidence, 0 to 1."
+              }
+            }
+          }
+        },
+        "indexed_in": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Which indexes the work is in, e.g. ['crossref', 'pubmed']. A work in none of them was found some other way.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "has_fulltext": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when OpenAlex holds full text for the work, which is what makes its keyword and topic assignment better."
+        },
+        "has_content": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Which content forms OpenAlex holds, keyed by form -- 'pdf', 'grobid_xml' and whatever else it adds -- with a boolean value. Read it as a map; the set of forms grows.",
+          "additionalProperties": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "content_urls": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "URLs for those content forms, keyed by the same form names.",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "created_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When the OpenAlex record was created."
+        },
+        "updated_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When it was last changed. OpenAlex rebuilds continuously, so a citation count read today differs from one read last week."
+        }
+      }
     },
     "test_examples": [
       {
@@ -2082,7 +3518,679 @@
         "null"
       ],
       "description": "OpenAlex authors search response data.",
-      "additionalProperties": true
+      "additionalProperties": true,
+      "properties": {
+        "meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "OpenAlex's own result header. `count` is the TOTAL matching the query upstream, not the number returned, so compare it with the length of `results` before treating the list as complete.",
+          "properties": {
+            "count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total matches upstream."
+            },
+            "db_response_time_ms": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How long OpenAlex took, in milliseconds. A server timing, not a property of the data."
+            },
+            "page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Which page this is."
+            },
+            "per_page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size requested."
+            },
+            "next_cursor": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cursor for the next page, when cursor paging is used."
+            },
+            "groups_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of groups, when the query grouped results."
+            },
+            "notice": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "A message OpenAlex attaches to the response, such as a deprecation or a rate-limit warning. Usually null; when it is not, read it."
+            },
+            "cost_usd": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "What OpenAlex charges for the query, where it does. 0 on the free tier."
+            },
+            "x_query": {
+              "type": [
+                "string",
+                "object",
+                "null"
+              ],
+              "description": "The query as OpenAlex parsed it -- what a natural-language search was actually turned into. The keys are whatever the parser produced, so read it as a map.",
+              "additionalProperties": {
+                "type": [
+                  "object",
+                  "array",
+                  "string",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One parsed clause. Its own keys come from the parser too, so this level is open as well.",
+                "additionalProperties": {
+                  "type": [
+                    "object",
+                    "array",
+                    "string",
+                    "number",
+                    "boolean",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "results": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The matching authors, best match first.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex author id, e.g. 'https://openalex.org/A5001226970'. DISAMBIGUATED by OpenAlex, not by the author, so it can merge or split between releases."
+              },
+              "orcid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The author's ORCID, where one is known."
+              },
+              "observed_orcids": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Every ORCID seen on this author's works. More than one means the disambiguation has merged records that may be different people.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "ids": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The same author in other namespaces: openalex, orcid, observed_orcids, scopus, twitter.",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "array",
+                    "null"
+                  ]
+                }
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Preferred name, e.g. 'Yann LeCun'."
+              },
+              "full_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The fuller form, e.g. 'LeCun, Yann André'."
+              },
+              "display_name_alternatives": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Other spellings seen in print, e.g. ['Le Cun, Yann', ...]. This is how the disambiguation grouped the works.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "raw_author_names": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "The raw name strings as they appeared on the works.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "block_key": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex's internal blocking key for disambiguation, e.g. 'y lecun'. Not an identifier to cite."
+              },
+              "works_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many works are attributed to this author id."
+              },
+              "cited_by_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Total citations across those works."
+              },
+              "summary_stats": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Citation summary for the entity.",
+                "properties": {
+                  "2yr_mean_citedness": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Mean citations per work over the last two years -- the impact-factor-shaped statistic. Comparable only within a field."
+                  },
+                  "h_index": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "h-index: h works each cited at least h times. Grows with career length, so it compares seniority as much as impact."
+                  },
+                  "i10_index": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many works have at least 10 citations."
+                  }
+                }
+              },
+              "counts_by_year": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Yearly activity, most recent first. The current year is partial, so its counts are not comparable with completed years.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "year": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "The calendar year."
+                    },
+                    "works_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Works published that year."
+                    },
+                    "cited_by_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Citations received that year."
+                    },
+                    "oa_works_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Of those works, how many are open access."
+                    }
+                  }
+                }
+              },
+              "affiliations": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Every institution the author has published from, with the years. This is a history, not a current post.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "institution": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The institution."
+                    },
+                    "years": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Years of works carrying that affiliation.",
+                      "items": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              },
+              "last_known_institutions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "The institution(s) on the author's most recent works. A best guess at a current post, derived from publications.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "OpenAlex institution id."
+                    },
+                    "display_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Institution name."
+                    },
+                    "ror": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its ROR id."
+                    },
+                    "country_code": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Two-letter country code."
+                    },
+                    "type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Institution type, e.g. 'education', 'government'."
+                    },
+                    "lineage": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "The institution and its parents, from itself upward.",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "topics": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Topics the author publishes in, with how many works fall under each.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "OpenAlex topic id, e.g. 'https://openalex.org/T10036'."
+                    },
+                    "display_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The topic's name, e.g. 'Advanced Neural Network Applications'."
+                    },
+                    "subfield": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The subfield it sits in, e.g. 'Computer Vision and Pattern Recognition'.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "field": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The field above that, e.g. 'Computer Science'.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "domain": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The domain above that, e.g. 'Physical Sciences'. Topic, subfield, field and domain are OpenAlex's four-level classification, from most to least specific.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "How strongly the entity matches the topic, 0 to 1. Assigned by a classifier, not by the authors."
+                    },
+                    "count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many of the entity's works fall under this topic."
+                    }
+                  }
+                }
+              },
+              "topic_share": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "The entity's topics weighted by how UNUSUALLY concentrated it is in each -- `value` is a share, not a count, so a small institution specialising narrowly can outrank a large general one.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "OpenAlex topic id, e.g. 'https://openalex.org/T10036'."
+                    },
+                    "display_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The topic's name, e.g. 'Advanced Neural Network Applications'."
+                    },
+                    "subfield": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The subfield it sits in, e.g. 'Computer Vision and Pattern Recognition'.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "field": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The field above that, e.g. 'Computer Science'.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "domain": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The domain above that, e.g. 'Physical Sciences'. Topic, subfield, field and domain are OpenAlex's four-level classification, from most to least specific.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "How strongly the entity matches the topic, 0 to 1. Assigned by a classifier, not by the authors."
+                    },
+                    "count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many of the entity's works fall under this topic."
+                    },
+                    "value": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "The share, e.g. 0.0996. Higher means more distinctive of this entity."
+                    }
+                  }
+                }
+              },
+              "x_concepts": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Legacy concept tags for the author. DEPRECATED upstream in favour of `topics`.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Concept id."
+                    },
+                    "display_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Concept name, e.g. 'Computer science'."
+                    },
+                    "score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Share of the author's works under it, 0 to 1."
+                    },
+                    "wikidata": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The matching Wikidata entity."
+                    }
+                  }
+                }
+              },
+              "works_api_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A ready-made OpenAlex API query returning this author's works."
+              },
+              "awards_api_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A ready-made query returning their awards."
+              },
+              "awards_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many funding awards OpenAlex links to them."
+              },
+              "created_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the record was created."
+              },
+              "updated_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When it was last changed."
+              }
+            }
+          }
+        },
+        "group_by": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Group counts, when the query asked for them; an empty list otherwise."
+        }
+      }
     },
     "test_examples": [
       {
@@ -2126,7 +4234,566 @@
         "null"
       ],
       "description": "OpenAlex author data.",
-      "additionalProperties": true
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "OpenAlex author id, e.g. 'https://openalex.org/A5001226970'. DISAMBIGUATED by OpenAlex, not by the author, so it can merge or split between releases."
+        },
+        "orcid": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The author's ORCID, where one is known."
+        },
+        "observed_orcids": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Every ORCID seen on this author's works. More than one means the disambiguation has merged records that may be different people.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ids": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The same author in other namespaces: openalex, orcid, observed_orcids, scopus, twitter.",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "array",
+              "null"
+            ]
+          }
+        },
+        "display_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Preferred name, e.g. 'Yann LeCun'."
+        },
+        "full_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The fuller form, e.g. 'LeCun, Yann André'."
+        },
+        "display_name_alternatives": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Other spellings seen in print, e.g. ['Le Cun, Yann', ...]. This is how the disambiguation grouped the works.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "raw_author_names": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The raw name strings as they appeared on the works.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "block_key": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "OpenAlex's internal blocking key for disambiguation, e.g. 'y lecun'. Not an identifier to cite."
+        },
+        "works_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many works are attributed to this author id."
+        },
+        "cited_by_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Total citations across those works."
+        },
+        "summary_stats": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Citation summary for the entity.",
+          "properties": {
+            "2yr_mean_citedness": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Mean citations per work over the last two years -- the impact-factor-shaped statistic. Comparable only within a field."
+            },
+            "h_index": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "h-index: h works each cited at least h times. Grows with career length, so it compares seniority as much as impact."
+            },
+            "i10_index": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many works have at least 10 citations."
+            }
+          }
+        },
+        "counts_by_year": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Yearly activity, most recent first. The current year is partial, so its counts are not comparable with completed years.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "year": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "The calendar year."
+              },
+              "works_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Works published that year."
+              },
+              "cited_by_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Citations received that year."
+              },
+              "oa_works_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Of those works, how many are open access."
+              }
+            }
+          }
+        },
+        "affiliations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Every institution the author has published from, with the years. This is a history, not a current post.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "institution": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The institution."
+              },
+              "years": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Years of works carrying that affiliation.",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "last_known_institutions": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The institution(s) on the author's most recent works. A best guess at a current post, derived from publications.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex institution id."
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Institution name."
+              },
+              "ror": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its ROR id."
+              },
+              "country_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Two-letter country code."
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Institution type, e.g. 'education', 'government'."
+              },
+              "lineage": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "The institution and its parents, from itself upward.",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "topics": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Topics the author publishes in, with how many works fall under each.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex topic id, e.g. 'https://openalex.org/T10036'."
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The topic's name, e.g. 'Advanced Neural Network Applications'."
+              },
+              "subfield": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The subfield it sits in, e.g. 'Computer Vision and Pattern Recognition'.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "field": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The field above that, e.g. 'Computer Science'.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "domain": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The domain above that, e.g. 'Physical Sciences'. Topic, subfield, field and domain are OpenAlex's four-level classification, from most to least specific.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "How strongly the entity matches the topic, 0 to 1. Assigned by a classifier, not by the authors."
+              },
+              "count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of the entity's works fall under this topic."
+              }
+            }
+          }
+        },
+        "topic_share": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The entity's topics weighted by how UNUSUALLY concentrated it is in each -- `value` is a share, not a count, so a small institution specialising narrowly can outrank a large general one.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex topic id, e.g. 'https://openalex.org/T10036'."
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The topic's name, e.g. 'Advanced Neural Network Applications'."
+              },
+              "subfield": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The subfield it sits in, e.g. 'Computer Vision and Pattern Recognition'.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "field": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The field above that, e.g. 'Computer Science'.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "domain": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The domain above that, e.g. 'Physical Sciences'. Topic, subfield, field and domain are OpenAlex's four-level classification, from most to least specific.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "How strongly the entity matches the topic, 0 to 1. Assigned by a classifier, not by the authors."
+              },
+              "count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of the entity's works fall under this topic."
+              },
+              "value": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The share, e.g. 0.0996. Higher means more distinctive of this entity."
+              }
+            }
+          }
+        },
+        "x_concepts": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Legacy concept tags for the author. DEPRECATED upstream in favour of `topics`.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ],
+                "description": "Concept id."
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Concept name, e.g. 'Computer science'."
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Share of the author's works under it, 0 to 1."
+              },
+              "wikidata": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The matching Wikidata entity."
+              }
+            }
+          }
+        },
+        "works_api_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A ready-made OpenAlex API query returning this author's works."
+        },
+        "awards_api_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A ready-made query returning their awards."
+        },
+        "awards_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many funding awards OpenAlex links to them."
+        },
+        "created_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When the record was created."
+        },
+        "updated_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When it was last changed."
+        }
+      }
     },
     "test_examples": [
       {
@@ -2188,7 +4855,793 @@
         "null"
       ],
       "description": "OpenAlex institutions search response data.",
-      "additionalProperties": true
+      "additionalProperties": true,
+      "properties": {
+        "meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "OpenAlex's own result header. `count` is the TOTAL matching the query upstream, not the number returned, so compare it with the length of `results` before treating the list as complete.",
+          "properties": {
+            "count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total matches upstream."
+            },
+            "db_response_time_ms": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How long OpenAlex took, in milliseconds. A server timing, not a property of the data."
+            },
+            "page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Which page this is."
+            },
+            "per_page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size requested."
+            },
+            "next_cursor": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cursor for the next page, when cursor paging is used."
+            },
+            "groups_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of groups, when the query grouped results."
+            },
+            "notice": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "A message OpenAlex attaches to the response, such as a deprecation or a rate-limit warning. Usually null; when it is not, read it."
+            },
+            "cost_usd": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "What OpenAlex charges for the query, where it does. 0 on the free tier."
+            },
+            "x_query": {
+              "type": [
+                "string",
+                "object",
+                "null"
+              ],
+              "description": "The query as OpenAlex parsed it -- what a natural-language search was actually turned into. The keys are whatever the parser produced, so read it as a map.",
+              "additionalProperties": {
+                "type": [
+                  "object",
+                  "array",
+                  "string",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One parsed clause. Its own keys come from the parser too, so this level is open as well.",
+                "additionalProperties": {
+                  "type": [
+                    "object",
+                    "array",
+                    "string",
+                    "number",
+                    "boolean",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "results": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The matching institutions, best match first.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex institution id."
+              },
+              "ror": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ROR identifier, e.g. 'https://ror.org/03vek6s52'. The one to use outside OpenAlex."
+              },
+              "ids": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The same institution elsewhere: openalex, ror, grid, wikipedia, wikidata, mag.",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "array",
+                    "null"
+                  ]
+                }
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Institution name, e.g. 'Harvard University'."
+              },
+              "display_name_alternatives": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Other names and spellings it is published under.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "country_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Two-letter country code."
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Institution type, e.g. 'education', 'healthcare', 'company', 'government'."
+              },
+              "type_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex id for that type."
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the institution is 'active' or no longer exists. A closed institution still carries its historical works."
+              },
+              "is_super_system": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True for an umbrella entity that contains other institutions, e.g. a university system. Counting works across both a super system and its members double-counts."
+              },
+              "lineage": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "This institution and its parents, from itself upward.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "associated_institutions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Related institutions and HOW they relate -- `relationship` is 'parent', 'child' or 'related'. Aggregating across them without reading it will double-count.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "OpenAlex id."
+                    },
+                    "display_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its name."
+                    },
+                    "ror": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its ROR id."
+                    },
+                    "country_code": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its country."
+                    },
+                    "type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its type."
+                    },
+                    "relationship": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "'parent', 'child' or 'related'."
+                    }
+                  }
+                }
+              },
+              "repositories": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Repositories this institution hosts, as OpenAlex sources.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "OpenAlex source id for the repository."
+                    },
+                    "display_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Repository name."
+                    },
+                    "host_organization": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "OpenAlex id of the hosting organisation."
+                    },
+                    "host_organization_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its name."
+                    },
+                    "host_organization_lineage": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "That organisation and its parents.",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "roles": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "The other roles this organisation plays in OpenAlex -- as a funder, as a publisher -- each with its own works_count. The same body appears under several ids.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "role": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "'institution', 'funder' or 'publisher'."
+                    },
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The OpenAlex id for that role."
+                    },
+                    "works_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Works under it."
+                    }
+                  }
+                }
+              },
+              "geo": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Where the institution is.",
+                "properties": {
+                  "city": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "City."
+                  },
+                  "region": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "State or region."
+                  },
+                  "country": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Country name."
+                  },
+                  "country_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Two-letter country code."
+                  },
+                  "latitude": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Latitude in decimal degrees."
+                  },
+                  "longitude": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Longitude in decimal degrees."
+                  },
+                  "geonames_city_id": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "null"
+                    ],
+                    "description": "GeoNames id of the city."
+                  }
+                }
+              },
+              "homepage_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The institution's website."
+              },
+              "image_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Logo image URL."
+              },
+              "image_thumbnail_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Thumbnail of that logo."
+              },
+              "works_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Works attributed to this institution alone."
+              },
+              "works_count_with_children": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Works including those of its child institutions. Larger than works_count whenever the institution has children, and the right figure for 'how much does this university publish'."
+              },
+              "works_count_with_children_and_predecessors": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "As above, also counting institutions it absorbed or was renamed from."
+              },
+              "cited_by_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Total citations to its works."
+              },
+              "summary_stats": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Citation summary for the entity.",
+                "properties": {
+                  "2yr_mean_citedness": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Mean citations per work over the last two years -- the impact-factor-shaped statistic. Comparable only within a field."
+                  },
+                  "h_index": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "h-index: h works each cited at least h times. Grows with career length, so it compares seniority as much as impact."
+                  },
+                  "i10_index": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many works have at least 10 citations."
+                  }
+                }
+              },
+              "counts_by_year": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Yearly activity, most recent first. The current year is partial, so its counts are not comparable with completed years.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "year": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "The calendar year."
+                    },
+                    "works_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Works published that year."
+                    },
+                    "cited_by_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Citations received that year."
+                    },
+                    "oa_works_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Of those works, how many are open access."
+                    }
+                  }
+                }
+              },
+              "topics": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Topics the institution publishes in, with counts.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "OpenAlex topic id, e.g. 'https://openalex.org/T10036'."
+                    },
+                    "display_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The topic's name, e.g. 'Advanced Neural Network Applications'."
+                    },
+                    "subfield": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The subfield it sits in, e.g. 'Computer Vision and Pattern Recognition'.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "field": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The field above that, e.g. 'Computer Science'.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "domain": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The domain above that, e.g. 'Physical Sciences'. Topic, subfield, field and domain are OpenAlex's four-level classification, from most to least specific.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "How strongly the entity matches the topic, 0 to 1. Assigned by a classifier, not by the authors."
+                    },
+                    "count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many of the entity's works fall under this topic."
+                    }
+                  }
+                }
+              },
+              "topic_share": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "The entity's topics weighted by how UNUSUALLY concentrated it is in each -- `value` is a share, not a count, so a small institution specialising narrowly can outrank a large general one.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "OpenAlex topic id, e.g. 'https://openalex.org/T10036'."
+                    },
+                    "display_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The topic's name, e.g. 'Advanced Neural Network Applications'."
+                    },
+                    "subfield": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The subfield it sits in, e.g. 'Computer Vision and Pattern Recognition'.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "field": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The field above that, e.g. 'Computer Science'.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "domain": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The domain above that, e.g. 'Physical Sciences'. Topic, subfield, field and domain are OpenAlex's four-level classification, from most to least specific.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "How strongly the entity matches the topic, 0 to 1. Assigned by a classifier, not by the authors."
+                    },
+                    "count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many of the entity's works fall under this topic."
+                    },
+                    "value": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "The share, e.g. 0.0996. Higher means more distinctive of this entity."
+                    }
+                  }
+                }
+              },
+              "works_api_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A ready-made query returning its works."
+              },
+              "awards_api_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A ready-made query returning its awards."
+              },
+              "awards_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many funding awards OpenAlex links to it."
+              },
+              "created_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the record was created."
+              },
+              "updated_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When it was last changed."
+              }
+            }
+          }
+        },
+        "group_by": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Group counts, when the query asked for them; an empty list otherwise."
+        }
+      }
     },
     "test_examples": [
       {
@@ -2232,7 +5685,680 @@
         "null"
       ],
       "description": "OpenAlex institution data.",
-      "additionalProperties": true
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "OpenAlex institution id."
+        },
+        "ror": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ROR identifier, e.g. 'https://ror.org/03vek6s52'. The one to use outside OpenAlex."
+        },
+        "ids": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The same institution elsewhere: openalex, ror, grid, wikipedia, wikidata, mag.",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "array",
+              "null"
+            ]
+          }
+        },
+        "display_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Institution name, e.g. 'Harvard University'."
+        },
+        "display_name_alternatives": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Other names and spellings it is published under.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "country_code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Two-letter country code."
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Institution type, e.g. 'education', 'healthcare', 'company', 'government'."
+        },
+        "type_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "OpenAlex id for that type."
+        },
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Whether the institution is 'active' or no longer exists. A closed institution still carries its historical works."
+        },
+        "is_super_system": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True for an umbrella entity that contains other institutions, e.g. a university system. Counting works across both a super system and its members double-counts."
+        },
+        "lineage": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "This institution and its parents, from itself upward.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "associated_institutions": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Related institutions and HOW they relate -- `relationship` is 'parent', 'child' or 'related'. Aggregating across them without reading it will double-count.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex id."
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its name."
+              },
+              "ror": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its ROR id."
+              },
+              "country_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its country."
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its type."
+              },
+              "relationship": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "'parent', 'child' or 'related'."
+              }
+            }
+          }
+        },
+        "repositories": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Repositories this institution hosts, as OpenAlex sources.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex source id for the repository."
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Repository name."
+              },
+              "host_organization": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex id of the hosting organisation."
+              },
+              "host_organization_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its name."
+              },
+              "host_organization_lineage": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "That organisation and its parents.",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "roles": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The other roles this organisation plays in OpenAlex -- as a funder, as a publisher -- each with its own works_count. The same body appears under several ids.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "'institution', 'funder' or 'publisher'."
+              },
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The OpenAlex id for that role."
+              },
+              "works_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Works under it."
+              }
+            }
+          }
+        },
+        "geo": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Where the institution is.",
+          "properties": {
+            "city": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "City."
+            },
+            "region": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "State or region."
+            },
+            "country": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Country name."
+            },
+            "country_code": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Two-letter country code."
+            },
+            "latitude": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Latitude in decimal degrees."
+            },
+            "longitude": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Longitude in decimal degrees."
+            },
+            "geonames_city_id": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ],
+              "description": "GeoNames id of the city."
+            }
+          }
+        },
+        "homepage_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The institution's website."
+        },
+        "image_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Logo image URL."
+        },
+        "image_thumbnail_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Thumbnail of that logo."
+        },
+        "works_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Works attributed to this institution alone."
+        },
+        "works_count_with_children": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Works including those of its child institutions. Larger than works_count whenever the institution has children, and the right figure for 'how much does this university publish'."
+        },
+        "works_count_with_children_and_predecessors": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "As above, also counting institutions it absorbed or was renamed from."
+        },
+        "cited_by_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Total citations to its works."
+        },
+        "summary_stats": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Citation summary for the entity.",
+          "properties": {
+            "2yr_mean_citedness": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Mean citations per work over the last two years -- the impact-factor-shaped statistic. Comparable only within a field."
+            },
+            "h_index": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "h-index: h works each cited at least h times. Grows with career length, so it compares seniority as much as impact."
+            },
+            "i10_index": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many works have at least 10 citations."
+            }
+          }
+        },
+        "counts_by_year": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Yearly activity, most recent first. The current year is partial, so its counts are not comparable with completed years.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "year": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "The calendar year."
+              },
+              "works_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Works published that year."
+              },
+              "cited_by_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Citations received that year."
+              },
+              "oa_works_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Of those works, how many are open access."
+              }
+            }
+          }
+        },
+        "topics": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Topics the institution publishes in, with counts.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex topic id, e.g. 'https://openalex.org/T10036'."
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The topic's name, e.g. 'Advanced Neural Network Applications'."
+              },
+              "subfield": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The subfield it sits in, e.g. 'Computer Vision and Pattern Recognition'.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "field": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The field above that, e.g. 'Computer Science'.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "domain": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The domain above that, e.g. 'Physical Sciences'. Topic, subfield, field and domain are OpenAlex's four-level classification, from most to least specific.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "How strongly the entity matches the topic, 0 to 1. Assigned by a classifier, not by the authors."
+              },
+              "count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of the entity's works fall under this topic."
+              }
+            }
+          }
+        },
+        "topic_share": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The entity's topics weighted by how UNUSUALLY concentrated it is in each -- `value` is a share, not a count, so a small institution specialising narrowly can outrank a large general one.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex topic id, e.g. 'https://openalex.org/T10036'."
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The topic's name, e.g. 'Advanced Neural Network Applications'."
+              },
+              "subfield": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The subfield it sits in, e.g. 'Computer Vision and Pattern Recognition'.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "field": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The field above that, e.g. 'Computer Science'.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "domain": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The domain above that, e.g. 'Physical Sciences'. Topic, subfield, field and domain are OpenAlex's four-level classification, from most to least specific.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "How strongly the entity matches the topic, 0 to 1. Assigned by a classifier, not by the authors."
+              },
+              "count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of the entity's works fall under this topic."
+              },
+              "value": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The share, e.g. 0.0996. Higher means more distinctive of this entity."
+              }
+            }
+          }
+        },
+        "works_api_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A ready-made query returning its works."
+        },
+        "awards_api_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A ready-made query returning its awards."
+        },
+        "awards_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many funding awards OpenAlex links to it."
+        },
+        "created_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When the record was created."
+        },
+        "updated_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When it was last changed."
+        }
+      }
     },
     "test_examples": [
       {
@@ -2294,7 +6420,708 @@
         "null"
       ],
       "description": "OpenAlex sources search response. results[].summary_stats contains h_index, i10_index, and 2yr_mean_citedness.",
-      "additionalProperties": true
+      "additionalProperties": true,
+      "properties": {
+        "meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "OpenAlex's own result header. `count` is the TOTAL matching the query upstream, not the number returned, so compare it with the length of `results` before treating the list as complete.",
+          "properties": {
+            "count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total matches upstream."
+            },
+            "db_response_time_ms": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How long OpenAlex took, in milliseconds. A server timing, not a property of the data."
+            },
+            "page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Which page this is."
+            },
+            "per_page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size requested."
+            },
+            "next_cursor": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cursor for the next page, when cursor paging is used."
+            },
+            "groups_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of groups, when the query grouped results."
+            },
+            "notice": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "A message OpenAlex attaches to the response, such as a deprecation or a rate-limit warning. Usually null; when it is not, read it."
+            },
+            "cost_usd": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "What OpenAlex charges for the query, where it does. 0 on the free tier."
+            },
+            "x_query": {
+              "type": [
+                "string",
+                "object",
+                "null"
+              ],
+              "description": "The query as OpenAlex parsed it -- what a natural-language search was actually turned into. The keys are whatever the parser produced, so read it as a map.",
+              "additionalProperties": {
+                "type": [
+                  "object",
+                  "array",
+                  "string",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One parsed clause. Its own keys come from the parser too, so this level is open as well.",
+                "additionalProperties": {
+                  "type": [
+                    "object",
+                    "array",
+                    "string",
+                    "number",
+                    "boolean",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "results": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The matching sources, best match first.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex source id, e.g. 'https://openalex.org/S137773608'."
+              },
+              "ids": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The same source elsewhere: openalex, issn_l, issn, mag, wikidata, fatcat.",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "array",
+                    "null"
+                  ]
+                }
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The source's name, e.g. 'Nature'."
+              },
+              "issn_l": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The linking ISSN -- the one ISSN that stands for the title across print and electronic. Match on this, not on `issn`."
+              },
+              "issn": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Every ISSN for the title, print and electronic.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What kind of source: 'journal', 'repository', 'conference', 'book series', 'ebook platform'."
+              },
+              "country_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Country of the publisher."
+              },
+              "homepage_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The source's website."
+              },
+              "host_organization": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex id of the publisher or hosting body."
+              },
+              "host_organization_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its name, e.g. 'Nature Portfolio'."
+              },
+              "host_organization_lineage": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "That organisation and its parents -- an imprint inside a group.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "is_oa": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the source is fully open access TODAY."
+              },
+              "is_in_doaj": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when it is listed in the Directory of Open Access Journals, the usual quality signal for an OA journal."
+              },
+              "is_in_doaj_since_year": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Since when. Null when it is not listed."
+              },
+              "is_in_scielo": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when it is in SciELO."
+              },
+              "is_core": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when OpenAlex counts it in its CORE set of serious scholarly venues -- the filter that excludes predatory and non-scholarly titles."
+              },
+              "is_high_oa_rate": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when most of its recent works are open access."
+              },
+              "is_high_oa_rate_since_year": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Since when. Null when the flag is false."
+              },
+              "is_ojs": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when it runs on Open Journal Systems."
+              },
+              "is_preprint_repository": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True for a preprint server. Works here have not been peer reviewed."
+              },
+              "oa_flip_year": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "The year the source converted to open access, where it did. Null otherwise -- works before that year are not OA even if the source is now."
+              },
+              "oa_works_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of its works are open access."
+              },
+              "listed_in": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "External lists and indexes that include the source, e.g. ['anvur-class-a', 'scopus']. These are what a national assessment exercise reads.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "apc_usd": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "The article processing charge in US dollars, e.g. 12690."
+              },
+              "apc_prices": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "The APC in each currency the publisher lists it in.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "price": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "The amount."
+                    },
+                    "currency": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its currency, e.g. 'USD'."
+                    }
+                  }
+                }
+              },
+              "apc_usd_by_year": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "The USD APC by year -- what it cost to publish there at the time, which a current figure does not give.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "year": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "The year."
+                    },
+                    "price": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "The APC in USD that year."
+                    }
+                  }
+                }
+              },
+              "first_publication_year": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Year of the earliest work OpenAlex holds for the source, e.g. 1851."
+              },
+              "last_publication_year": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Year of the most recent. A last year well in the past means the source has ceased."
+              },
+              "works_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Works published in the source."
+              },
+              "cited_by_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Total citations to them."
+              },
+              "summary_stats": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Citation summary for the entity.",
+                "properties": {
+                  "2yr_mean_citedness": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Mean citations per work over the last two years -- the impact-factor-shaped statistic. Comparable only within a field."
+                  },
+                  "h_index": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "h-index: h works each cited at least h times. Grows with career length, so it compares seniority as much as impact."
+                  },
+                  "i10_index": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many works have at least 10 citations."
+                  }
+                }
+              },
+              "counts_by_year": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Yearly activity, most recent first. The current year is partial, so its counts are not comparable with completed years.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "year": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "The calendar year."
+                    },
+                    "works_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Works published that year."
+                    },
+                    "cited_by_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Citations received that year."
+                    },
+                    "oa_works_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Of those works, how many are open access."
+                    }
+                  }
+                }
+              },
+              "topics": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Topics published in the source, with counts.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "OpenAlex topic id, e.g. 'https://openalex.org/T10036'."
+                    },
+                    "display_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The topic's name, e.g. 'Advanced Neural Network Applications'."
+                    },
+                    "subfield": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The subfield it sits in, e.g. 'Computer Vision and Pattern Recognition'.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "field": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The field above that, e.g. 'Computer Science'.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "domain": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The domain above that, e.g. 'Physical Sciences'. Topic, subfield, field and domain are OpenAlex's four-level classification, from most to least specific.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "How strongly the entity matches the topic, 0 to 1. Assigned by a classifier, not by the authors."
+                    },
+                    "count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many of the entity's works fall under this topic."
+                    }
+                  }
+                }
+              },
+              "topic_share": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "The entity's topics weighted by how UNUSUALLY concentrated it is in each -- `value` is a share, not a count, so a small institution specialising narrowly can outrank a large general one.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "OpenAlex topic id, e.g. 'https://openalex.org/T10036'."
+                    },
+                    "display_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The topic's name, e.g. 'Advanced Neural Network Applications'."
+                    },
+                    "subfield": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The subfield it sits in, e.g. 'Computer Vision and Pattern Recognition'.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "field": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The field above that, e.g. 'Computer Science'.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "domain": {
+                      "type": [
+                        "string",
+                        "object",
+                        "null"
+                      ],
+                      "description": "The domain above that, e.g. 'Physical Sciences'. Topic, subfield, field and domain are OpenAlex's four-level classification, from most to least specific.",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex id of the referenced entity."
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its name."
+                        }
+                      }
+                    },
+                    "score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "How strongly the entity matches the topic, 0 to 1. Assigned by a classifier, not by the authors."
+                    },
+                    "count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many of the entity's works fall under this topic."
+                    },
+                    "value": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "The share, e.g. 0.0996. Higher means more distinctive of this entity."
+                    }
+                  }
+                }
+              },
+              "works_api_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A ready-made query returning its works."
+              },
+              "created_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the record was created."
+              },
+              "updated_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When it was last changed."
+              }
+            }
+          }
+        },
+        "group_by": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Group counts, when the query asked for them; an empty list otherwise."
+        }
+      }
     },
     "test_examples": [
       {
@@ -2342,7 +7169,595 @@
         "null"
       ],
       "description": "OpenAlex source record. summary_stats contains h_index, i10_index, and 2yr_mean_citedness.",
-      "additionalProperties": true
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "OpenAlex source id, e.g. 'https://openalex.org/S137773608'."
+        },
+        "ids": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The same source elsewhere: openalex, issn_l, issn, mag, wikidata, fatcat.",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "array",
+              "null"
+            ]
+          }
+        },
+        "display_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The source's name, e.g. 'Nature'."
+        },
+        "issn_l": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The linking ISSN -- the one ISSN that stands for the title across print and electronic. Match on this, not on `issn`."
+        },
+        "issn": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Every ISSN for the title, print and electronic.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "What kind of source: 'journal', 'repository', 'conference', 'book series', 'ebook platform'."
+        },
+        "country_code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Country of the publisher."
+        },
+        "homepage_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The source's website."
+        },
+        "host_organization": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "OpenAlex id of the publisher or hosting body."
+        },
+        "host_organization_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Its name, e.g. 'Nature Portfolio'."
+        },
+        "host_organization_lineage": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "That organisation and its parents -- an imprint inside a group.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "is_oa": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when the source is fully open access TODAY."
+        },
+        "is_in_doaj": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when it is listed in the Directory of Open Access Journals, the usual quality signal for an OA journal."
+        },
+        "is_in_doaj_since_year": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Since when. Null when it is not listed."
+        },
+        "is_in_scielo": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when it is in SciELO."
+        },
+        "is_core": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when OpenAlex counts it in its CORE set of serious scholarly venues -- the filter that excludes predatory and non-scholarly titles."
+        },
+        "is_high_oa_rate": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when most of its recent works are open access."
+        },
+        "is_high_oa_rate_since_year": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Since when. Null when the flag is false."
+        },
+        "is_ojs": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when it runs on Open Journal Systems."
+        },
+        "is_preprint_repository": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True for a preprint server. Works here have not been peer reviewed."
+        },
+        "oa_flip_year": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The year the source converted to open access, where it did. Null otherwise -- works before that year are not OA even if the source is now."
+        },
+        "oa_works_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many of its works are open access."
+        },
+        "listed_in": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "External lists and indexes that include the source, e.g. ['anvur-class-a', 'scopus']. These are what a national assessment exercise reads.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "apc_usd": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The article processing charge in US dollars, e.g. 12690."
+        },
+        "apc_prices": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The APC in each currency the publisher lists it in.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "price": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "The amount."
+              },
+              "currency": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its currency, e.g. 'USD'."
+              }
+            }
+          }
+        },
+        "apc_usd_by_year": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The USD APC by year -- what it cost to publish there at the time, which a current figure does not give.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "year": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "The year."
+              },
+              "price": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "The APC in USD that year."
+              }
+            }
+          }
+        },
+        "first_publication_year": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Year of the earliest work OpenAlex holds for the source, e.g. 1851."
+        },
+        "last_publication_year": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Year of the most recent. A last year well in the past means the source has ceased."
+        },
+        "works_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Works published in the source."
+        },
+        "cited_by_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Total citations to them."
+        },
+        "summary_stats": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Citation summary for the entity.",
+          "properties": {
+            "2yr_mean_citedness": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Mean citations per work over the last two years -- the impact-factor-shaped statistic. Comparable only within a field."
+            },
+            "h_index": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "h-index: h works each cited at least h times. Grows with career length, so it compares seniority as much as impact."
+            },
+            "i10_index": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many works have at least 10 citations."
+            }
+          }
+        },
+        "counts_by_year": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Yearly activity, most recent first. The current year is partial, so its counts are not comparable with completed years.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "year": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "The calendar year."
+              },
+              "works_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Works published that year."
+              },
+              "cited_by_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Citations received that year."
+              },
+              "oa_works_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Of those works, how many are open access."
+              }
+            }
+          }
+        },
+        "topics": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Topics published in the source, with counts.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex topic id, e.g. 'https://openalex.org/T10036'."
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The topic's name, e.g. 'Advanced Neural Network Applications'."
+              },
+              "subfield": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The subfield it sits in, e.g. 'Computer Vision and Pattern Recognition'.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "field": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The field above that, e.g. 'Computer Science'.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "domain": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The domain above that, e.g. 'Physical Sciences'. Topic, subfield, field and domain are OpenAlex's four-level classification, from most to least specific.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "How strongly the entity matches the topic, 0 to 1. Assigned by a classifier, not by the authors."
+              },
+              "count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of the entity's works fall under this topic."
+              }
+            }
+          }
+        },
+        "topic_share": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The entity's topics weighted by how UNUSUALLY concentrated it is in each -- `value` is a share, not a count, so a small institution specialising narrowly can outrank a large general one.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OpenAlex topic id, e.g. 'https://openalex.org/T10036'."
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The topic's name, e.g. 'Advanced Neural Network Applications'."
+              },
+              "subfield": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The subfield it sits in, e.g. 'Computer Vision and Pattern Recognition'.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "field": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The field above that, e.g. 'Computer Science'.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "domain": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "The domain above that, e.g. 'Physical Sciences'. Topic, subfield, field and domain are OpenAlex's four-level classification, from most to least specific.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id of the referenced entity."
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its name."
+                  }
+                }
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "How strongly the entity matches the topic, 0 to 1. Assigned by a classifier, not by the authors."
+              },
+              "count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of the entity's works fall under this topic."
+              },
+              "value": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The share, e.g. 0.0996. Higher means more distinctive of this entity."
+              }
+            }
+          }
+        },
+        "works_api_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A ready-made query returning its works."
+        },
+        "created_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When the record was created."
+        },
+        "updated_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When it was last changed."
+        }
+      }
     },
     "test_examples": [
       {

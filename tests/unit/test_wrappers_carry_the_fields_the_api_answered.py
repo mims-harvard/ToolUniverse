@@ -10681,3 +10681,236 @@ def test_an_hpo_annotation_says_how_often_the_phenotype_occurs():
         assert name in row, f"{name} is answered upstream and not returned"
     assert "HP:0040280" in row["frequency_id"]["description"]
     assert "denominator" in row["observed_total"]["description"]
+
+
+def test_a_schema_that_declares_nothing_scored_as_declaring_everything():
+    """The seven EBI Proteins API tools had a bare {"type": "object"} branch.
+
+    A success branch with no `properties` is reported by the field audit as a
+    single `.*` path, and the declarable filter drops `.*` by design -- the
+    level is named and its contents are not. So a tool that documented nothing
+    scored zero gaps, and 423 measured leaf paths across these seven were
+    invisible to the whole sweep.
+
+    Two levels here are genuinely open and are declared with
+    additionalProperties rather than by naming one protein's keys:
+    dbReferences[].properties is keyed by what each DATABASE provides -- a PDB
+    row carries method/resolution/chains, an Ensembl row carries 'gene ID' --
+    and the genome-mapping properties likewise.
+    """
+    entry = _success_props(_config("proteins_api_get_protein")["return_schema"])
+    for name in (
+        "accession",
+        "id",
+        "secondaryAccession",
+        "proteinExistence",
+        "info",
+        "organism",
+        "gene",
+        "protein",
+        "sequence",
+        "keywords",
+        "comments",
+        "features",
+        "dbReferences",
+        "references",
+    ):
+        assert name in entry, f"{name} is returned and not declared"
+    assert "Swiss-Prot" in entry["info"]["properties"]["type"]["description"]
+    assert (
+        "canonical" in entry["sequence"]["properties"]["length"]["description"].lower()
+    )
+    xref = entry["dbReferences"]["items"]["properties"]
+    assert isinstance(xref["properties"].get("additionalProperties"), dict), (
+        "a level keyed by what each database provides must declare its VALUE shape"
+    )
+    comment = entry["comments"]["items"]["properties"]
+    assert "read `type` first" in entry["comments"]["description"]
+    for name in ("type", "text", "molecule", "interactions", "isoforms", "locations"):
+        assert name in comment, f"comments[].{name} is returned and not declared"
+    feature = entry["features"]["items"]["properties"]
+    for name in (
+        "type",
+        "category",
+        "begin",
+        "end",
+        "ftId",
+        "alternativeSequence",
+        "ligand",
+    ):
+        assert name in feature, f"features[].{name} is returned and not declared"
+    assert "canonical" in entry["features"]["description"].lower(), (
+        "feature coordinates are against the canonical isoform and must say so"
+    )
+    assert "1-based" in feature["begin"]["description"]
+
+
+def test_each_proteins_endpoint_declares_only_the_part_it_returns():
+    """Applying the whole entry shape to an endpoint that answers features
+    alone would declare fields that never appear there -- a fabrication, not a
+    gap. Each endpoint returns one slice of the UniProt entry and is declared
+    with that slice.
+    """
+    comments = _row_props(_config("proteins_api_get_comments")["return_schema"])
+    assert "type" in comments and "interactions" in comments
+    assert "accession" not in comments, "the comments endpoint does not return an entry"
+    features = _row_props(_config("proteins_api_get_features")["return_schema"])
+    assert "category" in features and "ftId" in features
+    assert "comments" not in features, "the features endpoint does not return comments"
+    xrefs = _row_props(_config("proteins_api_get_xrefs")["return_schema"])
+    assert set(xrefs) >= {"type", "id", "properties"}
+    pubs = _row_props(_config("proteins_api_get_publications")["return_schema"])
+    assert "citation" in pubs and "scope" in pubs
+    assert "which claim" in pubs["scope"]["description"]
+
+
+def test_a_funding_total_declares_what_it_does_not_count():
+    """~44.6% of rows have no award amount, and the schema never said so.
+
+    Every OpenNIH tool returns a `provenance` block, and it is not boilerplate.
+    Measured 2026-11-11 it states that a NULL award_amount is 'not_reported'
+    and never 0, that grant_count counts project-year ROWS so a multi-year
+    award counts once per year, that dollars are nominal rather than
+    inflation-adjusted, that the latest fiscal year may be partial, and which
+    mechanisms were excluded -- intramural, contracts.
+
+    So a total_funding read without that block is a sum over the 55% of rows
+    that carry an amount, counted per project-year, in mixed-year dollars,
+    over a window whose last year is incomplete. OpenNIH_source_status gives
+    the number directly: 1,330,950 of 3,021,519 rows have no amount.
+    """
+    for tool in (
+        "OpenNIH_search_grants",
+        "OpenNIH_rank_institutions",
+        "OpenNIH_topic_trend",
+        "OpenNIH_mechanism_mix",
+        "OpenNIH_institution_concentration",
+    ):
+        props = _success_props(_config(tool)["return_schema"])
+        assert "provenance" in props, f"{tool}: provenance is returned and not declared"
+        prov = props["provenance"]["properties"]
+        for name in ("source", "corpus_version", "null_award_rule", "funding_scope"):
+            assert name in prov, (
+                f"{tool}: provenance.{name} is returned and not declared"
+            )
+        assert "NEVER as 0" in prov["null_award_rule"]["description"]
+        assert "NOT boilerplate" in props["provenance"]["description"]
+    prov = _success_props(_config("OpenNIH_topic_trend")["return_schema"])[
+        "provenance"
+    ]["properties"]
+    assert "inflation" in prov["nominal_note"]["description"]
+    assert "partial" in prov["partial_fy_note"]["description"]
+    counts = _success_props(_config("OpenNIH_rank_institutions")["return_schema"])
+    row = counts["rankings"]["items"]["properties"]
+    assert (
+        "NOT a number of awards"
+        in counts["provenance"]["properties"]["count_metrics_note"]["description"]
+    )
+    assert "distinct_awards" in row and "grant_count" in row
+    assert "not awards" in row["grant_count"]["description"]
+
+
+def test_the_framework_s_own_warnings_about_a_reply_are_declared():
+    """'duplicate_full_project_rows': 146 rows, 142 distinct project numbers.
+
+    ToolUniverse attaches `tooluniverse_contract_warnings` to some OpenNIH
+    replies -- the slice repeats project numbers so a row count overstates the
+    award count, or the endpoint exposes no linked publications so an empty
+    list is not evidence of none. The framework computed those warnings and
+    the schema never mentioned them.
+    """
+    for tool in ("OpenNIH_search_grants", "OpenNIH_get_pi_profile"):
+        props = _success_props(_config(tool)["return_schema"])
+        assert "tooluniverse_contract_warnings" in props, (
+            f"{tool}: the framework's own warnings are returned and not declared"
+        )
+        warn = props["tooluniverse_contract_warnings"]["items"]["properties"]
+        for name in (
+            "code",
+            "message",
+            "slice_total_rows",
+            "slice_unique_project_nums",
+        ):
+            assert name in warn, f"{tool}: warning.{name} is returned and not declared"
+        assert (
+            "not evidence of none"
+            in props["tooluniverse_contract_warnings"]["description"]
+        )
+
+
+def test_an_openalex_abstract_is_declared_as_the_index_it_is():
+    """abstract_inverted_index is keyed by WORD, so it is not readable text.
+
+    OpenAlex returns the abstract as a map from each word to the positions it
+    occupies. Declaring one paper's vocabulary as the schema would have made
+    110 of a work record's 275 "fields" out of the words of one abstract, so
+    the level is declared open with the value shape instead.
+
+    All seven OpenAlex tools had a bare {"type": "object"} success branch.
+    """
+    work = _success_props(_config("openalex_get_work_by_doi")["return_schema"])
+    idx = work["abstract_inverted_index"]
+    assert isinstance(idx.get("additionalProperties"), dict), (
+        "a level keyed by the paper's own words must declare its VALUE shape"
+    )
+    assert "not readable text" in idx["description"]
+    for name in (
+        "doi",
+        "title",
+        "publication_year",
+        "is_retracted",
+        "is_paratext",
+        "authorships",
+        "primary_location",
+        "best_oa_location",
+        "open_access",
+        "cited_by_count",
+        "fwci",
+        "referenced_works",
+        "topics",
+        "concepts",
+    ):
+        assert name in work, f"{name} is returned and not declared"
+    assert "field" in work["fwci"]["description"].lower()
+    assert "bronze" in work["open_access"]["properties"]["oa_status"]["description"]
+    assert "retraction recorded" in work["is_retracted"]["description"]
+
+
+def test_an_openalex_count_is_declared_against_the_right_denominator():
+    """works_count and works_count_with_children are different numbers.
+
+    An institution's own works_count excludes its children; the question "how
+    much does this university publish" is answered by works_count_with_children.
+    `associated_institutions[].relationship` says which are children, which is
+    what stops a sum double-counting, and `is_super_system` flags the umbrella
+    entities where it would.
+    """
+    inst = _success_props(_config("openalex_get_institution")["return_schema"])
+    for name in (
+        "works_count",
+        "works_count_with_children",
+        "works_count_with_children_and_predecessors",
+        "associated_institutions",
+        "is_super_system",
+        "roles",
+        "lineage",
+    ):
+        assert name in inst, f"{name} is returned and not declared"
+    assert "double-count" in inst["associated_institutions"]["description"]
+    assert (
+        "parent"
+        in inst["associated_institutions"]["items"]["properties"]["relationship"][
+            "description"
+        ]
+    )
+    meta = _success_props(_config("openalex_search_authors")["return_schema"])["meta"][
+        "properties"
+    ]
+    assert "Total matches upstream" in meta["count"]["description"]
+    assert (
+        "complete" in meta["count"]["description"]
+        or "compare"
+        in _success_props(_config("openalex_search_authors")["return_schema"])["meta"][
+            "description"
+        ]
+    )
