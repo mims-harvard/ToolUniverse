@@ -23,7 +23,7 @@ def ClinGen_get_gene_validity(
     Parameters
     ----------
     gene : str
-        Optional: Filter by gene symbol
+        Optional: Filter by gene symbol. HGNC symbol only (e.g. BRCA1). A genomic ran...
     limit : int
         Maximum curations per page.
     offset : int

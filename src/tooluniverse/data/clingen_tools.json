@@ -1,14 +1,14 @@
 [
   {
     "name": "ClinGen_search_gene_validity",
-    "description": "Search ClinGen gene-disease validity curations by gene symbol. Returns classification (Definitive, Strong, Moderate, Limited, Disputed, Refuted), disease associations, and inheritance patterns. Essential for ACMG variant classification. Example: BRCA1 returns validity scores for hereditary breast/ovarian cancer.",
+    "description": "Search ClinGen gene-disease validity curations by gene symbol. Returns classification (Definitive, Strong, Moderate, Limited, Disputed, Refuted), disease associations, and inheritance patterns. Essential for ACMG variant classification. Example: BRCA1 returns validity scores for hereditary breast/ovarian cancer. The `gene` parameter takes an HGNC GENE SYMBOL only: this file carries no coordinate, transcript or ontology index, so a region, an Ensembl id, a RefSeq accession or an HGVS expression is refused with an error rather than answered with an empty result. Resolve a region to symbols first (Ensembl_get_region_features with feature_types='gene').",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
       "properties": {
         "gene": {
           "type": "string",
-          "description": "Gene symbol to search (e.g., BRCA1, TP53, CFTR)"
+          "description": "Gene symbol to search (e.g., BRCA1, TP53, CFTR). HGNC symbol only (e.g. BRCA1). A genomic range, Ensembl id, RefSeq accession or HGVS expression is refused with an error naming what to convert it with -- it is not answered with an empty list, which would be indistinguishable from an uncurated gene."
         }
       },
       "required": [
@@ -98,14 +98,14 @@
   },
   {
     "name": "ClinGen_get_gene_validity",
-    "description": "Get ClinGen gene-disease validity curations with classifications (Definitive, Strong, Moderate, Limited). The full catalog contains thousands of rows and is paged with limit/offset; total and next_offset make every curation reachable. An optional exact gene-symbol filter is available.",
+    "description": "Get ClinGen gene-disease validity curations with classifications (Definitive, Strong, Moderate, Limited). The full catalog contains thousands of rows and is paged with limit/offset; total and next_offset make every curation reachable. An optional exact gene-symbol filter is available. The `gene` parameter takes an HGNC GENE SYMBOL only: this file carries no coordinate, transcript or ontology index, so a region, an Ensembl id, a RefSeq accession or an HGVS expression is refused with an error rather than answered with an empty result. Resolve a region to symbols first (Ensembl_get_region_features with feature_types='gene').",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
       "properties": {
         "gene": {
           "type": "string",
-          "description": "Optional: Filter by gene symbol"
+          "description": "Optional: Filter by gene symbol. HGNC symbol only (e.g. BRCA1). A genomic range, Ensembl id, RefSeq accession or HGVS expression is refused with an error naming what to convert it with -- it is not answered with an empty list, which would be indistinguishable from an uncurated gene."
         },
         "limit": {
           "type": "integer",
@@ -214,14 +214,14 @@
   },
   {
     "name": "ClinGen_search_dosage_sensitivity",
-    "description": "Search ClinGen dosage sensitivity curations by gene symbol. Returns haploinsufficiency (HI) and triplosensitivity (TS) scores (0-3 scale). Score 3 = Sufficient evidence for dosage pathogenicity. Critical for CNV interpretation. Example: MECP2 has HI score of 3.",
+    "description": "Search ClinGen dosage sensitivity curations by gene symbol. Returns haploinsufficiency (HI) and triplosensitivity (TS) scores (0-3 scale). Score 3 = Sufficient evidence for dosage pathogenicity. Critical for CNV interpretation. Example: MECP2 has HI score of 3. The `gene` parameter takes an HGNC GENE SYMBOL only: this file carries no coordinate, transcript or ontology index, so a region, an Ensembl id, a RefSeq accession or an HGVS expression is refused with an error rather than answered with an empty result. Resolve a region to symbols first (Ensembl_get_region_features with feature_types='gene').",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
       "properties": {
         "gene": {
           "type": "string",
-          "description": "Gene symbol to search (e.g., MECP2, PMP22, RAI1)"
+          "description": "Gene symbol to search (e.g., MECP2, PMP22, RAI1). HGNC symbol only (e.g. BRCA1). A genomic range, Ensembl id, RefSeq accession or HGVS expression is refused with an error naming what to convert it with -- it is not answered with an empty list, which would be indistinguishable from an uncurated gene."
         }
       },
       "required": [
@@ -287,14 +287,14 @@
   },
   {
     "name": "ClinGen_get_dosage_sensitivity",
-    "description": "Get ClinGen dosage sensitivity curations, including haploinsufficiency and triplosensitivity scores. The catalog is paged with limit/offset; total and next_offset make every curation reachable. Set include_regions=true to include recurrent CNV regions.",
+    "description": "Get ClinGen dosage sensitivity curations, including haploinsufficiency and triplosensitivity scores. The catalog is paged with limit/offset; total and next_offset make every curation reachable. Set include_regions=true to include recurrent CNV regions. The `gene` parameter takes an HGNC GENE SYMBOL only: this file carries no coordinate, transcript or ontology index, so a region, an Ensembl id, a RefSeq accession or an HGVS expression is refused with an error rather than answered with an empty result. Resolve a region to symbols first (Ensembl_get_region_features with feature_types='gene').",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
       "properties": {
         "gene": {
           "type": "string",
-          "description": "Optional: Filter by gene symbol"
+          "description": "Optional: Filter by gene symbol. HGNC symbol only (e.g. BRCA1). A genomic range, Ensembl id, RefSeq accession or HGVS expression is refused with an error naming what to convert it with -- it is not answered with an empty list, which would be indistinguishable from an uncurated gene."
         },
         "include_regions": {
           "type": "boolean",
@@ -676,14 +676,14 @@
   },
   {
     "name": "ClinGen_search_actionability",
-    "description": "Search ClinGen clinical actionability across both adult and pediatric contexts by gene. Returns actionability data from both contexts for comparison. Useful for comprehensive actionability assessment of a gene across age groups.",
+    "description": "Search ClinGen clinical actionability across both adult and pediatric contexts by gene. Returns actionability data from both contexts for comparison. Useful for comprehensive actionability assessment of a gene across age groups. The `gene` parameter takes an HGNC GENE SYMBOL only: this file carries no coordinate, transcript or ontology index, so a region, an Ensembl id, a RefSeq accession or an HGVS expression is refused with an error rather than answered with an empty result. Resolve a region to symbols first (Ensembl_get_region_features with feature_types='gene').",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
       "properties": {
         "gene": {
           "type": "string",
-          "description": "Gene symbol to search (e.g., BRCA1, MLH1, LDLR)"
+          "description": "Gene symbol to search (e.g., BRCA1, MLH1, LDLR). HGNC symbol only (e.g. BRCA1). A genomic range, Ensembl id, RefSeq accession or HGVS expression is refused with an error naming what to convert it with -- it is not answered with an empty list, which would be indistinguishable from an uncurated gene."
         }
       },
       "required": [
@@ -745,14 +745,14 @@
   },
   {
     "name": "ClinGen_get_variant_classifications",
-    "description": "Get variant pathogenicity classifications from ClinGen Evidence Repository. Returns expert-curated variant classifications with supporting evidence. Optional filters by gene or variant. Classifications follow ACMG/AMP guidelines with expert review. Results are paged with limit/offset: 'total' counts every matching classification, and 'has_more' / 'next_offset' give the next page. CAID and ClinVar Variation ID lookups also return the CAID, mode of inheritance, met/unmet ACMG criteria, evidence summary, dates, version and HGVS forms.",
+    "description": "Get variant pathogenicity classifications from ClinGen Evidence Repository. Returns expert-curated variant classifications with supporting evidence. Optional filters by gene or variant. Classifications follow ACMG/AMP guidelines with expert review. Results are paged with limit/offset: 'total' counts every matching classification, and 'has_more' / 'next_offset' give the next page. CAID and ClinVar Variation ID lookups also return the CAID, mode of inheritance, met/unmet ACMG criteria, evidence summary, dates, version and HGVS forms. The `gene` parameter takes an HGNC GENE SYMBOL only: this file carries no coordinate, transcript or ontology index, so a region, an Ensembl id, a RefSeq accession or an HGVS expression is refused with an error rather than answered with an empty result. Resolve a region to symbols first (Ensembl_get_region_features with feature_types='gene').",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
       "properties": {
         "gene": {
           "type": "string",
-          "description": "Optional: Filter by gene symbol"
+          "description": "Optional: Filter by gene symbol. HGNC symbol only (e.g. BRCA1). A genomic range, Ensembl id, RefSeq accession or HGVS expression is refused with an error naming what to convert it with -- it is not answered with an empty list, which would be indistinguishable from an uncurated gene."
         },
         "variant": {
           "type": "string",
