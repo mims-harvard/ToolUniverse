@@ -912,18 +912,88 @@ class CIViCTool(BaseTool):
                 }[tool_name]
                 connection = result["data"].get(root_field, {})
                 page_info = connection.get("pageInfo", {})
+                # browseDiseases and browseTherapies carry BOTH counts, and
+                # only one of them answers the question asked: measured
+                # 2026-11-13, `totalCount` is 466 diseases and 674 therapies
+                # for every query including one matching nothing, while
+                # `filteredCount` reads 9 for "Melanoma", 126 for "carcinoma",
+                # 0 for "zzzzznotadisease". An earlier round dropped
+                # totalCount from these two queries because it is not a
+                # denominator; the denominator was the field beside it.
+                total = connection.get("filteredCount")
+                if total is None:
+                    total = connection.get("totalCount")
                 result["metadata"].update(
                     {
                         "returned": len(connection.get("nodes", [])),
-                        "total_results": connection.get("totalCount"),
-                        "total_results_is_exact": connection.get("totalCount")
-                        is not None,
+                        "total_results": total,
+                        "total_results_is_exact": total is not None,
                         "has_more": bool(page_info.get("hasNextPage")),
                         "next_cursor": page_info.get("endCursor")
                         if page_info.get("hasNextPage")
                         else None,
                     }
                 )
+                if connection.get("filteredCount") is not None:
+                    result["metadata"]["total_records_unfiltered"] = connection.get(
+                        "totalCount"
+                    )
+                    result["metadata"]["total_results_scope"] = (
+                        "filteredCount: records matching this query. "
+                        "total_records_unfiltered is the whole table and is the "
+                        "same for every query."
+                    )
+
+            # A name filter that matches several diseases unions them, and the
+            # union is invisible in the count: `disease="Melanoma"` returns 235
+            # evidence items drawn from SEVEN diseases -- Melanoma (151), Skin
+            # Melanoma (55), Uveal (17), Acral Lentiginous (5), Mucosal (4),
+            # Spitzoid (2), Malignant Anus Melanoma (1). 235 is neither the
+            # parent disease's own 304 nor any one ontology term's count, and
+            # nothing in the response said which diseases had been pooled. The
+            # rows carry their disease, so this is a tally of what came back,
+            # not a second request.
+            if tool_name == "civic_search_evidence_items" and (
+                arguments.get("disease") or arguments.get("disease_name")
+            ):
+                tally = {}
+                for node in result["data"].get("evidenceItems", {}).get("nodes") or []:
+                    disease = node.get("disease") or {}
+                    key = disease.get("id")
+                    if key is None:
+                        continue
+                    row = tally.setdefault(
+                        key,
+                        {
+                            "id": key,
+                            "name": disease.get("name"),
+                            "doid": disease.get("doid"),
+                            "evidence_items_on_this_page": 0,
+                        },
+                    )
+                    row["evidence_items_on_this_page"] += 1
+                matched = sorted(
+                    tally.values(),
+                    key=lambda r: -r["evidence_items_on_this_page"],
+                )
+                result["metadata"]["disease_filter"] = {
+                    "submitted": arguments.get("disease")
+                    or arguments.get("disease_name"),
+                    "matching": "case-insensitive substring of the disease name",
+                    "diseases_on_this_page": matched,
+                    "note": (
+                        "This filter is a name substring, not an ontology term "
+                        "or a subtype expansion. It unions every CIViC disease "
+                        "whose name contains the string, so the result is not "
+                        "any one disease's evidence and is not the ontology "
+                        "subtree of one either -- a disease whose name does not "
+                        "contain the string is absent however closely related "
+                        "it is. `diseases_on_this_page` is what came back here; "
+                        "call civic_search_diseases with the same string for "
+                        "every disease it matches and each one's "
+                        "evidenceItemCount."
+                    ),
+                }
 
             if tool_name == "civic_get_molecular_profile":
                 profile = result["data"].get("molecularProfile") or {}

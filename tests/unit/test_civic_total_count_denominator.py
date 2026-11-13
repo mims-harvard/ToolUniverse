@@ -57,11 +57,16 @@ def _post(payload):
     return r
 
 
-# browseDiseases/browseTherapies report the size of the whole browse table
-# regardless of the name filter -- 653 therapies for "imatinib", for
-# "zzzzznotatherapy", and for no filter at all (verified live). A denominator
-# that ignores the query is worse than none, so these two select pageInfo only.
-_NO_FILTER_AWARE_TOTAL = {"civic_search_diseases", "civic_search_therapies"}
+# browseDiseases/browseTherapies report the size of the whole browse table in
+# `totalCount` regardless of the name filter -- 674 therapies for "imatinib",
+# for "zzzzznotatherapy" and for no filter at all. A denominator that ignores
+# the query is worse than none, so an earlier round dropped the field from
+# these two queries. The denominator was the field beside it: `filteredCount`
+# reads 9 diseases for "Melanoma", 126 for "carcinoma", 0 for
+# "zzzzznotadisease", 466 unfiltered (measured live 2026-11-13). Both counts
+# are now selected, metadata.total_results carries the filtered one, and the
+# table size is published separately under a name that says what it is.
+_TABLE_SIZE_NOT_A_DENOMINATOR = {"civic_search_diseases", "civic_search_therapies"}
 
 
 class TestCivicQueriesRequestTotalCount(unittest.TestCase):
@@ -69,7 +74,7 @@ class TestCivicQueriesRequestTotalCount(unittest.TestCase):
         """Config invariant: no CIViC connection may ship without totalCount."""
         missing = []
         for cfg in _load_configs():
-            if cfg["name"] in _NO_FILTER_AWARE_TOTAL:
+            if cfg["name"] in _TABLE_SIZE_NOT_A_DENOMINATOR:
                 continue
             query = (cfg.get("fields") or {}).get("query", "")
             if "nodes" in query and "totalCount" not in query:
@@ -80,22 +85,49 @@ class TestCivicQueriesRequestTotalCount(unittest.TestCase):
             f"CIViC connection queries return a page with no denominator: {missing}",
         )
 
-    def test_browse_connections_do_not_publish_an_unfiltered_total(self):
-        """The exemption is asserted, not just commented.
+    def test_browse_connections_take_the_filtered_count_as_the_denominator(self):
+        """The browse connections must select both counts and label each.
 
-        Whoever adds totalCount back to these two must first confirm upstream
-        made them filter-aware -- otherwise a search matching nothing reports
-        653, under a description telling the caller to divide by it.
+        `totalCount` on these two is the size of the browse table and is the
+        same for every query, so it is not a denominator; `filteredCount` is.
+        Selecting the first without the second is what made it a trap.
         """
         for cfg in _load_configs():
-            if cfg["name"] not in _NO_FILTER_AWARE_TOTAL:
+            if cfg["name"] not in _TABLE_SIZE_NOT_A_DENOMINATOR:
                 continue
             query = (cfg.get("fields") or {}).get("query", "")
-            self.assertNotIn("totalCount", query, cfg["name"])
+            self.assertIn("filteredCount", query, cfg["name"])
+            self.assertIn("totalCount", query, cfg["name"])
             self.assertIn("pageInfo", query, cfg["name"])
-            self.assertNotIn(
-                "totalCount", json.dumps(cfg.get("return_schema", {})), cfg["name"]
+            props = cfg["return_schema"]["properties"]["data"]["properties"]
+            connection = props[next(iter(props))]["properties"]
+            self.assertIn("filteredCount", connection, cfg["name"])
+            # The table size must say that it is not filter-aware, or the next
+            # reader divides by it again.
+            self.assertIn(
+                "NOT filter-aware",
+                connection["totalCount"]["description"],
+                cfg["name"],
             )
+
+    def test_the_filtered_count_is_what_reaches_total_results(self):
+        """A browse search's metadata must not report the table size."""
+        tool = _make_tool("civic_search_diseases")
+        payload = {
+            "data": {
+                "browseDiseases": {
+                    "totalCount": 466,
+                    "filteredCount": 9,
+                    "pageCount": 2,
+                    "pageInfo": {"hasNextPage": True, "endCursor": "NQ"},
+                    "nodes": [{"id": 7, "name": "Melanoma"}],
+                }
+            }
+        }
+        with patch("requests.post", return_value=_post(payload)):
+            result = tool.run({"query": "Melanoma", "limit": 5})
+        self.assertEqual(result["metadata"]["total_results"], 9)
+        self.assertEqual(result["metadata"]["total_records_unfiltered"], 466)
 
     def test_paginated_variants_query_actually_sent_requests_total_count(self):
         """The gene-variants path builds its query in Python, not in JSON.
