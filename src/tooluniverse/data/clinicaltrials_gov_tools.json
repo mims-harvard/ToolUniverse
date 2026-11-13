@@ -750,7 +750,7 @@
   },
   {
     "name": "extract_clinical_trial_outcomes",
-    "description": "Extracts detailed trial outcome results (e.g., overall survival months, p-values, etc.) from clinicaltrials.gov, using their NCT IDs.",
+    "description": "Extracts the posted outcome RESULTS of a trial from ClinicalTrials.gov (the measured numbers per study arm, their denominators, dispersion and any statistical analysis), by NCT ID. Results are only available for trials that have posted them; `has_results` says whether this one did, and a trial that has not posted results is not a negative finding. For the outcome measures a trial PLANNED, use get_clinical_trial_outcome_measures instead.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -796,25 +796,123 @@
       "oneOf": [
         {
           "type": "array",
+          "description": "One entry per requested NCT ID.",
           "items": {
-            "oneOf": [
-              {
+            "type": "object",
+            "properties": {
+              "NCT ID": {
                 "type": "string"
               },
-              {
-                "type": "object",
-                "properties": {
-                  "NCT ID": {
-                    "type": "string"
-                  },
-                  "outcomes": {
-                    "type": "array"
+              "has_results": {
+                "type": "boolean",
+                "description": "The registry's own `hasResults` flag. False means the trial has posted no results at all, so `outcomes` is empty for that reason and not because the trial found nothing."
+              },
+              "note": {
+                "type": "string",
+                "description": "Present only when `outcomes` is empty, saying which of the two reasons it is: no results posted, or none of the posted measures matched `outcome_measure`."
+              },
+              "outcomes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "PRIMARY or SECONDARY."
+                    },
+                    "reporting_status": {
+                      "type": "string",
+                      "description": "POSTED, or NOT_POSTED for a measure the trial listed and has not yet reported."
+                    },
+                    "param_type": {
+                      "type": "string",
+                      "description": "What the value is: MEAN, MEDIAN, COUNT_OF_PARTICIPANTS, NUMBER, ..."
+                    },
+                    "unit_of_measure": {
+                      "type": "string"
+                    },
+                    "dispersion_type": {
+                      "type": "string",
+                      "description": "What `spread`, or `lower_limit`/`upper_limit`, means on each measurement row."
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "population": {
+                      "type": "string"
+                    },
+                    "time_frame": {
+                      "type": "string"
+                    },
+                    "unit_analyzed": {
+                      "type": "string"
+                    },
+                    "groups": {
+                      "type": "array",
+                      "description": "The study arms, each with `id`, `title` and `description`. `group_id` on every measurement refers to these."
+                    },
+                    "denominators": {
+                      "type": "array",
+                      "description": "How many units each arm contributed, as [{units, counts:[{group_id, value}]}]. A measure reported in more than one unit has more than one entry; all are returned."
+                    },
+                    "measurements": {
+                      "type": "array",
+                      "description": "One row per reported number. `class` and `category` carry the stratum the number belongs to -- a timepoint ('Day 5'), a grade, a subgroup -- and a measure reported at seven timepoints produces seven times as many rows, not an error. `group_title` repeats the arm so `group_id` need not be resolved by hand.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "class": {
+                            "type": "string"
+                          },
+                          "category": {
+                            "type": "string"
+                          },
+                          "group_id": {
+                            "type": "string"
+                          },
+                          "group_title": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          },
+                          "spread": {
+                            "type": "string"
+                          },
+                          "lower_limit": {
+                            "type": "string"
+                          },
+                          "upper_limit": {
+                            "type": "string"
+                          },
+                          "class_denominators": {
+                            "type": "array",
+                            "description": "The denominators of this stratum, when it carries its own -- they shrink over time as participants leave."
+                          }
+                        }
+                      }
+                    },
+                    "measurements_note": {
+                      "type": "string",
+                      "description": "Present instead of `measurements` when the measure posted no numbers."
+                    },
+                    "analyses": {
+                      "type": "array",
+                      "description": "Every statistical analysis of the measure, each key passed through: `p_value`, `statistical_method`, `param_type`/`param_value` (e.g. a hazard ratio), `ci_pct_value`, `ci_lower_limit`, `ci_upper_limit`, `group_ids`, `non_inferiority_type`. A measure with several comparisons returns several entries."
+                    }
                   }
                 }
               }
+            },
+            "required": [
+              "NCT ID",
+              "has_results",
+              "outcomes"
             ]
-          },
-          "description": "The extracted outcomes, one per entry. A 'Warning:' line appears here as an ORDINARY ELEMENT rather than as an error, so a caller treating every element as an outcome will treat the warning as one."
+          }
         },
         {
           "type": "object",
@@ -922,6 +1020,14 @@
               "NCT ID": {
                 "type": "string"
               },
+              "has_results": {
+                "type": "boolean",
+                "description": "The registry's own `hasResults` flag. False means the trial has posted no results at all, so no adverse events can be extracted -- which is not a statement that none occurred."
+              },
+              "note": {
+                "type": "string",
+                "description": "Present when `has_results` is false, saying so explicitly."
+              },
               "freq_threshold": {
                 "type": [
                   "string",
@@ -975,6 +1081,20 @@
                         "null"
                       ],
                       "description": "How many were at risk for the serious-event tally, e.g. 24. It can differ from otherNumAtRisk, so the two tallies have different denominators."
+                    },
+                    "deathsNumAffected": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "All-cause deaths in the arm. Counted whether or not the death is attributed to a listed event term, so it is not recoverable from the serious-event rows."
+                    },
+                    "deathsNumAtRisk": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "The denominator for deathsNumAffected."
                     }
                   }
                 }

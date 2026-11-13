@@ -704,8 +704,7 @@ class ClinicalTrialsTool(RESTfulTool):
                     "primary_outcome_measures": [
                         outcome.get("measure")
                         for outcome in (
-                            proto.get("outcomesModule", {}).get("primaryOutcomes")
-                            or []
+                            proto.get("outcomesModule", {}).get("primaryOutcomes") or []
                         )[:OUTCOMES_PER_SEARCH_ROW]
                         if isinstance(outcome, dict) and outcome.get("measure")
                     ],
@@ -2163,9 +2162,14 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
             query_type = "outcome"
             outcome_measure = query_params["outcome_measure"]
             del query_params["outcome_measure"]
+            # HasResults, not just the module: a trial with no posted
+            # results returns no outcomeMeasuresModule, and without this field
+            # the handler cannot tell that from a trial whose results simply
+            # did not come back.
             query_params["fields"] = [
                 "NCTId",
                 "OutcomeMeasure",
+                "HasResults",
             ]
 
         elif "adverse_event_type" in expected_param_names:
@@ -2178,6 +2182,7 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
             query_params["fields"] = [
                 "NCTId",
                 "AdverseEventsModule",
+                "HasResults",
             ]
 
         api_params = self._prepare_api_params(query_params)
@@ -2409,6 +2414,102 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
 
         return new_study
 
+    # ClinicalTrials.gov reports an outcome measure as nested lists: a measure
+    # taken at seven timepoints carries seven `classes`, a measure with several
+    # comparisons several `analyses`, a measure in two units two `denoms`. This
+    # handler used to assume exactly one of each and, for anything else,
+    # `return` a "Warning: Multiple classes found ..." string -- from inside
+    # the per-outcome loop, so one unexpected measure discarded every other
+    # measure of the same study. NCT04280705 has 43 posted outcome measures and
+    # the tool returned that one sentence and nothing else. Nothing is
+    # collapsed here now, and no branch returns prose in place of the data.
+    _MEASUREMENT_KEY_ORDER = (
+        "groupId",
+        "value",
+        "spread",
+        "lowerLimit",
+        "upperLimit",
+        "comment",
+    )
+
+    @staticmethod
+    def _snake_case(name):
+        return re.sub(r"(?<!^)(?=[A-Z])", "_", str(name)).lower()
+
+    @classmethod
+    def _passthrough(cls, node, drop=()):
+        """Every key of an upstream object, renamed and nothing dropped.
+
+        Listing the keys to keep is what lost the confidence interval:
+        `ciPctValue`, `ciLowerLimit` and `ciUpperLimit` sit beside the p-value
+        on every analysis and none of the three was ever read.
+        """
+        if not isinstance(node, dict):
+            return node
+        return {cls._snake_case(k): v for k, v in node.items() if k not in drop and v}
+
+    @classmethod
+    def _denominators(cls, denoms):
+        """`[{units, counts: [{groupId, value}]}]`, all of them."""
+        out = []
+        for denom in denoms or []:
+            if not isinstance(denom, dict):
+                continue
+            out.append(
+                {
+                    "units": denom.get("units"),
+                    "counts": [
+                        cls._passthrough(c) for c in (denom.get("counts") or [])
+                    ],
+                }
+            )
+        return out
+
+    @classmethod
+    def _measurement_rows(cls, outcome, group_titles):
+        """One flat row per reported number, carrying its stratum.
+
+        A measure reported per timepoint and per category nests them two deep
+        (`classes[].categories[].measurements[]`), and both levels carry a
+        `title` that says what the number is of -- "Day 5", "Grade 3". The row
+        is useless without them, so each row repeats both, plus the arm's title
+        so the `groupId` need not be resolved by hand.
+        """
+        rows = []
+        for klass in outcome.get("classes") or []:
+            if not isinstance(klass, dict):
+                continue
+            class_denoms = cls._denominators(klass.get("denoms"))
+            for category in klass.get("categories") or []:
+                if not isinstance(category, dict):
+                    continue
+                for measurement in category.get("measurements") or []:
+                    if not isinstance(measurement, dict):
+                        continue
+                    row = {}
+                    if klass.get("title"):
+                        row["class"] = klass["title"]
+                    if category.get("title"):
+                        row["category"] = category["title"]
+                    group_id = measurement.get("groupId")
+                    if group_id:
+                        row["group_id"] = group_id
+                        if group_titles.get(group_id):
+                            row["group_title"] = group_titles[group_id]
+                    for key in cls._MEASUREMENT_KEY_ORDER:
+                        if key == "groupId":
+                            continue
+                        if measurement.get(key) is not None:
+                            row[cls._snake_case(key)] = measurement[key]
+                    for key, value in measurement.items():
+                        snake = cls._snake_case(key)
+                        if key != "groupId" and snake not in row and value:
+                            row[snake] = value
+                    if class_denoms:
+                        row["class_denominators"] = class_denoms
+                    rows.append(row)
+        return rows
+
     def _extract_outcomes_from_output(self, study, outcome_measure):
         new_study = {}
         outcome_measure = outcome_measure.lower()
@@ -2416,200 +2517,164 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
             "nctId"
         )
 
-        if (
-            "resultsSection" in study
-            and "outcomeMeasuresModule" in study["resultsSection"]
-            and "outcomeMeasures" in study["resultsSection"]["outcomeMeasuresModule"]
-        ):
-            raw_outcomes = study["resultsSection"]["outcomeMeasuresModule"][
-                "outcomeMeasures"
-            ]
-            outcomes = []
-            for outcome in raw_outcomes:
-                new_outcome = {}
+        raw_outcomes = (
+            (study.get("resultsSection") or {}).get("outcomeMeasuresModule") or {}
+        ).get("outcomeMeasures")
 
-                if (outcome_measure == "primary") and outcome.get("type") != "PRIMARY":
+        # A trial that has posted no results and a trial whose posted results
+        # hold no measure matching the filter are different answers, and this
+        # tool used to give both of them as a bare `{"NCT ID": ...}` -- an
+        # object an agent reads as "asked and answered, nothing found". The
+        # registry states which it is in `hasResults`; say so.
+        has_results = study.get("hasResults")
+        if has_results is None:
+            has_results = bool(raw_outcomes)
+        new_study["has_results"] = bool(has_results)
+
+        if not raw_outcomes:
+            new_study["outcomes"] = []
+            new_study["note"] = (
+                f"{new_study['NCT ID']} has no posted results on "
+                "ClinicalTrials.gov, so there are no outcome results to "
+                "extract. This is not a null or negative finding about the "
+                "trial: the protocol's planned outcome measures are available "
+                "from get_clinical_trial_outcome_measures, and completed "
+                "trials are not required to post results."
+                if not has_results
+                else (
+                    f"{new_study['NCT ID']} has posted results, but the "
+                    "response carried no outcomeMeasuresModule."
+                )
+            )
+            return new_study
+
+        outcomes = []
+        for outcome in raw_outcomes:
+            new_outcome = {}
+
+            if (outcome_measure == "primary") and outcome.get("type") != "PRIMARY":
+                continue
+            if (outcome_measure == "secondary") and outcome.get("type") != "SECONDARY":
+                continue
+            if (outcome_measure == "all") and outcome.get("type") not in [
+                "PRIMARY",
+                "SECONDARY",
+            ]:
+                continue
+            if outcome_measure not in ["primary", "secondary", "all"]:
+                outcome_measure_variants = [outcome_measure]
+                # TODO: Add more rules here
+                outcome_measure_variants.append(outcome_measure.replace("-", " "))
+                outcome_measure_variants.append(outcome_measure.replace(" ", "-"))
+                outcome_measure_variants.append(
+                    outcome_measure.replace("progression", "progress")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("progress ", "progression ")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("progress-", "progression-")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("patient", "participant")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("participant", "patient")
+                )
+                outcome_measure_variants.append(outcome_measure.replace("_", " "))
+                outcome_measure_variants.append(
+                    outcome_measure.replace("percentage", "percent")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("percent ", "percentage ")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("percent-", "percentage-")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("proportion", "percentage")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("percentage", "proportion")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("proportion", "percent")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("percent", "proportion")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("time to event", "time-to-event")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("time-to-event", "time to event")
+                )
+                outcome_measure_variants = list(set(outcome_measure_variants))
+                found_match = False
+                for o in outcome_measure_variants:
+                    if (
+                        o in outcome.get("title", "").lower()
+                        or o in outcome.get("description", "").lower()
+                    ):
+                        found_match = True
+                        break
+                if not found_match:
                     continue
-                if (outcome_measure == "secondary") and outcome.get(
-                    "type"
-                ) != "SECONDARY":
-                    continue
-                if (outcome_measure == "all") and outcome.get("type") not in [
-                    "PRIMARY",
-                    "SECONDARY",
-                ]:
-                    continue
-                if outcome_measure not in ["primary", "secondary", "all"]:
-                    outcome_measure_variants = [outcome_measure]
-                    # TODO: Add more rules here
-                    outcome_measure_variants.append(outcome_measure.replace("-", " "))
-                    outcome_measure_variants.append(outcome_measure.replace(" ", "-"))
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("progression", "progress")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("progress ", "progression ")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("progress-", "progression-")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("patient", "participant")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("participant", "patient")
-                    )
-                    outcome_measure_variants.append(outcome_measure.replace("_", " "))
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("percentage", "percent")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("percent ", "percentage ")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("percent-", "percentage-")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("proportion", "percentage")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("percentage", "proportion")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("proportion", "percent")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("percent", "proportion")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("time to event", "time-to-event")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("time-to-event", "time to event")
-                    )
-                    outcome_measure_variants = list(set(outcome_measure_variants))
-                    found_match = False
-                    for o in outcome_measure_variants:
-                        if (
-                            o in outcome.get("title", "").lower()
-                            or o in outcome.get("description", "").lower()
-                        ):
-                            found_match = True
-                            break
-                    if not found_match:
-                        continue
 
-                new_outcome["title"] = outcome.get("title")
-                # PRIMARY or SECONDARY. The filter above reads it and the row
-                # did not carry it, so an `outcome_measure="all"` call returned
-                # primary and secondary outcomes mixed with no way to tell
-                # which was which.
-                new_outcome["type"] = outcome.get("type")
-                new_outcome["param_type"] = outcome.get("paramType")
-                new_outcome["unit_of_measure"] = outcome.get("unitOfMeasure")
-                new_outcome["dispersion_type"] = outcome.get("dispersionType")
-                new_outcome["description"] = outcome.get("description")
-                new_outcome["population"] = outcome.get("populationDescription")
-                new_outcome["time_frame"] = outcome.get("timeFrame")
-                new_outcome["unit_analyzed"] = outcome.get("typeUnitsAnalyzed")
+            new_outcome["title"] = outcome.get("title")
+            # PRIMARY or SECONDARY. The filter above reads it and the row
+            # did not carry it, so an `outcome_measure="all"` call returned
+            # primary and secondary outcomes mixed with no way to tell
+            # which was which.
+            new_outcome["type"] = outcome.get("type")
+            # POSTED or NOT_POSTED: a measure the trial listed and then did
+            # not report carries an empty `classes`, which is indistinguishable
+            # from a measure with no numbers unless this is returned.
+            new_outcome["reporting_status"] = outcome.get("reportingStatus")
+            new_outcome["param_type"] = outcome.get("paramType")
+            new_outcome["unit_of_measure"] = outcome.get("unitOfMeasure")
+            new_outcome["dispersion_type"] = outcome.get("dispersionType")
+            new_outcome["description"] = outcome.get("description")
+            new_outcome["population"] = outcome.get("populationDescription")
+            new_outcome["time_frame"] = outcome.get("timeFrame")
+            new_outcome["unit_analyzed"] = outcome.get("typeUnitsAnalyzed")
+            new_outcome["anticipated_posting_date"] = outcome.get(
+                "anticipatedPostingDate"
+            )
 
-                measurement_type = outcome.get("paramType")
-                if measurement_type:
-                    measurement_type = measurement_type.lower()
-                # GEOMETRIC_MEAN - Geometric Mean
-                # GEOMETRIC_LEAST_SQUARES_MEAN - Geometric Least Squares Mean
-                # LEAST_SQUARES_MEAN - Least Squares Mean
-                # LOG_MEAN - Log Mean
-                # MEAN - Mean
-                # MEDIAN - Median
-                # NUMBER - Number
-                # COUNT_OF_PARTICIPANTS - Count of Participants
-                # COUNT_OF_UNITS - Count of Units
+            groups = outcome.get("groups") or []
+            new_outcome["groups"] = groups
+            group_titles = {
+                g.get("id"): g.get("title") for g in groups if isinstance(g, dict)
+            }
 
-                unit = outcome.get("unitOfMeasure")
+            denominators = self._denominators(outcome.get("denoms"))
+            if denominators:
+                new_outcome["denominators"] = denominators
 
-                new_outcome["groups"] = outcome.get("groups")
+            measurements = self._measurement_rows(outcome, group_titles)
+            if measurements:
+                new_outcome["measurements"] = measurements
+            else:
+                new_outcome["measurements_note"] = (
+                    "No measurement rows were posted for this measure "
+                    f"(reportingStatus={outcome.get('reportingStatus')!r})."
+                )
 
-                denoms = outcome.get("denoms")
-                if denoms is not None:
-                    if len(denoms) > 1:
-                        # TODO: Investigate such trials
-                        return f"Warning: Multiple denoms found for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                    denoms = denoms[0]["counts"]
-                    new_outcome["denominators"] = denoms
+            analyses = [self._passthrough(a) for a in (outcome.get("analyses") or [])]
+            if analyses:
+                new_outcome["analyses"] = analyses
 
-                classes = outcome.get("classes")
-                if classes is not None:
-                    if len(classes) > 1:
-                        # TODO: Investigate such trials
-                        return f"Warning: Multiple classes found for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                    if "title" in classes[0] or "denoms" in classes[0]:
-                        # TODO: Investigate such trials
-                        return f"Warning: Unexpected structure in classes for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                        classes = classes[0]
-                    elif "categories" in classes[0]:
-                        classes = classes[0]["categories"]
-                        if len(classes) > 1:
-                            # TODO: Investigate such trials
-                            return f"Warning: Multiple classes-categories found for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                        if "title" in classes[0]:
-                            # TODO: Investigate such trials
-                            return f"Warning: Unexpected structure in classes-categories for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                            classes = classes[0]
-                        elif "measurements" in classes[0]:
-                            classes = classes[0]["measurements"]
-                        else:
-                            # TODO: Investigate such trials
-                            return f"Warning: Unexpected structure in classes-categories for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                    else:
-                        # TODO: Investigate such trials
-                        return f"Warning: Unexpected structure in classes for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
+            outcomes.append(new_outcome)
 
-                    if measurement_type and unit:
-                        new_outcome[measurement_type + " (" + unit + ")"] = classes
-                    else:
-                        # TODO: Investigate such trials
-                        return f"Warning: Missing paramType or unitOfMeasure for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-
-                analyses = outcome.get("analyses")
-                if analyses is not None:
-                    if len(analyses) > 1:
-                        # TODO: Investigate such trials
-                        return f"Warning: Multiple analyses found for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                    analyses = analyses[0]
-                    pvalue = analyses.get("pValue")
-                    pvalue_comment = analyses.get("pValueComment")
-                    statistic_test = analyses.get("statisticalMethod")
-                    statistic_comment = analyses.get("statisticalComment")
-
-                    statistic_name = analyses.get("paramType")
-                    statistic = analyses.get("paramValue")
-                    if statistic_name and statistic_test and statistic and pvalue:
-                        new_outcome["p-value (" + statistic_test + ")"] = pvalue
-                        new_outcome[statistic_name] = statistic
-                    else:
-                        # TODO: Investigate such trials
-                        return f"Warning: Missing paramType, paramValue, statisticalMethod or pvalue for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                    if statistic_comment:
-                        new_outcome["statistic_comment"] = statistic_comment
-                    if pvalue_comment:
-                        new_outcome["pvalue_comment"] = pvalue_comment
-
-                    statistic_test_type = analyses.get("nonInferiorityType")
-                    statistic_test_type_comment = analyses.get(
-                        "nonInferiorityTypeComment"
-                    )
-                    if statistic_test_type and statistic_test_type_comment:
-                        new_outcome["statistic_test_type"] = statistic_test_type
-                        new_outcome["statistic_test_type_comment"] = (
-                            statistic_test_type_comment
-                        )
-
-                outcomes.append(new_outcome)
-
-            new_study["outcomes"] = outcomes
-            new_study = self._remove_empty_values(new_study)
-
+        new_study["outcomes"] = [self._remove_empty_values(o) for o in outcomes]
+        if not outcomes:
+            new_study["note"] = (
+                f"{new_study['NCT ID']} has posted results with "
+                f"{len(raw_outcomes)} outcome measure(s), none of which matched "
+                f"outcome_measure={outcome_measure!r}. Call again with "
+                "outcome_measure='all' to see what is there."
+            )
         return new_study
 
     def _extract_safety_from_output(self, study, organs, adverse_event_type):
@@ -2619,6 +2684,24 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
         new_study["NCT ID"] = study["protocolSection"]["identificationModule"].get(
             "nctId"
         )
+
+        # Same silence as the outcomes handler had: a trial that has posted
+        # no results and a trial whose adverse-event module came back empty
+        # both left `{"NCT ID": ...}` as the whole answer, which reads as "no
+        # adverse events were reported". `hasResults` says which it is.
+        has_results = study.get("hasResults")
+        if has_results is None:
+            has_results = bool(
+                (study.get("resultsSection") or {}).get("adverseEventsModule")
+            )
+        new_study["has_results"] = bool(has_results)
+        if not has_results:
+            new_study["note"] = (
+                f"{new_study['NCT ID']} has no posted results on "
+                "ClinicalTrials.gov, so no adverse events can be extracted. "
+                "This is not a statement that none occurred: posting results "
+                "is not required of every completed trial."
+            )
 
         if (
             "resultsSection" in study
@@ -2631,11 +2714,11 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
                 else None
             )
             groups = ae_data["eventGroups"]
-            for group in groups:
-                if "deathsNumAffected" in group:
-                    del group["deathsNumAffected"]
-                if "deathsNumAtRisk" in group:
-                    del group["deathsNumAtRisk"]
+            # `deathsNumAffected` and `deathsNumAtRisk` used to be deleted
+            # from every arm here. They are the all-cause deaths of the arm,
+            # the single most serious number in the module, and they are not
+            # recoverable from the serious-event rows: a death is counted in
+            # this pair whether or not it is attributed to an event term.
             #     if "seriousNumAffected" in group:
             #         del group["seriousNumAffected"]
             #     if "seriousNumAtRisk" in group:
