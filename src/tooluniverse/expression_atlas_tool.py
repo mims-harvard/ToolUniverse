@@ -590,10 +590,33 @@ class ExpressionAtlasTool(BaseTool):
                 e.response.status_code if e.response is not None else "unknown"
             )
             if status_code == 404:
+                # This used to answer the 404 with {"status": "success",
+                # "data": null}. An accession that does not exist, one that
+                # has been RETIRED from Expression Atlas (E-MTAB-5214 is both
+                # absent from the API and absent from the 4,562-experiment
+                # listing), and one mistyped are all 404s, and reporting any
+                # of them as success means a caller that checks `status` is
+                # told the lookup worked. GxA_get_experiment_info, over the
+                # same resource, already returns an error for the same miss:
+                # two tools disagreeing about one accession, and the one
+                # saying success was the wrong one.
                 return {
-                    "status": "success",
-                    "data": None,
-                    "message": f"Experiment not found: {accession}",
+                    "status": "error",
+                    "error": (
+                        f"Expression Atlas has no experiment {accession} (HTTP "
+                        "404). The accession does not exist, is mistyped, or "
+                        "has been retired from Expression Atlas -- a retired "
+                        "accession can still resolve in ArrayExpress/BioStudies "
+                        "while being absent here. Use "
+                        "ExpressionAtlas_search_experiments to find the "
+                        "accessions Expression Atlas currently holds."
+                    ),
+                    "error_details": {
+                        "type": "NotFound",
+                        "accession": accession,
+                        "http_status": 404,
+                        "retriable": False,
+                    },
                 }
             return {
                 "status": "error",

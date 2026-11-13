@@ -565,7 +565,7 @@
   },
   {
     "name": "ExpressionAtlas_get_experiment",
-    "description": "Get metadata for a specific Expression Atlas experiment by accession (e.g., E-MTAB-2836): accession, type, species, and description/URLs. The experiment's design comes back in `assay_groups`: one entry per condition with its factor value, ontology term, replicate count and full sample properties (FACTOR = varied, SAMPLE = held fixed), plus `factors`, `assay_group_count` and an `assay_count` summed from the replicates. Caveat: GXA leaves `experimentalFactors`, `technologyType`, `contrasts`, `numberOfAssays`, `pubmedIds` and `lastUpdate` null on its own experiment object (confirmed live), so `technology`, `contrasts`, `pubmed_ids` and `last_update` are usually empty; for those, visit the experiment's page on https://www.ebi.ac.uk/gxa directly. This tool returns metadata and design only; for the per-gene expression values use GxA_get_experiment_expression, which reports them with their unit.",
+    "description": "Get metadata for a specific Expression Atlas experiment by accession (e.g., E-MTAB-2836): accession, type, species, and description/URLs. The experiment's design comes back in `assay_groups`: one entry per condition with its factor value, ontology term, replicate count and full sample properties (FACTOR = varied, SAMPLE = held fixed), plus `factors`, `assay_group_count` and an `assay_count` summed from the replicates. Caveat: GXA leaves `experimentalFactors`, `technologyType`, `contrasts`, `numberOfAssays`, `pubmedIds` and `lastUpdate` null on its own experiment object (confirmed live), so `technology`, `contrasts`, `pubmed_ids` and `last_update` are usually empty; for those, visit the experiment's page on https://www.ebi.ac.uk/gxa directly. This tool returns metadata and design only; for the per-gene expression values use GxA_get_experiment_expression, which reports them with their unit. An accession Expression Atlas does not hold returns status=error with error_details.type='NotFound', not a successful empty result.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -590,10 +590,7 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "accession": {
               "type": "string"
@@ -713,13 +710,17 @@
           "required": [
             "accession"
           ],
-          "description": "null when the record does not exist. The query was well-formed and the upstream answered 'no such record', which this tool reports as a successful empty result rather than an error; the reason is in `message`."
+          "description": "The experiment's metadata and design. An accession Expression Atlas does not hold is an ERROR branch, not this one: a 404 used to be reported as {\"status\": \"success\", \"data\": null}, so a caller checking `status` was told the lookup had worked."
         },
         {
           "type": "object",
           "properties": {
             "error": {
               "type": "string"
+            },
+            "error_details": {
+              "type": "object",
+              "description": "`type` is \"NotFound\" when the accession is absent from Expression Atlas -- it does not exist, is mistyped, or has been RETIRED. A retired accession can still resolve in ArrayExpress/BioStudies while being absent here, so 'the id is real' does not make this a transport failure."
             }
           },
           "required": [
