@@ -222,7 +222,7 @@
                   },
                   "clinical_features": {
                     "type": "array",
-                    "description": "Phenotypes observed in the submitted case, as HPO cross-references.",
+                    "description": "Phenotypes observed in the submitted case, as HPO cross-references. Measured on VCV000013961: 11 features across 2 of 45 submissions, and every one of them carries an hpo_id with a null name -- ClinVar's Trait element holds only <XRef DB=\"HP\" ID=\"...\"/> and no <Name>, so the human-readable label is not in this record to return. Resolve it with HPO_get_term if you need it.",
                     "items": {
                       "type": "object",
                       "properties": {
@@ -230,7 +230,8 @@
                           "type": [
                             "string",
                             "null"
-                          ]
+                          ],
+                          "description": "Human-readable phenotype label. Usually null: ClinVar submitters give the HPO id without a Name element, and this field is that element, not a lookup. A null here means ClinVar did not send a label, NOT that the phenotype is unnamed -- pass hpo_id to HPO_get_term for the term name."
                         },
                         "hpo_id": {
                           "type": [
