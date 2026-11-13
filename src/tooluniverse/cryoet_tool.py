@@ -12,6 +12,11 @@ from .tool_registry import register_tool
 
 GRAPHQL_URL = "https://graphql.cryoetdataportal.czscience.com/graphql"
 
+# How many of a deposition's datasets are named inline on its row. A
+# deposition can hold many, and the row says how many it holds and how to
+# fetch the rest, so this cap is visible rather than silent.
+_DATASETS_PER_DEPOSITION = 20
+
 
 def _gql(query: str, variables: dict = None) -> Dict[str, Any]:
     """Execute a GraphQL query and return parsed JSON."""
@@ -142,6 +147,7 @@ class CryoETTool(BaseTool):
         try:
             organism = arguments.get("organism_name")
             tissue = arguments.get("tissue_name")
+            deposition_id = arguments.get("deposition_id")
             limit = arguments.get("limit", 10)
             offset = arguments.get("offset", 0)
 
@@ -150,6 +156,11 @@ class CryoETTool(BaseTool):
                 where_parts.append(f'organismName: {{_ilike: "%{organism}%"}}')
             if tissue:
                 where_parts.append(f'tissueName: {{_ilike: "%{tissue}%"}}')
+            # Without this filter there was no route from a deposition to the
+            # datasets it bundles: organism and tissue were the only two ways
+            # in, and neither of them is the hierarchy.
+            if deposition_id is not None:
+                where_parts.append(f"depositionId: {{_eq: {int(deposition_id)}}}")
 
             where_clause = "{" + ", ".join(where_parts) + "}" if where_parts else "null"
             where_arg = f"where: {where_clause}, " if where_parts else ""
@@ -166,6 +177,7 @@ class CryoETTool(BaseTool):
                 tissueName
                 cellName
                 sampleType
+                depositionId
                 depositionDate
                 releaseDate
                 relatedDatabaseEntries
@@ -214,6 +226,7 @@ class CryoETTool(BaseTool):
                 cellTypeId
                 cellStrainName
                 sampleType
+                depositionId
                 samplePreparation
                 gridPreparation
                 otherSetup
@@ -449,6 +462,64 @@ class CryoETTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
+    @staticmethod
+    def _edges(node, key):
+        """A GraphQL connection as a plain list of its nodes."""
+        edges = ((node.get(key) or {}).get("edges")) or []
+        return [e.get("node") or {} for e in edges if isinstance(e, dict)]
+
+    @staticmethod
+    def _aggregate_count(node, key):
+        # An aggregate with nothing to count comes back as an EMPTY LIST, not
+        # as a row holding zero: deposition 10014 answers
+        # `annotationsAggregate: {aggregate: []}` and `annotations: {edges:
+        # []}` together. Reporting that as null would say "unknown" about a
+        # number the portal knows is zero.
+        agg = ((node.get(key) or {}).get("aggregate")) or []
+        if isinstance(agg, list):
+            if not agg:
+                return 0
+            agg = agg[0]
+        return (agg or {}).get("count")
+
+    @classmethod
+    def _shape_deposition(cls, raw):
+        """Flatten the connections and say how much of each is in the row."""
+        row = {
+            k: v
+            for k, v in raw.items()
+            if not k.endswith("Aggregate")
+            and k not in {"authors", "datasets", "depositionTypes"}
+        }
+        row["depositionTypes"] = [
+            t.get("type") for t in cls._edges(raw, "depositionTypes") if t.get("type")
+        ]
+        row["authors"] = cls._edges(raw, "authors")
+        contents = {
+            "datasets": cls._aggregate_count(raw, "datasetsAggregate"),
+            "annotations": cls._aggregate_count(raw, "annotationsAggregate"),
+            "tomograms": cls._aggregate_count(raw, "tomogramsAggregate"),
+            "tiltseries": cls._aggregate_count(raw, "tiltseriesAggregate"),
+            "frames": cls._aggregate_count(raw, "framesAggregate"),
+            "alignments": cls._aggregate_count(raw, "alignmentsAggregate"),
+        }
+        row["contents"] = contents
+        datasets = cls._edges(raw, "datasets")
+        row["datasets"] = datasets
+        total = contents["datasets"]
+        # The dataset list is a sample of the deposition, not the deposition.
+        # Saying how many were named out of how many there are is the whole
+        # difference between a page and a complete answer.
+        row["datasets_returned"] = len(datasets)
+        row["datasets_total"] = total
+        if total is not None and len(datasets) < total:
+            row["datasets_note"] = (
+                f"{len(datasets)} of {total} datasets are named here. For all "
+                f"of them call CryoET_list_datasets with "
+                f"deposition_id={raw.get('id')}."
+            )
+        return row
+
     # ------------------------------------------------------------------ #
     # list_depositions
     # ------------------------------------------------------------------ #
@@ -463,6 +534,12 @@ class CryoETTool(BaseTool):
             if deposition_id is not None:
                 where_arg = f"where: {{id: {{_eq: {int(deposition_id)}}}}}, "
 
+            # A deposition is defined by what it bundles, and this query used
+            # to ask for nine scalars and none of the eight connections --
+            # datasets, annotations, tomograms, tiltseries, frames,
+            # alignments, authors, depositionTypes. Nothing in the catalogue
+            # could reach a deposition's datasets at all, so the entry point
+            # the portal is organized around led nowhere.
             query = f"""
             {{
               depositions(
@@ -471,12 +548,37 @@ class CryoETTool(BaseTool):
                 id
                 title
                 description
+                tag
                 depositionDate
                 releaseDate
                 lastModifiedDate
                 relatedDatabaseEntries
                 depositionPublications
                 keyPhotoUrl
+                keyPhotoThumbnailUrl
+                depositionTypes {{ edges {{ node {{ type }} }} }}
+                authors(orderBy: {{authorListOrder: asc}}) {{
+                  edges {{
+                    node {{
+                      name
+                      orcid
+                      affiliationName
+                      primaryAuthorStatus
+                      correspondingAuthorStatus
+                    }}
+                  }}
+                }}
+                datasetsAggregate {{ aggregate {{ count }} }}
+                annotationsAggregate {{ aggregate {{ count }} }}
+                tomogramsAggregate {{ aggregate {{ count }} }}
+                tiltseriesAggregate {{ aggregate {{ count }} }}
+                framesAggregate {{ aggregate {{ count }} }}
+                alignmentsAggregate {{ aggregate {{ count }} }}
+                datasets(first: {_DATASETS_PER_DEPOSITION}) {{
+                  edges {{
+                    node {{ id title organismName sampleType }}
+                  }}
+                }}
               }}
             }}
             """
@@ -484,6 +586,7 @@ class CryoETTool(BaseTool):
             if "errors" in result:
                 return {"status": "error", "error": str(result["errors"])}
             depositions = result.get("data", {}).get("depositions", [])
+            depositions = [self._shape_deposition(d) for d in depositions]
             return self._page_result(depositions, "depositions", limit, offset)
         except Exception as e:
             return {"status": "error", "error": str(e)}
