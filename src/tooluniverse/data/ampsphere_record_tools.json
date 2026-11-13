@@ -139,7 +139,8 @@
               "type": [
                 "object",
                 "null"
-              ]
+              ],
+              "description": "`data` is the FIRST PAGE of this AMP's gene/sample provenance rows and `info` gives currentPage, pageSize, totalPage and totalItem. AMP10.000_000 carries 5 of 15,523. Read the response's metadata.gene_count for the total, and AMPSphere_get_amp_metadata to page through the rows."
             }
           },
           "required": [

@@ -51,8 +51,10 @@ from .AHA_ACC_get_guideline import AHA_ACC_get_guideline
 from .AHA_ACC_search_guidelines import AHA_ACC_search_guidelines
 from .AHA_list_guidelines import AHA_list_guidelines
 from .AMPSphere_get_amp import AMPSphere_get_amp
+from .AMPSphere_get_amp_coprediction import AMPSphere_get_amp_coprediction
 from .AMPSphere_get_amp_distributions import AMPSphere_get_amp_distributions
 from .AMPSphere_get_amp_features import AMPSphere_get_amp_features
+from .AMPSphere_get_amp_metadata import AMPSphere_get_amp_metadata
 from .AMPSphere_get_family import AMPSphere_get_family
 from .AMPSphere_get_statistics import AMPSphere_get_statistics
 from .AMPSphere_search_amps import AMPSphere_search_amps
@@ -3480,8 +3482,10 @@ __all__ = [
     "AHA_ACC_search_guidelines",
     "AHA_list_guidelines",
     "AMPSphere_get_amp",
+    "AMPSphere_get_amp_coprediction",
     "AMPSphere_get_amp_distributions",
     "AMPSphere_get_amp_features",
+    "AMPSphere_get_amp_metadata",
     "AMPSphere_get_family",
     "AMPSphere_get_statistics",
     "AMPSphere_search_amps",

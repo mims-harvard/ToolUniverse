@@ -638,5 +638,246 @@
       ],
       "estimated_execution_time": "1-3 seconds"
     }
+  },
+  {
+    "name": "AMPSphere_get_amp_coprediction",
+    "type": "AMPSphereCopredictionTool",
+    "description": "Get the per-predictor antimicrobial scores for one AMPSphere peptide: how each of the seven independent AMP predictors scored it (APIN, AI4AMP, AMPScanner2, AMPlify, ampir, Macrel, amPEPpy). AMPSphere's own membership is a Macrel call, and the predictors DISAGREE -- AMP10.000_000 reads 1.0 from APIN and 0.989 from AI4AMP but 0.604 from Macrel and 0.601 from amPEPpy -- so this is the evidence for the question the resource exists to answer, and it was not reachable from any tool. Treat a peptide scored high by one predictor and low by six as weakly supported. Keyless AMPSphere REST API (/v1/amps/{accession}/coprediction).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "AMPSphere AMP accession. Example: 'AMP10.000_000'."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "accession": {
+              "type": "string"
+            },
+            "predictions": {
+              "type": "array",
+              "description": "One entry per predictor, as returned.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "predictor": {
+                    "type": "string",
+                    "description": "APIN, AI4AMP, AMPScanner2, AMPlify, ampir, Macrel or amPEPpy."
+                  },
+                  "value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "That predictor's score. The scales are NOT comparable between predictors: each is its own model's probability or score, so read the spread as agreement or disagreement, not as an average."
+                  }
+                }
+              }
+            },
+            "predictors_agreeing": {
+              "type": "integer",
+              "description": "How many predictors scored above 0.5. Reported beside the count of predictors so the denominator is never missing."
+            },
+            "predictors_total": {
+              "type": "integer"
+            },
+            "score_range": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "[lowest, highest] score, so disagreement is visible without reading every row."
+            }
+          },
+          "required": [
+            "accession",
+            "predictions"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "accession": "AMP10.000_000"
+      },
+      {
+        "accession": "AMP10.000_001"
+      }
+    ],
+    "label": [
+      "AMPSphere",
+      "AMP",
+      "Prediction",
+      "Peptide",
+      "Antimicrobial"
+    ],
+    "metadata": {
+      "tags": [
+        "antimicrobial peptide",
+        "AMP",
+        "AMPSphere",
+        "prediction",
+        "coprediction",
+        "Macrel"
+      ],
+      "estimated_execution_time": "1-3 seconds"
+    },
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    }
+  },
+  {
+    "name": "AMPSphere_get_amp_metadata",
+    "type": "AMPSphereAmpMetadataTool",
+    "description": "Page through the samples one AMPSphere peptide was observed in: per sample, the GMSC gene accession and gene sequence, the sample id, whether it is metagenomic, the geographic location with latitude/longitude, the habitat (general_envo_name, environment_material) and the microbial source resolved down the taxonomy (domain to species). This is where a peptide's ecology and host range live, and nothing reached it: AMP10.000_000 has 15,523 such rows and AMPSphere_get_amp embeds five. Returns one page plus the totals, so a page is never mistaken for the set. Keyless AMPSphere REST API (/v1/amps/{accession}/metadata).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "AMPSphere AMP accession. Example: 'AMP10.000_000'."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based page number."
+        },
+        "page_size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20,
+          "description": "Rows per page (upstream default 20)."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "accession": {
+              "type": "string"
+            },
+            "samples": {
+              "type": "array",
+              "description": "One row per observation of this peptide in a sample.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "total_samples": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many rows there are in all, across every page."
+            },
+            "total_pages": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "page": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "page_size": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_page": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "accession",
+            "samples",
+            "returned"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "accession": "AMP10.000_000",
+        "page_size": 5
+      },
+      {
+        "accession": "AMP10.000_001"
+      }
+    ],
+    "label": [
+      "AMPSphere",
+      "AMP",
+      "Sample",
+      "Habitat",
+      "Taxonomy"
+    ],
+    "metadata": {
+      "tags": [
+        "antimicrobial peptide",
+        "AMP",
+        "AMPSphere",
+        "habitat",
+        "metagenome",
+        "taxonomy"
+      ],
+      "estimated_execution_time": "1-3 seconds"
+    },
+    "mcp_annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    }
   }
 ]
