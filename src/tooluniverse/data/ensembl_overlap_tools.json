@@ -125,6 +125,20 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "seq_region_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Sequence region (chromosome) the feature is on, e.g. '7' -- no 'chr' prefix."
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Annotation source that called the feature, e.g. 'havana' (manual) versus 'ensembl' (automatic) or 'ensembl_havana' (both). Present on 25 of the 100 features measured, so its absence does not mean the feature is unsourced."
                   }
                 }
               }
@@ -245,12 +259,82 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The feature's description as Ensembl stores it, including its source, e.g. 'tumor protein p53 [Source:HGNC Symbol;Acc:HGNC:11998]'. The bracketed part names the authority for the symbol."
+                  },
+                  "seq_region_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Sequence region (chromosome) the feature is on, e.g. '17' -- no 'chr' prefix."
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Annotation source that called the feature, e.g. 'ensembl_havana' (both automatic and manual agree), versus 'ensembl' or 'havana' alone."
+                  },
+                  "strand": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Strand as 1 or -1, e.g. -1. Ensembl uses integers here, not '+'/'-'."
                   }
                 }
               }
             },
             "type_summary": {
               "type": "object"
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when further features remain past this page. The field that distinguishes a complete answer from a first page."
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The limit that was applied, e.g. 100."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset this page started at, e.g. 0."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many features this reply actually contains, e.g. 2."
+            },
+            "total_features": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many overlapping features exist in total, e.g. 2 -- before any limit was applied. Compare with `returned` to know whether you have them all."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the reply was cut to fit the limit, e.g. false. If true, the feature list is not the full overlap set."
             }
           },
           "not": {

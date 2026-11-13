@@ -110,7 +110,10 @@ class TestMergedTermDisclosure:
             result = _tool("get_associated_genes").run({"term_id": "HP:0003114"})
 
         assert result["status"] == "success"
-        assert result["data"] == {"genes": []}
+        assert result["data"]["genes"] == []
+        # The same response answers medical actions; an empty list there is
+        # the annotation endpoint's own answer, not a probe that went wrong.
+        assert result["data"]["medical_actions"] == []
         assert "resolved_id" not in result["metadata"]
 
     def test_get_term_note_is_unchanged(self):

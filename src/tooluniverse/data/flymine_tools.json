@@ -80,6 +80,27 @@
                   }
                 }
               }
+            },
+            "executionTime": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When FlyMine ran the query, in its own format 'YYYY.MM.DD HH::MM::SS', e.g. '2026.11.11 01:46::18'. Note the doubled colons; it is not ISO 8601."
+            },
+            "statusCode": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "HTTP status FlyMine reported for the query, e.g. 200."
+            },
+            "wasSuccessful": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "FlyMine's own success flag. False with an otherwise well-formed reply means the results are not trustworthy."
             }
           },
           "not": {
@@ -204,6 +225,31 @@
                   }
                 }
               }
+            },
+            "executionTime": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When FlyMine ran the query, in its own format 'YYYY.MM.DD HH::MM::SS', e.g. '2026.11.11 01:46::18'. Note the doubled colons; it is not ISO 8601."
+            },
+            "facets": {
+              "type": "object",
+              "description": "Facet counts by category, organism, and pathway"
+            },
+            "statusCode": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "HTTP status FlyMine reported for the query, e.g. 200."
+            },
+            "wasSuccessful": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "FlyMine's own success flag. False with an otherwise well-formed reply means the results are not trustworthy."
             }
           },
           "not": {

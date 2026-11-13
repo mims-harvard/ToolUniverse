@@ -181,6 +181,99 @@
                       "number",
                       "null"
                     ]
+                  },
+                  "oligo_state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "monomer, homo-N-mer or heteromer. 131 of P04637's 325 models are monomers and 127 heteromers, and the output said only whether there were protein partners."
+                  },
+                  "md5": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gmqe": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "SWISS-MODEL's Global Model Quality Estimate, on the SWISSMODEL-built models"
+                  },
+                  "template_qsqe": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sequence_identity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Percent identity to the template"
+                  },
+                  "sequence_similarity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "found_by": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How the template was found"
+                  },
+                  "chain_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "ligands": {
+                    "type": "array",
+                    "description": "What is bound in the model: 266 of P04637's 325 structures carry a ligand (zinc, magnesium) and none was reported, while the protein partners were.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "hetid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "PDB chemical component id, e.g. ZN"
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "count": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "ligand_count": {
+                    "type": "integer"
+                  },
+                  "complex_partners": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "The other chains in the modelled complex, each with its chain id and UniProt accession. A monomer model and a model of one chain in a complex are different objects."
                   }
                 }
               }
@@ -291,11 +384,161 @@
                     "number",
                     "null"
                   ]
+                },
+                "oligo_state": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "monomer, homo-N-mer or heteromer. 131 of P04637's 325 models are monomers and 127 heteromers, and the output said only whether there were protein partners."
+                },
+                "md5": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "gmqe": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "SWISS-MODEL's Global Model Quality Estimate, on the SWISSMODEL-built models"
+                },
+                "template_qsqe": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "sequence_identity": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Percent identity to the template"
+                },
+                "sequence_similarity": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "found_by": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "How the template was found"
+                },
+                "chain_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "ligands": {
+                  "type": "array",
+                  "description": "What is bound in the model: 266 of P04637's 325 structures carry a ligand (zinc, magnesium) and none was reported, while the protein partners were.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "hetid": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "PDB chemical component id, e.g. ZN"
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "ligand_count": {
+                  "type": "integer"
+                },
+                "provider": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Who built the model, e.g. SWISSMODEL or PDB"
+                },
+                "complex_partners": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Other chains in the modelled complex",
+                  "items": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
                 }
               }
             },
             "methods_distribution": {
-              "type": "object"
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How many models came from each method, keyed by method",
+              "additionalProperties": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Model count for that method"
+              }
+            },
+            "providers_distribution": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How many models came from each provider, keyed by provider - PDB against SWISSMODEL, which is the difference between an experimental structure and a model",
+              "additionalProperties": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Model count for that provider"
+              }
+            },
+            "oligo_state_distribution": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How many models are in each oligomeric state, keyed by state",
+              "additionalProperties": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Model count for that state"
+              }
+            },
+            "models_with_ligands": {
+              "type": "integer",
+              "description": "How many of the models have a bound ligand"
             }
           },
           "not": {
@@ -309,6 +552,18 @@
           "properties": {
             "error": {
               "type": "string"
+            },
+            "providers_distribution": {
+              "type": "object",
+              "description": "How many models come from each provider (PDB against SWISSMODEL)"
+            },
+            "oligo_state_distribution": {
+              "type": "object",
+              "description": "How many models of each oligomeric state"
+            },
+            "models_with_ligands": {
+              "type": "integer",
+              "description": "How many of the models have a bound ligand"
             }
           },
           "required": [

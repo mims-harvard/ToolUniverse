@@ -275,12 +275,17 @@ def test_diseases_come_from_the_ribbon_as_a_post(alliance):
 
     data = result["data"]
     assert data["disease_count"] == 2
-    assert data["diseases"][0] == {
-        "disease_id": "DOID:0050117",
-        "disease_name": "Infection",
-        "evidence": [],
-        "model_type": "",
-    }
+    disease = data["diseases"][0]
+    assert disease["disease_id"] == "DOID:0050117"
+    assert disease["disease_name"] == "Infection"
+    assert disease["evidence"] == []
+    assert disease["model_type"] == ""
+    # `disease_count` counts ribbon CATEGORIES, which is the same number for
+    # every gene. The gene's own count comes from the subjects block, and a
+    # category it has no annotation in is marked as such rather than being
+    # reported as a finding.
+    assert "has_annotations" in disease
+    assert "annotated_disease_count" in data
     assert data["human_gene_ids"] == []
 
     posts = [(m, p, b) for m, p, b in alliance if m == "POST"]

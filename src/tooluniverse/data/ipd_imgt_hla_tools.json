@@ -1,324 +1,942 @@
 [
-    {
-        "type": "IPDIMGTHLATool",
-        "name": "IPD_search_hla_alleles",
-        "description": "Search the IPD-IMGT/HLA database for human HLA alleles by allele name prefix or substring with complete access through the official opaque cursor. Returns matching accessions and names plus exact total, has_more, and next_cursor; continue with the same name/match/limit and cursor=next_cursor. offset/page/skip are ignored by IPD and are therefore not exposed. Keyless EMBL-EBI API.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string",
-                    "description": "HLA allele name or partial name to search (e.g. 'A*01:01', 'DRB1*15:01', 'B*07'). The filter expression is built for you."
-                },
-                "match": {
-                    "type": "string",
-                    "enum": [
-                        "startsWith",
-                        "contains",
-                        "eq"
-                    ],
-                    "description": "How to match the name: 'startsWith' (default, prefix match), 'contains' (substring), or 'eq' (exact full name).",
-                    "default": "startsWith"
-                },
-                "limit": {
-                    "type": "integer",
-                    "description": "Maximum number of alleles to return (default 10, max 100).",
-                    "default": 10,
-                    "minimum": 1,
-                    "maximum": 100
-                },
-                "cursor": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Opaque continuation token from data.next_cursor. Repeat the same name, match, and limit when continuing."
-                }
-            },
-            "required": [
-                "name"
-            ]
+  {
+    "type": "IPDIMGTHLATool",
+    "name": "IPD_search_hla_alleles",
+    "description": "Search the IPD-IMGT/HLA database for human HLA alleles by allele name prefix or substring with complete access through the official opaque cursor. Returns matching accessions and names plus exact total, has_more, and next_cursor; continue with the same name/match/limit and cursor=next_cursor. offset/page/skip are ignored by IPD and are therefore not exposed. Keyless EMBL-EBI API.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "HLA allele name or partial name to search (e.g. 'A*01:01', 'DRB1*15:01', 'B*07'). The filter expression is built for you."
         },
-        "label": [
-            "IPD-IMGT/HLA",
-            "HLA",
-            "MHC",
-            "allele",
-            "immunogenetics",
-            "EMBL-EBI"
-        ],
-        "test_examples": [
-            {
-                "name": "A*01:01",
-                "limit": 3
-            },
-            {
-                "name": "DRB1*15:01",
-                "match": "startsWith",
-                "limit": 5
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "alleles": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                        "count": {
-                  "type": "integer"
-                },
-                        "total": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                        "has_more": {
-                            "type": "boolean"
-                        },
-                        "next_cursor": {
-                            "type": [
-                                "string",
-                                "null"
-                            ]
-                        },
-                        "previous_cursor": {
-                            "type": [
-                                "string",
-                                "null"
-                            ]
-                        },
-                        "result_set_complete": {
-                            "type": "boolean"
-                        }
-                    },
-                    "required": [
-                "alleles"
-              ]
-                },
-                {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
-            }
-            ]
+        "match": {
+          "type": "string",
+          "enum": [
+            "startsWith",
+            "contains",
+            "eq"
+          ],
+          "description": "How to match the name: 'startsWith' (default, prefix match), 'contains' (substring), or 'eq' (exact full name).",
+          "default": "startsWith"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of alleles to return (default 10, max 100).",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "cursor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque continuation token from data.next_cursor. Repeat the same name, match, and limit when continuing."
         }
+      },
+      "required": [
+        "name"
+      ]
     },
-    {
-        "type": "IPDIMGTHLATool",
-        "name": "IPD_get_hla_allele",
-        "description": "Fetch the full IPD-IMGT/HLA record for a single HLA allele by its IPD accession (e.g. 'HLA00001'). Returns the complete record including allele name, locus, class, sequence, confirmation status, citations, CWD (common/well-documented) status, release history, and cross-references. Use IPD_search_hla_alleles first to obtain an accession. Keyless EMBL-EBI API.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "accession": {
-                    "type": "string",
-                    "description": "IPD-IMGT/HLA allele accession (e.g. 'HLA00001'). Obtain via IPD_search_hla_alleles."
+    "label": [
+      "IPD-IMGT/HLA",
+      "HLA",
+      "MHC",
+      "allele",
+      "immunogenetics",
+      "EMBL-EBI"
+    ],
+    "test_examples": [
+      {
+        "name": "A*01:01",
+        "limit": 3
+      },
+      {
+        "name": "DRB1*15:01",
+        "match": "startsWith",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "alleles": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
                 }
+              }
             },
-            "required": [
-                "accession"
-            ]
+            "count": {
+              "type": "integer"
+            },
+            "total": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_cursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "previous_cursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "result_set_complete": {
+              "type": "boolean"
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to this call."
+            }
+          },
+          "required": [
+            "alleles"
+          ]
         },
-        "label": [
-            "IPD-IMGT/HLA",
-            "HLA",
-            "MHC",
-            "allele",
-            "sequence",
-            "EMBL-EBI"
-        ],
-        "test_examples": [
-            {
-                "accession": "HLA00001"
-            },
-            {
-                "accession": "HLA01244"
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
             }
-        ],
-        "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "locus": {
-                  "type": "string"
-                },
-                "class": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "accession"
-              ]
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
-            }
+          },
+          "required": [
+            "error"
           ]
         }
+      ]
+    }
+  },
+  {
+    "type": "IPDIMGTHLATool",
+    "name": "IPD_get_hla_allele",
+    "description": "Fetch the full IPD-IMGT/HLA record for a single HLA allele by its IPD accession (e.g. 'HLA00001'). Returns the complete record including allele name, locus, class, sequence, confirmation status, citations, CWD (common/well-documented) status, release history, and cross-references. Use IPD_search_hla_alleles first to obtain an accession. Keyless EMBL-EBI API.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "IPD-IMGT/HLA allele accession (e.g. 'HLA00001'). Obtain via IPD_search_hla_alleles."
+        }
+      },
+      "required": [
+        "accession"
+      ]
     },
-    {
-        "type": "IPDIMGTHLATool",
-        "name": "IPD_search_cells",
-        "description": "Search IPD cell lines (HLA reference cells with their HLA typing) by a field value with complete access through the official opaque cursor. Returns exact total, has_more, and next_cursor; continue with the same query/field/match/limit and cursor=next_cursor. Keyless EMBL-EBI API.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "Text to search for (e.g. a cell primary name, or a lab name when field='lab_of_origin'). The filter expression is built for you."
-                },
-                "field": {
-                    "type": "string",
-                    "description": "Cell field to search (default 'primary_name'). Other useful fields include 'lab_of_origin'.",
-                    "default": "primary_name"
-                },
-                "match": {
-                    "type": "string",
-                    "enum": [
-                        "startsWith",
-                        "contains",
-                        "eq"
-                    ],
-                    "description": "How to match: 'contains' (default, substring), 'startsWith' (prefix), or 'eq' (exact).",
-                    "default": "contains"
-                },
-                "limit": {
-                    "type": "integer",
-                    "description": "Maximum number of cells to return (default 10, max 100).",
-                    "default": 10,
-                    "minimum": 1,
-                    "maximum": 100
-                },
-                "cursor": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Opaque continuation token from data.next_cursor. Repeat the same search controls when continuing."
+    "label": [
+      "IPD-IMGT/HLA",
+      "HLA",
+      "MHC",
+      "allele",
+      "sequence",
+      "EMBL-EBI"
+    ],
+    "test_examples": [
+      {
+        "accession": "HLA00001"
+      },
+      {
+        "accession": "HLA01244"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "accession": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "locus": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "HLA locus, e.g. A, B, DRB1"
+            },
+            "class": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "HLA class, I or II"
+            },
+            "allele_history": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Previous names this allele has had, with the release each name changed in. An HLA allele renamed between releases is the same allele, and a caller matching on name alone will miss it",
+              "items": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
                 }
+              }
             },
-            "required": [
-                "query"
-            ]
-        },
-        "label": [
-            "IPD-IMGT/HLA",
-            "HLA",
-            "cell line",
-            "reference cell",
-            "immunogenetics",
-            "EMBL-EBI"
-        ],
-        "test_examples": [
-            {
-                "query": "Roche",
-                "field": "lab_of_origin",
-                "limit": 3
+            "cell_entries": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Cell lines typed for this allele",
+              "items": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
             },
-            {
-                "query": "10839496",
-                "field": "primary_name",
-                "match": "eq"
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "cells": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "cellid": {
-                        "type": "string"
-                      },
-                      "primary_name": {
-                        "type": "string"
-                      }
-                    }
-                  }
+            "cigars": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "CIGAR strings describing how the allele differs from the reference, at coding, genomic and protein level",
+              "properties": {
+                "coding_cigar": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "CIGAR against the reference coding sequence"
                 },
-                        "count": {
-                  "type": "integer"
+                "genomic_cigar": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "CIGAR against the reference genomic sequence"
                 },
-                        "total": {
+                "protein_cigar": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "CIGAR against the reference protein"
+                }
+              }
+            },
+            "citations": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Publications describing the allele",
+              "items": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "confirmation_status": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Whether the allele has been confirmed, and on how much evidence",
+              "properties": {
+                "confirmed": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether IPD considers the sequence confirmed"
+                },
+                "cells": {
                   "type": [
                     "integer",
                     "null"
-                  ]
+                  ],
+                  "description": "How many cells it was seen in"
                 },
-                        "has_more": {
-                            "type": "boolean"
-                        },
-                        "next_cursor": {
-                            "type": [
-                                "string",
-                                "null"
-                            ]
-                        },
-                        "previous_cursor": {
-                            "type": [
-                                "string",
-                                "null"
-                            ]
-                        },
-                        "result_set_complete": {
-                            "type": "boolean"
-                        }
-                    },
-                    "required": [
-                "cells"
-              ]
-                },
-                {
-              "type": "object",
+                "laboratories": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many laboratories reported it"
+                }
+              }
+            },
+            "cwd": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Common and Well-Documented classification, by CWD version",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "dictionary": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The allele's HLA dictionary entry with its source",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "feature": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Sequence features at coding, genomic and protein level",
               "properties": {
-                "error": {
-                  "type": "string"
+                "coding": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Coding-sequence features",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "genomic": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Genomic-sequence features",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "protein": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Protein-sequence features",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "insdc": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "INSDC (GenBank/ENA/DDBJ) accessions for the allele's sequence",
+              "items": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "date_assigned": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the allele name was assigned"
+            },
+            "date_modified": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the record last changed"
+            },
+            "first_release": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "IPD release the allele first appeared in"
+            },
+            "confirmation": {
+              "type": [
+                "string",
+                "boolean",
+                "null"
+              ],
+              "description": "Confirmation flag as IPD sends it"
+            },
+            "oid": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "IPD internal object id"
+            },
+            "omim": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "OMIM references for the locus"
+            },
+            "sequence": {
+              "type": [
+                "object",
+                "string",
+                "null"
+              ],
+              "description": "The allele's nucleotide and protein sequences",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "previous_nomenclature": {
+              "type": [
+                "array",
+                "string",
+                "null"
+              ],
+              "description": "Names the allele was known by before the current nomenclature"
+            },
+            "secondary_names": {
+              "type": [
+                "array",
+                "string",
+                "null"
+              ],
+              "description": "Other names in use for the allele"
+            },
+            "project": {
+              "type": [
+                "object",
+                "string",
+                "null"
+              ],
+              "description": "The project that submitted the allele",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ]
+              }
+            },
+            "release_version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "IPD release this record is from"
+            },
+            "release_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Date of that release"
+            },
+            "release_modified": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the record last changed within the release"
+            },
+            "release_status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Status of the record in that release"
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "IPD's status for the allele record"
+            },
+            "sequence_status": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How much of the allele was sequenced: the span covered and whether it is full length. A partial sequence cannot be compared with a full one as if it were complete",
+              "properties": {
+                "full": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when the sequence is full length"
+                },
+                "start": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "First position covered"
+                },
+                "end": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Last position covered"
+                },
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What was sequenced, e.g. gDNA or cDNA"
+                }
+              }
+            },
+            "sequence_version": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ],
+              "description": "Version of the sequence record"
+            },
+            "wmda": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "WMDA assignments: the G and P groups the allele belongs to, and its serological equivalence. The G group is what matters for matching - alleles differing only outside the antigen-recognition domain share one",
+              "properties": {
+                "G_group": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "G group: alleles identical across the antigen-recognition domain",
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "P_group": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "P group: alleles identical in the expressed protein",
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "rel_dna_ser": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "WMDA's DNA-to-serology relationship for the allele",
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ],
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
                 }
               },
-              "required": [
-                "error"
-              ]
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              }
             }
-            ]
+          },
+          "required": [
+            "accession"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
+      ]
     }
+  },
+  {
+    "type": "IPDIMGTHLATool",
+    "name": "IPD_search_cells",
+    "description": "Search IPD cell lines (HLA reference cells with their HLA typing) by a field value with complete access through the official opaque cursor. Returns exact total, has_more, and next_cursor; continue with the same query/field/match/limit and cursor=next_cursor. Keyless EMBL-EBI API.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Text to search for (e.g. a cell primary name, or a lab name when field='lab_of_origin'). The filter expression is built for you."
+        },
+        "field": {
+          "type": "string",
+          "description": "Cell field to search (default 'primary_name'). Other useful fields include 'lab_of_origin'.",
+          "default": "primary_name"
+        },
+        "match": {
+          "type": "string",
+          "enum": [
+            "startsWith",
+            "contains",
+            "eq"
+          ],
+          "description": "How to match: 'contains' (default, substring), 'startsWith' (prefix), or 'eq' (exact).",
+          "default": "contains"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of cells to return (default 10, max 100).",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "cursor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque continuation token from data.next_cursor. Repeat the same search controls when continuing."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "label": [
+      "IPD-IMGT/HLA",
+      "HLA",
+      "cell line",
+      "reference cell",
+      "immunogenetics",
+      "EMBL-EBI"
+    ],
+    "test_examples": [
+      {
+        "query": "Roche",
+        "field": "lab_of_origin",
+        "limit": 3
+      },
+      {
+        "query": "10839496",
+        "field": "primary_name",
+        "match": "eq"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "cells": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "cellid": {
+                    "type": "string"
+                  },
+                  "primary_name": {
+                    "type": "string"
+                  },
+                  "lab_of_origin": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The laboratory the cell line came from. Provenance, and the only field that attributes it."
+                  }
+                }
+              }
+            },
+            "count": {
+              "type": "integer"
+            },
+            "total": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_cursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "previous_cursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "result_set_complete": {
+              "type": "boolean"
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to this call."
+            }
+          },
+          "required": [
+            "cells"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
 ]

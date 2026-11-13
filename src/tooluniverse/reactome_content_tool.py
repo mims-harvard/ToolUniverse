@@ -17,6 +17,21 @@ from .base_tool import BaseTool
 
 REACTOME_CS_BASE_URL = "https://reactome.org/ContentService"
 
+def _species_names(value):
+    """Reactome gives `species` as a record, a list of records, or a string."""
+    if isinstance(value, dict):
+        return [value.get("displayName") or value.get("name")]
+    if isinstance(value, list):
+        names = []
+        for item in value:
+            if isinstance(item, dict):
+                name = item.get("displayName") or item.get("name")
+                names.extend(name if isinstance(name, list) else [name])
+            elif item:
+                names.append(item)
+        return [n for n in names if n]
+    return [value] if value else []
+
 
 class ReactomeContentTool(BaseTool):
     """
@@ -172,6 +187,18 @@ class ReactomeContentTool(BaseTool):
                         "species": entry.get("species", []),
                         "compartments": entry.get("compartmentNames", []),
                         "is_disease": entry.get("isDisease", False),
+                        # WHAT the hit is. Reactome answers a summation --
+                        # the paragraph describing the pathway or reaction --
+                        # for all 30 entries of a search, and the row carried
+                        # a name. Also the numeric dbId its own endpoints
+                        # take, and the compartment accessions behind the
+                        # compartment names.
+                        "summation": self._strip_html(entry.get("summation") or "")
+                        or None,
+                        "db_id": entry.get("dbId"),
+                        "compartment_accessions": entry.get("compartmentAccession")
+                        or [],
+                        "exact_type": entry.get("exactType"),
                     }
                 )
 
@@ -292,6 +319,22 @@ class ReactomeContentTool(BaseTool):
                 "name": e.get("displayName"),
                 "schemaClass": schema,
                 "is_disease": e.get("isInDisease", False),
+                # The same event inferred in other species. "This reaction
+                # exists in mouse as R-MMU-..." is the answer to half the
+                # questions asked of a pathway, and 39 of them came back on
+                # one call with nothing reported.
+                "orthologous_events": [
+                    {
+                        "stId": orthologue.get("stId"),
+                        "species": orthologue.get("speciesName")
+                        or _species_names(orthologue.get("species")),
+                        "name": orthologue.get("displayName"),
+                    }
+                    for orthologue in (e.get("orthologousEvent") or [])
+                    if isinstance(orthologue, dict)
+                ],
+                "species": _species_names(e.get("species")),
+                "db_id": e.get("dbId"),
             }
             if schema == "Pathway":
                 pathways.append(entry)

@@ -94,6 +94,411 @@
             "publication_count": {
               "type": "integer",
               "description": "Number of associated publications"
+            },
+            "enzymes": {
+              "type": "array",
+              "description": "The biosynthetic enzymes GlyGen records for this glycan, which no tool in this family exposed",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uniprot_canonical_ac": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "protein_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tax_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tax_common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tax_id": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_link": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "description": "GlyGen's evidence records: the source database, the id and a link",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "xref_key": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "xref_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "enzyme_count": {
+              "type": "integer",
+              "description": "Enzymes before the cap on `enzymes`"
+            },
+            "enzymes_truncated": {
+              "type": "boolean"
+            },
+            "residues": {
+              "type": "array",
+              "description": "The structure residue by residue: each monosaccharide, the residue it hangs off and the linkage. number_monosaccharides was the only thing said about it before.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "parent_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The residue this one is attached to"
+                  },
+                  "attached_by": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The reaction or enzyme the attachment is attributed to"
+                  }
+                }
+              }
+            },
+            "residue_count": {
+              "type": "integer"
+            },
+            "residues_truncated": {
+              "type": "boolean"
+            },
+            "motifs": {
+              "type": "array",
+              "description": "Named motifs the structure contains",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "synonym": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "keywords": {
+                    "type": [
+                      "array",
+                      "string",
+                      "null"
+                    ],
+                    "description": "A list on some motifs and a single semicolon-joined string on others, as GlyGen sends it"
+                  }
+                }
+              }
+            },
+            "subsumption": {
+              "type": "array",
+              "description": "Other GlyTouCan accessions for the same structure at a coarser resolution, and how they relate (Topology, Basecomposition)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "related_accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "relationship": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "subsumption_count": {
+              "type": "integer"
+            },
+            "subsumption_truncated": {
+              "type": "boolean"
+            },
+            "publications": {
+              "type": "array",
+              "description": "The papers behind the record, which reached the caller only as publication_count",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "journal": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "authors": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": "array",
+                    "description": "PubMed and other references for the paper",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "description": "GlyGen's evidence records: the source database, the id and a link",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            },
+            "publications_truncated": {
+              "type": "boolean"
+            },
+            "expression": {
+              "type": "array",
+              "description": "Where the glycan has been observed, with the tissue or cell line as an ontology record",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "tissue or cell_line"
+                  },
+                  "tissue": {
+                    "type": [
+                      "object",
+                      "string",
+                      "null"
+                    ],
+                    "description": "UBERON record: name, namespace, id, url"
+                  },
+                  "cell_line": {
+                    "type": [
+                      "object",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species": {
+                    "type": [
+                      "object",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "uniprot_canonical_ac": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The glycoprotein it was seen on"
+                  },
+                  "start_pos": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "end_pos": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "residue": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "description": "GlyGen evidence records: source database, id and link",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            },
+            "expression_count": {
+              "type": "integer"
+            },
+            "expression_truncated": {
+              "type": "boolean"
+            },
+            "crossref": {
+              "type": "array",
+              "description": "The glycan in other databases",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "crossref_count": {
+              "type": "integer"
+            },
+            "crossref_truncated": {
+              "type": "boolean"
+            },
+            "biosynthesis_steps": {
+              "type": "array",
+              "description": "GlyGen's GlycoTree reconstruction: per step the precursor accession, the residue added and the enzyme that adds it",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Precursor GlyTouCan accession"
+                  },
+                  "target": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "residue_affected": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The residue added, with its id and full name"
+                  },
+                  "enzymes": {
+                    "type": "array",
+                    "description": "The enzyme(s) that catalyse this step",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            },
+            "byonic": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The Byonic-format composition string with its mass, e.g. 'HexNAc(4)Hex(5)dHex(1)NeuAc(2) % 2368.84091476'. The form mass-spectrometry software expects."
+            },
+            "classification": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Glycan type and subtype, e.g. N-linked / Biantennary. The classification a glycomics question turns on."
+            },
+            "composition": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "The glycan's monosaccharide composition, each residue with its name, short code and count."
             }
           },
           "not": {
@@ -203,6 +608,34 @@
               },
               "hit_score": {
                 "type": "number"
+              },
+              "publication_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many papers GlyGen records for the glycan. The row reported counts of proteins, enzymes and species and not this one."
+              },
+              "pubmed_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "PubMed ids of those papers. GlyGen sends them as one semicolon-joined string ('37485378; 30251656; ...'), which a caller taking it whole would read as a single 36-id identifier, so it is split here."
+              },
+              "image_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "GlyGen's rendering of the glycan structure, e.g. https://api.glygen.org/glycan/image/G62765YT."
+              },
+              "byonic": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Byonic-format composition string with its mass, e.g. 'HexNAc(2)Hex(8) % 1720.59189791'. The form mass-spectrometry software expects."
               }
             }
           }
@@ -293,6 +726,305 @@
             },
             "pathway_count": {
               "type": "integer"
+            },
+            "diseases": {
+              "type": "array",
+              "description": "The diseases GlyGen associates with the protein, beside the count it already reported",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "disease_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "resource": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "e.g. Disease Ontology"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "description": "GlyGen's evidence records: the source database, the id and a link",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            },
+            "diseases_truncated": {
+              "type": "boolean"
+            },
+            "snvs": {
+              "type": "array",
+              "description": "The single-nucleotide variants, with what each one does to the glycosylation -- the question GlyGen answers and no other source in the catalogue carries",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chr_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "chr_pos": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "ref_nt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "alt_nt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "start_pos": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "end_pos": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "sequence_org": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Residue in the reference sequence"
+                  },
+                  "sequence_mut": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Residue after the substitution"
+                  },
+                  "glycoeffect": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "What the substitution does to the glycosylation, e.g. n-glyco-sequon-gain or o-glyco-site-loss. Null where GlyGen records no assessment, which is not the same as an empty list of effects, so the null is passed through.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "site_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "keywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "comment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "description": "GlyGen's evidence records: the source database, the id and a link",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            },
+            "snvs_truncated": {
+              "type": "boolean"
+            },
+            "pathways": {
+              "type": "array",
+              "description": "Pathways the protein takes part in",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "resource": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "pathways_truncated": {
+              "type": "boolean"
+            },
+            "publications": {
+              "type": "array",
+              "description": "The papers behind the record, which reached the caller only as publication_count",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "journal": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "authors": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": "array",
+                    "description": "PubMed and other references for the paper",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "description": "GlyGen's evidence records: the source database, the id and a link",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            },
+            "publications_truncated": {
+              "type": "boolean"
+            },
+            "expression_tissue": {
+              "type": "array",
+              "description": "Where the protein is expressed, with the score behind `present`",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tissue": {
+                    "type": [
+                      "object",
+                      "string",
+                      "null"
+                    ],
+                    "description": "The tissue as GlyGen names it: an UBERON record with name, namespace, id and url"
+                  },
+                  "present": {
+                    "type": [
+                      "string",
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "description": "GlyGen's evidence records: the source database, the id and a link",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            },
+            "publication_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many papers GlyGen records for the glycan. The row reported counts of proteins, enzymes and species and not this one."
+            },
+            "function": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The protein's function as GlyGen records it, with its citation."
+            },
+            "mass": {
+              "description": "The protein's mass, as an object with chemical_mass."
+            },
+            "sequence_length": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Length of the protein, e.g. 728. The denominator for every site position."
+            },
+            "snv_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Single-nucleotide variants GlyGen records on the protein, e.g. 105."
             }
           },
           "not": {
@@ -393,10 +1125,105 @@
                 "type": "string"
               },
               "glycosylation_count": {
-                "type": "integer"
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "N-linked plus O-linked reported sites. Null, not 0, when the row reports neither: the tool used to read two keys a /protein/list row does not carry and summed them to 0 on every result."
               },
               "hit_score": {
                 "type": "number"
+              },
+              "n_linked_site_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Reported N-linked glycosylation sites"
+              },
+              "o_linked_site_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Reported O-linked glycosylation sites"
+              },
+              "n_linked_sites_with_glycan": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Of the N-linked sites, how many have a glycan identified on them"
+              },
+              "o_linked_sites_with_glycan": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "predicted_glycosite_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Sites predicted rather than reported"
+              },
+              "fully_resolved_glycan_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "publication_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "mass": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "sequence_length": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "uniprot_id": {
+                "type": "array",
+                "description": "UniProt entry names with links",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "refseq_ac": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "ec_numbers": {
+                "type": "array",
+                "description": "Enzyme Commission numbers for the protein",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "protein_names_refseq": {
+                "type": "array",
+                "description": "RefSeq's names for the protein, which can differ from UniProt's",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "gene_names_refseq": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
               }
             }
           }
@@ -479,6 +1306,148 @@
             "snv": {
               "type": "array",
               "description": "SNVs at this position"
+            },
+            "protein_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The protein the site is in, which the accession alone did not say"
+            },
+            "gene_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "glycation": {
+              "type": "array",
+              "description": "Glycation at the site: the same kind of annotation as the phosphorylation and mutagenesis the description promises",
+              "items": {
+                "type": "object"
+              }
+            },
+            "neighbors": {
+              "type": "array",
+              "description": "The annotated sites around this one, with how far away and in which direction",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "distance": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "direction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "upstream or downstream"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "description": "What is annotated at the neighbouring site",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "neighbor_count": {
+              "type": "integer"
+            },
+            "neighbors_truncated": {
+              "type": "boolean"
+            },
+            "publications": {
+              "type": "array",
+              "description": "The papers behind the record, which reached the caller only as publication_count",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "journal": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "authors": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": "array",
+                    "description": "PubMed and other references for the paper",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "description": "GlyGen's evidence records: the source database, the id and a link",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            },
+            "publication_count": {
+              "type": "integer"
+            },
+            "publications_truncated": {
+              "type": "boolean"
+            },
+            "all_sites_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many sites the protein has in total, e.g. 4. Puts the one returned in context."
+            },
+            "categories": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "What kind of site this is, e.g. ['glycosylation_flag']."
+            },
+            "species": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Species the site is recorded in, each with its taxid and the evidence behind it."
+            },
+            "start_aa": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The amino acid at the site, e.g. 'T'. A glycosylation site without its residue cannot be checked against a sequence."
             }
           },
           "not": {

@@ -98,6 +98,35 @@
               }
             }
           }
+        },
+        "transcripts": {
+          "type": "array",
+          "description": "Each related transcript with the probe's distance to its transcription start site. A CpG 854 bp upstream of one BRCA1 transcript's TSS is 741 upstream of another, and `genes` was the deduplicated name list that lost both the distance and the transcript.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gene_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ensembl_transcript_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "position_to_tss": {
+                "type": [
+                  "integer",
+                  "number",
+                  "null"
+                ],
+                "description": "Negative upstream of the TSS, positive downstream"
+              }
+            }
+          }
         }
       }
     },
@@ -216,6 +245,35 @@
                     "string",
                     "null"
                   ]
+                }
+              }
+            }
+          },
+          "transcripts": {
+            "type": "array",
+            "description": "Each related transcript with the probe's distance to its transcription start site. A CpG 854 bp upstream of one BRCA1 transcript's TSS is 741 upstream of another, and `genes` was the deduplicated name list that lost both the distance and the transcript.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "gene_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "ensembl_transcript_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "position_to_tss": {
+                  "type": [
+                    "integer",
+                    "number",
+                    "null"
+                  ],
+                  "description": "Negative upstream of the TSS, positive downstream"
                 }
               }
             }
@@ -350,6 +408,35 @@
                     "string",
                     "null"
                   ]
+                }
+              }
+            }
+          },
+          "transcripts": {
+            "type": "array",
+            "description": "Each related transcript with the probe's distance to its transcription start site. A CpG 854 bp upstream of one BRCA1 transcript's TSS is 741 upstream of another, and `genes` was the deduplicated name list that lost both the distance and the transcript.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "gene_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "ensembl_transcript_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "position_to_tss": {
+                  "type": [
+                    "integer",
+                    "number",
+                    "null"
+                  ],
+                  "description": "Negative upstream of the TSS, positive downstream"
                 }
               }
             }
@@ -517,6 +604,13 @@
                   "number",
                   "null"
                 ]
+              },
+              "sd_age": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The spread behind mean_age. A cohort with mean age 52 and SD 3 is not the one with SD 20, and an EWAS is read against age."
               }
             }
           }
@@ -705,6 +799,13 @@
                         "number",
                         "null"
                       ]
+                    },
+                    "sd_age": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "The spread behind mean_age. A cohort with mean age 52 and SD 3 is not the one with SD 20, and an EWAS is read against age."
                     }
                   }
                 }

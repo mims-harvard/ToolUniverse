@@ -86,7 +86,235 @@
                     "type": "integer"
                   },
                   "total_cells": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Cells summed over the datasets that report a count, or null when none does. It used to be 0 for every collection, because the listing endpoint's datasets carry no cell_count and a 0 reads as 'no cells'."
+                  },
+                  "collection_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "contact_email": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "published_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "revised_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "publication": {
+                    "type": "object",
+                    "description": "The paper the collection belongs to: the journal, the date and the full author list, none of which the row carried -- so a collection could not be cited from a listing.",
+                    "properties": {
+                      "journal": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "publication_year": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "publication_month": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "publication_day": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "is_preprint": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "authors": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "author_count": {
+                        "type": "integer"
+                      },
+                      "authors_truncated": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "tissues": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "ontology_term_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "tissue_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
+                    "description": "The distinct tissues across the collection's datasets, with their UBERON ids, capped at 25. The sibling dataset-search handler read these and the collection row did not."
+                  },
+                  "tissue_count": {
                     "type": "integer"
+                  },
+                  "tissues_truncated": {
+                    "type": "boolean"
+                  },
+                  "diseases": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "ontology_term_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "tissue_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "disease_count": {
+                    "type": "integer"
+                  },
+                  "organisms": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "ontology_term_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "tissue_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "assays": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "ontology_term_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "tissue_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "assay_count": {
+                    "type": "integer"
+                  },
+                  "datasets_with_cell_count": {
+                    "type": "integer",
+                    "description": "How many of the datasets report a cell count. The listing endpoint reports none, which is why total_cells is null rather than 0."
+                  },
+                  "contact_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who to contact about the collection, e.g. 'Walid Khaled'."
+                  },
+                  "consortia": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Consortia the collection belongs to, e.g. ['CZI Cell Science']. Measured on 2 of 5 collections - collections from one consortium share protocols and are not independent."
+                  },
+                  "created_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the collection was created, e.g. '2026-06-09T23:02:06+00:00'."
+                  },
+                  "curator_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who curated the collection, e.g. 'Jennifer Yu-Sheng Chien'. Who to ask about the annotations."
                   }
                 }
               }
@@ -213,9 +441,227 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "is_primary_data": {
+                    "type": [
+                      "array",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether the dataset holds primary data or a reanalysis of someone else's. Measured as a LIST of booleans ([false]) rather than a single boolean, because a dataset can mix both. Counting a reanalysis as an independent observation double-counts the cells."
                   }
                 }
               }
+            },
+            "collection_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "contact_email": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "published_at": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "revised_at": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "publication": {
+              "type": "object",
+              "description": "The paper the collection belongs to: the journal, the date and the full author list, none of which the row carried -- so a collection could not be cited from a listing.",
+              "properties": {
+                "journal": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "publication_year": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "publication_month": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "publication_day": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "is_preprint": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "authors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "author_count": {
+                  "type": "integer"
+                },
+                "authors_truncated": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "tissues": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ontology_term_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tissue_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "description": "The distinct tissues across the collection's datasets, with their UBERON ids, capped at 25. The sibling dataset-search handler read these and the collection row did not."
+            },
+            "tissue_count": {
+              "type": "integer"
+            },
+            "tissues_truncated": {
+              "type": "boolean"
+            },
+            "diseases": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ontology_term_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tissue_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "disease_count": {
+              "type": "integer"
+            },
+            "organisms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ontology_term_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tissue_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "assays": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ontology_term_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tissue_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "assay_count": {
+              "type": "integer"
+            },
+            "datasets_with_cell_count": {
+              "type": "integer",
+              "description": "How many of the datasets report a cell count. The listing endpoint reports none, which is why total_cells is null rather than 0."
+            },
+            "contact_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Who to contact about the collection, e.g. 'Walid Khaled'."
+            },
+            "links": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "Supplementary resources for the collection, each with a link_name and URL, e.g. a trained CellTypist model. The artefacts needed to reuse the analysis rather than only the data."
             }
           },
           "not": {
@@ -353,6 +799,13 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "collection_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The collection the dataset belongs to, e.g. 'c114c20f-1ef4-49a5-9c2e-d965787fb90c'. Datasets from one collection share a study and must not be treated as independent."
                   }
                 }
               }

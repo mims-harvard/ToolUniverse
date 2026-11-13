@@ -76,16 +76,53 @@
               "description": "Total number of matching entries"
             },
             "facets": {
-              "type": "object",
-              "description": "Facet counts by category and organism",
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Facet counts, keyed by facet name then by facet value",
               "properties": {
                 "Category": {
-                  "type": "object",
-                  "description": "Count of results per entity type"
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Counts for one facet, keyed by facet value",
+                  "additionalProperties": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many results carry that value"
+                  }
                 },
                 "organism.shortName": {
-                  "type": "object",
-                  "description": "Count of results per organism"
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Counts for one facet, keyed by facet value",
+                  "additionalProperties": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many results carry that value"
+                  }
+                }
+              },
+              "additionalProperties": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Counts for one facet, keyed by value",
+                "additionalProperties": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many results carry that value"
                 }
               }
             },
@@ -150,9 +187,39 @@
                         "description": "Identifier for pathways/diseases"
                       }
                     }
+                  },
+                  "relevance": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ],
+                    "description": "InterMine's relevance score for the match, which is what the result order is based on"
                   }
                 }
               }
+            },
+            "wasSuccessful": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the InterMine server reported success. A query that failed upstream is not an empty result"
+            },
+            "statusCode": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "HTTP status the server returned"
+            },
+            "executionTime": {
+              "type": [
+                "string",
+                "number",
+                "null"
+              ],
+              "description": "When the server executed the query"
             }
           }
         },
@@ -243,6 +310,9 @@
                 "organism.shortName": {
                   "type": "object",
                   "description": "Gene counts per organism"
+                },
+                "Category": {
+                  "description": "Counts per result category, keyed by category name."
                 }
               }
             },
@@ -284,9 +354,37 @@
                         "description": "Ensembl gene ID"
                       }
                     }
+                  },
+                  "relevance": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "InterMine's relevance score for the row."
                   }
                 }
               }
+            },
+            "executionTime": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When InterMine ran the query, as it formats it."
+            },
+            "statusCode": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "InterMine's HTTP-style status for the query."
+            },
+            "wasSuccessful": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether InterMine considered the query successful. False with an empty result set is an error, not an absence of matches."
             }
           }
         },
@@ -395,9 +493,40 @@
                         "description": "Pathway ID (e.g., R-HSA-109581 for Reactome)"
                       }
                     }
+                  },
+                  "relevance": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "InterMine's relevance score for the row."
                   }
                 }
               }
+            },
+            "executionTime": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When InterMine ran it."
+            },
+            "facets": {
+              "description": "Facet counts for the result set."
+            },
+            "statusCode": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "InterMine's status for the query."
+            },
+            "wasSuccessful": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether InterMine considered the query successful."
             }
           }
         },
@@ -417,7 +546,7 @@
   },
   {
     "name": "InterMine_run_pathquery",
-    "description": "Run an arbitrary InterMine PathQuery against HumanMine (an InterMine data warehouse) to traverse the data model graph: gene->pathways, gene->protein domains, region->features, etc. The 'query' argument is an InterMine XML PathQuery string (with model, view columns, and constraints) \u2014 results come back as JSON rows in the order of the 'view' columns. Example: query '<query model=\"genomic\" view=\"Gene.symbol Gene.pathways.name Gene.pathways.dataSets.name\"><constraint path=\"Gene.symbol\" op=\"=\" value=\"PAX6\"/></query>' returns PAX6 Reactome pathways like 'Activation of HOX genes during differentiation'. A second view 'Gene.proteins.proteinDomainRegions.proteinDomain.name' returns protein domains such as 'Homeobox domain'.",
+    "description": "Run an arbitrary InterMine PathQuery against HumanMine (an InterMine data warehouse) to traverse the data model graph: gene->pathways, gene->protein domains, region->features, etc. The 'query' argument is an InterMine XML PathQuery string (with model, view columns, and constraints) — results come back as JSON rows in the order of the 'view' columns. Example: query '<query model=\"genomic\" view=\"Gene.symbol Gene.pathways.name Gene.pathways.dataSets.name\"><constraint path=\"Gene.symbol\" op=\"=\" value=\"PAX6\"/></query>' returns PAX6 Reactome pathways like 'Activation of HOX genes during differentiation'. A second view 'Gene.proteins.proteinDomainRegions.proteinDomain.name' returns protein domains such as 'Homeobox domain'.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -485,7 +614,10 @@
               "type": "string"
             },
             "error": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "statusCode": {
               "type": "integer"

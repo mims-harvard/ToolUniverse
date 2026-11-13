@@ -298,6 +298,13 @@ def test_no_tool_is_typed_against_the_retired_opentargets_genetics_host():
 # refused it: "None is not of type 'object'". A tool answering outside its own
 # contract is the same defect as a wrapper dropping a field, one level up.
 #
+# ExpressionAtlas_get_experiment has since LEFT this list, in the other
+# direction: measured against GxA_get_experiment_info over the same resource,
+# the two disagreed about E-MTAB-5214 and the one reporting success was the
+# wrong one, so its 404 is an error now. Fourteen remain. Being on this list
+# is a claim that a successful empty result is the right answer for that
+# tool's miss; it is not a licence, and the claim is re-checkable per tool.
+#
 # NOT DERIVABLE AT CLASS LEVEL, which is why this is a list. An AST scan finds
 # the nine classes mechanically, but a class serves several tools and only some
 # of its operations can reach the empty-success return: the rule "every tool
@@ -316,7 +323,6 @@ EMPTY_RESULT_TOOLS = [
     ("ComplexPortal_get_complex", "complex not found"),
     ("DepMap_get_cell_line", "cell line not found"),
     ("EVE_get_gene_info", "gene not found in Ensembl"),
-    ("ExpressionAtlas_get_experiment", "experiment not found"),
     ("IMPC_get_gene_summary", "gene not yet phenotyped by IMPC"),
     ("IUCN_get_conservation_status", "no IUCN assessment for the name"),
     ("Pharos_get_ligand_targets", "no ligand found"),

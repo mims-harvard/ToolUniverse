@@ -217,6 +217,23 @@
               "items": {
                 "type": "string"
               }
+            },
+            "translation": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "Ensembl protein/transcript pairs, each {protein, rna}. Which protein each transcript makes."
+            },
+            "type_of_gene": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Ensembl's gene biotype, e.g. 'protein_coding'. A pseudogene and a coding gene are not interchangeable and only this says which."
             }
           }
         },
@@ -245,6 +262,23 @@
         "pathway": {
           "type": "object",
           "description": "Pathway annotations from KEGG, Reactome, WikiPathways"
+        },
+        "_version": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "MyGene's internal document version."
+        },
+        "generif": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "GeneRIF statements, each a pubmed id and a one-line finding. 370 on TP53 - the curated sentence-level literature on what the gene does."
         }
       }
     }
@@ -329,6 +363,13 @@
               "notfound": {
                 "type": "boolean",
                 "description": "True if gene was not found"
+              },
+              "_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Relevance score for the hit; results come back in descending order of it."
               }
             }
           }
@@ -419,6 +460,61 @@
                 "properties": {
                   "rsid": {
                     "type": "string"
+                  },
+                  "_license": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Licence URL for the dbSNP data."
+                  },
+                  "alt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Alternate allele."
+                  },
+                  "chrom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Chromosome, as dbSNP records it."
+                  },
+                  "dbsnp_build": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "dbSNP build the record comes from, e.g. 156. rsIDs are merged and retired between builds, so this dates the record."
+                  },
+                  "hg19": {
+                    "description": "The variant's hg19/GRCh37 coordinates, as start and end. The top-level coordinates are hg38, so this is what a GRCh37 pipeline needs - and conflating the two is a silent error."
+                  },
+                  "ref": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Reference allele."
+                  },
+                  "vartype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Variant type, e.g. 'snv', 'del', 'ins'."
+                  },
+                  "alleles": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "dbSNP's allele records for the variant, each with the allele and its frequency observations. The variant's own ref/alt are the single pair; this is every allele dbSNP has seen at the position."
                   }
                 }
               },
@@ -437,11 +533,219 @@
                   "phred": {
                     "type": "number",
                     "description": "CADD Phred score"
+                  },
+                  "1000g": {
+                    "description": "1000 Genomes allele frequencies as CADD recorded them, overall and per super-population (afr, amr, eur)."
+                  },
+                  "_license": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Licence URL for the CADD data."
+                  },
+                  "alt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Alternate allele."
+                  },
+                  "anc": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Inferred ancestral allele, e.g. 'G'. Differs from `ref` where the reference carries the derived allele."
+                  },
+                  "annotype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the position is, e.g. 'Intergenic', 'CodingTranscript'. The context every other CADD field has to be read in."
+                  },
+                  "bstatistic": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Background-selection statistic, e.g. 802. Low values mean strong linked selection."
+                  },
+                  "chmm": {
+                    "description": "ChromHMM state coverage at the position, keyed by state (enh, het, quies, tssa and the rest). The regulatory context."
+                  },
+                  "chrom": {
+                    "description": "Chromosome, as CADD records it."
+                  },
+                  "consdetail": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Consequence detail, e.g. 'intergenic'."
+                  },
+                  "consequence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "CADD's consequence term for the variant, e.g. 'DOWNSTREAM', 'NON_SYNONYMOUS'."
+                  },
+                  "consscore": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "CADD's numeric consequence severity rank."
+                  },
+                  "cpg": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "CpG content of the surrounding window."
+                  },
+                  "dna": {
+                    "description": "DNA shape features at the position: helt, mgw, prot, roll."
+                  },
+                  "encode": {
+                    "description": "ENCODE signal at the position: h3k27ac, h3k4me1, h3k4me3 and nucleosome occupancy."
+                  },
+                  "fitcons": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "fitCons functional-constraint score, e.g. 0.065712: the fraction of sites in this class under selection."
+                  },
+                  "gc": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "GC content of the surrounding window, e.g. 0.29."
+                  },
+                  "gerp": {
+                    "description": "GERP constraint scores: `n` the neutral rate and `s` the observed substitution deficit."
+                  },
+                  "isderived": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'TRUE' when the alternate allele is the derived one."
+                  },
+                  "isknownvariant": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'TRUE' when the variant was already in the training data - a CADD score on a known variant is not an independent prediction."
+                  },
+                  "istv": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'TRUE' for a transversion, 'FALSE' for a transition."
+                  },
+                  "length": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Length of the change; 0 for a substitution."
+                  },
+                  "mapability": {
+                    "description": "Mappability at 20bp and 35bp read lengths. Low mappability means the call itself is less trustworthy, which is a caveat on everything else."
+                  },
+                  "min_dist_tse": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Distance to the nearest transcription end site."
+                  },
+                  "min_dist_tss": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Distance to the nearest transcription start site, e.g. 24354."
+                  },
+                  "motif": {
+                    "description": "Transcription-factor motif evidence: distance to the motif and how much it overlaps."
+                  },
+                  "mutindex": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Mutability index for the position."
+                  },
+                  "phast_cons": {
+                    "description": "PhastCons conservation probabilities, per clade: mammalian, primate, vertebrate."
+                  },
+                  "phylop": {
+                    "description": "PhyloP conservation scores, per clade: mammalian, primate, vertebrate. Positive means conserved. One of the main inputs to the CADD score, and a caller checking whether a position is constrained needs it directly."
+                  },
+                  "pos": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Position on that chromosome."
+                  },
+                  "rawscore": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "CADD's raw deleteriousness score, e.g. -0.106892. Unscaled: compare it only within one CADD version. The PHRED-scaled form is the one usually quoted, and neither was declared."
+                  },
+                  "ref": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Reference allele."
+                  },
+                  "segway": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Segway genome-segmentation label for the position, e.g. 'F0'."
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Variant type, e.g. 'SNV'."
                   }
                 }
+              },
+              "_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "This hit's relevance score; hits come back in descending order of it."
+              },
+              "gnomad_genome": {
+                "description": "gnomAD genome frequencies for the variant: overall allele frequency, allele count and number, and the per-population breakdown. An allele that is rare overall and common in one population is the case this block exists to show."
               }
             }
           }
+        },
+        "max_score": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Highest relevance score among the hits, from MyVariant's Elasticsearch backend."
         }
       }
     }
@@ -501,6 +805,51 @@
             },
             "alleles": {
               "type": "array"
+            },
+            "_license": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Licence URL for the dbSNP data."
+            },
+            "alt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Alternate allele."
+            },
+            "chrom": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Chromosome, as dbSNP records it."
+            },
+            "dbsnp_build": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "dbSNP build the record comes from, e.g. 156. rsIDs are merged and retired between builds, so this dates the record."
+            },
+            "hg19": {
+              "description": "The variant's hg19/GRCh37 coordinates, as start and end. The top-level coordinates are hg38, so this is what a GRCh37 pipeline needs - and conflating the two is a silent error."
+            },
+            "ref": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reference allele."
+            },
+            "vartype": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Variant type, e.g. 'snv', 'del', 'ins'."
             }
           }
         },
@@ -517,12 +866,203 @@
             },
             "consequence": {
               "type": "string"
+            },
+            "1000g": {
+              "description": "1000 Genomes allele frequencies as CADD recorded them, overall and per super-population (afr, amr, eur)."
+            },
+            "_license": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Licence URL for the CADD data."
+            },
+            "alt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Alternate allele."
+            },
+            "anc": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Inferred ancestral allele, e.g. 'G'. Differs from `ref` where the reference carries the derived allele."
+            },
+            "annotype": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the position is, e.g. 'Intergenic', 'CodingTranscript'. The context every other CADD field has to be read in."
+            },
+            "bstatistic": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Background-selection statistic, e.g. 802. Low values mean strong linked selection."
+            },
+            "chmm": {
+              "description": "ChromHMM state coverage at the position, keyed by state (enh, het, quies, tssa and the rest). The regulatory context."
+            },
+            "chrom": {
+              "description": "Chromosome, as CADD records it."
+            },
+            "consdetail": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Consequence detail, e.g. 'intergenic'."
+            },
+            "consscore": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "CADD's numeric consequence severity rank."
+            },
+            "cpg": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "CpG content of the surrounding window."
+            },
+            "dna": {
+              "description": "DNA shape features at the position: helt, mgw, prot, roll."
+            },
+            "encode": {
+              "description": "ENCODE signal at the position: h3k27ac, h3k4me1, h3k4me3 and nucleosome occupancy."
+            },
+            "fitcons": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "fitCons functional-constraint score, e.g. 0.065712: the fraction of sites in this class under selection."
+            },
+            "gc": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "GC content of the surrounding window, e.g. 0.29."
+            },
+            "gerp": {
+              "description": "GERP constraint scores: `n` the neutral rate and `s` the observed substitution deficit."
+            },
+            "isderived": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "'TRUE' when the alternate allele is the derived one."
+            },
+            "isknownvariant": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "'TRUE' when the variant was already in the training data - a CADD score on a known variant is not an independent prediction."
+            },
+            "istv": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "'TRUE' for a transversion, 'FALSE' for a transition."
+            },
+            "length": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Length of the change; 0 for a substitution."
+            },
+            "mapability": {
+              "description": "Mappability at 20bp and 35bp read lengths. Low mappability means the call itself is less trustworthy, which is a caveat on everything else."
+            },
+            "min_dist_tse": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Distance to the nearest transcription end site."
+            },
+            "min_dist_tss": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Distance to the nearest transcription start site, e.g. 24354."
+            },
+            "motif": {
+              "description": "Transcription-factor motif evidence: distance to the motif and how much it overlaps."
+            },
+            "mutindex": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Mutability index for the position."
+            },
+            "phast_cons": {
+              "description": "PhastCons conservation probabilities, per clade: mammalian, primate, vertebrate."
+            },
+            "phylop": {
+              "description": "PhyloP conservation scores, per clade: mammalian, primate, vertebrate. Positive means conserved. One of the main inputs to the CADD score, and a caller checking whether a position is constrained needs it directly."
+            },
+            "pos": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Position on that chromosome."
+            },
+            "rawscore": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "CADD's raw deleteriousness score, e.g. -0.106892. Unscaled: compare it only within one CADD version. The PHRED-scaled form is the one usually quoted, and neither was declared."
+            },
+            "ref": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reference allele."
+            },
+            "segway": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Segway genome-segmentation label for the position, e.g. 'F0'."
+            },
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Variant type, e.g. 'SNV'."
             }
           }
         },
         "gnomad_genome": {
           "type": "object",
           "description": "gnomAD genome allele frequencies"
+        },
+        "_version": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "MyVariant's internal document version for the record."
         }
       }
     }
@@ -607,7 +1147,38 @@
                   },
                   "drug_interactions": {
                     "type": "array"
+                  },
+                  "cas": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "CAS registry number."
+                  },
+                  "unii": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "FDA UNII code."
+                  },
+                  "inchi_key": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InChIKey."
+                  },
+                  "accession_number": {
+                    "description": "Secondary DrugBank accessions."
+                  },
+                  "synonyms": {
+                    "description": "Other names DrugBank records."
                   }
+                },
+                "description": "DrugBank's identifiers for the compound. The free MyChem feed carries identity only; a full record here is 8 keys.",
+                "additionalProperties": {
+                  "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
                 }
               },
               "chembl": {
@@ -615,7 +1186,102 @@
                 "properties": {
                   "molecule_chembl_id": {
                     "type": "string"
+                  },
+                  "pref_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ChEMBL's preferred name."
+                  },
+                  "max_phase": {
+                    "description": "Highest clinical phase reached: 4 is approved, 0 or null is preclinical. This is the field that answers 'is it a drug?' and it was undeclared."
+                  },
+                  "first_approval": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Year of first approval, when there is one."
+                  },
+                  "black_box_warning": {
+                    "description": "Whether the drug carries a boxed warning (1/0)."
+                  },
+                  "drug_indications": {
+                    "description": "Indications ChEMBL records, with their MeSH and EFO terms and max phase."
+                  },
+                  "atc_classifications": {
+                    "description": "WHO ATC codes for the drug."
+                  },
+                  "molecule_properties": {
+                    "description": "Computed physicochemical properties: logP, polar surface area, rule-of-five violations and the rest."
+                  },
+                  "molecule_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "e.g. 'Small molecule', 'Antibody'."
+                  },
+                  "molecule_synonyms": {
+                    "description": "Synonyms with the source that uses each."
+                  },
+                  "molecule_hierarchy": {
+                    "description": "Parent and active-ingredient ids, for salts and prodrugs."
+                  },
+                  "first_in_class": {
+                    "description": "Whether ChEMBL records it as first in its class."
+                  },
+                  "prodrug": {
+                    "description": "Whether it is a prodrug."
+                  },
+                  "natural_product": {
+                    "description": "Whether it is a natural product."
+                  },
+                  "oral": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether an oral formulation exists."
+                  },
+                  "parenteral": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether a parenteral formulation exists."
+                  },
+                  "topical": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether a topical formulation exists."
+                  },
+                  "orphan": {
+                    "description": "Whether it has orphan-drug designation."
+                  },
+                  "chirality": {
+                    "description": "ChEMBL's chirality code."
+                  },
+                  "availability_type": {
+                    "description": "Prescription status code: -1 unknown, 0 discontinued, 1 prescription only, 2 over the counter."
+                  },
+                  "withdrawn_flag": {
+                    "description": "Whether the drug has been withdrawn."
+                  },
+                  "inchi_key": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InChIKey as ChEMBL records it."
                   }
+                },
+                "description": "ChEMBL's record for the compound. Which keys appear depends on the `fields` argument; a full record carries 35.",
+                "additionalProperties": {
+                  "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
                 }
               },
               "pubchem": {
@@ -626,12 +1292,269 @@
                 "properties": {
                   "cid": {
                     "type": "integer"
+                  },
+                  "molecular_formula": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Molecular formula."
+                  },
+                  "molecular_weight": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Molecular weight."
+                  },
+                  "exact_mass": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Exact mass."
+                  },
+                  "monoisotopic_weight": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Monoisotopic weight."
+                  },
+                  "smiles": {
+                    "description": "SMILES, canonical and isomeric."
+                  },
+                  "inchi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InChI string."
+                  },
+                  "inchikey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InChIKey."
+                  },
+                  "iupac": {
+                    "description": "IUPAC names PubChem generates."
+                  },
+                  "xlogp": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Computed octanol/water partition coefficient."
+                  },
+                  "topological_polar_surface_area": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "TPSA, used in permeability rules."
+                  },
+                  "hydrogen_bond_donor_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Hydrogen-bond donors."
+                  },
+                  "hydrogen_bond_acceptor_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Hydrogen-bond acceptors."
+                  },
+                  "rotatable_bond_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Rotatable bonds."
+                  },
+                  "heavy_atom_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Non-hydrogen atoms."
+                  },
+                  "complexity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "PubChem's structural complexity score."
+                  },
+                  "formal_charge": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Net formal charge."
+                  },
+                  "defined_chiral_atom_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Stereocentres with defined configuration."
+                  },
+                  "undefined_chiral_atom_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Stereocentres left undefined - non-zero means the record does not pin the stereochemistry down."
                   }
                 },
-                "description": "PubChem annotations. MyChem merges source records, so this is an object for one PubChem entry and an array when a compound has several: measured across 12 queries and 120 hits, 53 objects and 11 arrays. chembl (64) and drugbank (50) were objects in every one of those hits, so they are left as declared."
+                "description": "PubChem's computed record for the compound. Which keys appear depends on the `fields` argument; a full record carries 27.",
+                "additionalProperties": {
+                  "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
+                }
+              },
+              "chebi": {
+                "type": "object",
+                "description": "ChEBI's record for the compound. Which keys appear depends on the `fields` argument and on what ChEBI curated; a full record carries 24.",
+                "properties": {
+                  "formula": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Molecular formula, e.g. 'C9H8O4'."
+                  },
+                  "mass": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Average molecular mass."
+                  },
+                  "monoisotopic_mass": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Monoisotopic mass."
+                  },
+                  "smiles": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SMILES string."
+                  },
+                  "inchi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InChI string."
+                  },
+                  "inchikey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InChIKey."
+                  },
+                  "iupac": {
+                    "description": "IUPAC name(s). A string, or a list when ChEBI records several."
+                  },
+                  "synonyms": {
+                    "description": "Other names ChEBI records. A string or a list."
+                  },
+                  "xrefs": {
+                    "description": "Cross-references to other chemical databases, keyed by database."
+                  },
+                  "parents": {
+                    "description": "Immediate parents in the ChEBI ontology."
+                  },
+                  "ancestors": {
+                    "description": "All ancestors in the ChEBI ontology."
+                  },
+                  "relationship": {
+                    "description": "ChEBI's typed relationships, e.g. has_role, is_conjugate_base_of."
+                  },
+                  "star": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "ChEBI's curation level: 3 means manually annotated, lower means not."
+                  },
+                  "secondary_chebi_id": {
+                    "description": "ChEBI ids merged into this one."
+                  }
+                },
+                "additionalProperties": {
+                  "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
+                }
+              },
+              "drugcentral": {
+                "type": "object",
+                "description": "DrugCentral's record for the compound: approvals, pharmacologic class and measured bioactivity. Returned by default and declared by nothing before this.",
+                "properties": {
+                  "approval": {
+                    "description": "Approval records: agency, date and the approved product."
+                  },
+                  "bioactivity": {
+                    "description": "Measured activities against targets, with the value, units and source."
+                  },
+                  "drug_use": {
+                    "description": "Indications and contraindications DrugCentral records."
+                  },
+                  "drug_dosage": {
+                    "description": "Dosing records with route and strength."
+                  },
+                  "pharmacology_class": {
+                    "description": "Pharmacologic classes, including FDA's EPC/MoA codes."
+                  },
+                  "structures": {
+                    "description": "Structure identifiers: SMILES, InChI, CAS."
+                  },
+                  "fda_adverse_event": {
+                    "description": "FAERS adverse-event signals DrugCentral links to the drug."
+                  },
+                  "xrefs": {
+                    "description": "Cross-references to other drug databases."
+                  },
+                  "id": {
+                    "description": "DrugCentral's own id."
+                  }
+                },
+                "additionalProperties": {
+                  "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
+                }
+              },
+              "_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "This hit's relevance score. Hits are returned in descending score order, so it is how far down the ranking a hit sits."
+              },
+              "_ignored": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Fields MyChem's index skipped for this record, usually because a value exceeded the index's length limit. Present only when something was skipped."
               }
             }
           }
+        },
+        "max_score": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Highest relevance score among the hits, from MyChem's Elasticsearch backend."
         }
       }
     }
@@ -705,7 +1628,38 @@
             },
             "categories": {
               "type": "array"
+            },
+            "cas": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "CAS registry number."
+            },
+            "unii": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "FDA UNII code."
+            },
+            "inchi_key": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChIKey."
+            },
+            "accession_number": {
+              "description": "Secondary DrugBank accessions."
+            },
+            "synonyms": {
+              "description": "Other names DrugBank records."
             }
+          },
+          "description": "DrugBank's identifiers for the compound. The free MyChem feed carries identity only; a full record here is 8 keys.",
+          "additionalProperties": {
+            "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
           }
         },
         "chebi": {
@@ -719,7 +1673,81 @@
             },
             "definition": {
               "type": "string"
+            },
+            "formula": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Molecular formula, e.g. 'C9H8O4'."
+            },
+            "mass": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Average molecular mass."
+            },
+            "monoisotopic_mass": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Monoisotopic mass."
+            },
+            "smiles": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "SMILES string."
+            },
+            "inchi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChI string."
+            },
+            "inchikey": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChIKey."
+            },
+            "iupac": {
+              "description": "IUPAC name(s). A string, or a list when ChEBI records several."
+            },
+            "synonyms": {
+              "description": "Other names ChEBI records. A string or a list."
+            },
+            "xrefs": {
+              "description": "Cross-references to other chemical databases, keyed by database."
+            },
+            "parents": {
+              "description": "Immediate parents in the ChEBI ontology."
+            },
+            "ancestors": {
+              "description": "All ancestors in the ChEBI ontology."
+            },
+            "relationship": {
+              "description": "ChEBI's typed relationships, e.g. has_role, is_conjugate_base_of."
+            },
+            "star": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "ChEBI's curation level: 3 means manually annotated, lower means not."
+            },
+            "secondary_chebi_id": {
+              "description": "ChEBI ids merged into this one."
             }
+          },
+          "description": "ChEBI's record for the compound. Which keys appear depends on the `fields` argument and on what ChEBI curated; a full record carries 24.",
+          "additionalProperties": {
+            "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
           }
         },
         "pubchem": {
@@ -730,7 +1758,122 @@
             },
             "inchikey": {
               "type": "string"
+            },
+            "molecular_formula": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Molecular formula."
+            },
+            "molecular_weight": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Molecular weight."
+            },
+            "exact_mass": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Exact mass."
+            },
+            "monoisotopic_weight": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Monoisotopic weight."
+            },
+            "smiles": {
+              "description": "SMILES, canonical and isomeric."
+            },
+            "inchi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChI string."
+            },
+            "iupac": {
+              "description": "IUPAC names PubChem generates."
+            },
+            "xlogp": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Computed octanol/water partition coefficient."
+            },
+            "topological_polar_surface_area": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "TPSA, used in permeability rules."
+            },
+            "hydrogen_bond_donor_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Hydrogen-bond donors."
+            },
+            "hydrogen_bond_acceptor_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Hydrogen-bond acceptors."
+            },
+            "rotatable_bond_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Rotatable bonds."
+            },
+            "heavy_atom_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Non-hydrogen atoms."
+            },
+            "complexity": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "PubChem's structural complexity score."
+            },
+            "formal_charge": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Net formal charge."
+            },
+            "defined_chiral_atom_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Stereocentres with defined configuration."
+            },
+            "undefined_chiral_atom_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Stereocentres left undefined - non-zero means the record does not pin the stereochemistry down."
             }
+          },
+          "description": "PubChem's computed record for the compound. Which keys appear depends on the `fields` argument; a full record carries 27.",
+          "additionalProperties": {
+            "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
           }
         },
         "chembl": {
@@ -744,8 +1887,132 @@
             },
             "molecule_type": {
               "type": "string"
+            },
+            "max_phase": {
+              "description": "Highest clinical phase reached: 4 is approved, 0 or null is preclinical. This is the field that answers 'is it a drug?' and it was undeclared."
+            },
+            "first_approval": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Year of first approval, when there is one."
+            },
+            "black_box_warning": {
+              "description": "Whether the drug carries a boxed warning (1/0)."
+            },
+            "drug_indications": {
+              "description": "Indications ChEMBL records, with their MeSH and EFO terms and max phase."
+            },
+            "atc_classifications": {
+              "description": "WHO ATC codes for the drug."
+            },
+            "molecule_properties": {
+              "description": "Computed physicochemical properties: logP, polar surface area, rule-of-five violations and the rest."
+            },
+            "molecule_synonyms": {
+              "description": "Synonyms with the source that uses each."
+            },
+            "molecule_hierarchy": {
+              "description": "Parent and active-ingredient ids, for salts and prodrugs."
+            },
+            "first_in_class": {
+              "description": "Whether ChEMBL records it as first in its class."
+            },
+            "prodrug": {
+              "description": "Whether it is a prodrug."
+            },
+            "natural_product": {
+              "description": "Whether it is a natural product."
+            },
+            "oral": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether an oral formulation exists."
+            },
+            "parenteral": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether a parenteral formulation exists."
+            },
+            "topical": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether a topical formulation exists."
+            },
+            "orphan": {
+              "description": "Whether it has orphan-drug designation."
+            },
+            "chirality": {
+              "description": "ChEMBL's chirality code."
+            },
+            "availability_type": {
+              "description": "Prescription status code: -1 unknown, 0 discontinued, 1 prescription only, 2 over the counter."
+            },
+            "withdrawn_flag": {
+              "description": "Whether the drug has been withdrawn."
+            },
+            "inchi_key": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChIKey as ChEMBL records it."
             }
+          },
+          "description": "ChEMBL's record for the compound. Which keys appear depends on the `fields` argument; a full record carries 35.",
+          "additionalProperties": {
+            "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
           }
+        },
+        "drugcentral": {
+          "type": "object",
+          "description": "DrugCentral's record for the compound: approvals, pharmacologic class and measured bioactivity. Returned by default and declared by nothing before this.",
+          "properties": {
+            "approval": {
+              "description": "Approval records: agency, date and the approved product."
+            },
+            "bioactivity": {
+              "description": "Measured activities against targets, with the value, units and source."
+            },
+            "drug_use": {
+              "description": "Indications and contraindications DrugCentral records."
+            },
+            "drug_dosage": {
+              "description": "Dosing records with route and strength."
+            },
+            "pharmacology_class": {
+              "description": "Pharmacologic classes, including FDA's EPC/MoA codes."
+            },
+            "structures": {
+              "description": "Structure identifiers: SMILES, InChI, CAS."
+            },
+            "fda_adverse_event": {
+              "description": "FAERS adverse-event signals DrugCentral links to the drug."
+            },
+            "xrefs": {
+              "description": "Cross-references to other drug databases."
+            },
+            "id": {
+              "description": "DrugCentral's own id."
+            }
+          },
+          "additionalProperties": {
+            "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
+          }
+        },
+        "_version": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "MyChem's internal document version for the record."
         }
       }
     }
@@ -799,6 +2066,459 @@
             "required": [
               "error"
             ]
+          },
+          "properties": {
+            "_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "MyVariant's identifier for the variant, in HGVS genomic form, e.g. 'chr16:g.23635348A>C'."
+            },
+            "_version": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "Record version."
+            },
+            "cadd": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "CADD deleteriousness prediction.",
+              "properties": {
+                "_license": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "CADD's licence. CADD is free for academic use only, and this is where that is stated."
+                },
+                "phred": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "CADD PHRED score. 20 means the variant is in the most deleterious 1% of the genome, 30 the top 0.1%. A raw score is not comparable between CADD versions; the PHRED is."
+                },
+                "gerp": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "GERP conservation at the site.",
+                  "properties": {
+                    "rs": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "The GERP rejected-substitutions score. High means the position is conserved and a change there is more likely to matter."
+                    }
+                  }
+                }
+              }
+            },
+            "clinvar": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ClinVar's clinical interpretation.",
+              "properties": {
+                "_license": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "ClinVar's licence."
+                },
+                "rcv": {
+                  "type": "array",
+                  "description": "One entry per ClinVar submission record. SEVERAL entries with DIFFERENT significances is the normal case for a disputed variant, and reading only the first hides the dispute.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "clinical_significance": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "What that record asserts, e.g. 'Conflicting interpretations of pathogenicity' -- which is itself a verdict, not a missing one."
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "dbnsfp": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "dbNSFP's collected in-silico predictions. They are NOT independent: most are trained on overlapping data, so agreement between them is weaker evidence than it looks.",
+              "properties": {
+                "_license": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "dbNSFP's licence."
+                },
+                "sift": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "SIFT.",
+                  "properties": {
+                    "score": {
+                      "type": [
+                        "array",
+                        "number",
+                        "null"
+                      ],
+                      "description": "SIFT score per transcript -- a LIST, because the same variant has different consequences on different transcripts. Below 0.05 is called damaging.",
+                      "items": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "The score for one transcript."
+                      }
+                    },
+                    "pred": {
+                      "type": [
+                        "array",
+                        "string",
+                        "null"
+                      ],
+                      "description": "SIFT's call per transcript, 'D' damaging or 'T' tolerated.",
+                      "items": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The call for one transcript."
+                      }
+                    }
+                  }
+                },
+                "polyphen2": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "PolyPhen-2.",
+                  "properties": {
+                    "hdiv": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "The HumDiv-trained model, for rare Mendelian variants.",
+                      "properties": {
+                        "score": {
+                          "type": [
+                            "array",
+                            "number",
+                            "null"
+                          ],
+                          "description": "Score, 0 to 1.",
+                          "items": {
+                            "type": [
+                              "number",
+                              "null"
+                            ],
+                            "description": "The score for one transcript."
+                          }
+                        },
+                        "pred": {
+                          "type": [
+                            "array",
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its call: 'D' probably damaging, 'P' possibly damaging, 'B' benign.",
+                          "items": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The call for one transcript."
+                          }
+                        }
+                      }
+                    },
+                    "hvar": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "The HumVar-trained model, for distinguishing severe from milder variants.",
+                      "properties": {
+                        "score": {
+                          "type": [
+                            "array",
+                            "number",
+                            "null"
+                          ],
+                          "description": "Score, 0 to 1.",
+                          "items": {
+                            "type": [
+                              "number",
+                              "null"
+                            ],
+                            "description": "The score for one transcript."
+                          }
+                        },
+                        "pred": {
+                          "type": [
+                            "array",
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its call.",
+                          "items": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The call for one transcript."
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "alphamissense": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "AlphaMissense.",
+                  "properties": {
+                    "score": {
+                      "type": [
+                        "array",
+                        "number",
+                        "null"
+                      ],
+                      "description": "Pathogenicity score per transcript, 0 to 1.",
+                      "items": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "The score for one transcript."
+                      }
+                    },
+                    "pred": {
+                      "type": [
+                        "array",
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its call: 'P' pathogenic, 'B' benign, 'A' ambiguous.",
+                      "items": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The call for one transcript."
+                      }
+                    }
+                  }
+                },
+                "metarnn": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "MetaRNN, an ensemble that combines the other predictors.",
+                  "properties": {
+                    "score": {
+                      "type": [
+                        "array",
+                        "number",
+                        "null"
+                      ],
+                      "description": "Score, 0 to 1.",
+                      "items": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "The score for one transcript."
+                      }
+                    },
+                    "pred": {
+                      "type": [
+                        "array",
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its call, 'D' or 'T'.",
+                      "items": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The call for one transcript."
+                      }
+                    }
+                  }
+                },
+                "revel": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "REVEL, an ensemble tuned for rare missense variants.",
+                  "properties": {
+                    "score": {
+                      "type": [
+                        "array",
+                        "number",
+                        "null"
+                      ],
+                      "description": "Score, 0 to 1. Above about 0.75 is commonly treated as supporting pathogenicity.",
+                      "items": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "The score for one transcript."
+                      }
+                    }
+                  }
+                },
+                "vest4": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "VEST4.",
+                  "properties": {
+                    "score": {
+                      "type": [
+                        "array",
+                        "number",
+                        "null"
+                      ],
+                      "description": "Score, 0 to 1.",
+                      "items": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "The score for one transcript."
+                      }
+                    }
+                  }
+                },
+                "mutationtaster": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "MutationTaster.",
+                  "properties": {
+                    "pred": {
+                      "type": [
+                        "array",
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its call.",
+                      "items": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The call for one transcript."
+                      }
+                    }
+                  }
+                },
+                "phastcons": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "phastCons conservation.",
+                  "properties": {
+                    "100way_vertebrate": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "Across 100 vertebrates.",
+                      "properties": {
+                        "rankscore": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "Rank-normalised score, 0 to 1."
+                        }
+                      }
+                    }
+                  }
+                },
+                "phylop": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "phyloP conservation.",
+                  "properties": {
+                    "100way_vertebrate": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "Across 100 vertebrates.",
+                      "properties": {
+                        "rankscore": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "Rank-normalised score. phyloP can be negative for faster-than-neutral sites, which the rankscore hides."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "dbsnp": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "dbSNP.",
+              "properties": {
+                "_license": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "dbSNP's licence."
+                },
+                "rsid": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The rsID, e.g. 'rs45478192'."
+                }
+              }
+            }
           }
         },
         {

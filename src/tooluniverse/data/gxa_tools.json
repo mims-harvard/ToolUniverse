@@ -75,9 +75,63 @@
                   },
                   "number_of_assays": {
                     "type": "integer"
+                  },
+                  "kingdom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "animals, plants, fungi or protists, populated on all 4562 experiments. A cross-kingdom atlas that answered only the species name made 'are there plant experiments' a question about 1026 rows the caller could not see."
+                  },
+                  "technology_type": {
+                    "type": "array",
+                    "description": "Sequencing or array technologies used.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "experimental_factors": {
+                    "type": "array",
+                    "description": "The factors the experiment varies.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "last_update": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the Atlas last updated the experiment."
+                  },
+                  "load_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the Atlas loaded it."
                   }
                 }
               }
+            },
+            "has_more": {
+              "type": "boolean",
+              "description": "True when more experiments match than were returned."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "The page size applied."
+            },
+            "offset": {
+              "type": "integer",
+              "description": "The offset applied."
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset for the next page, null when there is none."
             }
           },
           "not": {
@@ -178,6 +232,43 @@
                       "integer",
                       "null"
                     ]
+                  },
+                  "assay_group_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Upstream assay-group id for this column, e.g. g1"
+                  },
+                  "properties": {
+                    "type": "array",
+                    "description": "Every sample property behind this column, so the varied factor can be told from the held-fixed annotation. contrastPropertyType FACTOR is the varied one; SAMPLE is held fixed.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "property_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "e.g. 'organism part', 'developmental stage', 'sex'"
+                        },
+                        "value": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The property's value for this assay group"
+                        },
+                        "property_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "FACTOR (varied in this experiment) or SAMPLE (held fixed)"
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -238,6 +329,13 @@
                         }
                       }
                     }
+                  },
+                  "expression_unit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The unit every value in `expressions` is measured in, as Expression Atlas reports it -- e.g. 'tpms'. A bare number cannot be compared without it."
                   }
                 }
               }
@@ -256,6 +354,13 @@
                 "null"
               ],
               "description": "Present (non-null) only when a gene_id filter was supplied and matched nothing in the upstream sample. Explains that the upstream API returns only a partial sample and ignores gene filters, so an empty match is not evidence the gene is unexpressed or absent from the experiment."
+            },
+            "expression_units": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Every distinct unit present on this page. More than one entry means the values are NOT directly comparable."
             }
           },
           "not": {
@@ -332,7 +437,90 @@
               "type": "array"
             },
             "config": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "disclaimer": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Atlas disclaimer for the experiment, e.g. 'experimental' for a pilot dataset."
+                },
+                "resources": {
+                  "type": "array",
+                  "description": "Downloadable files the Atlas offers for the experiment, each with its type and URL.",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "conditions": {
+              "type": "array",
+              "description": "The experiment's assay groups: one per condition, with the factor each varies. This tool's description promises factor information and reported the conditions as a count (total_conditions 29 for E-MTAB-2836) with column_groupings empty, so none of it reached the caller. property_type separates the varied FACTOR from the SAMPLE annotation held fixed.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "assay_group_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The assay group's id, e.g. g1."
+                  },
+                  "factor_value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The condition, e.g. 'adipose tissue'."
+                  },
+                  "ontology_term_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ontology term for the condition, e.g. UBERON_0001013."
+                  },
+                  "replicates": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of replicate assays in the group."
+                  },
+                  "properties": {
+                    "type": "array",
+                    "description": "The sample characteristics of the group, each with whether it is the varied factor.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "property_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Characteristic, e.g. 'organism part', 'developmental stage', 'sex'."
+                        },
+                        "value": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its value for this group."
+                        },
+                        "property_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "FACTOR for the characteristic this experiment varies, SAMPLE for one held fixed."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           },
           "not": {

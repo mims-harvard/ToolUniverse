@@ -213,6 +213,45 @@
             "publications": {
               "type": "array",
               "description": "Supporting publications with PubMed IDs"
+            },
+            "phenotypes": {
+              "type": "string",
+              "description": "Semicolon-separated HP phenotype terms"
+            },
+            "last_updated": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the record last changed, 'YYYY-MM-DD', e.g. '2022-12-07'."
+            },
+            "mined_publications": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Publications found by TEXT MINING rather than curation, each {pmid, year, title, ...}. These have NOT been through G2P's curation and do not count toward the confidence assertion in `summary`."
+            },
+            "panels": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The G2P panels the record belongs to, each {name, description}, e.g. {'name': 'Cancer', 'description': 'Cancer disorders'}. Panels are curated independently, so which one an entry sits on says who reviewed it."
+            },
+            "summary": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "G2P's own one-sentence verdict on the record, e.g. 'BRCA1-related cancer has a confidence assertion of definitive based on 17 curated publications'. The confidence level and the evidence count in one place."
+            },
+            "under_review": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the record is currently being re-reviewed, e.g. false. A record under review may change."
             }
           },
           "not": {
@@ -498,6 +537,90 @@
               },
               "panel": {
                 "type": "string"
+              },
+              "additional mined publications": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PMIDs found by text mining rather than curation, as a '; '-delimited string. Measured on 86 of 125 rows. Mined references are unreviewed and should not be cited as curated evidence."
+              },
+              "comments": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The curator's free-text note, e.g. 'Regulatory element for MSH2'. Measured on 2 of 125 rows."
+              },
+              "cross cutting modifier": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Qualifiers on the entry, e.g. 'potential secondary finding; restricted mutation set'. Measured on 6 of 125 rows. 'restricted mutation set' means the gene-disease pair holds only for particular variants, not for any LOF."
+              },
+              "date of last review": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the entry was last reviewed, e.g. '2025-01-28 23:03:26+00:00'. A gene-disease assertion ages, and this is the only field that says how recently it was checked."
+              },
+              "disease mim": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OMIM number for the DISEASE, e.g. '609054'. Measured on 83 of 125 rows; absent where the disease has no OMIM entry."
+              },
+              "gene mim": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OMIM number for the GENE, e.g. '605882'. NOTE the SPACE in the property name - G2P's CSV headers are used verbatim as keys, so every key here must be quoted."
+              },
+              "molecular mechanism categorisation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A finer category for the mechanism, e.g. 'destabilising LOF:evidence'. Measured on 1 of 125 rows."
+              },
+              "molecular mechanism evidence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The evidence behind the mechanism, e.g. '32350270 -> function: biochemical, protein expression'. Measured on 3 of 125 rows; a PMID with the assay type that supports it."
+              },
+              "molecular mechanism support": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the mechanism is 'inferred' or backed by evidence. 'inferred' on all 125 measured rows - so a panel read without this field presents inferred mechanisms as established ones."
+              },
+              "previous gene symbols": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Symbols the gene was formerly known by, as a '; '-delimited STRING, e.g. 'BACH1; FANCJ; OF'. Measured on 121 of 125 rows, and what lets an older report's symbol be matched."
+              },
+              "review": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The review field itself. Measured NULL on all 125 rows, so it is a documented always-empty field rather than a dropped one."
+              },
+              "variant types": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which variant classes the entry covers, as a '; '-delimited string, e.g. 'inframe_deletion; inframe_insertion; missense_variant'. Measured on 14 of 125 rows. An entry restricted to inframe indels does not support a missense call."
               }
             }
           }

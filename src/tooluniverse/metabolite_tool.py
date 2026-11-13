@@ -269,16 +269,39 @@ class MetaboliteTool(BaseTool):
                         "DiseaseID": disease_id,
                         "DirectEvidence": entry.get("direct_evidence"),
                         "PubMedIDs": [str(p) for p in pubmed_ids],
+                        # WHICH chemical the match landed on. The lookup tries
+                        # the title, a stereochemistry-stripped form, a CAS
+                        # number and up to ten synonyms in turn, and reported
+                        # only the term that worked -- not the CTD chemical it
+                        # resolved to. The edge names it, so a caller can
+                        # check that "GlcCer(d18:1/16:0)" really matched
+                        # glucosylceramide and not something adjacent.
+                        "ChemicalName": entry.get("chemical_name"),
+                        "MeshChemicalID": entry.get("mesh_chemical_id"),
+                        "CASRegistryNumber": entry.get("cas_registry_number"),
+                        # `source` is the CTD table the edge came from,
+                        # which is the closest thing these documents carry to
+                        # a curated-against-inferred distinction.
+                        "Source": entry.get("source"),
                     }
                 )
         return rows
 
     def _resolve_ctd_term(
-        self, title: str, synonyms: List[str]
+        self, title: str, synonyms: List[str], tried=None
     ) -> tuple[str, List[Dict[str, Any]]]:
         """
         Try multiple name variants to find a CTD match.
         Returns (term_used, disease_rows).
+
+        `tried`, when given a list, is filled with the variants actually
+        attempted, which the caller reports: the search is not a lookup -- it
+        walks the title, a stereochemistry-stripped form, a CAS number from
+        the PubChem synonyms and up to ten synonyms -- so an empty result
+        means all of them missed, which is a different statement from "this
+        metabolite has no disease associations". Returned through an argument
+        rather than a third tuple slot so the signature, and every test that
+        patches this method, keeps working.
         """
         candidates = [title]
         stripped = _strip_stereo(title)
@@ -292,7 +315,9 @@ class MetaboliteTool(BaseTool):
             if syn and syn not in candidates and len(syn) < 50 and not syn[0].isdigit():
                 candidates.append(syn)
 
-        for term in candidates:
+        for index, term in enumerate(candidates):
+            if tried is not None:
+                tried.append(term)
             rows = self._ctd_diseases(term)
             if rows:
                 return term, rows
@@ -505,7 +530,8 @@ class MetaboliteTool(BaseTool):
                 and identifier != title
             ):
                 synonyms = [identifier] + list(synonyms)
-            term_used, rows = self._resolve_ctd_term(title, synonyms)
+            terms_tried: List[str] = []
+            term_used, rows = self._resolve_ctd_term(title, synonyms, terms_tried)
             all_diseases = [
                 {
                     "disease_name": r.get("DiseaseName"),
@@ -518,6 +544,16 @@ class MetaboliteTool(BaseTool):
                         if isinstance(r.get("PubMedIDs"), str)
                         else (r.get("PubMedIDs") or [])
                     ),
+                    # WHICH chemical the match landed on. The lookup tries the
+                    # title, a stereochemistry-stripped form, a CAS number and
+                    # up to ten synonyms in turn, and reported only the term
+                    # that worked -- not the CTD chemical it resolved to. A
+                    # caller could not check that "GlcCer(d18:1/16:0)" matched
+                    # glucosylceramide and not something adjacent.
+                    "chemical_name": r.get("ChemicalName"),
+                    "mesh_chemical_id": r.get("MeshChemicalID"),
+                    "cas_registry_number": r.get("CASRegistryNumber"),
+                    "source": r.get("Source"),
                 }
                 for r in rows
             ]
@@ -534,6 +570,7 @@ class MetaboliteTool(BaseTool):
                     "compound_name": title,
                     "pubchem_cid": cid,
                     "ctd_query_term": term_used,
+                    "ctd_terms_tried": terms_tried,
                     "disease_count": len(all_diseases),
                     "returned": len(diseases),
                     "offset": offset,

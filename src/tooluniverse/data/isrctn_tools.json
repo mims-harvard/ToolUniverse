@@ -41,25 +41,97 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "isrctn_id": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The ISRCTN registration, e.g. 'ISRCTN12336055'."
+                            },
+                            "doi": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "DOI of the registry record itself, e.g. '10.1186/ISRCTN12336055'."
+                            },
+                            "eudract_number": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The trial's EU CTR/EudraCT number, where it is also registered there. The same trial under two registrations is one trial, and counting both double-counts."
+                            },
+                            "clinicaltrials_gov_number": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Its NCT number, where it is also on ClinicalTrials.gov. Same caution."
+                            },
+                            "title": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Public title."
+                            },
+                            "scientific_title": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Scientific title, usually naming the design and the comparator."
+                            },
+                            "acronym": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Study acronym, e.g. 'INITIATE-CGM'."
+                            },
+                            "study_hypothesis": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "What the trial set out to test."
+                            },
+                            "primary_study_design": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "e.g. 'Interventional' or 'Observational'. Decides what the result can support."
+                            },
+                            "overall_end_date": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "When the whole study ends or ended."
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     },
     {
@@ -168,25 +240,423 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "isrctn_id": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The ISRCTN registration, e.g. 'ISRCTN12336055'."
+                            },
+                            "doi": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "DOI of the registry record itself, e.g. '10.1186/ISRCTN12336055'."
+                            },
+                            "eudract_number": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The trial's EU CTR/EudraCT number, where it is also registered there. The same trial under two registrations is one trial, and counting both double-counts."
+                            },
+                            "clinicaltrials_gov_number": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Its NCT number, where it is also on ClinicalTrials.gov. Same caution."
+                            },
+                            "title": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Public title."
+                            },
+                            "scientific_title": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Scientific title, usually naming the design and the comparator."
+                            },
+                            "acronym": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Study acronym, e.g. 'INITIATE-CGM'."
+                            },
+                            "plain_english_summary": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Lay summary written for participants."
+                            },
+                            "study_hypothesis": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "What the trial set out to test."
+                            },
+                            "primary_study_design": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "e.g. 'Interventional' or 'Observational'. Decides what the result can support."
+                            },
+                            "secondary_study_design": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The design in more detail, e.g. 'Randomised parallel trial'. Whether randomisation happened is here, not in primary_study_design."
+                            },
+                            "phase": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Trial phase, e.g. 'Phase IV'."
+                            },
+                            "conditions": {
+                                "type": "array",
+                                "description": "Conditions studied.",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "interventions": {
+                                "type": "array",
+                                "description": "What was given, in detail. The description carries dated amendments, e.g. 'Current interventions as of 02/11/2026', so what the trial does now may differ from what it registered.",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "intervention_type": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "Kind of intervention, e.g. 'Device', 'Drug'."
+                                        },
+                                        "description": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "What it is, as registered, including amendment history."
+                                        },
+                                        "drug_names": {
+                                            "type": [
+                                                "string",
+                                                "array",
+                                                "null"
+                                            ],
+                                            "description": "The products involved.",
+                                            "items": {
+                                                "type": [
+                                                    "string",
+                                                    "object",
+                                                    "integer",
+                                                    "number",
+                                                    "boolean",
+                                                    "null"
+                                                ],
+                                                "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                                            }
+                                        },
+                                        "phase": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "Phase for this intervention."
+                                        }
+                                    }
+                                }
+                            },
+                            "primary_outcomes": {
+                                "type": "array",
+                                "description": "The pre-specified primary outcomes. Changing a primary outcome after a trial starts is the classic form of outcome switching, so `measure` here is what the trial should be judged on.",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "measure": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "What is measured, e.g. 'HbA1c level'."
+                                        },
+                                        "method": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "How it is measured."
+                                        },
+                                        "timepoints": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "When. Two trials measuring the same outcome at different times are not directly comparable."
+                                        }
+                                    }
+                                }
+                            },
+                            "secondary_outcomes": {
+                                "type": "array",
+                                "description": "Secondary outcomes, same shape. A positive secondary outcome in a trial whose primary outcome failed is not a positive trial.",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "measure": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "What is measured."
+                                        },
+                                        "method": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "How."
+                                        },
+                                        "timepoints": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "When."
+                                        }
+                                    }
+                                }
+                            },
+                            "eligibility": {
+                                "type": [
+                                    "object",
+                                    "null"
+                                ],
+                                "description": "Who could take part.",
+                                "properties": {
+                                    "inclusion": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Inclusion criteria, as free text, including amendment history."
+                                    },
+                                    "exclusion": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Exclusion criteria. These decide how far the result generalises."
+                                    },
+                                    "age_range": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Age band, e.g. 'Mixed', 'Adult'."
+                                    },
+                                    "lower_age_limit": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Minimum age, e.g. '18 Years'."
+                                    },
+                                    "upper_age_limit": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Maximum age, e.g. '100 Years'."
+                                    },
+                                    "gender": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Which sexes were eligible, e.g. 'All'."
+                                    },
+                                    "healthy_volunteers_allowed": {
+                                        "type": [
+                                            "boolean",
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Whether healthy volunteers could enrol."
+                                    }
+                                }
+                            },
+                            "target_enrolment": {
+                                "type": [
+                                    "integer",
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "How many participants were planned."
+                            },
+                            "total_final_enrolment": {
+                                "type": [
+                                    "integer",
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "How many actually enrolled. Far below target means the trial is underpowered against its own protocol, which no p-value in the paper will say."
+                            },
+                            "recruitment_start": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "When recruitment opened."
+                            },
+                            "recruitment_end": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "When it closed."
+                            },
+                            "overall_end_date": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "When the whole study ends or ended."
+                            },
+                            "recruitment_countries": {
+                                "type": "array",
+                                "description": "Countries recruiting.",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "sponsors": {
+                                "type": [
+                                    "array",
+                                    "object"
+                                ],
+                                "description": "Who is responsible for the trial.",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "organisation": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "The sponsor, e.g. 'Dexcom, Inc.'."
+                                        },
+                                        "ror_id": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "Its ROR id."
+                                        },
+                                        "commercial_status": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "Whether the sponsor is 'Commercial' or not. A commercial sponsor of a trial of its own product is a competing interest the registry states plainly."
+                                        },
+                                        "sponsor_type": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "The sponsor's role, e.g. 'Lead'. Null where the registry did not record one."
+                                        }
+                                    }
+                                }
+                            },
+                            "funders": {
+                                "type": "array",
+                                "description": "Who paid. A funder that also makes the product under test is a competing interest the registry states and the paper may not.",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "The funder, e.g. 'Dexcom, Inc.'."
+                                        },
+                                        "fund_ref": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "Its FundRef/Crossref Funder Registry URI."
+                                        }
+                                    }
+                                }
+                            },
+                            "contacts": {
+                                "type": "array",
+                                "description": "Who to contact, with their role.",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "The person."
+                                        },
+                                        "contact_types": {
+                                            "type": "array",
+                                            "description": "Their roles, e.g. ['Principal investigator'].",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "ipd_sharing_statement": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Whether individual participant data will be shared, e.g. 'No'. Decides whether the result can be re-analysed by anyone else."
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     },
     {
@@ -220,27 +690,402 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "not": {
-                "required": [
-                  "error"
-                ]
-              },
-              "type": "object"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
+            "oneOf": [
+                {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
+                    "type": "object",
+                    "properties": {
+                        "isrctn_id": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "The ISRCTN registration, e.g. 'ISRCTN12336055'."
+                        },
+                        "doi": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "DOI of the registry record itself, e.g. '10.1186/ISRCTN12336055'."
+                        },
+                        "eudract_number": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "The trial's EU CTR/EudraCT number, where it is also registered there. The same trial under two registrations is one trial, and counting both double-counts."
+                        },
+                        "clinicaltrials_gov_number": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Its NCT number, where it is also on ClinicalTrials.gov. Same caution."
+                        },
+                        "title": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Public title."
+                        },
+                        "scientific_title": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Scientific title, usually naming the design and the comparator."
+                        },
+                        "acronym": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Study acronym, e.g. 'INITIATE-CGM'."
+                        },
+                        "plain_english_summary": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Lay summary written for participants."
+                        },
+                        "study_hypothesis": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "What the trial set out to test."
+                        },
+                        "primary_study_design": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "e.g. 'Interventional' or 'Observational'. Decides what the result can support."
+                        },
+                        "secondary_study_design": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "The design in more detail, e.g. 'Randomised parallel trial'. Whether randomisation happened is here, not in primary_study_design."
+                        },
+                        "phase": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Trial phase, e.g. 'Phase IV'."
+                        },
+                        "conditions": {
+                            "type": "array",
+                            "description": "Conditions studied.",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "drug_names": {
+                            "type": "array",
+                            "description": "Interventions by name.",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "interventions": {
+                            "type": "array",
+                            "description": "What was given, in detail. The description carries dated amendments, e.g. 'Current interventions as of 02/11/2026', so what the trial does now may differ from what it registered.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "intervention_type": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Kind of intervention, e.g. 'Device', 'Drug'."
+                                    },
+                                    "description": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "What it is, as registered, including amendment history."
+                                    },
+                                    "drug_names": {
+                                        "type": [
+                                            "string",
+                                            "array",
+                                            "null"
+                                        ],
+                                        "description": "The products involved.",
+                                        "items": {
+                                            "type": [
+                                                "string",
+                                                "object",
+                                                "integer",
+                                                "number",
+                                                "boolean",
+                                                "null"
+                                            ],
+                                            "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
+                                        }
+                                    },
+                                    "phase": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Phase for this intervention."
+                                    }
+                                }
+                            }
+                        },
+                        "primary_outcomes": {
+                            "type": "array",
+                            "description": "The pre-specified primary outcomes. Changing a primary outcome after a trial starts is the classic form of outcome switching, so `measure` here is what the trial should be judged on.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "measure": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "What is measured, e.g. 'HbA1c level'."
+                                    },
+                                    "method": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "How it is measured."
+                                    },
+                                    "timepoints": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "When. Two trials measuring the same outcome at different times are not directly comparable."
+                                    }
+                                }
+                            }
+                        },
+                        "eligibility": {
+                            "type": [
+                                "object",
+                                "null"
+                            ],
+                            "description": "Who could take part.",
+                            "properties": {
+                                "inclusion": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "description": "Inclusion criteria, as free text, including amendment history."
+                                },
+                                "exclusion": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "description": "Exclusion criteria. These decide how far the result generalises."
+                                },
+                                "age_range": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "description": "Age band, e.g. 'Mixed', 'Adult'."
+                                },
+                                "lower_age_limit": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "description": "Minimum age, e.g. '18 Years'."
+                                },
+                                "upper_age_limit": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "description": "Maximum age, e.g. '100 Years'."
+                                },
+                                "gender": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "description": "Which sexes were eligible, e.g. 'All'."
+                                },
+                                "healthy_volunteers_allowed": {
+                                    "type": [
+                                        "boolean",
+                                        "string",
+                                        "null"
+                                    ],
+                                    "description": "Whether healthy volunteers could enrol."
+                                }
+                            }
+                        },
+                        "target_enrolment": {
+                            "type": [
+                                "integer",
+                                "string",
+                                "null"
+                            ],
+                            "description": "How many participants were planned."
+                        },
+                        "total_final_enrolment": {
+                            "type": [
+                                "integer",
+                                "string",
+                                "null"
+                            ],
+                            "description": "How many actually enrolled. Far below target means the trial is underpowered against its own protocol, which no p-value in the paper will say."
+                        },
+                        "recruitment_start": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "When recruitment opened."
+                        },
+                        "recruitment_end": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "When it closed."
+                        },
+                        "overall_end_date": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "When the whole study ends or ended."
+                        },
+                        "recruitment_countries": {
+                            "type": "array",
+                            "description": "Countries recruiting.",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "sponsors": {
+                            "type": [
+                                "array",
+                                "object"
+                            ],
+                            "description": "Who is responsible for the trial.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "organisation": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "The sponsor, e.g. 'Dexcom, Inc.'."
+                                    },
+                                    "ror_id": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Its ROR id."
+                                    },
+                                    "commercial_status": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Whether the sponsor is 'Commercial' or not. A commercial sponsor of a trial of its own product is a competing interest the registry states plainly."
+                                    },
+                                    "sponsor_type": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "The sponsor's role, e.g. 'Lead'. Null where the registry did not record one."
+                                    }
+                                }
+                            }
+                        },
+                        "funders": {
+                            "type": "array",
+                            "description": "Who paid. A funder that also makes the product under test is a competing interest the registry states and the paper may not.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "The funder, e.g. 'Dexcom, Inc.'."
+                                    },
+                                    "fund_ref": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Its FundRef/Crossref Funder Registry URI."
+                                    }
+                                }
+                            }
+                        },
+                        "contacts": {
+                            "type": "array",
+                            "description": "Who to contact, with their role.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "The person."
+                                    },
+                                    "contact_types": {
+                                        "type": "array",
+                                        "description": "Their roles, e.g. ['Principal investigator'].",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "ipd_sharing_statement": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Whether individual participant data will be shared, e.g. 'No'. Decides whether the result can be re-analysed by anyone else."
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     }
 ]

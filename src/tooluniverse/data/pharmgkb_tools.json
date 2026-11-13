@@ -60,6 +60,13 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "pediatric": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the record is paediatric-specific."
               }
             }
           }
@@ -173,6 +180,102 @@
               "chr": {
                 "type": "object",
                 "additionalProperties": true
+              },
+              "alleleFile": {
+                "description": "PharmGKB's allele-definition file for the gene, when one exists."
+              },
+              "alleleFunctionSource": {
+                "description": "Where the allele function assignments come from."
+              },
+              "amp": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether the gene is on the AMP (Association for Molecular Pathology) recommended testing list."
+              },
+              "buildVersion": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which genome build PharmGKB's own record is anchored to."
+              },
+              "cbStart": {
+                "description": "Start of the cytogenetic band."
+              },
+              "cbStop": {
+                "description": "Stop of the cytogenetic band."
+              },
+              "chrStartPosB37": {
+                "description": "Start coordinate on GRCh37/hg19."
+              },
+              "chrStartPosB38": {
+                "description": "Start coordinate on GRCh38/hg38. Pair it with the B37 fields: a caller that does not know which build a coordinate is on cannot use it."
+              },
+              "chrStopPosB37": {
+                "description": "Stop coordinate on GRCh37/hg19."
+              },
+              "chrStopPosB38": {
+                "description": "Stop coordinate on GRCh38/hg38."
+              },
+              "hasNonStandardHaplotypes": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether PharmGKB records haplotypes outside the star-allele system."
+              },
+              "hideHaplotypes": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "PharmGKB's own display flag for haplotypes."
+              },
+              "usesStarAlleles": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether the gene is named with star alleles (*1, *2), which changes how a variant must be written."
+              },
+              "vipCitation": {
+                "description": "Citation for the VIP summary."
+              },
+              "vipId": {
+                "description": "Id of the VIP annotation."
+              },
+              "vipSummary": {
+                "description": "The VIP summary itself, as an object with an id and an HTML body - the curated prose on why the gene matters pharmacogenomically."
+              },
+              "vipTier": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PharmGKB's Very Important Pharmacogene tier, e.g. 'Tier 1'. The tier is how much curated pharmacogenomic evidence stands behind the gene."
+              },
+              "cpicGene": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when CPIC has published a prescribing guideline for the gene - the strongest signal that it is clinically actionable."
+              },
+              "pharmVarGene": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when PharmVar curates the gene's star alleles."
+              },
+              "strand": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Strand the gene is on, e.g. 'minus'."
               }
             },
             "additionalProperties": true
@@ -243,6 +346,84 @@
         },
         "pharmVarGene": {
           "type": "boolean"
+        },
+        "chrStartPosB37": {
+          "description": "Start coordinate on GRCh37/hg19."
+        },
+        "chrStopPosB37": {
+          "description": "Stop coordinate on GRCh37/hg19."
+        },
+        "chrStartPosB38": {
+          "description": "Start coordinate on GRCh38/hg38. Pair it with the B37 fields: a caller that does not know which build a coordinate is on cannot use it."
+        },
+        "chrStopPosB38": {
+          "description": "Stop coordinate on GRCh38/hg38."
+        },
+        "buildVersion": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which genome build PharmGKB's own record is anchored to."
+        },
+        "cbStart": {
+          "description": "Start of the cytogenetic band."
+        },
+        "cbStop": {
+          "description": "Stop of the cytogenetic band."
+        },
+        "vipTier": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "PharmGKB's Very Important Pharmacogene tier, e.g. 'Tier 1'. The tier is how much curated pharmacogenomic evidence stands behind the gene."
+        },
+        "vipId": {
+          "description": "Id of the VIP annotation."
+        },
+        "vipSummary": {
+          "description": "The VIP summary itself, as an object with an id and an HTML body - the curated prose on why the gene matters pharmacogenomically."
+        },
+        "vipCitation": {
+          "description": "Citation for the VIP summary."
+        },
+        "amp": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether the gene is on the AMP (Association for Molecular Pathology) recommended testing list."
+        },
+        "alleleFile": {
+          "description": "PharmGKB's allele-definition file for the gene, when one exists."
+        },
+        "alleleFunctionSource": {
+          "description": "Where the allele function assignments come from."
+        },
+        "usesStarAlleles": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether the gene is named with star alleles (*1, *2), which changes how a variant must be written."
+        },
+        "hasNonStandardHaplotypes": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether PharmGKB records haplotypes outside the star-allele system."
+        },
+        "hideHaplotypes": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "PharmGKB's own display flag for haplotypes."
+        },
+        "history": {
+          "description": "PharmGKB's change history for the record."
         }
       },
       "additionalProperties": true
@@ -250,7 +431,7 @@
   },
   {
     "name": "PharmGKB_get_clinical_annotations",
-    "description": "Get clinical annotations showing gene-drug-phenotype relationships. Returns variant-level clinical significance data. Always provide annotation_id \u2014 gene_id lookup is not supported by the API and returns an error with guidance.",
+    "description": "Get clinical annotations showing gene-drug-phenotype relationships. Returns variant-level clinical significance data. Always provide annotation_id — gene_id lookup is not supported by the API and returns an error with guidance.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -260,7 +441,7 @@
         },
         "gene_id": {
           "type": "string",
-          "description": "PharmGKB Gene Accession ID (e.g., \"PA128\"). NOTE: Gene-based lookup is not supported \u2014 will return an error with instructions to use annotation_id instead."
+          "description": "PharmGKB Gene Accession ID (e.g., \"PA128\"). NOTE: Gene-based lookup is not supported — will return an error with instructions to use annotation_id instead."
         },
         "gene": {
           "type": "string",
@@ -268,7 +449,7 @@
         },
         "gene_symbol": {
           "type": "string",
-          "description": "Alias for gene \u2014 NOT SUPPORTED. See gene parameter."
+          "description": "Alias for gene — NOT SUPPORTED. See gene parameter."
         }
       },
       "required": []
@@ -315,6 +496,58 @@
         },
         "types": {
           "type": "array"
+        },
+        "allelePhenotypes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Per allele, the phenotype PharmGKB records and whether the evidence for it is limited - each with allele, phenotype and limitedEvidence. This is the annotation's actual content: which genotype means what."
+        },
+        "relatedAlleles": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "The star alleles the annotation covers, each as a StarAllele with its PharmGKB id and symbol, e.g. 'CYP2D6*1'."
+        },
+        "relatedChemicalsLogic": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "How the related chemicals combine, 'Or' or 'And'. Whether the annotation applies to any one of the drugs or to the combination."
+        },
+        "location": {
+          "description": "The variant or haplotype the annotation is about, with its genes, genomic position and haplotype detail."
+        },
+        "overrideLevel": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when a curator set the level of evidence by hand rather than letting the score decide."
+        },
+        "scoreDetails": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The scoring that produced levelOfEvidence, as a JSON string PharmGKB embeds - the per-step scores behind the level. It is a string, not an object: parse it before reading it."
+        },
+        "pediatric": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when the annotation is specific to paediatric patients."
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "PharmGKB's change history for the annotation, each entry with a date and description."
         }
       },
       "additionalProperties": true
@@ -402,7 +635,7 @@
   },
   {
     "name": "PharmGKB_get_dosing_guidelines",
-    "description": "Get pharmacogenetic dosing guidelines (CPIC/DPWG) from PharmGKB by guideline_id. IMPORTANT: use the 'clinpgxid' field from CPIC_list_guidelines (e.g., 'PA166251454'), NOT the 'pharmgkbid' field \u2014 old-format pharmgkbid values (e.g., 'PA166104996') return HTTP 404. The test example PA166251465 is for the warfarin guideline.",
+    "description": "Get pharmacogenetic dosing guidelines (CPIC/DPWG) from PharmGKB by guideline_id. IMPORTANT: use the 'clinpgxid' field from CPIC_list_guidelines (e.g., 'PA166251454'), NOT the 'pharmgkbid' field — old-format pharmgkbid values (e.g., 'PA166104996') return HTTP 404. The test example PA166251465 is for the warfarin guideline.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -454,6 +687,43 @@
         },
         "relatedGenes": {
           "type": "array"
+        },
+        "level": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The guideline's evidence level, e.g. 'A'. Level A means CPIC considers the gene-drug pair actionable; it is the field that decides whether to act."
+        },
+        "link": {
+          "description": "The guideline's source record, with its resource and url."
+        },
+        "literature": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "The papers behind the guideline, each with its id and title."
+        },
+        "pediatric": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when the guideline is paediatric-specific."
+        },
+        "relatedAnnotations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "Other PharmGKB annotations for the same pair."
         }
       },
       "additionalProperties": true
@@ -558,6 +828,74 @@
                 },
                 "literature": {
                   "type": "array"
+                },
+                "highlightedLabelLink": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Filename of the annotated label PDF, e.g. 'Bosutinib_2025_01_15_FDA.pdf'."
+                },
+                "history": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "PharmGKB's change history for the annotation."
+                },
+                "otherPrescribingGuidance": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when the label's guidance is not genotype-based."
+                },
+                "pediatric": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when the label carries paediatric-specific pharmacogenomic guidance."
+                },
+                "pediatricMarkdown": {
+                  "description": "The paediatric-specific text, when there is one."
+                },
+                "pgxRelated": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether PharmGKB considers the label pharmacogenomics-related at all."
+                },
+                "relatedChemicals": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "The drugs the label covers, each with its PharmGKB id and name."
+                },
+                "relatedGenes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "The genes the label mentions, each with its PharmGKB id and symbol."
+                },
+                "source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which agency issued the label, e.g. 'FDA', 'EMA', 'Swissmedic'. The same drug has different pharmacogenomic language in different jurisdictions."
+                },
+                "summaryMarkdown": {
+                  "description": "PharmGKB's summary of the label's pharmacogenomic content, as an object with an HTML body."
+                },
+                "testing": {
+                  "description": "Whether genetic testing is required, recommended, actionable or informative, as a PharmGKB controlled term. This is the actionable content of a drug-label annotation."
+                },
+                "textMarkdown": {
+                  "description": "The fuller annotation text, as an object with an HTML body."
                 }
               },
               "additionalProperties": true
@@ -652,6 +990,75 @@
             "description": {
               "type": "object",
               "additionalProperties": true
+            },
+            "history": {
+              "description": "PharmGKB's change history for the record."
+            },
+            "formatVersion": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Version of PharmGKB's pathway format."
+            },
+            "gpmlLink": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GPML file, which is the diagram as data rather than a picture - the form that can be computed on."
+            },
+            "illustratorLink": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Editable Illustrator file of the diagram."
+            },
+            "imageLink": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "PNG of the pathway diagram."
+            },
+            "pdfLink": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "PDF of the diagram."
+            },
+            "pediatric": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the pathway is paediatric-specific."
+            },
+            "pharmacodynamic": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when it describes what the drug does to the body. The two are different questions and the pathway's id does not say which it answers."
+            },
+            "pharmacokinetic": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the pathway describes what the body does to the drug."
+            },
+            "summary": {
+              "description": "PharmGKB's prose summary of the pathway, as an object with an HTML body. The only field that explains what the pathway does."
+            },
+            "thumbnailLink": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Small PNG of the same diagram."
             }
           },
           "additionalProperties": true,
@@ -758,6 +1165,80 @@
               },
               "literature": {
                 "type": "object"
+              },
+              "connWords1": {
+                "description": "Connecting phrase PharmGKB uses to render the annotation as a sentence."
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The annotation in the curator's words, e.g. 'Genotyped for rs1799853 and rs1057910. Combined *2/*2, *2/*3 ...'. The only field that says what was actually found."
+              },
+              "drugsConnWord": {
+                "description": "Connecting phrase for the drug part of that sentence."
+              },
+              "formatVersion": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Version of PharmGKB's annotation format."
+              },
+              "isAssociated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether the study found an association at all. A variant annotation with isAssociated false is a NEGATIVE result, and without this field it reads like a positive one."
+              },
+              "isPlural": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether the rendered sentence should be plural."
+              },
+              "location": {
+                "description": "The variant or haplotype, with its genes, genomic position and diplotypes."
+              },
+              "polarity": {
+                "description": "Whether the association is in the direction stated or the opposite, as a controlled term. Reverses the meaning of the sentence it belongs to."
+              },
+              "populationPhenotypes": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "Phenotypes recorded for that population."
+              },
+              "populationTerm": {
+                "description": "The population studied, as a PharmGKB controlled term."
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "PharmGKB's evidence score for the annotation, e.g. 2.75."
+              },
+              "scoreDetails": {
+                "description": "The per-step scores behind 'score', as an object. Lets the score be checked rather than taken."
+              },
+              "studyParameters": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "The study's design parameters: cohort sizes, p-values, allele frequencies and the statistical test used."
+              },
+              "useForCaScoring": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether this annotation counts toward the clinical-annotation score."
               }
             },
             "additionalProperties": true

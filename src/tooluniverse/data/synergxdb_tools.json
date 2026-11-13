@@ -26,7 +26,7 @@
             "string",
             "null"
           ],
-          "description": "Drug name for drug A \u2014 triggers automatic SYNERGxDB ID lookup (e.g., 'gemcitabine', 'imatinib', 'paclitaxel'). Aliases: drug1. Use instead of drug_id_1 when you don't know the integer ID."
+          "description": "Drug name for drug A — triggers automatic SYNERGxDB ID lookup (e.g., 'gemcitabine', 'imatinib', 'paclitaxel'). Aliases: drug1. Use instead of drug_id_1 when you don't know the integer ID."
         },
         "drug_id_2": {
           "type": [
@@ -40,7 +40,7 @@
             "string",
             "null"
           ],
-          "description": "Drug name for drug B \u2014 triggers automatic SYNERGxDB ID lookup (e.g., 'erlotinib', 'topotecan', 'oxaliplatin'). Aliases: drug2. Use instead of drug_id_2 when you don't know the integer ID."
+          "description": "Drug name for drug B — triggers automatic SYNERGxDB ID lookup (e.g., 'erlotinib', 'topotecan', 'oxaliplatin'). Aliases: drug2. Use instead of drug_id_2 when you don't know the integer ID."
         },
         "sample": {
           "type": [
@@ -79,50 +79,218 @@
         "type": "object",
         "properties": {
           "comboId": {
-            "type": "integer",
-            "description": "Combination design ID"
-          },
-          "drugNameA": {
-            "type": "string"
-          },
-          "drugNameB": {
-            "type": "string"
-          },
-          "sampleName": {
-            "type": "string",
-            "description": "Cell line name"
-          },
-          "tissue": {
-            "type": "string"
-          },
-          "sourceName": {
-            "type": "string",
-            "description": "Dataset name"
-          },
-          "bliss": {
-            "type": "number",
-            "description": "Bliss independence synergy score"
-          },
-          "loewe": {
-            "type": "number",
-            "description": "Loewe additivity synergy score"
-          },
-          "hsa": {
-            "type": "number",
-            "description": "Highest Single Agent synergy score"
-          },
-          "zip": {
-            "type": "number",
-            "description": "Zero Interaction Potency synergy score"
-          },
-          "comboscore": {
             "type": [
               "integer",
               "null"
             ],
-            "description": "Composite combination score"
+            "description": "Id of this drug-combination measurement"
+          },
+          "drugNameA": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Name of the first drug"
+          },
+          "drugNameB": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Name of the second drug"
+          },
+          "sampleName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Cell line name, e.g. MOLT-4"
+          },
+          "tissue": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Tissue of origin"
+          },
+          "sourceName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Dataset name, e.g. NCI-ALMANAC"
+          },
+          "bliss": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Bliss independence synergy score"
+          },
+          "loewe": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Loewe additivity synergy score"
+          },
+          "hsa": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Highest single agent synergy score"
+          },
+          "zip": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Zero interaction potency synergy score"
+          },
+          "comboscore": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "SYNERGxDB's combined synergy score"
+          },
+          "idDrugA": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "SYNERGxDB's own id for the first drug"
+          },
+          "idDrugBankA": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "DrugBank accession for the first drug, e.g. DB00188"
+          },
+          "idPubChemDrugA": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "PubChem CID for the first drug"
+          },
+          "inchikeyDrugA": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "InChIKey for the first drug - the identifier that survives a name change"
+          },
+          "smilesDrugA": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "SMILES for the first drug"
+          },
+          "atCodeDrugA": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "ATC code for the first drug, where it has one"
+          },
+          "idDrugB": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "SYNERGxDB's own id for the second drug"
+          },
+          "idDrugBankB": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "DrugBank accession for the second drug, e.g. DB00188"
+          },
+          "idPubChemDrugB": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "PubChem CID for the second drug"
+          },
+          "inchikeyDrugB": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "InChIKey for the second drug - the identifier that survives a name change"
+          },
+          "smilesDrugB": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "SMILES for the second drug"
+          },
+          "atCodeDrugB": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "ATC code for the second drug, where it has one"
+          },
+          "idCellosaurus": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Cellosaurus accession for the cell line, e.g. CVCL_0013. The cell line was named and not identified, and a name alone does not pin a line down across studies"
+          },
+          "idSample": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "SYNERGxDB's own id for the sample"
+          },
+          "idSource": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Id of the dataset the measurement came from"
+          },
+          "disease": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Disease of the sample"
+          },
+          "age": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "Donor age, where recorded"
+          },
+          "sex": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Donor sex, where recorded"
+          },
+          "origin": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Where the sample came from, where recorded"
           }
-        }
+        },
+        "description": "One drug-combination measurement in one cell line"
       }
     },
     "test_examples": [
@@ -199,6 +367,13 @@
           "zip_matrix": {
             "type": "number",
             "description": "ZIP synergy matrix value"
+          },
+          "combo_score": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "The combination score for the pair, or null when SYNERGxDB records none for this cell line. Null is 'not measured', not 'no synergy'."
           }
         }
       }

@@ -32,32 +32,156 @@ MCSA_BASE_URL = "https://www.ebi.ac.uk/thornton-srv/m-csa/api"
 _PAGE_SIZE = 100
 
 
+def _reference_chain(chains: List[Any]) -> Dict[str, Any]:
+    """The chain M-CSA marks as the reference, not whichever came first."""
+    dicts = [c for c in chains if isinstance(c, dict)]
+    for chain in dicts:
+        if chain.get("is_reference"):
+            return chain
+    return dicts[0] if dicts else {}
+
+
 def _residue_summary(residue: Dict[str, Any]) -> Dict[str, Any]:
-    """Condense one catalytic residue record to its identity and roles."""
+    """Condense one catalytic residue record to its identity and roles.
+
+    Two things here are easy to get wrong and were.
+
+    `resid` is M-CSA's own sequential index and `auth_resid` is the PDB
+    author numbering -- the one papers and mutation names use. Entry 2's
+    catalytic serine is `resid: 45, auth_resid: 70`, and the enzyme's
+    mechanism text in the same response calls it "Ser70". Reporting 45 as
+    the residue number, for a tool whose purpose is interpreting active-site
+    mutations, is the wrong number under the right name.
+
+    A role is `{function, function_type, emo}`, and `function_type` is
+    "reactant", "interaction" or "spectator": whether the residue does the
+    chemistry, holds the substrate, or neither. Collapsing the role objects
+    to a sorted set of `function` strings dropped that distinction along with
+    the EMO ontology ids -- 3 of entry 2's 7 residues are spectators, and
+    nothing said so.
+    """
     chains = residue.get("residue_chains") or []
-    first = chains[0] if chains and isinstance(chains[0], dict) else {}
+    first = _reference_chain(chains)
     sequences = residue.get("residue_sequences") or []
     seq = sequences[0] if sequences and isinstance(sequences[0], dict) else {}
-    roles = [
-        r.get("function")
-        for r in (residue.get("roles") or [])
-        if isinstance(r, dict) and r.get("function")
-    ]
+    role_details = []
+    for role in residue.get("roles") or []:
+        if not isinstance(role, dict) or not role.get("function"):
+            continue
+        role_details.append(
+            {
+                "function": role.get("function"),
+                "function_type": role.get("function_type") or None,
+                "emo_id": role.get("emo") or None,
+                "group_function": role.get("group_function") or None,
+            }
+        )
+    role_types = sorted({r["function_type"] for r in role_details if r["function_type"]})
     return {
         "code": first.get("code") or seq.get("code"),
         "pdb_id": first.get("pdb_id"),
         "chain": first.get("chain_name"),
         "residue_number": first.get("resid"),
+        # The PDB/literature numbering of the same residue.
+        "auth_residue_number": first.get("auth_resid"),
         "uniprot_id": seq.get("uniprot_id"),
         "uniprot_position": seq.get("resid"),
-        "roles": sorted(set(roles)),
+        "domain_name": first.get("domain_name") or None,
+        "domain_cath_id": first.get("domain_cath_id") or None,
+        "assembly": first.get("assembly"),
+        "is_reference_chain": bool(first.get("is_reference")),
+        "chain_count": len([c for c in chains if isinstance(c, dict)]),
+        "roles": sorted({r["function"] for r in role_details}),
+        "role_details": role_details,
+        "role_count": len(role_details),
+        "role_types": role_types,
         "roles_summary": residue.get("roles_summary") or None,
+        # "main-N" where catalysis is by the backbone nitrogen, not the side
+        # chain -- which changes what a substitution at the position means.
+        "function_location": residue.get("function_location_abv") or None,
+        "annotation": (residue.get("main_annotation") or "").strip() or None,
         "is_ptm": bool(residue.get("ptm")),
     }
 
 
-def _entry_summary(entry: Dict[str, Any], with_residues: bool = True) -> Dict[str, Any]:
-    """Condense one M-CSA entry."""
+MECHANISM_TEXT_CHARACTERS = 1500
+
+
+def _compounds(reaction: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """What the reaction consumes and produces, which the tool's own
+    description promises as "the reaction catalysed" and never returned."""
+    out = []
+    for compound in reaction.get("compounds") or []:
+        if not isinstance(compound, dict):
+            continue
+        out.append(
+            {
+                "name": compound.get("name"),
+                "chebi_id": compound.get("chebi_id"),
+                "role": compound.get("type"),
+                "count": compound.get("count"),
+            }
+        )
+    return out
+
+
+def _mechanisms(reaction: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """M-CSA's curated mechanisms, capped per entry.
+
+    `mechanism_text` is the prose a curator wrote about how the enzyme works
+    -- entry 2's names Ser70 and the acylation/deacylation steps -- and it
+    reached no caller. `steps` is the per-step arrow-pushing and is left to
+    the M-CSA page, which `url` points at.
+    """
+    out = []
+    for mechanism in reaction.get("mechanisms") or []:
+        if not isinstance(mechanism, dict):
+            continue
+        text = (mechanism.get("mechanism_text") or "").strip()
+        truncated = len(text) > MECHANISM_TEXT_CHARACTERS
+        out.append(
+            {
+                "mechanism_id": mechanism.get("mechanism_id"),
+                "is_detailed": mechanism.get("is_detailed"),
+                "rating": mechanism.get("rating"),
+                "text": (
+                    text[:MECHANISM_TEXT_CHARACTERS].rstrip() + "..."
+                    if truncated
+                    else text or None
+                ),
+                "text_truncated": truncated,
+                "step_count": len(mechanism.get("steps") or []),
+                # Each reference is a record, with the evidence types that
+                # tie it to this mechanism: "computational experiment" and
+                # "traceable author statement" are different claims.
+                "references": [
+                    {
+                        "pubmed_id": r.get("pubmed_id"),
+                        "doi": r.get("doi"),
+                        "title": r.get("title"),
+                        "evidence_types": [
+                            e for e in (r.get("evidence_types") or []) if e
+                        ],
+                    }
+                    for r in (mechanism.get("references") or [])
+                    if isinstance(r, dict)
+                ],
+            }
+        )
+    return out
+
+
+def _entry_summary(
+    entry: Dict[str, Any],
+    with_residues: bool = True,
+    with_mechanisms: bool = False,
+) -> Dict[str, Any]:
+    """Condense one M-CSA entry.
+
+    The mechanism prose belongs to the single-entry lookup: a search of 25
+    rows would otherwise carry 25 copies of a 1.5 kB curator narrative, so a
+    search row gets the count and the compounds and points at `url`.
+    """
     reaction = entry.get("reaction") or {}
     summary = {
         "mcsa_id": entry.get("mcsa_id"),
@@ -68,7 +192,16 @@ def _entry_summary(entry: Dict[str, Any], with_residues: bool = True) -> Dict[st
         "url": entry.get("url"),
     }
     if isinstance(reaction, dict):
-        summary["reaction_name"] = reaction.get("name")
+        # `reaction_name` was read from a key M-CSA does not send -- the
+        # reaction object holds ec, compounds, mechanisms and is_polymeric
+        # and has never carried a name -- so it was null on every entry.
+        summary["reaction_ec"] = reaction.get("ec")
+        summary["reaction_is_polymeric"] = reaction.get("is_polymeric")
+        summary["reaction_compounds"] = _compounds(reaction)
+        mechanisms = _mechanisms(reaction)
+        summary["mechanism_count"] = len(mechanisms)
+        if with_mechanisms:
+            summary["mechanisms"] = mechanisms
     if with_residues:
         residues = [
             _residue_summary(r)
@@ -156,7 +289,7 @@ class MCSATool(BaseTool):
 
         return {
             "status": "success",
-            "data": _entry_summary(entry),
+            "data": _entry_summary(entry, with_mechanisms=True),
             "metadata": {
                 "mcsa_id": entry.get("mcsa_id"),
                 "source": "M-CSA (EBI/Thornton group)",

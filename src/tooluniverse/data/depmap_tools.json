@@ -1,7 +1,7 @@
 [
   {
     "name": "DepMap_get_cell_lines",
-    "description": "Get list of cancer cell lines from DepMap/Sanger with metadata. Filter by tissue or cancer type. Returns cell line IDs, tissue, and cancer type for target validation studies.",
+    "description": "Get a page of cancer cell line and organoid models from DepMap/Sanger with their metadata. Each row carries the model id and names, its type and growth properties, its tumour mutational burden and ploidy, and data_available: which assays exist for it, including crispr_ko, so a target-validation screen can see whether the line has knockout data at all. Tissue and cancer type are NOT on this endpoint and no tissue or cancer_type filter can be applied upstream; pass a model_id to DepMap_get_cell_line for those.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -49,7 +49,171 @@
           "type": "object",
           "properties": {
             "cell_lines": {
-              "type": "array"
+              "type": "array",
+              "description": "Cell line (and organoid) models",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "model_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Cell Model Passports model id, e.g. SIDM01774"
+                  },
+                  "model_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The model's first recorded name"
+                  },
+                  "model_names": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Every name recorded for the model"
+                  },
+                  "model_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Cell Line, Organoid, and so on"
+                  },
+                  "growth_properties": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Adherent, Suspension, Semi-Adherent"
+                  },
+                  "model_treatment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Treatment the model was derived under, where recorded"
+                  },
+                  "mutations_per_mb": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Tumour mutational burden, mutations per megabase"
+                  },
+                  "ploidy_wes": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Ploidy from whole-exome sequencing"
+                  },
+                  "ploidy_wgs": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Ploidy from whole-genome sequencing"
+                  },
+                  "ploidy": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Ploidy, where recorded without a platform"
+                  },
+                  "pubmed_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "PubMed id of the model's source publication"
+                  },
+                  "doi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DOI of that publication"
+                  },
+                  "comment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Curator comment on the model"
+                  },
+                  "commercially_available": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether the model can be bought"
+                  },
+                  "data_available": {
+                    "type": "object",
+                    "description": "Which assays exist for this model - the question a target-validation screen starts from. crispr_ko false means no knockout data.",
+                    "properties": {
+                      "crispr_ko": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "expression": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "mutations": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "rnaseq": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "cnv": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "methylation": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "proteomics": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "fusions": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "drugs": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
             },
             "count": {
               "type": "integer"
@@ -61,6 +225,15 @@
         },
         "error": {
           "type": "string"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Present when a tissue or cancer_type filter was given, to say that the upstream cannot apply it",
+          "properties": {
+            "note": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -163,6 +336,13 @@
         },
         "error": {
           "type": "string"
+        },
+        "message": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the result is empty, e.g. \"Cell line 'A549' not found\". Without it an empty result and a failed lookup are the same answer."
         }
       }
     },
@@ -298,6 +478,16 @@
             },
             "genes": {
               "type": "array"
+            },
+            "matched_gene": {
+              "description": "The gene record this query resolved to, with its symbol, ids and whether the match was exact. The query 'TP53' can resolve to more than one gene and this says which one was used."
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the dependency scores mean: negative is essential, zero is no effect. The sign convention, without which the numbers can be read backwards."
             }
           }
         },
@@ -378,7 +568,79 @@
               "type": "string"
             },
             "genes": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DepMap's own id for the gene."
+                  },
+                  "symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HGNC symbol."
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Full gene name."
+                  },
+                  "hgnc_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HGNC identifier, e.g. 'HGNC:11998'."
+                  },
+                  "ensembl_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ensembl gene id, e.g. 'ENSG00000141510'."
+                  },
+                  "exact_match": {
+                    "type": "boolean",
+                    "description": "Whether the symbol equals the query exactly rather than merely starting with it."
+                  },
+                  "hgnc_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HGNC status of the symbol, e.g. 'current'. A withdrawn or merged symbol otherwise resolves silently and the caller cannot see that what they searched is no longer the current symbol."
+                  },
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Cytogenetic location, e.g. '17p13.1'."
+                  },
+                  "method_of_action": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DepMap's mechanism annotation for the gene's product, e.g. 'ambiguous'. Populated on a minority of genes."
+                  },
+                  "hgnc_merge_comment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HGNC's note when this symbol's record was merged into another. Null when none."
+                  }
+                }
+              }
             },
             "count": {
               "type": "integer"

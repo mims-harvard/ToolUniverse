@@ -42,7 +42,38 @@
         {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "Gene": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The gene symbol."
+              },
+              "Gene description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What the gene is."
+              },
+              "Gene synonym": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "description": "Other symbols it is known by, which is why a search on one name finds it.",
+                "items": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "One synonym."
+                }
+              }
+            }
           }
         },
         {
@@ -111,6 +142,72 @@
       "properties": {
         "error": {
           "type": "string"
+        },
+        "genes": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "The matching genes, each with gene_name, ensembl_id, gene_synonyms and the HPA fields for the entry. The result itself, which the schema named nowhere - 45 entries for the query 'TP53'."
+        },
+        "has_more": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when matches remain beyond this page."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page size applied, e.g. 50."
+        },
+        "match_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many came back in this reply, e.g. 45. Equal to total_matches only when nothing was cut."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many matches were skipped before this page."
+        },
+        "result_set_complete": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when this reply contains every match, so the caller can stop paging. The single flag that answers 'is this all of it'."
+        },
+        "search_query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The query as it was run, e.g. 'TP53'. HPA normalises what it was given, so this says what actually matched."
+        },
+        "total_matches": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many genes matched the query in total, e.g. 45."
+        },
+        "truncated": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when the returned list is shorter than the match set."
         }
       }
     }
@@ -154,6 +251,58 @@
       "properties": {
         "error": {
           "type": "string"
+        },
+        "expression_unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The unit the values are in: 'nTPM (normalized Transcripts Per Million)'. nTPM values are comparable across tissues within HPA but not with raw TPM or FPKM from elsewhere."
+        },
+        "gene_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The gene the query resolved to, e.g. 'TP53'."
+        },
+        "gene_symbol": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The gene symbol, equal to gene_name in the measured reply."
+        },
+        "gene_synonym": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Other symbols for the gene, e.g. ['IDDM1', ...]. Explains why a query under a different name reached this gene."
+        },
+        "cell_line": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The cell line the comparison is for, e.g. 'hela'. Lower-cased by the wrapper, so it will not match HPA's own 'HeLa' in a string comparison."
+        },
+        "cell_line_expression": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Expression in that cell line, or 'N/A' where HPA holds none - measured 'N/A'. A string, and 'N/A' is not zero."
+        },
+        "comparison_summary": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The comparison itself, e.g. 'Insufficient data for comparison'. The field that says there is no answer; without it an absent comparison looks like no difference."
         }
       }
     }
@@ -202,6 +351,65 @@
       "properties": {
         "error": {
           "type": "string"
+        },
+        "expression_unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The unit the values are in: 'nTPM (normalized Transcripts Per Million)'. nTPM values are comparable across tissues within HPA but not with raw TPM or FPKM from elsewhere."
+        },
+        "gene_synonym": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Other symbols for the gene, e.g. ['IDDM1', ...]. Explains why a query under a different name reached this gene."
+        },
+        "disease_expression": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Expression in the diseased tissue, or 'N/A' where HPA holds none - measured 'N/A'. A string, and 'N/A' is not zero."
+        },
+        "disease_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The disease the comparison is for, e.g. 'lung cancer'."
+        },
+        "disease_vs_healthy": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The comparison itself, e.g. 'Insufficient data for comparison'. The field that says there is no answer; without it an absent comparison looks like no difference."
+        },
+        "gene_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The gene the query resolved to, e.g. 'TP53'."
+        },
+        "gene_symbol": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The gene symbol, equal to gene_name in the measured reply."
+        },
+        "tissue_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The tissue the comparison is for, e.g. 'lung'."
         }
       }
     }
@@ -703,6 +911,71 @@
       "properties": {
         "error": {
           "type": "string"
+        },
+        "enriched_tissues": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "The tissues HPA marks the gene as enriched in, e.g. ['pancreas']. HPA's own specificity judgement, as distinct from the raw values."
+        },
+        "ensembl_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ensembl gene id for that gene, e.g. 'ENSG00000254647'. The unambiguous identity behind the symbol."
+        },
+        "expression_level_basis": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "States that expression_level is computed by ToolUniverse from expression_value and is not HPA's own classification. Without it, the level reads as an HPA call rather than a derived one."
+        },
+        "expression_unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The unit the values are in: 'nTPM (normalized Transcripts Per Million)'. nTPM values are comparable across tissues within HPA but not with raw TPM or FPKM from elsewhere."
+        },
+        "gene": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The gene the query resolved to, e.g. 'INS'. A synonym can resolve elsewhere, so this says which gene the numbers belong to."
+        },
+        "gene_synonym": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Other symbols for the gene, e.g. ['IDDM1', ...]. Explains why a query under a different name reached this gene."
+        },
+        "queried_tissues": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "The tissues asked for, e.g. ['pancreas']. Echoed so a tissue HPA holds no data for can be told from one that was never requested."
+        },
+        "tissue_expression": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The expression values per tissue, keyed by tissue name. The payload of the reply."
         }
       }
     }
@@ -794,6 +1067,13 @@
             },
             "functional_relevance": {
               "type": "string"
+            },
+            "expression_level_basis": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "States that expression_level is computed by ToolUniverse from expression_value and is not HPA's own classification. Without it, the level reads as an HPA call rather than a derived one."
             }
           },
           "additionalProperties": true
@@ -850,6 +1130,69 @@
       "properties": {
         "error": {
           "type": "string"
+        },
+        "expression_level_basis": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "States that expression_level is computed by ToolUniverse from expression_value and is not HPA's own classification. Without it, the level reads as an HPA call rather than a derived one."
+        },
+        "expression_unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The unit the values are in: 'nTPM (normalized Transcripts Per Million)'. nTPM values are comparable across tissues within HPA but not with raw TPM or FPKM from elsewhere."
+        },
+        "column_queried": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact HPA column the value came from, e.g. 'Tissue RNA - liver [nTPM]'. The unit and the dataset, on record; the value alone carries neither."
+        },
+        "expression_level": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A banding of that value - 'high', 'medium', 'low', 'not detected'. Computed by ToolUniverse from expression_value rather than taken from HPA, so it is a derived label, not an HPA call."
+        },
+        "expression_value": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The expression figure as a STRING, e.g. '15.6'. It needs converting before arithmetic."
+        },
+        "gene_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The gene the query resolved to, e.g. 'TP53'."
+        },
+        "source_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The tissue, cell line or cell type the value is for, e.g. 'liver'."
+        },
+        "source_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which of those it is, e.g. 'tissue', 'cell_line', 'single_cell_type'. The same name can exist in more than one category, and the value means different things in each."
+        },
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Whether the lookup succeeded, e.g. 'ok'. Separates a gene with no expression from a lookup that failed."
         }
       }
     }
@@ -974,8 +1317,122 @@
           }
         },
         "RNA tissue specific nTPM": {
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "description": "Tissue-specific nTPM values keyed by tissue, e.g. {'placenta': '61.8'}. Measured on ENSG00000146648 (EGFR). Null for genes with no tissue-specific enrichment."
+        },
+        "Gene description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "HPA's one-line description of the gene product, e.g. 'Tumor protein p53'."
+        },
+        "Chromosome": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Chromosome the gene is on, e.g. '17'."
+        },
+        "Position": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Start-end coordinates on that chromosome, e.g. '7661779-7687538'."
+        },
+        "Protein class": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "HPA's classes for the protein, e.g. ['Cancer-related genes', 'Plasma proteins', 'Potential drug targets']. 'Potential drug targets' and the disease classes are the ones a target question turns on."
+        },
+        "Disease involvement": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Diseases and disease roles HPA records, e.g. ['Cancer-related genes', 'Disease variant', 'Li-Fraumeni syndrome', 'Tumor suppressor']."
+        },
+        "Molecular function": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Molecular functions, e.g. ['Activator', 'DNA-binding', 'Repressor']."
+        },
+        "Subcellular location": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "All subcellular locations HPA observed, e.g. ['Nucleoplasm', 'Vesicles', 'Cytosol']."
+        },
+        "Subcellular main location": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "The main location among them, e.g. ['Nucleoplasm']. Narrower than 'Subcellular location' and the one to quote."
+        },
+        "Secretome location": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Where HPA places the protein in the secretome, when it does. Null for proteins HPA does not classify as secreted."
+        },
+        "Evidence": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "HPA's evidence level for the protein's existence, e.g. 'Evidence at protein level'. The caveat on everything else in the record."
+        },
+        "Antibody": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "HPA antibody identifiers used to stain this protein, e.g. ['CAB002973', 'HPA051244']. The staining-based fields rest on these, so they are what makes an expression claim checkable."
+        },
+        "Antibody RRID": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "RRID for each antibody above, keyed by antibody id. Null for antibodies with no RRID registered."
         }
       }
     }

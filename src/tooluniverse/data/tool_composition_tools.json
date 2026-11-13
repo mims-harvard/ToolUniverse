@@ -164,7 +164,106 @@
     "return_schema": {
       "type": "object",
       "description": "Output of the tool execution.",
-      "properties": {}
+      "properties": {
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Whether the graph build succeeded."
+        },
+        "timestamp": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When it ran."
+        },
+        "cache_loaded": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when the graph came from cache rather than being rebuilt. A cached graph can predate recent tool changes."
+        },
+        "tools_analyzed": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "How many tools were examined."
+        },
+        "edges_created": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "How many composition edges were found. Zero with a non-zero tool count means nothing composed, not that nothing was analysed."
+        },
+        "missing_tools": {
+          "type": "array",
+          "description": "Tools the graph expected and could not load. Their absence silently removes every edge they would have carried.",
+          "items": {
+            "type": "string",
+            "description": "One missing tool name."
+          }
+        },
+        "graph_files": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Where the graph was written.",
+          "properties": {
+            "json": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The JSON copy."
+            },
+            "pickle": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The pickled copy."
+            }
+          }
+        },
+        "statistics": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Summary of the graph.",
+          "properties": {
+            "automation_ready_percentage": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "What share of tools can be chained automatically."
+            },
+            "categories": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How many tools fall in each category, KEYED BY CATEGORY NAME. The categories are derived from the catalogue, so the key set is data rather than schema.",
+              "additionalProperties": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many tools are in that category."
+              }
+            }
+          }
+        }
+      }
     }
   }
 ]

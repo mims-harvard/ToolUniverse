@@ -84,6 +84,26 @@
                   },
                   "last_update": {
                     "type": "string"
+                  },
+                  "experimental_factors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Which variables the experiment measured across -- organism part, cell type, developmental stage -- which is how a caller picks among a species' baseline experiments. 7,159 factor values came back across one listing and the rows carried none."
+                  },
+                  "technology_type": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "e.g. 'RNA-Seq mRNA' against a microarray platform"
+                  },
+                  "kingdom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -114,6 +134,13 @@
             },
             "result_set_complete": {
               "type": "boolean"
+            },
+            "page_note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Present ONLY when this page does not reach the end of the list, e.g. 'Showing 1-50 of 123. Re-run with offset=50 for the next page, or raise limit (max 500).' Its ABSENCE is the signal that the page is complete, so a caller that ignores it silently reports the first 50 of 123 experiments as if they were all of them."
             }
           },
           "required": [
@@ -245,6 +272,26 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "experimental_factors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Which variables the experiment measured across -- organism part, cell type, developmental stage -- which is how a caller picks among a species' baseline experiments. 7,159 factor values came back across one listing and the rows carried none."
+                  },
+                  "technology_type": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "e.g. 'RNA-Seq mRNA' against a microarray platform"
+                  },
+                  "kingdom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -275,6 +322,20 @@
             },
             "result_set_complete": {
               "type": "boolean"
+            },
+            "page_note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What part of the matching set this reply holds and how to get the rest. Measured value: 'Showing 1-50 of 1528. Re-run with offset=50 for the next page, or raise limit (max 500).' The totals here are the only statement that the list is a page. Measured on a search with 1528 matches."
+            },
+            "warning": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Expression Atlas caveat the tool raises about its own answer. Measured value: \"'gene_mentioned' only reflects a text-search coincidence against experiment descriptions, not a measured expression result\" -- so a hit flagged gene_mentioned is NOT evidence that the gene was assayed, let alone differentially expressed."
             }
           },
           "required": [
@@ -400,6 +461,26 @@
                       "boolean",
                       "null"
                     ]
+                  },
+                  "experimental_factors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Which variables the experiment measured across -- organism part, cell type, developmental stage -- which is how a caller picks among a species' baseline experiments. 7,159 factor values came back across one listing and the rows carried none."
+                  },
+                  "technology_type": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "e.g. 'RNA-Seq mRNA' against a microarray platform"
+                  },
+                  "kingdom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -436,6 +517,20 @@
             },
             "result_set_complete": {
               "type": "boolean"
+            },
+            "page_note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What part of the matching set this reply holds and how to get the rest. Measured value: 'Showing 1-50 of 1528. Re-run with offset=50 for the next page, or raise limit (max 500).' The totals here are the only statement that the list is a page. Measured on a search with 1651 matches."
+            },
+            "warning": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Expression Atlas caveat the tool raises about its own answer. Measured value: \"'gene_mentioned' only reflects a text-search coincidence against experiment descriptions, not a measured expression result\" -- so a hit flagged gene_mentioned is NOT evidence that the gene was assayed, let alone differentially expressed."
             }
           },
           "required": [
@@ -470,7 +565,7 @@
   },
   {
     "name": "ExpressionAtlas_get_experiment",
-    "description": "Get metadata for a specific Expression Atlas experiment by accession (e.g., E-MTAB-2836): accession, type, species, and description/URLs. Caveat: the underlying GXA API does not expose per-experiment design/technology/contrasts/PubMed/assay-count data through this endpoint (confirmed live: those fields are always empty) -- for that level of detail, visit the experiment's page on https://www.ebi.ac.uk/gxa directly.",
+    "description": "Get metadata for a specific Expression Atlas experiment by accession (e.g., E-MTAB-2836): accession, type, species, and description/URLs. The experiment's design comes back in `assay_groups`: one entry per condition with its factor value, ontology term, replicate count and full sample properties (FACTOR = varied, SAMPLE = held fixed), plus `factors`, `assay_group_count` and an `assay_count` summed from the replicates. Caveat: GXA leaves `experimentalFactors`, `technologyType`, `contrasts`, `numberOfAssays`, `pubmedIds` and `lastUpdate` null on its own experiment object (confirmed live), so `technology`, `contrasts`, `pubmed_ids` and `last_update` are usually empty; for those, visit the experiment's page on https://www.ebi.ac.uk/gxa directly. This tool returns metadata and design only; for the per-gene expression values use GxA_get_experiment_expression, which reports them with their unit. An accession Expression Atlas does not hold returns status=error with error_details.type='NotFound', not a successful empty result.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -495,10 +590,7 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "accession": {
               "type": "string"
@@ -513,7 +605,11 @@
               "type": "string"
             },
             "factors": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The experiment's varied factors. GXA leaves experiment.experimentalFactors null, so these are read off the assay groups' FACTOR properties."
             },
             "technology": {
               "type": "array"
@@ -522,25 +618,109 @@
               "type": "array"
             },
             "assay_count": {
-              "type": "null"
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Assays in the experiment. GXA leaves experiment.numberOfAssays null, so this is the sum of the assay groups' replicates (103 for E-MTAB-2836) and null when neither is available."
             },
             "last_update": {
               "type": "null"
             },
             "pubmed_ids": {
               "type": "array"
+            },
+            "assay_group_count": {
+              "type": "integer",
+              "description": "How many assay groups (conditions) the experiment contrasts"
+            },
+            "urls": {
+              "type": [
+                "object",
+                "array",
+                "null"
+              ],
+              "description": "GXA's own links for the experiment: main_page, download, genome_browsers"
+            },
+            "assay_groups": {
+              "type": "array",
+              "description": "The experiment's design, one entry per assay group. GXA answers this under columnHeaders in the same response that leaves experiment.experimentalFactors and contrasts null.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "assay_group_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "e.g. g1"
+                  },
+                  "factor_value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The condition this group represents, e.g. 'adipose tissue'"
+                  },
+                  "ontology_term_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "e.g. UBERON_0001013"
+                  },
+                  "replicates": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Assays in this group"
+                  },
+                  "properties": {
+                    "type": "array",
+                    "description": "Every sample property behind the group. property_type FACTOR is varied in this experiment; SAMPLE is held fixed.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "property_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "value": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "property_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           },
           "required": [
             "accession"
           ],
-          "description": "null when the record does not exist. The query was well-formed and the upstream answered 'no such record', which this tool reports as a successful empty result rather than an error; the reason is in `message`."
+          "description": "The experiment's metadata and design. An accession Expression Atlas does not hold is an ERROR branch, not this one: a 404 used to be reported as {\"status\": \"success\", \"data\": null}, so a caller checking `status` was told the lookup had worked."
         },
         {
           "type": "object",
           "properties": {
             "error": {
               "type": "string"
+            },
+            "error_details": {
+              "type": "object",
+              "description": "`type` is \"NotFound\" when the accession is absent from Expression Atlas -- it does not exist, is mistyped, or has been RETIRED. A retired accession can still resolve in ArrayExpress/BioStudies while being absent here, so 'the id is real' does not make this a transport failure."
             }
           },
           "required": [

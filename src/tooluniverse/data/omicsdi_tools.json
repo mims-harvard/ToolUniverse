@@ -111,13 +111,22 @@
                     "type": "string"
                   },
                   "description": {
-                    "type": ["string", "null"]
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "organisms": {
-                    "type": ["array", "null"]
+                    "type": [
+                      "array",
+                      "null"
+                    ]
                   },
                   "publicationDate": {
-                    "type": ["string", "null"]
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "omicsType": {
                     "type": "array"
@@ -130,6 +139,62 @@
                   },
                   "downloadCount": {
                     "type": "integer"
+                  },
+                  "citationsCountScaled": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The citation count rescaled to 0-1 across the index. A scaled 0.0 is the lowest band, not necessarily zero citations."
+                  },
+                  "claimable": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the submitter has not yet claimed the record, so its contact details are unverified."
+                  },
+                  "connectionsCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many other datasets OmicsDI links this one to."
+                  },
+                  "connectionsCountScaled": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The connection count rescaled the same way."
+                  },
+                  "downloadCountScaled": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The download count rescaled the same way."
+                  },
+                  "reanalysisCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many times the dataset has been reanalysed."
+                  },
+                  "reanalysisCountScaled": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The reanalysis count rescaled the same way."
+                  },
+                  "viewsCountScaled": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The view count rescaled the same way."
                   }
                 }
               }
@@ -148,7 +213,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -211,13 +278,19 @@
               "type": "string"
             },
             "keywords": {
-              "type": ["array", "null"],
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
                 "type": "string"
               }
             },
             "organisms": {
-              "type": ["array", "null"],
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
                 "type": "object",
                 "properties": {
@@ -231,13 +304,19 @@
               }
             },
             "tissues": {
-              "type": ["array", "null"],
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
                 "type": "string"
               }
             },
             "diseases": {
-              "type": ["array", "null"],
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
                 "type": "string"
               }
@@ -252,13 +331,19 @@
               "type": "string"
             },
             "publicationIds": {
-              "type": ["array", "null"],
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
                 "type": "string"
               }
             },
             "protocols": {
-              "type": ["array", "null"],
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
                 "type": "object",
                 "properties": {
@@ -272,13 +357,19 @@
               }
             },
             "instruments": {
-              "type": ["array", "null"],
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
                 "type": "string"
               }
             },
             "full_dataset_link": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "citationsCount": {
               "type": "integer"
@@ -288,6 +379,116 @@
             },
             "downloadCount": {
               "type": "integer"
+            },
+            "citationsCountScaled": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The citation count rescaled to 0-1 across the whole index. Raw and scaled counts answer different questions, and a scaled 0.0 does not mean zero citations - it means the lowest band."
+            },
+            "claimable": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the submitter has not yet claimed the record. An unclaimed record's contact details are unverified."
+            },
+            "connectionsCount": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many other datasets OmicsDI links this one to."
+            },
+            "connectionsCountScaled": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The connection count rescaled the same way."
+            },
+            "currentStatus": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "OmicsDI's processing state for the record, e.g. 'Enriched'. An un-enriched record has had less metadata resolved, so its empty fields may not mean empty data."
+            },
+            "dates": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The dataset's dates, under 'publication' and 'submission'. Submitted and published can be years apart, and only one of them is the embargo end."
+            },
+            "downloadCountScaled": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The download count rescaled the same way."
+            },
+            "experimentType": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "The assay used, e.g. ['NMR spectroscopy']. What kind of data it is, which the title often does not state."
+            },
+            "organization": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "The submitting institution, e.g. ['Norwegian University of Science and Technology']."
+            },
+            "reanalysisCount": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many times the dataset has been reanalysed."
+            },
+            "reanalysisCountScaled": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The reanalysis count rescaled the same way."
+            },
+            "repositories": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Which archives hold the dataset, e.g. ['MetaboLights']. OmicsDI is an index over other repositories, so this says where the data actually lives."
+            },
+            "submitterMail": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Contact address for the submitter. For a dataset with access conditions this is the only route to it."
+            },
+            "viewsCountScaled": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The view count rescaled the same way."
             }
           }
         },
@@ -299,7 +500,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -340,7 +543,47 @@
           "type": "array",
           "description": "Statistics data",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "domain": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "One repository's contribution to OmicsDI.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The repository's id. Measured NULL on all 28 rows, so `name` is the only usable key."
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The repository, e.g. 'Expression Atlas Experiments'."
+                  },
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its display label."
+                  },
+                  "value": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
+                    "description": "How many datasets it contributes, as a STRING of digits rather than a number."
+                  }
+                }
+              }
+            }
           }
         },
         {
@@ -351,7 +594,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

@@ -369,7 +369,8 @@
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "description": "Transcription factor names UniBind holds binding sites for, e.g. 'SMAD2'."
         },
         {
           "type": "object",

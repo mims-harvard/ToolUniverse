@@ -33,7 +33,10 @@
             "properties": {
               "code": {"type": ["string", "null"]},
               "name": {"type": ["string", "null"]},
-              "leaf": {"type": ["boolean", "null"]}
+              "leaf": {"type": ["boolean", "null"]},
+              "concept_status": {"type": ["string", "null"], "description": "Whether the concept is still current. EVS retires concepts and keeps answering for them, so a row with a code and a name and no status can hand back a retired concept as though it were in use."},
+              "terminology_version": {"type": ["string", "null"]},
+              "terminology": {"type": ["string", "null"]}
             }
           }
         },

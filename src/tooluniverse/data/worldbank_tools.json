@@ -97,7 +97,10 @@
           "type": "array",
           "description": "Two-element list: [0] pagination metadata (page, pages, per_page, total), [1] array of data points with country, year, indicator, and value",
           "items": {
-            "type": ["object", "array"],
+            "type": [
+              "object",
+              "array"
+            ],
             "properties": {
               "indicator": {
                 "type": "object",
@@ -139,6 +142,48 @@
               },
               "decimal": {
                 "type": "integer"
+              },
+              "lastupdated": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Date the World Bank last refreshed this indicator, 'YYYY-MM-DD', e.g. '2026-10-08'. Recent data may still be older than this."
+              },
+              "page": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Which page of the upstream result this is, e.g. 1."
+              },
+              "pages": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Total pages available upstream, e.g. 1. Greater than `page` means values are missing from this reply."
+              },
+              "per_page": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Page size the upstream request used, e.g. 1000."
+              },
+              "sourceid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "World Bank source database id as a STRING, e.g. '2' for World Development Indicators. The same indicator code can exist in several sources with different coverage."
+              },
+              "total": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Total observations the upstream query matched, e.g. 5."
               }
             }
           }
@@ -196,7 +241,10 @@
           "type": "array",
           "description": "Two-element list: [0] pagination metadata, [1] array of country metadata objects",
           "items": {
-            "type": ["object", "array"],
+            "type": [
+              "object",
+              "array"
+            ],
             "properties": {
               "id": {
                 "type": "string",
@@ -234,6 +282,34 @@
               },
               "latitude": {
                 "type": "string"
+              },
+              "page": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Which page of the upstream result this is, e.g. 1."
+              },
+              "pages": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Total pages available, e.g. 1."
+              },
+              "per_page": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Page size as a STRING, e.g. '50'."
+              },
+              "total": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Total records matching upstream, e.g. 1."
               }
             }
           }
@@ -308,7 +384,10 @@
           "type": "array",
           "description": "Two-element list: [0] pagination metadata, [1] array of matching indicators",
           "items": {
-            "type": ["object", "array"],
+            "type": [
+              "object",
+              "array"
+            ],
             "properties": {
               "id": {
                 "type": "string",
@@ -339,6 +418,48 @@
                 "items": {
                   "type": "object"
                 }
+              },
+              "catalog": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The source catalogue the indicator belongs to, e.g. 'World Development Indicators (source 2)'."
+              },
+              "offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Offset this page started at, e.g. 0."
+              },
+              "page": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Which page of the upstream result this is, e.g. 1."
+              },
+              "pages": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Total pages available, e.g. 4 -- so this reply holds a quarter of the matches."
+              },
+              "per_page": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Page size as a STRING on this endpoint, e.g. '10'."
+              },
+              "total": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Total indicators matching the search, e.g. 39."
               }
             }
           }

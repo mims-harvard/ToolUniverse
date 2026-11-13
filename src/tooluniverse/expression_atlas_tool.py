@@ -199,6 +199,15 @@ class ExpressionAtlasTool(BaseTool):
                     "species": exp.get("species"),
                     "num_assays": exp.get("numberOfAssays"),
                     "last_update": exp.get("lastUpdate"),
+                    # Which variables the experiment measured across --
+                    # organism part, cell type, developmental stage -- which
+                    # is how a caller picks among 30 baseline experiments for
+                    # one species. 7,159 factor values came back across the
+                    # listing and the rows carried none of them, along with
+                    # the technology that produced the data.
+                    "experimental_factors": exp.get("experimentalFactors") or [],
+                    "technology_type": exp.get("technologyType") or [],
+                    "kingdom": exp.get("kingdom"),
                 }
                 for exp in baseline_exps
             ]
@@ -503,6 +512,53 @@ class ExpressionAtlasTool(BaseTool):
 
             experiment = data.get("experiment", data)
 
+            # The `experiment` object really is sparse here -- measured live on
+            # E-MTAB-2836, experimentalFactors, technologyType, contrasts,
+            # numberOfAssays and pubmedIds are all null. The experiment's
+            # DESIGN is not missing from the response, though: it is in
+            # `columnHeaders`, one entry per assay group, which this tool did
+            # not read while its description said the API "does not expose
+            # per-experiment design ... through this endpoint".
+            column_headers = data.get("columnHeaders") or []
+            assay_groups = []
+            factor_names = []
+            for col in column_headers:
+                if not isinstance(col, dict):
+                    continue
+                summary = col.get("assayGroupSummary") or {}
+                properties = []
+                for prop in summary.get("properties") or []:
+                    if not isinstance(prop, dict):
+                        continue
+                    properties.append(
+                        {
+                            "property_name": prop.get("propertyName"),
+                            "value": prop.get("testValue"),
+                            "property_type": prop.get("contrastPropertyType"),
+                        }
+                    )
+                    if (
+                        prop.get("contrastPropertyType") == "FACTOR"
+                        and prop.get("propertyName")
+                        and prop["propertyName"] not in factor_names
+                    ):
+                        factor_names.append(prop["propertyName"])
+                assay_groups.append(
+                    {
+                        "assay_group_id": col.get("assayGroupId"),
+                        "factor_value": col.get("factorValue"),
+                        "ontology_term_id": col.get("factorValueOntologyTermId"),
+                        "replicates": summary.get("replicates"),
+                        "properties": properties,
+                    }
+                )
+
+            replicate_total = sum(
+                group["replicates"]
+                for group in assay_groups
+                if isinstance(group.get("replicates"), int)
+            )
+
             return {
                 "status": "success",
                 "data": {
@@ -510,10 +566,14 @@ class ExpressionAtlasTool(BaseTool):
                     "type": experiment.get("type"),
                     "description": experiment.get("description"),
                     "species": experiment.get("species"),
-                    "factors": experiment.get("experimentalFactors", []),
+                    "urls": experiment.get("urls") or [],
+                    "factors": experiment.get("experimentalFactors") or factor_names,
                     "technology": experiment.get("technologyType", []),
                     "contrasts": experiment.get("contrasts", []),
-                    "assay_count": experiment.get("numberOfAssays"),
+                    "assay_groups": assay_groups,
+                    "assay_group_count": len(assay_groups),
+                    "assay_count": experiment.get("numberOfAssays")
+                    or (replicate_total or None),
                     "last_update": experiment.get("lastUpdate"),
                     "pubmed_ids": experiment.get("pubmedIds", []),
                 },
@@ -530,10 +590,33 @@ class ExpressionAtlasTool(BaseTool):
                 e.response.status_code if e.response is not None else "unknown"
             )
             if status_code == 404:
+                # This used to answer the 404 with {"status": "success",
+                # "data": null}. An accession that does not exist, one that
+                # has been RETIRED from Expression Atlas (E-MTAB-5214 is both
+                # absent from the API and absent from the 4,562-experiment
+                # listing), and one mistyped are all 404s, and reporting any
+                # of them as success means a caller that checks `status` is
+                # told the lookup worked. GxA_get_experiment_info, over the
+                # same resource, already returns an error for the same miss:
+                # two tools disagreeing about one accession, and the one
+                # saying success was the wrong one.
                 return {
-                    "status": "success",
-                    "data": None,
-                    "message": f"Experiment not found: {accession}",
+                    "status": "error",
+                    "error": (
+                        f"Expression Atlas has no experiment {accession} (HTTP "
+                        "404). The accession does not exist, is mistyped, or "
+                        "has been retired from Expression Atlas -- a retired "
+                        "accession can still resolve in ArrayExpress/BioStudies "
+                        "while being absent here. Use "
+                        "ExpressionAtlas_search_experiments to find the "
+                        "accessions Expression Atlas currently holds."
+                    ),
+                    "error_details": {
+                        "type": "NotFound",
+                        "accession": accession,
+                        "http_status": 404,
+                        "retriable": False,
+                    },
                 }
             return {
                 "status": "error",

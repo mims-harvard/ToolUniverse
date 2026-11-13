@@ -27,7 +27,7 @@ def AMPSphere_search_amps(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Filter/search the AMPSphere catalogue (863,498 prokaryotic smORF antimicrobial peptides from the ...
 
@@ -70,7 +70,7 @@ def AMPSphere_search_amps(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

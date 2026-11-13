@@ -114,13 +114,24 @@ class GProfilerTool(BaseTool):
                     "source": r.get("source"),
                     "native": r.get("native"),
                     "name": r.get("name"),
+                    "description": r.get("description"),
                     "p_value": r.get("p_value"),
                     "significant": r.get("significant"),
                     "term_size": r.get("term_size"),
                     "query_size": r.get("query_size"),
                     "intersection_size": r.get("intersection_size"),
+                    # The denominator of the hypergeometric test. With
+                    # term_size (K), query_size (n) and intersection_size (k)
+                    # but no N, the reported p_value cannot be recomputed or
+                    # checked -- and N is not the genome size: g:Profiler uses
+                    # the annotated domain per source (20,972 for GO:BP in
+                    # hsapiens, not 20,000-odd protein-coding genes).
+                    "effective_domain_size": r.get("effective_domain_size"),
                     "precision": r.get("precision"),
                     "recall": r.get("recall"),
+                    "parents": r.get("parents") or [],
+                    "intersection_genes": self._intersection_genes(r, genes),
+                    "query": r.get("query"),
                 }
             )
 
@@ -132,8 +143,66 @@ class GProfilerTool(BaseTool):
                 "organism": organism,
                 "total_results": len(enriched_terms),
                 "query_genes": genes,
+                **self._gene_resolution(data, genes),
             },
         }
+
+    @staticmethod
+    def _gene_resolution(data, genes):
+        """Which submitted genes g:Profiler actually used, and which it dropped.
+
+        g:Profiler resolves every submitted identifier to Ensembl gene ids and
+        reports what it could not resolve under `meta.genes_metadata.failed`.
+        That was not passed on, so a list with one typo in it enriched the rest
+        and said nothing: four genes in, `failed: ["NOTAGENE123"]` upstream,
+        three genes tested, and a caller reading `query_size: 3` with no way to
+        learn which one is missing. Ambiguous symbols (one symbol, several
+        genes) and duplicates are reported the same way.
+        """
+        meta = (data.get("meta") or {}).get("genes_metadata") or {}
+        per_query = meta.get("query") or {}
+        mapping = {}
+        for query_meta in per_query.values():
+            if isinstance(query_meta, dict):
+                mapping.update(query_meta.get("mapping") or {})
+        failed = meta.get("failed") or []
+        resolution = {
+            "genes_submitted": len(genes),
+            "genes_resolved": len(mapping),
+            "gene_id_mapping": mapping,
+            "genes_failed": list(failed),
+            "genes_ambiguous": meta.get("ambiguous") or {},
+            "genes_duplicated": meta.get("duplicates") or [],
+        }
+        if failed:
+            resolution["gene_resolution_warning"] = (
+                f"g:Profiler could not resolve {len(failed)} of "
+                f"{len(genes)} submitted identifiers "
+                f"({', '.join(str(f) for f in failed)}). The enrichment was "
+                "computed on the rest, so every p_value, query_size and "
+                "intersection below is for the resolved genes only."
+            )
+        return resolution
+
+    @staticmethod
+    def _intersection_genes(result_row, genes):
+        """Which submitted genes are in this term, with their evidence codes.
+
+        g:Profiler answers `intersections` as one entry per submitted gene, in
+        submission order, holding that gene's annotation evidence codes for
+        this term and `[]` when the gene is not annotated to it. So the
+        intersection is recoverable but only against the query list -- the
+        row's own `intersection_size` is a count with no names behind it, and
+        the tool's description promises the genes.
+        """
+        intersections = result_row.get("intersections")
+        if not isinstance(intersections, list):
+            return []
+        return [
+            {"gene": gene, "evidence_codes": codes}
+            for gene, codes in zip(genes, intersections)
+            if codes
+        ]
 
     def _convert_ids(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Convert gene identifiers between namespaces (g:Convert)."""

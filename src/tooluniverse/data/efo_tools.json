@@ -26,22 +26,37 @@
         {
           "type": "object",
           "properties": {
-            "efo_id": {"type": "string"},
-            "name": {"type": "string"}
+            "efo_id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
           },
-          "required": ["efo_id", "name"],
+          "required": [
+            "efo_id",
+            "name"
+          ],
           "additionalProperties": true
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"},
-            "details": {"type": "string"}
+            "error": {
+              "type": "string"
+            },
+            "details": {
+              "type": "string"
+            }
           },
-          "required": ["error"],
+          "required": [
+            "error"
+          ],
           "additionalProperties": true
         },
-        {"type": "null"}
+        {
+          "type": "null"
+        }
       ]
     }
   },
@@ -52,44 +67,112 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "query": {"type": "string", "description": "Search query (free text)."},
-        "rows": {"type": "integer", "description": "Maximum number of results to return.", "default": 10}
+        "query": {
+          "type": "string",
+          "description": "Search query (free text)."
+        },
+        "rows": {
+          "type": "integer",
+          "description": "Maximum number of results to return.",
+          "default": 10
+        }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "test_examples": [
-      {"query": "diabetes mellitus", "rows": 2}
+      {
+        "query": "diabetes mellitus",
+        "rows": 2
+      }
     ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "url": {"type": "string"},
-        "count": {"type": "integer"},
+        "status": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer"
+        },
         "terms": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "iri": {"type": ["string", "null"]},
-              "obo_id": {"type": ["string", "null"]},
-              "short_form": {"type": ["string", "null"]},
-              "label": {"type": ["string", "null"]},
-              "description": {"type": ["array", "null"], "items": {"type": "string"}},
-              "ontology_name": {"type": ["string", "null"]},
-              "ontology_prefix": {"type": ["string", "null"]},
-              "type": {"type": ["string", "null"]}
+              "iri": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "obo_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "short_form": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "description": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "ontology_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ontology_prefix": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             },
             "additionalProperties": true
           }
         },
-        "error": {"type": "string"},
+        "error": {
+          "type": "string"
+        },
         "detail": {},
-        "status_code": {"type": "integer"}
+        "status_code": {
+          "type": "integer"
+        }
       },
       "additionalProperties": true
     },
-    "fields": {"kind": "search", "ontology_id": "efo"}
+    "fields": {
+      "kind": "search",
+      "ontology_id": "efo"
+    }
   },
   {
     "type": "OLSRESTTool",
@@ -98,42 +181,188 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "iri": {"type": "string", "description": "Term IRI returned by `ols_search_efo_terms`."},
-        "obo_id": {"type": "string", "description": "OBO ID like 'EFO:0000400' (will be converted to an EFO IRI)."}
+        "iri": {
+          "type": "string",
+          "description": "Term IRI returned by `ols_search_efo_terms`."
+        },
+        "obo_id": {
+          "type": "string",
+          "description": "OBO ID like 'EFO:0000400' (will be converted to an EFO IRI)."
+        }
       },
-      "oneOf": [{"required": ["iri"]}, {"required": ["obo_id"]}]
+      "oneOf": [
+        {
+          "required": [
+            "iri"
+          ]
+        },
+        {
+          "required": [
+            "obo_id"
+          ]
+        }
+      ]
     },
     "test_examples": [
-      {"obo_id": "EFO:0000400"}
+      {
+        "obo_id": "EFO:0000400"
+      }
     ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "url": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
         "term": {
           "type": "object",
           "properties": {
-            "iri": {"type": ["string", "null"]},
-            "obo_id": {"type": ["string", "null"]},
-            "short_form": {"type": ["string", "null"]},
-            "label": {"type": ["string", "null"]},
-            "description": {"type": ["array", "null"], "items": {"type": "string"}},
-            "synonyms": {"type": ["array", "null"], "items": {"type": "string"}},
-            "has_children": {"type": ["boolean", "null"]},
-            "is_obsolete": {"type": ["boolean", "null"]},
-            "ontology_name": {"type": ["string", "null"]},
-            "ontology_prefix": {"type": ["string", "null"]}
+            "term_replaced_by": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "What an obsolete term was replaced BY. EFO:0000400 comes back as \"obsolete_diabetes mellitus\" with is_obsolete true, and the record names MONDO_0005015 as the replacement -- in `annotation`, which was not read, so a caller got a dead term and no pointer to the live one."
+            },
+            "alternative_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Ids merged into this term"
+            },
+            "obsolescence_reason": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ]
+            },
+            "synonym_scopes": {
+              "type": "array",
+              "description": "Each synonym with the scope OBO gives it: an exact synonym can be substituted for the label and a related one cannot, and `synonyms` is the flattened list of both",
+              "items": {
+                "type": "object"
+              }
+            },
+            "cross_references": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The term in other vocabularies -- DOID, ICD10, MeSH, MedDRA -- which is how an EFO id is carried into a resource that does not speak EFO"
+            },
+            "obo_xrefs": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "obo_definition_citations": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "in_subset": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "lang": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "iri": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "obo_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "short_form": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              }
+            },
+            "synonyms": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              }
+            },
+            "has_children": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "is_obsolete": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "ontology_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ontology_prefix": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
           },
           "additionalProperties": true
         },
-        "error": {"type": "string"},
+        "error": {
+          "type": "string"
+        },
         "detail": {},
-        "status_code": {"type": "integer"}
+        "status_code": {
+          "type": "integer"
+        }
       },
       "additionalProperties": true
     },
-    "fields": {"kind": "term", "ontology_id": "efo"}
+    "fields": {
+      "kind": "term",
+      "ontology_id": "efo"
+    }
   },
   {
     "type": "OLSRESTTool",
@@ -142,41 +371,172 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "iri": {"type": "string", "description": "Term IRI returned by `ols_search_efo_terms`."},
-        "obo_id": {"type": "string", "description": "OBO ID like 'EFO:0000400' (will be converted to an EFO IRI)."},
-        "size": {"type": "integer", "description": "Maximum number of children to return.", "default": 20}
+        "iri": {
+          "type": "string",
+          "description": "Term IRI returned by `ols_search_efo_terms`."
+        },
+        "obo_id": {
+          "type": "string",
+          "description": "OBO ID like 'EFO:0000400' (will be converted to an EFO IRI)."
+        },
+        "size": {
+          "type": "integer",
+          "description": "Maximum number of children to return.",
+          "default": 20
+        }
       },
-      "oneOf": [{"required": ["iri"]}, {"required": ["obo_id"]}]
+      "oneOf": [
+        {
+          "required": [
+            "iri"
+          ]
+        },
+        {
+          "required": [
+            "obo_id"
+          ]
+        }
+      ]
     },
     "test_examples": [
-      {"obo_id": "EFO:0000400", "size": 2}
+      {
+        "obo_id": "EFO:0000400",
+        "size": 2
+      }
     ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "url": {"type": "string"},
-        "count": {"type": "integer"},
+        "status": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer"
+        },
         "children": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "iri": {"type": ["string", "null"]},
-              "obo_id": {"type": ["string", "null"]},
-              "short_form": {"type": ["string", "null"]},
-              "label": {"type": ["string", "null"]}
+              "synonym_scopes": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "obo_definition_citations": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "ontology_iri": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lang": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "description": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "A descendant list of labels cannot be filtered or followed; the same rows carry the definition"
+              },
+              "synonyms": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "is_obsolete": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "has_children": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "ontology_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which ontology the descendant came from: OLS returns descendants from importing ontologies too, so EFO:0001444 answers GO terms"
+              },
+              "ontology_prefix": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "alternative_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "iri": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "obo_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "short_form": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             },
             "additionalProperties": true
           }
         },
-        "error": {"type": "string"},
+        "error": {
+          "type": "string"
+        },
         "detail": {},
-        "status_code": {"type": "integer"}
+        "status_code": {
+          "type": "integer"
+        }
       },
       "additionalProperties": true
     },
-    "fields": {"kind": "children", "ontology_id": "efo"}
+    "fields": {
+      "kind": "children",
+      "ontology_id": "efo"
+    }
   },
   {
     "type": "OLSRESTTool",
@@ -185,14 +545,38 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "iri": {"type": "string", "description": "Term IRI returned by `ols_search_efo_terms`."},
-        "obo_id": {"type": "string", "description": "OBO ID like 'EFO:0001444' (will be converted to an EFO IRI)."},
-        "size": {"type": "integer", "description": "Maximum number of descendant rows to return (the full subtree size is reported separately in `total`).", "default": 20}
+        "iri": {
+          "type": "string",
+          "description": "Term IRI returned by `ols_search_efo_terms`."
+        },
+        "obo_id": {
+          "type": "string",
+          "description": "OBO ID like 'EFO:0001444' (will be converted to an EFO IRI)."
+        },
+        "size": {
+          "type": "integer",
+          "description": "Maximum number of descendant rows to return (the full subtree size is reported separately in `total`).",
+          "default": 20
+        }
       },
-      "oneOf": [{"required": ["iri"]}, {"required": ["obo_id"]}]
+      "oneOf": [
+        {
+          "required": [
+            "iri"
+          ]
+        },
+        {
+          "required": [
+            "obo_id"
+          ]
+        }
+      ]
     },
     "test_examples": [
-      {"obo_id": "EFO:0001444", "size": 5}
+      {
+        "obo_id": "EFO:0001444",
+        "size": 5
+      }
     ],
     "return_schema": {
       "type": "object",
@@ -211,40 +595,138 @@
         }
       }
     },
-    "fields": {"kind": "descendants", "ontology_id": "efo"}
+    "fields": {
+      "kind": "descendants",
+      "ontology_id": "efo"
+    }
   },
   {
     "type": "OLSRESTTool",
     "name": "ols_get_efo_ontology_info",
     "description": "Get metadata about the EFO ontology itself (version, status, number of terms, title/description).",
-    "parameter": {"type": "object", "properties": {}, "required": []},
-    "test_examples": [{}],
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "test_examples": [
+      {}
+    ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "url": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
         "ontology": {
           "type": "object",
           "properties": {
-            "ontologyId": {"type": ["string", "null"]},
-            "version": {"type": ["string", "null"]},
-            "status": {"type": ["string", "null"]},
-            "numberOfTerms": {"type": ["integer", "null"]},
-            "updated": {"type": ["string", "null"]},
-            "title": {"type": ["string", "null"]},
-            "description": {"type": ["string", "null"]},
-            "homepage": {"type": ["string", "null"]}
+            "ontologyId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "numberOfTerms": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "updated": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "homepage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "languages": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Language codes the ontology carries labels in, e.g. ['be', 'en', ...] - 8 for EFO. Which translations exist for a term's label."
+            },
+            "loaded": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When OLS last loaded this version of the ontology, e.g. '2026-11-10T00:10:11.670120438'. How fresh the served ontology is, as distinct from the ontology's own release date."
+            },
+            "numberOfIndividuals": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Count of individuals (instances) in the ontology, e.g. 19."
+            },
+            "numberOfProperties": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Count of properties in the ontology, e.g. 328. With the term count, this says how much of the ontology is relations rather than classes."
+            },
+            "preferredPrefix": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The prefix the ontology's maintainers prefer, e.g. 'EFO'. Case-correct, where the OLS id is lower-cased."
+            }
           },
           "additionalProperties": true
         },
-        "error": {"type": "string"},
+        "error": {
+          "type": "string"
+        },
         "detail": {},
-        "status_code": {"type": "integer"}
+        "status_code": {
+          "type": "integer"
+        }
       },
       "additionalProperties": true
     },
-    "fields": {"kind": "ontology", "ontology_id": "efo"}
+    "fields": {
+      "kind": "ontology",
+      "ontology_id": "efo"
+    }
   },
   {
     "type": "OLSRESTTool",
@@ -253,36 +735,131 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "size": {"type": "integer", "description": "Maximum number of ontologies to return.", "default": 20}
+        "size": {
+          "type": "integer",
+          "description": "Maximum number of ontologies to return.",
+          "default": 20
+        }
       },
       "required": []
     },
-    "test_examples": [{"size": 2}],
+    "test_examples": [
+      {
+        "size": 2
+      }
+    ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "url": {"type": "string"},
-        "count": {"type": "integer"},
+        "status": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer"
+        },
         "ontologies": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "ontologyId": {"type": ["string", "null"]},
-              "title": {"type": ["string", "null"]},
-              "numberOfTerms": {"type": ["integer", "null"]},
-              "status": {"type": ["string", "null"]}
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "preferredPrefix": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "homepage": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "version": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "updated": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "loaded": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "numberOfProperties": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "numberOfIndividuals": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "languages": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Which languages the ontology has labels in, which decides what a term lookup gets back"
+              },
+              "ontologyId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "numberOfTerms": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             },
             "additionalProperties": true
           }
         },
-        "error": {"type": "string"},
+        "error": {
+          "type": "string"
+        },
         "detail": {},
-        "status_code": {"type": "integer"}
+        "status_code": {
+          "type": "integer"
+        }
       },
       "additionalProperties": true
     },
-    "fields": {"kind": "ontologies"}
+    "fields": {
+      "kind": "ontologies"
+    }
   }
 ]

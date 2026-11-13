@@ -28,7 +28,12 @@
           "default": "hg38"
         }
       },
-      "required": ["chr", "pos", "ref", "alt"]
+      "required": [
+        "chr",
+        "pos",
+        "ref",
+        "alt"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -70,6 +75,456 @@
             },
             "gnomad_exomes_af": {
               "type": "number"
+            },
+            "clinvar_review_status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How well-reviewed the ClinVar classification is, e.g. 'criteria provided, conflicting classifications' or 'reviewed by expert panel'. A classification without it cannot be weighed"
+            },
+            "clinvar_submissions_summary": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The submissions behind clinvar_classification by call: BRAF V600E is 'P:3 LP:1 US:5 O:1', so five of ten say uncertain"
+            },
+            "clinvar_disease": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Diseases ClinVar lists for the variant"
+            },
+            "pathogenicity_classification_combined": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GeneBe's combined pathogenicity call"
+            },
+            "phenotype_combined": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GeneBe's combined phenotype"
+            },
+            "effect": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The variant's effect on the reported transcript"
+            },
+            "gene_hgnc_id": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "HGNC id of the gene"
+            },
+            "warning": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Any warning GeneBe attached to the call"
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Per-gene effects from acmg_by_gene"
+            },
+            "revel_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "REVEL score"
+            },
+            "spliceai_max_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "SpliceAI max score"
+            },
+            "phylop100way_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "phyloP 100-way score"
+            },
+            "bayesdelnoaf_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "BayesDel (no AF) score"
+            },
+            "computational_score_selected": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "the selected computational score"
+            },
+            "splice_score_selected": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "the selected splice score"
+            },
+            "revel_prediction": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "REVEL prediction"
+            },
+            "spliceai_max_prediction": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "SpliceAI max prediction"
+            },
+            "phylop100way_prediction": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "phyloP 100-way prediction"
+            },
+            "bayesdelnoaf_prediction": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "BayesDel (no AF) prediction"
+            },
+            "computational_prediction_selected": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "the selected computational prediction"
+            },
+            "splice_prediction_selected": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "the selected splice prediction"
+            },
+            "computational_source_selected": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which predictor GeneBe selected for the computational evidence"
+            },
+            "splice_source_selected": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which predictor GeneBe selected for the splice evidence"
+            },
+            "gnomad_exomes_ac": {
+              "type": [
+                "integer",
+                "number",
+                "null"
+              ],
+              "description": "gnomAD exomes allele count"
+            },
+            "gnomad_exomes_homalt": {
+              "type": [
+                "integer",
+                "number",
+                "null"
+              ],
+              "description": "gnomAD exomes homozygous-alt count"
+            },
+            "gnomad_genomes_ac": {
+              "type": [
+                "integer",
+                "number",
+                "null"
+              ],
+              "description": "gnomAD genomes allele count"
+            },
+            "gnomad_genomes_homalt": {
+              "type": [
+                "integer",
+                "number",
+                "null"
+              ],
+              "description": "gnomAD genomes homozygous-alt count"
+            },
+            "allele_count_reference_population": {
+              "type": [
+                "integer",
+                "number",
+                "null"
+              ],
+              "description": "reference-population allele count"
+            },
+            "hom_count_reference_population": {
+              "type": [
+                "integer",
+                "number",
+                "null"
+              ],
+              "description": "reference-population homozygote count"
+            },
+            "gnomad_genomes_af": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "gnomAD genomes allele frequency"
+            },
+            "gnomad_exomes_filter": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "gnomAD exomes filter status"
+            },
+            "gnomad_genomes_filter": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "gnomAD genomes filter status"
+            },
+            "frequency_reference_population": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Allele frequency in GeneBe's reference population"
+            },
+            "consequences": {
+              "type": "array",
+              "description": "Per-transcript consequences, MANE Select first then canonical, capped at metadata.consequences_per_variant. BRAF V600E is annotated on 43 transcripts",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "transcript": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Transcript accession"
+                  },
+                  "feature": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The feature GeneBe annotated"
+                  },
+                  "gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene symbol"
+                  },
+                  "gene_hgnc_id": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "biotype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "e.g. protein_coding, processed_transcript - which changes what the consequence means"
+                  },
+                  "protein_coding": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether the transcript is protein coding"
+                  },
+                  "consequences": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "VEP-style consequence terms"
+                  },
+                  "hgvs_c": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Coding-level HGVS"
+                  },
+                  "hgvs_p": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Protein-level HGVS"
+                  },
+                  "exon_rank": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Exon the variant falls in"
+                  },
+                  "exon_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Exons in the transcript"
+                  },
+                  "intron_rank": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Intron the variant falls in, if intronic"
+                  },
+                  "aa_start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Residue position"
+                  },
+                  "aa_ref": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Reference amino acid"
+                  },
+                  "aa_alt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Alternate amino acid"
+                  },
+                  "aa_length": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Protein length"
+                  },
+                  "cds_length": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "CDS length"
+                  },
+                  "cdna_length": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "cDNA length"
+                  },
+                  "strand": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "canonical": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether the transcript is canonical"
+                  },
+                  "mane_select": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'MANE_Select' on the MANE Select transcript"
+                  },
+                  "mane_plus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MANE Plus Clinical marker"
+                  },
+                  "transcript_support_level": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "protein_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Protein accession for the transcript"
+                  }
+                }
+              }
+            },
+            "consequence_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many transcripts GeneBe annotated"
+            },
+            "consequences_truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the cap applied"
+            },
+            "alphamissense_prediction": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "AlphaMissense prediction, beside its score"
+            },
+            "acmg_gene_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many per-gene ACMG blocks the variant has. The hgvs_c, hgvs_p and effects above come from the first; a variant in an overlapping-gene region can have several"
+            },
+            "acmg_gene_symbol": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The gene that block belongs to"
             }
           },
           "required": [
@@ -90,7 +545,13 @@
       ]
     },
     "test_examples": [
-      {"chr": "7", "pos": 140753336, "ref": "A", "alt": "T", "genome": "hg38"}
+      {
+        "chr": "7",
+        "pos": 140753336,
+        "ref": "A",
+        "alt": "T",
+        "genome": "hg38"
+      }
     ]
   },
   {
@@ -106,12 +567,29 @@
           "items": {
             "type": "object",
             "properties": {
-              "chr": {"type": "string", "description": "Chromosome, e.g. '7', 'X' (a 'chr' prefix is also accepted)."},
-              "pos": {"type": "integer", "description": "1-based genomic position, e.g. 140753336."},
-              "ref": {"type": "string", "description": "Reference allele, e.g. 'A'."},
-              "alt": {"type": "string", "description": "Alternate allele, e.g. 'T'."}
+              "chr": {
+                "type": "string",
+                "description": "Chromosome, e.g. '7', 'X' (a 'chr' prefix is also accepted)."
+              },
+              "pos": {
+                "type": "integer",
+                "description": "1-based genomic position, e.g. 140753336."
+              },
+              "ref": {
+                "type": "string",
+                "description": "Reference allele, e.g. 'A'."
+              },
+              "alt": {
+                "type": "string",
+                "description": "Alternate allele, e.g. 'T'."
+              }
             },
-            "required": ["chr", "pos", "ref", "alt"]
+            "required": [
+              "chr",
+              "pos",
+              "ref",
+              "alt"
+            ]
           }
         },
         "genome": {
@@ -120,7 +598,9 @@
           "default": "hg38"
         }
       },
-      "required": ["variants"]
+      "required": [
+        "variants"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -220,6 +700,428 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "allele_count_reference_population": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ],
+                    "description": "reference-population allele count"
+                  },
+                  "alphamissense_prediction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "AlphaMissense prediction, beside its score"
+                  },
+                  "bayesdelnoaf_prediction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "BayesDel (no AF) prediction"
+                  },
+                  "bayesdelnoaf_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "BayesDel (no AF) score"
+                  },
+                  "clinvar_disease": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Diseases ClinVar lists for the variant"
+                  },
+                  "clinvar_review_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How well-reviewed the ClinVar classification is, e.g. 'criteria provided, conflicting classifications' or 'reviewed by expert panel'. A classification without it cannot be weighed"
+                  },
+                  "clinvar_submissions_summary": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The submissions behind clinvar_classification by call: BRAF V600E is 'P:3 LP:1 US:5 O:1', so five of ten say uncertain"
+                  },
+                  "computational_prediction_selected": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "the selected computational prediction"
+                  },
+                  "computational_score_selected": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "the selected computational score"
+                  },
+                  "computational_source_selected": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which predictor GeneBe selected for the computational evidence"
+                  },
+                  "consequences": {
+                    "type": "array",
+                    "description": "Per-transcript consequences, MANE Select first then canonical, capped at metadata.consequences_per_variant. BRAF V600E is annotated on 43 transcripts",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "transcript": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Transcript accession"
+                        },
+                        "feature": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The feature GeneBe annotated"
+                        },
+                        "gene_symbol": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Gene symbol"
+                        },
+                        "gene_hgnc_id": {
+                          "type": [
+                            "integer",
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "biotype": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "e.g. protein_coding, processed_transcript - which changes what the consequence means"
+                        },
+                        "protein_coding": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "Whether the transcript is protein coding"
+                        },
+                        "consequences": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "VEP-style consequence terms"
+                        },
+                        "hgvs_c": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Coding-level HGVS"
+                        },
+                        "hgvs_p": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Protein-level HGVS"
+                        },
+                        "exon_rank": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Exon the variant falls in"
+                        },
+                        "exon_count": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Exons in the transcript"
+                        },
+                        "intron_rank": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Intron the variant falls in, if intronic"
+                        },
+                        "aa_start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Residue position"
+                        },
+                        "aa_ref": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Reference amino acid"
+                        },
+                        "aa_alt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Alternate amino acid"
+                        },
+                        "aa_length": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Protein length"
+                        },
+                        "cds_length": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "CDS length"
+                        },
+                        "cdna_length": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "cDNA length"
+                        },
+                        "strand": {
+                          "type": [
+                            "integer",
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "canonical": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "Whether the transcript is canonical"
+                        },
+                        "mane_select": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "'MANE_Select' on the MANE Select transcript"
+                        },
+                        "mane_plus": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "MANE Plus Clinical marker"
+                        },
+                        "transcript_support_level": {
+                          "type": [
+                            "integer",
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "protein_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Protein accession for the transcript"
+                        },
+                        "cdna_start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "The variant's position within the transcript's cDNA, 1-based, e.g. 2145. Present on 105 of the 128 consequence rows measured -- absent where the variant falls outside the transcript's exons. Read against cdna_length for where in the transcript it sits."
+                        },
+                        "cds_start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "The variant's position within the CODING sequence, 1-based, e.g. 1919. Present on 80 of 128 rows -- fewer than cdna_start, because a UTR or non-coding-transcript consequence has a cDNA position but no CDS one. Divide by 3 for the codon; do not confuse with cdna_start, which includes the 5' UTR and so is the larger number."
+                        }
+                      }
+                    }
+                  },
+                  "effect": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The variant's effect on the reported transcript"
+                  },
+                  "frequency_reference_population": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Allele frequency in GeneBe's reference population"
+                  },
+                  "gene_hgnc_id": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
+                    "description": "HGNC id of the gene"
+                  },
+                  "gnomad_exomes_ac": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ],
+                    "description": "gnomAD exomes allele count"
+                  },
+                  "gnomad_exomes_filter": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "gnomAD exomes filter status"
+                  },
+                  "gnomad_exomes_homalt": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ],
+                    "description": "gnomAD exomes homozygous-alt count"
+                  },
+                  "gnomad_genomes_ac": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ],
+                    "description": "gnomAD genomes allele count"
+                  },
+                  "gnomad_genomes_af": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "gnomAD genomes allele frequency"
+                  },
+                  "gnomad_genomes_filter": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "gnomAD genomes filter status"
+                  },
+                  "gnomad_genomes_homalt": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ],
+                    "description": "gnomAD genomes homozygous-alt count"
+                  },
+                  "hom_count_reference_population": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ],
+                    "description": "reference-population homozygote count"
+                  },
+                  "pathogenicity_classification_combined": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GeneBe's combined pathogenicity call"
+                  },
+                  "phenotype_combined": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GeneBe's combined phenotype"
+                  },
+                  "phylop100way_prediction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "phyloP 100-way prediction"
+                  },
+                  "phylop100way_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "phyloP 100-way score"
+                  },
+                  "revel_prediction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "REVEL prediction"
+                  },
+                  "revel_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "REVEL score"
+                  },
+                  "splice_prediction_selected": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "the selected splice prediction"
+                  },
+                  "splice_score_selected": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "the selected splice score"
+                  },
+                  "splice_source_selected": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which predictor GeneBe selected for the splice evidence"
+                  },
+                  "spliceai_max_prediction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SpliceAI max prediction"
+                  },
+                  "spliceai_max_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "SpliceAI max score"
                   }
                 }
               }
@@ -245,8 +1147,18 @@
     "test_examples": [
       {
         "variants": [
-          {"chr": "7", "pos": 140753336, "ref": "A", "alt": "T"},
-          {"chr": "22", "pos": 28695868, "ref": "AG", "alt": "A"}
+          {
+            "chr": "7",
+            "pos": 140753336,
+            "ref": "A",
+            "alt": "T"
+          },
+          {
+            "chr": "22",
+            "pos": 28695868,
+            "ref": "AG",
+            "alt": "A"
+          }
         ],
         "genome": "hg38"
       }

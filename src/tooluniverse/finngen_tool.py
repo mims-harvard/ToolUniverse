@@ -18,6 +18,39 @@ from .tool_registry import register_tool
 FINNGEN_BASE_URL = "https://r12.finngen.fi/api"
 
 
+def _phenotype_row(record: dict) -> dict:
+    """One FinnGen phenotype, as both the list and the lookup should report it.
+
+    `gc_lambda` is the genomic-control inflation factor at four quantiles,
+    and it is on all 2,470 phenotypes of the /phenos list. It is how a caller
+    tells a usable GWAS from one whose statistics are inflated or, for a rare
+    phenotype, deflated -- AB1_TUBERCULOSIS_MILIARY reads 0.38 at the 0.5
+    quantile. `assoc_files` is the summary-statistics file behind the
+    phenotype.
+
+    The single-phenotype lookup already returned gc_lambda and the list did
+    not, from the same upstream record shape, so both now build this row and
+    the fields present decide what it carries.
+    """
+    row = {
+        "phenocode": record.get("phenocode"),
+        "phenostring": record.get("phenostring"),
+        "category": record.get("category"),
+        "category_index": record.get("category_index"),
+        "num_cases": record.get("num_cases"),
+        "num_controls": record.get("num_controls"),
+        "num_gw_significant": record.get("num_gw_significant"),
+        # Keyed by quantile: {"0.001": .., "0.01": .., "0.1": .., "0.5": ..}
+        "gc_lambda": record.get("gc_lambda"),
+        "assoc_files": [f for f in (record.get("assoc_files") or []) if f],
+    }
+    # Only the per-phenotype endpoint carries the previous release's counts.
+    for key in ("num_cases_prev", "num_controls_prev"):
+        if key in record:
+            row[key] = record.get(key)
+    return row
+
+
 @register_tool("FinnGenTool")
 class FinnGenTool(BaseTool):
     """
@@ -107,16 +140,7 @@ class FinnGenTool(BaseTool):
                     continue
             if min_cases and p.get("num_cases", 0) < min_cases:
                 continue
-            results.append(
-                {
-                    "phenocode": p.get("phenocode"),
-                    "phenostring": p.get("phenostring"),
-                    "category": p.get("category"),
-                    "num_cases": p.get("num_cases"),
-                    "num_controls": p.get("num_controls"),
-                    "num_gw_significant": p.get("num_gw_significant"),
-                }
-            )
+            results.append(_phenotype_row(p))
 
         results.sort(key=lambda x: x.get("num_cases", 0), reverse=True)
         total = len(results)
@@ -155,17 +179,7 @@ class FinnGenTool(BaseTool):
         resp.raise_for_status()
         data = resp.json()
 
-        result = {
-            "phenocode": data.get("phenocode"),
-            "phenostring": data.get("phenostring"),
-            "category": data.get("category"),
-            "num_cases": data.get("num_cases"),
-            "num_controls": data.get("num_controls"),
-            "num_gw_significant": data.get("num_gw_significant"),
-            "num_cases_prev": data.get("num_cases_prev"),
-            "num_controls_prev": data.get("num_controls_prev"),
-            "gc_lambda": data.get("gc_lambda"),
-        }
+        result = _phenotype_row(data)
 
         return {
             "status": "success",
@@ -198,6 +212,36 @@ class FinnGenTool(BaseTool):
         resp.raise_for_status()
         data = resp.json()
 
+        # FinnGen answers with THREE top-level keys and this returned one of
+        # them. `regions` is 455 fine-mapping region definitions -- a
+        # phenocode and an interval, and no statistic. `results` is 2470
+        # association rows carrying beta, mlogp, maf, n_case, n_control and
+        # `phenostring`, the readable phenotype name. The tool's description
+        # promises "which disease associations a variant contributes to" and
+        # it returned `M13_ARTHROPATHIES` with no effect size, no p-value and
+        # no phenotype name, while all of it sat in the same response.
+        by_pheno: Dict[str, Dict[str, Any]] = {}
+        for row in data.get("results") or []:
+            if isinstance(row, dict) and row.get("phenocode"):
+                by_pheno.setdefault(str(row["phenocode"]), row)
+
+        def association_of(phenocode):
+            row = by_pheno.get(str(phenocode))
+            if not row:
+                return None
+            return {
+                "phenostring": row.get("phenostring"),
+                "category": row.get("category"),
+                "beta": row.get("beta"),
+                "mlogp": row.get("mlogp"),
+                "maf": row.get("maf"),
+                "maf_case": row.get("maf_case"),
+                "maf_control": row.get("maf_control"),
+                "n_case": row.get("n_case"),
+                "n_control": row.get("n_control"),
+                "n_sample": row.get("n_sample"),
+            }
+
         parsed_regions: List[Dict[str, Any]] = [
             {
                 "phenocode": r.get("phenocode"),
@@ -205,9 +249,16 @@ class FinnGenTool(BaseTool):
                 "start": r.get("start"),
                 "end": r.get("end"),
                 "type": r.get("type"),
+                # The region's own results file, so the credible set behind
+                # the interval can be fetched.
+                "path": r.get("path"),
+                # The association this region's phenotype actually shows for
+                # the variant, joined on phenocode.
+                "association": association_of(r.get("phenocode")),
             }
             for r in data.get("regions", [])
         ]
+        matched = sum(1 for r in parsed_regions if r.get("association"))
 
         return {
             "status": "success",
@@ -216,6 +267,14 @@ class FinnGenTool(BaseTool):
                 "source": "FinnGen r12",
                 "variant": variant,
                 "total_regions": len(parsed_regions),
+                # The response's association rows, and how many regions one
+                # could be joined to. A region with association null is one
+                # FinnGen fine-mapped but did not report a phenome-wide row
+                # for; saying so is the difference between "no association"
+                # and "not looked up".
+                "total_association_rows": len(data.get("results") or []),
+                "regions_with_association": matched,
+                "regions_without_association": len(parsed_regions) - matched,
             },
         }
 

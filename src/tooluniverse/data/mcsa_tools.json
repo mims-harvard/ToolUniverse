@@ -63,13 +63,6 @@
               ],
               "description": "Entry description"
             },
-            "reaction_name": {
-              "type": [
-                "string",
-                "null"
-              ],
-              "description": "Catalysed reaction"
-            },
             "url": {
               "type": [
                 "string",
@@ -144,6 +137,113 @@
                   "is_ptm": {
                     "type": "boolean",
                     "description": "Whether the residue carries a post-translational modification"
+                  },
+                  "auth_residue_number": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "The PDB author numbering of the residue - what papers and mutation names use. Entry 2's catalytic serine is residue_number 45 and auth_residue_number 70, and the literature calls it Ser70"
+                  },
+                  "domain_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "CATH domain the residue sits in"
+                  },
+                  "domain_cath_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "That domain's CATH classification"
+                  },
+                  "assembly": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Biological assembly the chain belongs to"
+                  },
+                  "is_reference_chain": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether these chain fields come from the chain M-CSA marks as the reference"
+                  },
+                  "chain_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many chains M-CSA records this residue in; the chain fields above describe the reference one"
+                  },
+                  "role_details": {
+                    "type": "array",
+                    "description": "Each catalytic role as M-CSA records it, not collapsed to its name",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "function": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The role, e.g. nucleophile, proton donor"
+                        },
+                        "function_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "reactant, interaction or spectator: whether the residue does the chemistry, holds the substrate, or neither"
+                        },
+                        "emo_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "EMO ontology id of the role"
+                        },
+                        "group_function": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Role of the group the residue belongs to"
+                        }
+                      }
+                    }
+                  },
+                  "role_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many role records the residue has"
+                  },
+                  "role_types": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The distinct function_types across this residue's roles"
+                  },
+                  "function_location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'main-N' where catalysis is by the backbone nitrogen rather than the side chain"
+                  },
+                  "annotation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "M-CSA's free-text note on the residue"
                   }
                 }
               }
@@ -154,6 +254,152 @@
                 "null"
               ],
               "description": "Number of catalytic residues"
+            },
+            "reaction_ec": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "EC number of the catalysed reaction"
+            },
+            "reaction_is_polymeric": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the substrate is a polymer"
+            },
+            "reaction_compounds": {
+              "type": "array",
+              "description": "What the reaction consumes and produces",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Compound name"
+                  },
+                  "chebi_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ChEBI identifier"
+                  },
+                  "role": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "reactant or product"
+                  },
+                  "count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Stoichiometric count"
+                  }
+                }
+              }
+            },
+            "mechanism_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many curated mechanisms M-CSA holds for the entry"
+            },
+            "mechanisms": {
+              "type": "array",
+              "description": "M-CSA's curated mechanisms. Returned by MCSA_get_entry; a search row carries mechanism_count and url instead",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "mechanism_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "M-CSA mechanism identifier"
+                  },
+                  "is_detailed": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether the curator recorded per-step chemistry"
+                  },
+                  "rating": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "M-CSA's confidence rating for the mechanism"
+                  },
+                  "text": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The curator's narrative, capped at MECHANISM_TEXT_CHARACTERS"
+                  },
+                  "text_truncated": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when text was cut at that cap"
+                  },
+                  "step_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Steps in the mechanism; the arrow-pushing itself is on the M-CSA page that url points at"
+                  },
+                  "references": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "pubmed_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "PubMed identifier"
+                        },
+                        "doi": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "DOI"
+                        },
+                        "title": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Paper title"
+                        },
+                        "evidence_types": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "How the paper supports this mechanism, e.g. 'computational experiment' or 'traceable author statement'"
+                        }
+                      }
+                    },
+                    "description": "Literature references for the mechanism"
+                  }
+                }
+              }
             }
           },
           "not": {
@@ -282,13 +528,6 @@
                 ],
                 "description": "Entry description"
               },
-              "reaction_name": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "Catalysed reaction"
-              },
               "url": {
                 "type": [
                   "string",
@@ -363,6 +602,113 @@
                     "is_ptm": {
                       "type": "boolean",
                       "description": "Whether the residue carries a post-translational modification"
+                    },
+                    "auth_residue_number": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "The PDB author numbering of the residue - what papers and mutation names use. Entry 2's catalytic serine is residue_number 45 and auth_residue_number 70, and the literature calls it Ser70"
+                    },
+                    "domain_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "CATH domain the residue sits in"
+                    },
+                    "domain_cath_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "That domain's CATH classification"
+                    },
+                    "assembly": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Biological assembly the chain belongs to"
+                    },
+                    "is_reference_chain": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "Whether these chain fields come from the chain M-CSA marks as the reference"
+                    },
+                    "chain_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many chains M-CSA records this residue in; the chain fields above describe the reference one"
+                    },
+                    "role_details": {
+                      "type": "array",
+                      "description": "Each catalytic role as M-CSA records it, not collapsed to its name",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "function": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The role, e.g. nucleophile, proton donor"
+                          },
+                          "function_type": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "reactant, interaction or spectator: whether the residue does the chemistry, holds the substrate, or neither"
+                          },
+                          "emo_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "EMO ontology id of the role"
+                          },
+                          "group_function": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Role of the group the residue belongs to"
+                          }
+                        }
+                      }
+                    },
+                    "role_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many role records the residue has"
+                    },
+                    "role_types": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "The distinct function_types across this residue's roles"
+                    },
+                    "function_location": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "'main-N' where catalysis is by the backbone nitrogen rather than the side chain"
+                    },
+                    "annotation": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "M-CSA's free-text note on the residue"
                     }
                   }
                 }
@@ -373,6 +719,64 @@
                   "null"
                 ],
                 "description": "Number of catalytic residues"
+              },
+              "reaction_ec": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "EC number of the catalysed reaction"
+              },
+              "reaction_is_polymeric": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether the substrate is a polymer"
+              },
+              "reaction_compounds": {
+                "type": "array",
+                "description": "What the reaction consumes and produces",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Compound name"
+                    },
+                    "chebi_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "ChEBI identifier"
+                    },
+                    "role": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "reactant or product"
+                    },
+                    "count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Stoichiometric count"
+                    }
+                  }
+                }
+              },
+              "mechanism_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many curated mechanisms M-CSA holds for the entry"
               }
             }
           }

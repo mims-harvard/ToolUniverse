@@ -150,6 +150,70 @@ def _variant_query_param(variant: Any) -> tuple:
     return "hgvs", value
 
 
+def _not_a_gene_symbol(gene: str) -> Optional[Dict[str, Any]]:
+    """Refuse an identifier this file cannot be keyed by, instead of '[]'.
+
+    ClinGen's gene-validity and gene-dosage downloads are CSVs keyed by HGNC
+    symbol. There is no coordinate, Ensembl or HGVS index in them, so any
+    other kind of identifier filters to nothing -- and `{"status": "success",
+    "data": [], "total": 0}` is exactly what a curated gene with no
+    classifications would return. Measured 2026-11-12:
+
+        gene="BRCA1"                    -> 2 Definitive curations
+        gene="chr17:43044295-43125483"  -> success, [], 0
+
+    Same locus. An agent reading the second concludes the region is
+    uncurated. The capability gap is small; the silence is the defect.
+    """
+    value = gene.strip()
+    kind = None
+    # `chr`-prefixed only. A bare "X", "M" or "T" is a chromosome name AND a
+    # real gene symbol -- T was HGNC's symbol for brachyury before TBXT -- and
+    # refusing a real symbol would be the same defect pointed the other way.
+    # A bare number is caught below as a number, which no symbol is.
+    if re.fullmatch(r"chr[0-9]{1,2}|chr[XYM]|chrMT", value, re.IGNORECASE):
+        kind = "a chromosome name"
+    elif re.match(r"^(chr)?[0-9XYMT]{1,2}\s*[:\-]\s*[\d,]+", value, re.IGNORECASE):
+        kind = "a genomic coordinate or range"
+    elif re.fullmatch(r"ENS[A-Z]*[GTP]\d{6,}(\.\d+)?", value, re.IGNORECASE):
+        kind = "an Ensembl identifier"
+    elif re.match(r"^(NM|NR|NP|NC|NG|XM|XR|XP)_\d+", value, re.IGNORECASE):
+        kind = "a RefSeq accession"
+    elif re.search(r":[cgnpmr]\.", value, re.IGNORECASE):
+        kind = "an HGVS expression"
+    elif re.fullmatch(r"(MONDO|OMIM|DOID|HP|MEDGEN)[:_]?\d+", value, re.IGNORECASE):
+        kind = "a disease or phenotype identifier"
+    elif re.fullmatch(r"\d+", value):
+        kind = "a bare number"
+    if kind is None:
+        return None
+    return {
+        "status": "error",
+        "error": (
+            f"`gene` takes an HGNC gene symbol such as BRCA1; {value!r} is "
+            f"{kind}. ClinGen's curation files are keyed by symbol and carry "
+            "no coordinate, transcript or ontology index, so this cannot be "
+            "resolved here -- and an empty result would have been "
+            "indistinguishable from a gene that has no curations. Resolve it "
+            "to one or more symbols first (Ensembl_get_region_features for a "
+            "region, Ensembl_lookup_id or translate-id for an accession) and "
+            "call again per symbol."
+        ),
+        "error_details": {
+            "type": "UnsupportedIdentifier",
+            "submitted": value,
+            "submitted_looks_like": kind,
+            "parameter_accepts": "HGNC gene symbol",
+            "retriable": False,
+            "next_steps": [
+                "Ensembl_get_region_features with feature_types='gene' turns a "
+                "region into gene symbols",
+                "Call this tool once per symbol",
+            ],
+        },
+    }
+
+
 def _same_gene(label: Any, gene: str) -> bool:
     """Exact HGNC symbol match; the `gene` filter matches on substring
     server-side, so `gene=ATM` also returns GATM classifications."""
@@ -203,6 +267,15 @@ class ClinGenTool(BaseTool):
         handler = operation_map.get(operation)
         if not handler:
             return {"status": "error", "error": f"Unknown operation: {operation}"}
+
+        # Every ClinGen operation that takes `gene` means an HGNC symbol, and
+        # every one of them answers anything else with an empty success. One
+        # gate here, before any download, rather than six that can drift.
+        gene = arguments.get("gene")
+        if gene:
+            refusal = _not_a_gene_symbol(str(gene))
+            if refusal is not None:
+                return refusal
 
         return handler(arguments)
 
@@ -299,13 +372,35 @@ class ClinGenTool(BaseTool):
                 if c.get("GENE SYMBOL", c.get("Gene Symbol", "")).upper() == gene_upper
             ]
 
-            return {
+            result = {
                 "status": "success",
                 "data": matches,
                 "total": len(matches),
                 "gene_searched": gene,
+                "curated_genes_in_file": len(
+                    {
+                        (c.get("GENE SYMBOL") or c.get("Gene Symbol") or "").upper()
+                        for c in curations
+                    }
+                    - {""}
+                ),
                 "source": "ClinGen Gene-Disease Validity",
             }
+            # An empty result has two meanings and they are not the same
+            # answer: ClinGen has never curated this symbol, or the symbol is
+            # not a symbol. The second is refused above; the first is said
+            # here rather than left as a bare zero.
+            if not matches:
+                result["note"] = (
+                    f"{gene} does not appear in ClinGen's gene-validity file, "
+                    f"which covers {result['curated_genes_in_file']} genes. "
+                    "That is a statement about ClinGen's curation coverage, "
+                    "not about the gene: most human genes have no gene-disease "
+                    "validity curation. Check the symbol is the current HGNC "
+                    "one (an older alias will not match) before concluding "
+                    "anything from this."
+                )
+            return result
         except requests.exceptions.Timeout:
             return {"status": "error", "error": f"Timeout after {self.timeout}s"}
         except requests.exceptions.HTTPError as e:
@@ -638,6 +733,55 @@ class ClinGenTool(BaseTool):
             "Mondo Id": condition.get("@id"),
             "Assertion": (first_guideline.get("outcome") or {}).get("label"),
             "Expert Panel": first_agent.get("affiliation"),
+            # WHICH specification was applied. A pathogenicity call under the
+            # ENIGMA BRCA1 panel's version 1.0.0 of the ACMG/AMP guidelines is
+            # a different claim from one under the generic rules, and the
+            # record names the specification, its version and its CSPEC id.
+            "Guidelines": [
+                {
+                    "label": guideline.get("label"),
+                    "version": guideline.get("version"),
+                    "outcome": (guideline.get("outcome") or {}).get("label"),
+                    "cspec_id": guideline.get("cspecId"),
+                    "id": guideline.get("@id"),
+                    "agents": [
+                        {
+                            "label": agent.get("label"),
+                            "affiliation": agent.get("affiliation"),
+                            "id": agent.get("@id"),
+                        }
+                        for agent in (guideline.get("agents") or [])
+                        if isinstance(agent, dict)
+                    ],
+                }
+                for guideline in guidelines
+                if isinstance(guideline, dict)
+            ],
+            # The curator's warnings on this interpretation, dropped whole.
+            # One of BRCA1's reads "Gene obtained from curated document aligns
+            # with the Allele Registry but not with ClinVar data" -- a stated
+            # disagreement with ClinVar about a pathogenicity classification,
+            # and the caller saw the classification without it.
+            "Warnings": [
+                {
+                    "id": (warning.get("warningId") or {}).get("value"),
+                    "message": (
+                        (
+                            (
+                                (warning.get("warningId") or {}).get("properties") or {}
+                            ).get("msg")
+                            or {}
+                        ).get("value")
+                    ),
+                }
+                for warning in (item.get("warnings") or [])
+                if isinstance(warning, dict)
+            ],
+            "Published Date": item.get("publishedDate"),
+            "UUID": item.get("uuid"),
+            "CAID": item.get("caid"),
+            "HGVS": hgvs,
+            "Evidence Links": item.get("evidenceLinks") or [],
         }
 
     @staticmethod

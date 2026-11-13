@@ -37,6 +37,41 @@ def _json_or_none(response):
     return response.json()
 
 
+def _match_locations(protein_rows: list) -> list:
+    """Where on a protein an InterPro entry matches.
+
+    `entry_protein_locations` is what "this protein contains this domain"
+    actually means: the residue ranges, each possibly in several fragments,
+    with the signature model and score behind the call. The twin endpoint in
+    the sibling module builds the same shape and the two must agree -- a
+    caller joining a domain's proteins to a protein's domains reads both.
+    """
+    locations = []
+    for row in protein_rows or []:
+        if not isinstance(row, dict):
+            continue
+        for location in row.get("entry_protein_locations") or []:
+            if not isinstance(location, dict):
+                continue
+            locations.append(
+                {
+                    "fragments": [
+                        {
+                            "start": fragment.get("start"),
+                            "end": fragment.get("end"),
+                            "status": fragment.get("dc-status"),
+                        }
+                        for fragment in (location.get("fragments") or [])
+                        if isinstance(fragment, dict)
+                    ],
+                    "model": location.get("model"),
+                    "score": location.get("score"),
+                    "representative": location.get("representative"),
+                }
+            )
+    return locations
+
+
 class InterProEntryTool(BaseTool):
     """
     Tool for InterPro entry API providing protein-to-domain mappings
@@ -163,12 +198,39 @@ class InterProEntryTool(BaseTool):
                 else (str(name_obj) if name_obj else "")
             )
 
+            # Where on the protein the entry matches, which is the point of
+            # asking what entries a protein has: the CDD cd08367 match on P53
+            # runs 109-288, and the row said only that the entry exists. The
+            # response carries the fragments, the model and the score, plus
+            # the entry's GO terms, its member databases and whether the
+            # protein is in AlphaFold.
+            protein_rows = [
+                pr for pr in (r.get("proteins") or []) if isinstance(pr, dict)
+            ]
+            locations = _match_locations(protein_rows)
+            first_protein = protein_rows[0] if protein_rows else {}
             entries.append(
                 {
                     "accession": meta.get("accession"),
                     "name": name,
                     "type": meta.get("type"),
                     "source_database": meta.get("source_database"),
+                    "integrated_interpro": meta.get("integrated"),
+                    "member_databases": meta.get("member_databases") or {},
+                    "go_terms": [
+                        {
+                            "identifier": g.get("identifier"),
+                            "name": g.get("name"),
+                            "category": (g.get("category") or {}).get("name"),
+                        }
+                        for g in (meta.get("go_terms") or [])
+                        if isinstance(g, dict)
+                    ],
+                    "match_locations": locations,
+                    "match_count": len(locations),
+                    "protein_length": first_protein.get("protein_length"),
+                    "protein_source_database": first_protein.get("source_database"),
+                    "in_alphafold": first_protein.get("in_alphafold"),
                 }
             )
 

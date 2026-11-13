@@ -41,6 +41,20 @@
                 ],
                 "description": "PDB identifier"
               },
+              "opm_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "OPM's own primary key, and the only safe way back to the full record: the detail endpoint answers HTTP 200 for a PDB id by coercing it to an integer, so asking for '1uaz' returns an unrelated entry"
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The OPM page for this structure"
+              },
               "name": {
                 "type": [
                   "string",
@@ -102,7 +116,98 @@
                   "string",
                   "null"
                 ],
-                "description": "Free-text description"
+                "description": "OPM's own description field, which is null on most records; the prose is usually in comments"
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Species of the solved structure"
+              },
+              "tilt_error_degrees": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Uncertainty on the tilt angle, the counterpart of thickness_error"
+              },
+              "transmembrane_segments": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many times the positioned subunit crosses the bilayer"
+              },
+              "topology_subunit": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Chain the membrane placement was computed for"
+              },
+              "uniprot_entry_names": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "UniProt entry names for the structure, the join out of OPM"
+              },
+              "comments": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OPM's curator note on the structure - what the protein does and what it interacts with"
+              },
+              "verification": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether OPM's computed placement was checked against experiment, in OPM's own words. Null for most entries - 16 of 395 sampled - but the only statement the database makes about whether the thickness and tilt are confirmed rather than modelled"
+              },
+              "subunits_positioned": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many subunits of the structure were positioned in the bilayer"
+              },
+              "secondary_representations": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Alternative placements OPM holds for this entry"
+              },
+              "citation_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Papers citing this placement"
+              },
+              "family_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "OPM family id, the join into /families/<id> for the Pfam, InterPro and TCDB cross-references and the superfamily above it"
+              },
+              "superfamily_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "OPM superfamily id"
+              },
+              "species_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "OPM species id, the join into /species/<id> for the taxonomy"
               }
             }
           }
@@ -279,6 +384,13 @@
                 "null"
               ],
               "description": "Total evidence records available"
+            },
+            "total_experimental_evidence": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many experimental observations back the topology, e.g. 1204. The weight behind a membrane-topology call."
             }
           },
           "not": {

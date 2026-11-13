@@ -41,6 +41,15 @@ _GEO_SEARCH_ENDPOINTS = {
 }
 
 
+def _ucsc_csv(value):
+    """UCSC packs repeated bigBed columns as one comma-joined string."""
+    if value is None or value == "":
+        return []
+    if isinstance(value, list):
+        return [str(part) for part in value]
+    return [part for part in str(value).split(",") if part]
+
+
 def _encode_empty_result_note(biosample: Any = None) -> str:
     """Explain a genuinely empty ENCODE result, hinting at ontology spelling."""
     note = (
@@ -90,6 +99,41 @@ def _request_with_backoff(url: str, *, timeout: int, **kwargs) -> requests.Respo
         time.sleep(delay)
     last_resp.raise_for_status()
     return last_resp
+
+
+# How many GSM rows a search result carries per series. A ChIP-seq search
+# returns 20 series and GEO's esummary answers every sample of each -- 82 for
+# GSE313540 alone -- so the whole list would be the bulk of the response for a
+# tool whose job is to find series. Capped and disclosed, per the row-axis
+# convention: `n_samples` is the true count, `samples_truncated` says the list
+# is a prefix, and GEO_get_dataset_info returns the rest.
+SAMPLES_PER_DATASET = 20
+
+
+def _geo_sample_rows(uid_data, cap):
+    """The series' GSM accessions and titles, capped when `cap` is set.
+
+    GEO's esummary answers `samples: [{accession, title}]` per series and the
+    search tools returned only `n_samples`, the count. The accession is what
+    identifies a run to download, so a ChIP-seq search that reports "82
+    samples" and no accessions ends at a number. The tools' own description
+    said GSM records were "excluded upstream", which is true of the esearch
+    entry-type filter (`gse[ETYP]`) and not of this list.
+    """
+    samples = uid_data.get("samples")
+    if not isinstance(samples, list):
+        return {"samples": [], "samples_returned": 0, "samples_truncated": False}
+    rows = [
+        {"accession": s.get("accession"), "title": s.get("title")}
+        for s in samples
+        if isinstance(s, dict)
+    ]
+    page = rows if cap is None else rows[:cap]
+    return {
+        "samples": page,
+        "samples_returned": len(page),
+        "samples_truncated": len(page) < len(rows),
+    }
 
 
 def _geo_search_metadata(query, term, organism, esearch):
@@ -712,6 +756,8 @@ class EpigenomicsTool(BaseTool):
                         "organism": uid_data.get("taxon", ""),
                         "n_samples": uid_data.get("n_samples", 0),
                         "date_published": uid_data.get("pdat"),
+                        "pubmed_ids": uid_data.get("pubmedids") or [],
+                        **_geo_sample_rows(uid_data, SAMPLES_PER_DATASET),
                     }
                 )
 
@@ -766,6 +812,8 @@ class EpigenomicsTool(BaseTool):
                         "organism": uid_data.get("taxon", ""),
                         "n_samples": uid_data.get("n_samples", 0),
                         "date_published": uid_data.get("pdat"),
+                        "pubmed_ids": uid_data.get("pubmedids") or [],
+                        **_geo_sample_rows(uid_data, SAMPLES_PER_DATASET),
                     }
                 )
 
@@ -817,6 +865,10 @@ class EpigenomicsTool(BaseTool):
                 "organism": uid_data.get("taxon", ""),
                 "n_samples": uid_data.get("n_samples", 0),
                 "date_published": uid_data.get("pdat"),
+                "pubmed_ids": uid_data.get("pubmedids") or [],
+                # No cap here: this call names one series, so the whole sample
+                # list is what was asked for.
+                **_geo_sample_rows(uid_data, None),
                 "supplementary_data": supp_data if supp_data else None,
             },
             "metadata": {
@@ -864,6 +916,8 @@ class EpigenomicsTool(BaseTool):
                         "organism": uid_data.get("taxon", ""),
                         "n_samples": uid_data.get("n_samples", 0),
                         "date_published": uid_data.get("pdat"),
+                        "pubmed_ids": uid_data.get("pubmedids") or [],
+                        **_geo_sample_rows(uid_data, SAMPLES_PER_DATASET),
                     }
                 )
 
@@ -916,6 +970,8 @@ class EpigenomicsTool(BaseTool):
                         "organism": uid_data.get("taxon", ""),
                         "n_samples": uid_data.get("n_samples", 0),
                         "date_published": uid_data.get("pdat"),
+                        "pubmed_ids": uid_data.get("pubmedids") or [],
+                        **_geo_sample_rows(uid_data, SAMPLES_PER_DATASET),
                     }
                 )
 
@@ -1060,6 +1116,14 @@ class EpigenomicsTool(BaseTool):
                     "end": feat.get("end"),
                     "strand": feat.get("strand", 0),
                     "seq_region_name": feat.get("seq_region_name", ""),
+                    # Which build asserted the element, and its flanking
+                    # bounds. The Regulatory Build gives a core start/end and
+                    # an extended pair; an overlap test against the core
+                    # alone is a different question from one against the
+                    # extended region.
+                    "source": feat.get("source", ""),
+                    "extended_start": feat.get("extended_start"),
+                    "extended_end": feat.get("extended_end"),
                 }
             )
 
@@ -1385,6 +1449,13 @@ class UCSCEpigenomicsTool(BaseTool):
                     "chromEnd": item.get("chromEnd"),
                     "score": item.get("score", 0),
                     "sourceCount": item.get("sourceCount", 0),
+                    # `sourceCount: 1` said how many ENCODE experiments support
+                    # the cluster and not which, nor how strongly each one
+                    # scored it. UCSC answers both as comma-joined strings on
+                    # the same row; a count with no sources behind it cannot be
+                    # traced to a cell type or an assay.
+                    "sourceIds": _ucsc_csv(item.get("sourceIds")),
+                    "sourceScores": _ucsc_csv(item.get("sourceScores")),
                 }
             )
 

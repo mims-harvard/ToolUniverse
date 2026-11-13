@@ -1,7 +1,7 @@
 """
 civic_get_variant
 
-Get a specific CIViC variant by variant ID. Returns the variant's aliases and types, its genomic ...
+Get one CIViC variant by id, including its MyVariant.info annotation. Returns the variant's name,...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def civic_get_variant(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get a specific CIViC variant by variant ID. Returns the variant's aliases and types, its genomic ...
+    Get one CIViC variant by id, including its MyVariant.info annotation. Returns the variant's name,...
 
     Parameters
     ----------

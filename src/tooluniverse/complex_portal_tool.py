@@ -303,6 +303,27 @@ class ComplexPortalTool(BaseTool):
                     "description": interactor.get("description"),
                     "stoichiometry": interactor.get("stochiometry"),
                     "interactor_type": interactor.get("interactorType"),
+                    "interactor_ac": interactor.get("interactorAC"),
+                    # What the subunit does in the complex, as distinct from
+                    # what it is. CPX-1's participants are "unspecified role";
+                    # elsewhere they are enzyme, enzyme target, inhibitor.
+                    "bio_role": interactor.get("bioRole"),
+                    "bio_role_id": interactor.get("bioRoleMI"),
+                    # Which part of the subunit does the binding, and to whom.
+                    # "full subunit composition" that says a complex contains
+                    # Q13485 but not that its smad2 binding region is the
+                    # contact is a parts list without the assembly.
+                    "linked_features": [
+                        {
+                            "feature_ac": feature.get("featureAc"),
+                            "name": feature.get("name"),
+                            "feature_type": feature.get("featureType"),
+                            "feature_type_id": feature.get("featureTypeMI"),
+                            "linked_participant": feature.get("participantId"),
+                        }
+                        for feature in (interactor.get("linkedFeatures") or [])
+                        if isinstance(feature, dict)
+                    ],
                 }
                 complex_data["subunits"].append(subunit)
 
@@ -313,6 +334,14 @@ class ComplexPortalTool(BaseTool):
                     "database": db,
                     "identifier": xref.get("identifier"),
                     "description": xref.get("description"),
+                    # What the cross-reference asserts. On a GO entry this is
+                    # the aspect -- "cellular component" for GO:0071144 -- so
+                    # a go_annotations list without it does not say which of
+                    # the three ontologies each term came from.
+                    "qualifier": xref.get("qualifier"),
+                    "qualifier_id": xref.get("qualifierMI"),
+                    "database_id": xref.get("dbMI"),
+                    "search_url": xref.get("searchURL"),
                 }
                 if db.lower() in ("efo", "orphanet", "mondo"):
                     complex_data["diseases"].append(xref_entry)

@@ -5,10 +5,34 @@
         "parameter": {
             "type": "object",
             "properties": {
-                "name": {"type": ["string", "null"], "description": "Compound name substring, e.g. 'penicillin'."},
-                "inchikey": {"type": ["string", "null"], "description": "Full or partial InChIKey."},
-                "formula": {"type": ["string", "null"], "description": "Molecular formula, e.g. 'C19H37NO5'."},
-                "smiles": {"type": ["string", "null"], "description": "SMILES for structure search."},
+                "name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Compound name substring, e.g. 'penicillin'."
+                },
+                "inchikey": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Full or partial InChIKey."
+                },
+                "formula": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Molecular formula, e.g. 'C19H37NO5'."
+                },
+                "smiles": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "SMILES for structure search."
+                },
                 "limit": {
                     "type": "integer",
                     "minimum": 1,
@@ -26,29 +50,101 @@
             "required": [],
             "additionalProperties": false
         },
-        "fields": {"timeout": 30},
+        "fields": {
+            "timeout": 30
+        },
         "type": "NPAtlasSearchTool",
-        "test_examples": [{"name": "penicillin", "limit": 3}, {"formula": "C19H37NO5"}, {"name": "curvularide"}],
-        "return_schema": {
-          "oneOf": [
+        "test_examples": [
             {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
+                "name": "penicillin",
+                "limit": 3
             },
             {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
+                "formula": "C19H37NO5"
+            },
+            {
+                "name": "curvularide"
             }
-          ]
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "npaid": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "NPAtlas accession."
+                            },
+                            "name": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Compound name."
+                            },
+                            "molecular_formula": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Molecular formula."
+                            },
+                            "molecular_weight": {
+                                "type": [
+                                    "number",
+                                    "null"
+                                ],
+                                "description": "Average molecular weight."
+                            },
+                            "exact_mass": {
+                                "type": [
+                                    "number",
+                                    "null"
+                                ],
+                                "description": "Monoisotopic mass, for mass spectrometry."
+                            },
+                            "inchikey": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "InChIKey -- the key for matching against another chemical database."
+                            },
+                            "smiles": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Canonical SMILES."
+                            },
+                            "origin_organism": {
+                                "type": [
+                                    "object",
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The organism the compound was isolated from. NPAtlas is a natural-products atlas, so the producing organism is half the record."
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
         }
     },
     {
@@ -63,12 +159,26 @@
                     "description": "NPAtlas compound id, e.g. 'NPA000001'."
                 }
             },
-            "required": ["npaid"],
+            "required": [
+                "npaid"
+            ],
             "additionalProperties": false
         },
-        "fields": {"timeout": 30},
+        "fields": {
+            "timeout": 30
+        },
         "type": "NPAtlasCompoundTool",
-        "test_examples": [{"npaid": "NPA000001"}, {"npaid": "NPA019568"}, {"npaid": "NPA020973"}],
+        "test_examples": [
+            {
+                "npaid": "NPA000001"
+            },
+            {
+                "npaid": "NPA019568"
+            },
+            {
+                "npaid": "NPA020973"
+            }
+        ],
         "return_schema": {
             "oneOf": [
                 {
@@ -153,16 +263,16 @@
                     ]
                 },
                 {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "error"
-              ]
-            }
             ]
         }
     }

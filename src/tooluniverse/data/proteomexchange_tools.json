@@ -170,6 +170,48 @@
               },
               "contact": {
                 "type": "string"
+              },
+              "announce_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When ProteomeCentral announced the dataset, YYYY-MM-DD. The only date in the row, and what a 'recent datasets' question needs."
+              },
+              "repository": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which repository holds the data, e.g. 'PRIDE', 'MassIVE', 'jPOST'. It decides how the files are fetched, and the row searched on it without returning it."
+              },
+              "instrument": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Mass spectrometer the data was acquired on, e.g. 'Q Exactive HF'. For a proteomics dataset this is part of what the data IS."
+              },
+              "keywords": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The dataset's keywords. ProteomeCentral sends them as one comma-separated string with inconsistent spacing; they are split and trimmed here."
+              },
+              "publication": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The publication field as ProteomeCentral sends it, with its HTML stripped - usually one or more DOIs separated by semicolons."
+              },
+              "publication_dois": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The DOIs pulled out of that field, e.g. ['10.6019/PXD070403', '10.1016/J.JMCCPL.2026.100878']. The first is usually the dataset's own DOI and the rest the papers that used it."
               }
             }
           }

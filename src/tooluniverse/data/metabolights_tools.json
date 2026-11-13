@@ -62,7 +62,9 @@
           "default": 0
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/metabolights/ws/studies",
@@ -98,7 +100,9 @@
           "description": "MetaboLights study ID (e.g., 'MTBLS1')"
         }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/metabolights/ws/studies/{study_id}",
@@ -134,7 +138,9 @@
           "description": "MetaboLights study ID"
         }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/metabolights/ws/studies/{study_id}/assays",
@@ -144,7 +150,16 @@
       "type": "array",
       "description": "List of assays with metadata",
       "items": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The assay sheet's filename, e.g. 'a_MTBLS1_NMR_metabolite_profiling_NMR_spectroscopy.txt'. The name encodes the platform and the technique, and it is what must be fetched to get the per-sample measurements."
+          }
+        }
       }
     },
     "test_examples": [
@@ -165,7 +180,9 @@
           "description": "MetaboLights study ID"
         }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/metabolights/ws/studies/{study_id}/samples",
@@ -175,7 +192,17 @@
       "type": "array",
       "description": "List of samples, one object per row of the study's sample sheet (column name -> value)",
       "items": {
-        "type": "object"
+        "type": "object",
+        "description": "One sample row from the study's ISA-Tab sample sheet, keyed by COLUMN -- 'Source Name', 'Characteristics[Organism]', 'Factor Value[Gender]'. The column set is the study's own experimental design, not a fixed schema: the Characteristics[] columns say what was recorded about each sample and the Factor Value[] columns say what was VARIED, which is what defines the study's groups.",
+        "additionalProperties": {
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ],
+          "description": "That column's value for this sample."
+        }
       }
     },
     "test_examples": [
@@ -196,7 +223,9 @@
           "description": "MetaboLights study ID"
         }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/metabolights/ws/studies/{study_id}/files",
@@ -207,8 +236,28 @@
       "description": "File listings organized by category",
       "properties": {
         "study": {
-          "type": "array",
-          "description": "Study files"
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The study's files",
+          "items": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "One file with its name, type and size",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ]
+            }
+          }
         },
         "latest": {
           "type": "array",
@@ -217,6 +266,20 @@
         "private": {
           "type": "array",
           "description": "Private files"
+        },
+        "uploadPath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Where files are uploaded for this study"
+        },
+        "obfuscationCode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "MetaboLights' per-study access token, which appears in private-study URLs. Treat it as a credential rather than an identifier"
         }
       }
     },
@@ -250,7 +313,166 @@
       "type": "array",
       "description": "List of protocols with detailed methodology",
       "items": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The protocol's name, e.g. 'Sample collection'."
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "What was done, in full. This is the method the study's numbers rest on."
+          },
+          "protocolType": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "A term with its ontology, as ISA-Tab records it.",
+            "properties": {
+              "annotationValue": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The term as text. Empty string where the submitter typed nothing, which is not the same as null."
+              },
+              "termAccession": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its ontology URI. An empty accession means the text is free rather than controlled, so it cannot be matched across studies."
+              },
+              "termSource": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The ontology the term came from.",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its short name, e.g. 'NCIT', 'MTBLS'."
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What it is, e.g. 'NCI Thesaurus OBO Edition'."
+                  },
+                  "file": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where the ontology itself is published."
+                  },
+                  "version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which version the term was taken from. Empty string when the submitter did not record one, which means the accession cannot be pinned to a release."
+                  }
+                }
+              }
+            }
+          },
+          "uri": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "A URI for the protocol, where one was given. Empty string is common."
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Protocol version. Empty string is common."
+          },
+          "parameters": {
+            "type": "array",
+            "description": "The parameters the protocol declares. Their VALUES are per sample and live in the assay sheet, not here.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "parameterName": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "A term with its ontology, as ISA-Tab records it.",
+                  "properties": {
+                    "annotationValue": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The term as text. Empty string where the submitter typed nothing, which is not the same as null."
+                    },
+                    "termAccession": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its ontology URI. An empty accession means the text is free rather than controlled, so it cannot be matched across studies."
+                    },
+                    "termSource": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "The ontology the term came from.",
+                      "properties": {
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its short name, e.g. 'NCIT', 'MTBLS'."
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "What it is, e.g. 'NCI Thesaurus OBO Edition'."
+                        },
+                        "file": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Where the ontology itself is published."
+                        },
+                        "version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Which version the term was taken from. Empty string when the submitter did not record one, which means the accession cannot be pinned to a release."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "test_examples": [
@@ -283,7 +505,76 @@
       "type": "array",
       "description": "List of experimental factors (variables)",
       "items": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "factorName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The factor's name, e.g. 'Gender'. A factor is what the study VARIED -- its experimental design in one word."
+          },
+          "factorType": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "A term with its ontology, as ISA-Tab records it.",
+            "properties": {
+              "annotationValue": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The term as text. Empty string where the submitter typed nothing, which is not the same as null."
+              },
+              "termAccession": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its ontology URI. An empty accession means the text is free rather than controlled, so it cannot be matched across studies."
+              },
+              "termSource": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The ontology the term came from.",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its short name, e.g. 'NCIT', 'MTBLS'."
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What it is, e.g. 'NCI Thesaurus OBO Edition'."
+                  },
+                  "file": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where the ontology itself is published."
+                  },
+                  "version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which version the term was taken from. Empty string when the submitter did not record one, which means the accession cannot be pinned to a release."
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "test_examples": [
@@ -376,7 +667,137 @@
             "object",
             "array"
           ],
-          "description": "Reference compound record (object) with name, formula, inchi, inchikey, chebiId, metSpecies, hasNMR, hasMS, hasPathways flags; or the full list of MTBLC* accessions (array) when list=true."
+          "description": "Reference compound record (object) with name, formula, inchi, inchikey, chebiId, metSpecies, hasNMR, hasMS, hasPathways flags; or the full list of MTBLC* accessions (array) when list=true.",
+          "properties": {
+            "id": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "MetaboLights internal id."
+            },
+            "accession": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "MetaboLights compound accession, e.g. 'MTBLC10'."
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Compound name."
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Free-text description. Empty string on many entries."
+            },
+            "formula": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Molecular formula."
+            },
+            "inchi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChI string."
+            },
+            "inchikey": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChIKey -- the key for matching against another chemical database."
+            },
+            "iupacNames": {
+              "type": [
+                "array",
+                "string",
+                "null"
+              ],
+              "description": "IUPAC names, where any are recorded."
+            },
+            "chebiId": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The ChEBI entry this compound mirrors, e.g. 'CHEBI:10'. MetaboLights compounds are ChEBI-derived, so this is the authoritative record."
+            },
+            "ObjectType": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What kind of record this is, e.g. 'compound'."
+            },
+            "studyStatus": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether the record is PUBLIC or still private."
+            },
+            "updatedDate": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When it was last changed, in 'DD-Mon-YYYY HH:MM:SS' form."
+            },
+            "hasLiterature": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when literature is linked. These has* flags say what EXISTS for the compound, which is how to tell an empty section from an unfetched one."
+            },
+            "hasMS": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when mass-spectrometry data exists for it."
+            },
+            "hasNMR": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when NMR data exists."
+            },
+            "hasPathways": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when pathways are linked."
+            },
+            "hasReactions": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when reactions are linked."
+            },
+            "hasSpecies": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when species associations exist."
+            }
+          }
         },
         {
           "type": "object",

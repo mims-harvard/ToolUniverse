@@ -356,8 +356,17 @@ class TestBackwardCompatibility:
         self.tu.eager_load_tools([])
         self.tu.clear_cache()
 
+    @pytest.mark.network
     def test_cache_functionality(self):
-        """Test that caching functionality works."""
+        """Test that caching functionality works.
+
+        Marked network because it does: the body calls
+        UniProt_get_entry_by_accession live, against the 60-second
+        pytest-timeout, and `test_new_parameters_have_defaults` in this same
+        file is already marked for making the same kind of call. Without the
+        marker it runs in the unit tier, where it fails whenever UniProt is
+        slow -- which is also what turned CI red on an unrelated commit.
+        """
         # Test cache operations
         self.tu.clear_cache()
         

@@ -208,6 +208,33 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "details": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The comment's structured detail, whose shape depends on the comment type",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ],
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    }
                   }
                 }
               }
@@ -255,6 +282,64 @@
                         }
                       }
                     }
+                  },
+                  "featureId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "UniProt's identifier for the feature, e.g. a VAR_ or CARBOHYD id"
+                  },
+                  "evidences": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Evidence for the feature, each an ECO code with its source",
+                    "items": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "One evidence record",
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "alternativeSequence": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "For a variant feature, the sequence it changes to",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ],
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    }
                   }
                 }
               }
@@ -264,6 +349,47 @@
                 "integer",
                 "number"
               ]
+            },
+            "additional_publications": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Publications beyond the ones UniProt lists as primary",
+              "items": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ]
+              }
+            },
+            "references": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The entry's literature references, each with its citation and the scope it supports",
+              "items": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "One reference",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
             }
           },
           "required": [
@@ -426,8 +552,10 @@
     "return_schema": {
       "type": "array",
       "items": {
-        "type": "string"
-      }
+        "type": "string",
+        "description": "One alternative name."
+      },
+      "description": "The protein's alternative names, e.g. ['Antigen NY-CO-13', 'Phosphoprotein p53', 'Tumor suppressor p53']. The RECOMMENDED name is not in this list -- these are the other names the protein is published under, which is what makes an older paper's name resolvable."
     }
   },
   {
@@ -848,8 +976,10 @@
     "return_schema": {
       "type": "array",
       "items": {
-        "type": "string"
-      }
+        "type": "string",
+        "description": "One isoform accession."
+      },
+      "description": "The accession's isoform ids, e.g. ['P04637-1', 'P04637-2', ...]. The '-1' suffix is the CANONICAL isoform, which is the sequence any coordinate from the parent accession refers to; the others differ in sequence and their coordinates do not line up."
     }
   },
   {
@@ -958,6 +1088,88 @@
                       "integer",
                       "number"
                     ]
+                  },
+                  "entry_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "\"UniProtKB reviewed (Swiss-Prot)\" or \"UniProtKB unreviewed (TrEMBL)\""
+                  },
+                  "reviewed": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "The single biggest quality distinction in UniProt, which a search result used not to state"
+                  },
+                  "annotation_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "protein_existence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "e.g. \"1: Evidence at protein level\""
+                  },
+                  "organism_taxon_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "organism_common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_synonyms": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "keywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "secondary_accessions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "feature_count": {
+                    "type": "integer",
+                    "description": "Sequence features on the entry -- 48 on human insulin"
+                  },
+                  "feature_types": {
+                    "type": "object",
+                    "description": "The features broken down by type: signal peptides, disulfide bonds, natural variants. The features themselves come from UniProt_get_entry_by_accession, which a search of 500 entries cannot repeat."
+                  },
+                  "reference_count": {
+                    "type": "integer"
+                  },
+                  "first_reference": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The first citation in full, so a hit can be cited without a second call"
+                  },
+                  "cross_reference_count": {
+                    "type": "integer"
+                  },
+                  "cross_reference_databases": {
+                    "type": "object",
+                    "description": "Which databases the entry links to, with a count each -- \"this hit has PDB structures\" is what a search is scanned for"
                   }
                 }
               }
@@ -965,6 +1177,27 @@
             "normalization_note": {
               "type": "string",
               "description": "Present only when the submitted query was rewritten. Currently emitted when an 'organism_id:<taxid>' clause was rewritten to 'taxonomy_id:<taxid>', widening the scope to include descendant strains."
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more records match than this response carries. The field that says the answer is a page and not the whole set."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result was cut by a cap rather than reaching the end of the data."
+            },
+            "next_cursor": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cursor to pass for the next page. UniProt pages by cursor, not offset, so without this a result set cannot be continued at all."
             }
           },
           "required": [
@@ -1923,9 +2156,33 @@
                         }
                       }
                     }
+                  },
+                  "goTerms": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "GO terms for the cluster, each with its id and name."
                   }
                 }
               }
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more records match than this response carries. The field that says the answer is a page and not the whole set."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result was cut by a cap rather than reaching the end of the data."
             }
           },
           "required": [
@@ -2309,6 +2566,20 @@
                   }
                 }
               }
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more records match than this response carries. The field that says the answer is a page and not the whole set."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result was cut by a cap rather than reaching the end of the data."
             }
           },
           "required": [

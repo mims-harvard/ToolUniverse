@@ -58,6 +58,204 @@
         "num_sequences": 4,
         "seed": 37
       }
-    ]
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The designed sequences for one backbone.",
+          "required": [
+            "sequences",
+            "designs",
+            "n_designs"
+          ],
+          "properties": {
+            "model": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The exact ProteinMPNN build and weight set used, e.g. 'ProteinMPNN 8907e667 (stock loop, held resident) / vanilla_model_weights v_48_020'. Scores from different weight sets are not comparable."
+            },
+            "device": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Where it ran. 'cpu' -- this provider holds no GPU memory."
+            },
+            "weight_set": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "'vanilla' (ProteinMPNN as released) or 'soluble' (SolubleMPNN), echoing the request."
+            },
+            "seed": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The seed used. The same seed, backbone and temperature reproduce these sequences exactly."
+            },
+            "temperature": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The sampling temperature used, e.g. 0.1."
+            },
+            "n_residues": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many residues of the backbone were read, e.g. 40. Compare it with the structure you sent: waters, ligands and any residue without a complete N/CA/C/O are not counted, so a lower number than expected means part of the file was ignored."
+            },
+            "designed_chains": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The chains that were designed, e.g. ['A']. Every chain in the file is designed, so this is the list of chains that parsed.",
+              "items": {
+                "type": "string",
+                "description": "One chain id."
+              }
+            },
+            "native_sequence": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The backbone's OWN sequence, over the designed positions only. This is what seq_recovery is measured against."
+            },
+            "native_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The model's score for the native sequence on this backbone, e.g. 1.7105. It is the baseline the designs are judged against: a design scoring below it is more probable than the natural sequence under the model, and a design scoring above it is less."
+            },
+            "sequences": {
+              "type": "array",
+              "description": "The designed sequences, in sampling order. A convenience view: each one is also designs[].sequence, with its score beside it.",
+              "items": {
+                "type": "string",
+                "description": "One designed sequence, one letter per designed residue."
+              }
+            },
+            "designs": {
+              "type": "array",
+              "description": "One record per design, with the numbers that decide which to keep.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "T": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The temperature this design was sampled at."
+                  },
+                  "sample": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Its 1-based index in the sampling order."
+                  },
+                  "sequence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The designed sequence."
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Negative log-likelihood of the design over the DESIGNED positions, lower is better, e.g. 1.169. Compare it with native_score, not between backbones -- the scale depends on length and topology."
+                  },
+                  "global_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The same score over ALL positions, including any that were fixed. Equal to `score` when every chain was designed, which is this tool's case, and it is the figure to use if that ever differs."
+                  },
+                  "seq_recovery": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The fraction of designed positions that match native_sequence, e.g. 0.275. LOW RECOVERY IS NOT FAILURE: at temperature 0.1 ProteinMPNN routinely returns 25-40% identity to the natural sequence while scoring better than it, and recovery is not a measure of whether the design folds."
+                  }
+                }
+              }
+            },
+            "n_designs": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many designs were produced, over all temperatures."
+            },
+            "timing_s": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Wall-clock seconds inside the worker, which excludes the queue: requests run one at a time, so the time a caller waits can be longer.",
+              "properties": {
+                "parse": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Seconds spent reading the PDB text."
+                },
+                "design": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Seconds spent decoding sequences."
+                },
+                "total": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Seconds for the whole request inside the worker."
+                }
+              }
+            },
+            "peak_rss_gib": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The worker's peak resident memory, in GiB, e.g. 0.324. It is the HIGH WATER MARK FOR THE WORKER'S WHOLE LIFE, not for this request, so it does not fall back and a later request can report the same number without having used it."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "The request was refused or the call failed.",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "What went wrong, in words."
+            }
+          }
+        }
+      ]
+    }
   }
 ]

@@ -140,11 +140,26 @@ class ProgenetixTool(BaseTool):
                         "id"
                     ),
                     "pathological_stage": s.get("pathologicalStage", {}).get("label"),
+                    # TNM is three findings, not one: T, N and M are
+                    # separate codes and the row kept the first label it
+                    # found. A sample staged T2 N1 M0 came back as "T2".
                     "pathological_tnm": s.get("pathologicalTnmFinding", [{}])[0].get(
                         "label"
                     )
                     if s.get("pathologicalTnmFinding")
                     else None,
+                    "pathological_tnm_findings": [
+                        {"id": finding.get("id"), "label": finding.get("label")}
+                        for finding in (s.get("pathologicalTnmFinding") or [])
+                        if isinstance(finding, dict)
+                    ],
+                    "pathological_stage_id": (s.get("pathologicalStage") or {}).get(
+                        "id"
+                    ),
+                    "biosample_status_id": (s.get("biosampleStatus") or {}).get("id"),
+                    "sample_origin_type_id": (s.get("sampleOriginType") or {}).get(
+                        "id"
+                    ),
                     "sample_origin_type": s.get("sampleOriginType", {}).get("label"),
                     "external_references": external_references,
                     "external_references_count": len(external_references),
@@ -329,6 +344,15 @@ class ProgenetixTool(BaseTool):
                     "cohort_size": c.get("cohortSize"),
                     "cohort_type": c.get("cohortType"),
                     "data_types": [dt.get("id") for dt in c.get("cohortDataTypes", [])],
+                    # What the collection IS and when it last changed. A list
+                    # of ids, names and sizes cannot be chosen between, and
+                    # `reference` is the paper or portal the cohort comes
+                    # from.
+                    "entity": c.get("entity"),
+                    "reference": c.get("reference"),
+                    "updated": c.get("updated"),
+                    "description": c.get("description"),
+                    "cohort_design": c.get("cohortDesign"),
                 }
             )
 
@@ -403,6 +427,20 @@ class ProgenetixTool(BaseTool):
                     ),
                     "external_references": external_references,
                     "external_references_count": len(external_references),
+                    # Which cohorts the sample belongs to. A CNV search
+                    # answers samples from several collations at once, and
+                    # which study a sample came from is how its CNV is read.
+                    "cohorts": [
+                        {"id": cohort.get("id"), "label": cohort.get("label")}
+                        for cohort in (s.get("cohorts") or [])
+                        if isinstance(cohort, dict)
+                    ],
+                    "pathological_stage": (s.get("pathologicalStage") or {}).get(
+                        "label"
+                    ),
+                    "sample_origin_type": (s.get("sampleOriginType") or {}).get(
+                        "label"
+                    ),
                 }
                 samples.append(sample)
 
@@ -476,6 +514,9 @@ class ProgenetixTool(BaseTool):
         intervals = [
             {
                 "no": iv.get("no"),
+                # The interval's own id, which is how a bin is referred to
+                # between calls: `no` is its position in this response.
+                "id": iv.get("id"),
                 "reference_name": iv.get("referenceName"),
                 "cytobands": iv.get("cytobands"),
                 "start": iv.get("start"),

@@ -70,6 +70,34 @@
                 "pdbx_release_status": {
                   "type": "string",
                   "description": "Release status (REL = released)"
+                },
+                "pdbx_ambiguous_flag": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "'Y' when the component's identity or geometry is ambiguous in the entries that use it, 'N' when not."
+                },
+                "pdbx_initial_date": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When the component was first defined, e.g. '1999-07-08T00:00:00.000+00:00'."
+                },
+                "pdbx_modified_date": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When its definition last changed, e.g. '2011-06-04...'. Chemical component definitions are revised, which can change atom names between releases."
+                },
+                "pdbx_processing_site": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which wwPDB site processed it, e.g. 'EBI', 'RCSB', 'PDBj'."
                 }
               }
             },
@@ -114,9 +142,84 @@
                   },
                   "type": {
                     "type": "string"
+                  },
+                  "program_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Version of the program that generated the identifier, e.g. '10.04'. InChI and SMILES differ between generator versions, so a string comparison across versions can fail on the same molecule."
                   }
                 }
               }
+            },
+            "pdbx_chem_comp_audit": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "The definition's change history, each with an action_type such as 'Create component'. What changed and when."
+            },
+            "rcsb_chem_comp_container_identifiers": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Cross-references for the component - comp_id, drugbank_id and rcsb_id. The join to DrugBank, which is how a ligand is matched to a drug."
+            },
+            "rcsb_chem_comp_descriptor": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Canonical descriptors - InChI, InChIKey, SMILES and the stereo-aware SMILES. The machine-readable structure."
+            },
+            "rcsb_chem_comp_info": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Atom and bond counts including the chiral and aromatic breakdowns. What says whether the component has stereochemistry at all."
+            },
+            "rcsb_chem_comp_related": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "Related components, each with its comp_id and the resource relating them - 6 for ATP. Analogues and parent compounds, which is how a modified nucleotide is traced to its parent."
+            },
+            "rcsb_chem_comp_synonyms": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "Other names for the component, each with its provenance - 9 for ATP."
+            },
+            "rcsb_chem_comp_target": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "Proteins the component is known to target, each with its interaction type - 43 for ATP. The pharmacology attached to the ligand definition itself."
+            },
+            "rcsb_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The component's PDB chemical id, e.g. 'ATP'."
             }
           },
           "not": {

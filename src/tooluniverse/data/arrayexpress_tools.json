@@ -118,7 +118,9 @@
           "description": "ArrayExpress experiment ID (e.g., 'E-MTAB-1234')"
         }
       },
-      "required": ["experiment_id"]
+      "required": [
+        "experiment_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/arrayexpress/json/v3/experiments/{experiment_id}",
@@ -136,6 +138,23 @@
         "section": {
           "type": "object",
           "description": "Experiment metadata and sections"
+        },
+        "attributes": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "The experiment's metadata as name/value pairs, e.g. {'name': 'Title', 'value': 'Epigen...'}. The title, design and protocols all live in here rather than as named fields."
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "What kind of record it is, e.g. 'submission'."
         }
       }
     },
@@ -157,7 +176,9 @@
           "description": "ArrayExpress experiment ID"
         }
       },
-      "required": ["experiment_id"]
+      "required": [
+        "experiment_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/arrayexpress/files/{experiment_id}",
@@ -200,7 +221,9 @@
           "description": "ArrayExpress experiment ID"
         }
       },
-      "required": ["experiment_id"]
+      "required": [
+        "experiment_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/arrayexpress/experiments/{experiment_id}/samples",
@@ -212,7 +235,38 @@
       "description": "List of samples with their attributes",
       "items": {
         "type": "object",
-        "description": "Sample with key-value pairs of attributes"
+        "description": "Sample with key-value pairs of attributes",
+        "properties": {
+          "No": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "The sample's row number in the experiment."
+          },
+          "age": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Donor age as recorded, with its unit inline."
+          },
+          "tissue": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Tissue the sample came from."
+          },
+          "No. of Samples": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "How many samples the row stands for, as a STRING. The key contains both a full stop and spaces, so it has to be read by explicit name."
+          }
+        }
       }
     },
     "test_examples": [

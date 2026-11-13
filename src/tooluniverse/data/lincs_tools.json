@@ -45,8 +45,172 @@
     ],
     "return_schema": {
       "type": "array",
+      "description": "One row per matching L1000 signature.",
       "items": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "signature_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "SigCom LINCS signature uuid."
+          },
+          "drug_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Perturbagen name."
+          },
+          "cell_line": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Cell line the perturbation was applied to."
+          },
+          "dose": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Perturbation dose as recorded, e.g. '10uM'."
+          },
+          "time_point": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Perturbation duration, e.g. '6H'."
+          },
+          "perturbation_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "e.g. trt_cp for a compound treatment."
+          },
+          "tissue": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "disease": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "anatomy": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pubchem_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "PubChem CID of the perturbagen."
+          },
+          "library_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "SigCom library the signature belongs to."
+          },
+          "cmap_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "CMap identifier, which joins this signature to the rest of the LINCS ecosystem, e.g. 'CPC006_TYKNU_6H:BRD-A35108200-001-04-7:10'."
+          },
+          "local_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "SigCom's own local identifier."
+          },
+          "disease_ontology_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Disease Ontology id, where the signature carries one."
+          },
+          "data_level": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "LINCS processing level; 5 is a differential expression signature."
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Release version of the signature."
+          },
+          "created": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "When the signature file was created."
+          },
+          "data_file": {
+            "type": "object",
+            "description": "Where the signature's data is and how to verify it. The search returned the signature's annotations -- drug, cell line, dose, time -- and nothing that led to the signature itself, so a caller could not fetch the differential expression it describes.",
+            "properties": {
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Resolvable URL to the signature file, an https://lincs-dcic.s3.amazonaws.com/... .tsv."
+              },
+              "filename": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "File name as published."
+              },
+              "size_in_bytes": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "uncompressed_size_in_bytes": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "sha256": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Checksum, so a caller can verify what arrived."
+              },
+              "md5": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -91,7 +255,51 @@
     "return_schema": {
       "type": "array",
       "items": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "library_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The library's identifier."
+          },
+          "dataset": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The dataset it belongs to."
+          },
+          "dataset_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "What kind of dataset."
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "What the library contains."
+          },
+          "assay": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The assay used."
+          },
+          "organism": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The organism."
+          }
+        }
       }
     }
   }

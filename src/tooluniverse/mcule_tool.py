@@ -260,8 +260,18 @@ class MculeTool(BaseTool):
                     {
                         "filename": f.get("filename"),
                         "file_type": f.get("file_type"),
+                        "file_type_display": f.get("file_type_display"),
                         "size_mb": f.get("size_mb"),
                         "download_url": f.get("download_url"),
+                        # The means of checking the download. These files run
+                        # to 2.4 GB; the row gave the URL and the size and no
+                        # way to tell a complete download from a truncated
+                        # one. This is the sixth tool in this effort with the
+                        # same shape -- LINCS, Figshare, MassBank and ENA
+                        # were the others -- the data's location declared and
+                        # the means of verifying it dropped.
+                        "sha256_checksum": f.get("sha256_checksum"),
+                        "file_id": f.get("id"),
                     }
                 )
             databases.append(
@@ -309,8 +319,13 @@ class MculeTool(BaseTool):
                 {
                     "filename": f.get("filename"),
                     "file_type": f.get("file_type"),
+                    "file_type_display": f.get("file_type_display"),
                     "size_mb": f.get("size_mb"),
                     "download_url": f.get("download_url"),
+                    # Same omission as list_databases: the URL without the
+                    # checksum that verifies what it downloads.
+                    "sha256_checksum": f.get("sha256_checksum"),
+                    "file_id": f.get("id"),
                 }
             )
 

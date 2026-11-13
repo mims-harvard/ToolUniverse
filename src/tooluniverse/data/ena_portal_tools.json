@@ -310,6 +310,35 @@
               },
               "instrument_platform": {
                 "type": "string"
+              },
+              "fastq_md5": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "MD5 of each FASTQ file, semicolon-separated in file order. A paired-end run returns two checksums in one string, so a caller verifying a download has to split on ';' and pair them with fastq_ftp - taking the whole string as one checksum fails every time"
+              },
+              "fastq_bytes": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Size of each FASTQ file in bytes, semicolon-separated in the same order as fastq_md5"
+              },
+              "read_count": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ],
+                "description": "Reads in the run, as a string"
+              },
+              "scientific_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Scientific name of the sequenced organism"
               }
             }
           }

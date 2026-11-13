@@ -74,7 +74,12 @@
         "query"
       ]
     },
-    "optional_api_keys": ["SERPBASE_API_KEY", "FIRECRAWL_API_KEY", "OUTCRAWL_API_KEY", "KEENABLE_API_KEY"],
+    "optional_api_keys": [
+      "SERPBASE_API_KEY",
+      "FIRECRAWL_API_KEY",
+      "OUTCRAWL_API_KEY",
+      "KEENABLE_API_KEY"
+    ],
     "api_key_info": {
       "SERPBASE_API_KEY": {
         "domain": "Other",
@@ -163,11 +168,43 @@
               }
             },
             "provider_errors": {
-              "type": "object",
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
                 "duckduckgo": {
                   "type": "string"
+                },
+                "auto": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Why the automatic provider choice failed"
+                },
+                "bing": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Why Bing failed"
+                },
+                "brave": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Why Brave failed"
                 }
+              },
+              "description": "Why each search provider failed, keyed by provider. An empty result with provider errors is not the same as an empty result from a working provider",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The error that provider returned"
               }
             },
             "provider_notice": {
@@ -327,11 +364,43 @@
               }
             },
             "provider_errors": {
-              "type": "object",
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
                 "duckduckgo": {
                   "type": "string"
+                },
+                "auto": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Why the automatic provider choice failed"
+                },
+                "bing": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Why Bing failed"
+                },
+                "brave": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Why Brave failed"
                 }
+              },
+              "description": "Why each search provider failed, keyed by provider. An empty result with provider errors is not the same as an empty result from a working provider",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The error that provider returned"
               }
             },
             "provider_notice": {

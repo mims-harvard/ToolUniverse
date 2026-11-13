@@ -70,7 +70,7 @@
                       "number",
                       "null"
                     ],
-                    "description": "Id of the published version: pass it as guideline_id to MAGICapp_get_recommendations, MAGICapp_get_sections or MAGICapp_get_guideline"
+                    "description": "Id of the published version: pass it as guideline_id to MAGICapp_get_recommendations, MAGICapp_get_sections or MAGICapp_get_guideline; check isLatestPublished before using it"
                   },
                   "guidelineId": {
                     "type": [
@@ -108,7 +108,8 @@
                     "type": [
                       "string",
                       "null"
-                    ]
+                    ],
+                    "description": "Date of the guideline itself, which can be years before lastEdit"
                   },
                   "publishedRecommendationCount": {
                     "type": [
@@ -125,6 +126,116 @@
                   },
                   "url": {
                     "type": "string"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The guideline's own description, one of the fields the query is matched against, capped at metadata.description_characters"
+                  },
+                  "description_truncated": {
+                    "type": "boolean",
+                    "description": "True when description was cut at that cap"
+                  },
+                  "institutionName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Institution that owns the guideline; a searched field"
+                  },
+                  "institutionShortName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Institution's short name"
+                  },
+                  "institutionUrl": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Institution's website"
+                  },
+                  "mainEditor": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Editor or editorial team named by MAGICapp"
+                  },
+                  "countryFlag": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Country code MAGICapp shows as a flag"
+                  },
+                  "publishCreationTime": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When this published version was created"
+                  },
+                  "publishLastSearchDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the evidence was last searched: the GRADE currency marker"
+                  },
+                  "startDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When work on the guideline started"
+                  },
+                  "lastEdit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the guideline was last edited, a living guideline's currency"
+                  },
+                  "versionLabel": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Version of the published guideline, e.g. '1.2'"
+                  },
+                  "isLatestPublished": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "False when publishedId is a superseded published version"
+                  },
+                  "publishedPicoCount": {
+                    "type": [
+                      "number",
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of published PICO questions"
+                  },
+                  "pdfPublishedPath": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Direct link to the published guideline as PDF"
+                  },
+                  "jsonPath": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Direct link to the published guideline as JSON"
                   }
                 }
               }
@@ -522,6 +633,13 @@
             },
             "keyInfoJudgementType": {
               "type": "string"
+            },
+            "enableDA": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the guideline has decision aids enabled in MAGICapp, e.g. true."
             }
           },
           "required": [
@@ -2212,6 +2330,20 @@
                           }
                         }
                       }
+                    },
+                    "setting": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Clinical setting the PICO applies to. Measured null on all 3 PICOs -- absence means unstated, so the PICO should not be assumed to be setting-general."
+                    },
+                    "showPicots": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when the PICO is displayed in full PICOT form (adding timing), e.g. false. A display flag, not a property of the evidence."
                     }
                   }
                 }
@@ -2747,6 +2879,27 @@
                     "number"
                   ]
                 }
+              },
+              "showAdaptation": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the recommendation is displayed as an adaptation of another guideline, e.g. false."
+              },
+              "statusComment": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What that status means in words, e.g. 'Evidence search updated through November 26, 2025'. This is the field that dates the EVIDENCE rather than the document -- a recommendation published in 2026 on a 2025 evidence search is current only up to that search."
+              },
+              "statusDate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Date of the recommendation's current status, 'YYYY-MM-DD', e.g. '2026-03-02'. Present on 4 of the 6 recommendations measured."
               }
             }
           }

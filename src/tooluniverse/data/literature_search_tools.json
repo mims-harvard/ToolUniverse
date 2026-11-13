@@ -345,7 +345,39 @@
         "object",
         "null"
       ],
-      "description": "Multi-agent search results with session_id and results summary"
+      "description": "Multi-agent search results with session_id and results summary",
+      "properties": {
+        "success": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether the search completed."
+        },
+        "session_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Identifier for the run."
+        },
+        "results": {
+          "type": [
+            "array",
+            "object",
+            "null"
+          ],
+          "description": "What the agents found."
+        },
+        "missing_tools": {
+          "type": "array",
+          "description": "Tools the search wanted and could not load. Each absence narrows the search without failing it.",
+          "items": {
+            "type": "string",
+            "description": "One missing tool name."
+          }
+        }
+      }
     }
   }
 ]

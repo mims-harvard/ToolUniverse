@@ -1,7 +1,7 @@
 """
 DepMap_get_cell_lines
 
-Get list of cancer cell lines from DepMap/Sanger with metadata. Filter by tissue or cancer type. ...
+Get a page of cancer cell line and organoid models from DepMap/Sanger with their metadata. Each r...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def DepMap_get_cell_lines(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get list of cancer cell lines from DepMap/Sanger with metadata. Filter by tissue or cancer type. ...
+    Get a page of cancer cell line and organoid models from DepMap/Sanger with their metadata. Each r...
 
     Parameters
     ----------

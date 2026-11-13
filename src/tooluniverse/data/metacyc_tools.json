@@ -28,6 +28,53 @@
         },
         "data": {
           "type": "object"
+        },
+        "error_details": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Structured detail for the failure, present alongside 'error' whenever ToolUniverse itself refused the call: 'type' (e.g. 'ToolUnavailableError'), 'message', 'retriable' (false for a missing API key -- retrying will not help), 'next_steps' (what the caller can actually do) and 'details'. The error string alone does not say whether a retry is worth attempting.",
+          "properties": {
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The error class, e.g. 'ToolUnavailableError'."
+            },
+            "message": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The same text as 'error'."
+            },
+            "retriable": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "False when retrying cannot succeed, as for a missing credential."
+            },
+            "next_steps": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Concrete actions that would make the call work."
+            },
+            "details": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Any extra machine-readable context; frequently empty."
+            }
+          }
         }
       }
     },
@@ -45,14 +92,14 @@
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account email \u2014 unlocks MetaCyc pathway/compound/reaction web services.",
+        "purpose": "BioCyc account email — unlocks MetaCyc pathway/compound/reaction web services.",
         "without": "MetaCyc tools are blocked without an account (paired with the password)."
       },
       "BIOCYC_PASSWORD": {
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account password \u2014 authenticates the MetaCyc web-service session.",
+        "purpose": "BioCyc account password — authenticates the MetaCyc web-service session.",
         "without": "Required together with the BioCyc email."
       }
     },
@@ -89,6 +136,53 @@
         },
         "data": {
           "type": "object"
+        },
+        "error_details": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Structured detail for the failure, present alongside 'error' whenever ToolUniverse itself refused the call: 'type' (e.g. 'ToolUnavailableError'), 'message', 'retriable' (false for a missing API key -- retrying will not help), 'next_steps' (what the caller can actually do) and 'details'. The error string alone does not say whether a retry is worth attempting.",
+          "properties": {
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The error class, e.g. 'ToolUnavailableError'."
+            },
+            "message": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The same text as 'error'."
+            },
+            "retriable": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "False when retrying cannot succeed, as for a missing credential."
+            },
+            "next_steps": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Concrete actions that would make the call work."
+            },
+            "details": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Any extra machine-readable context; frequently empty."
+            }
+          }
         }
       }
     },
@@ -106,14 +200,14 @@
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account email \u2014 unlocks MetaCyc pathway/compound/reaction web services.",
+        "purpose": "BioCyc account email — unlocks MetaCyc pathway/compound/reaction web services.",
         "without": "MetaCyc tools are blocked without an account (paired with the password)."
       },
       "BIOCYC_PASSWORD": {
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account password \u2014 authenticates the MetaCyc web-service session.",
+        "purpose": "BioCyc account password — authenticates the MetaCyc web-service session.",
         "without": "Required together with the BioCyc email."
       }
     },
@@ -150,6 +244,53 @@
         },
         "data": {
           "type": "object"
+        },
+        "error_details": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Structured detail for the failure, present alongside 'error' whenever ToolUniverse itself refused the call: 'type' (e.g. 'ToolUnavailableError'), 'message', 'retriable' (false for a missing API key -- retrying will not help), 'next_steps' (what the caller can actually do) and 'details'. The error string alone does not say whether a retry is worth attempting.",
+          "properties": {
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The error class, e.g. 'ToolUnavailableError'."
+            },
+            "message": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The same text as 'error'."
+            },
+            "retriable": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "False when retrying cannot succeed, as for a missing credential."
+            },
+            "next_steps": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Concrete actions that would make the call work."
+            },
+            "details": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Any extra machine-readable context; frequently empty."
+            }
+          }
         }
       }
     },
@@ -167,14 +308,14 @@
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account email \u2014 unlocks MetaCyc pathway/compound/reaction web services.",
+        "purpose": "BioCyc account email — unlocks MetaCyc pathway/compound/reaction web services.",
         "without": "MetaCyc tools are blocked without an account (paired with the password)."
       },
       "BIOCYC_PASSWORD": {
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account password \u2014 authenticates the MetaCyc web-service session.",
+        "purpose": "BioCyc account password — authenticates the MetaCyc web-service session.",
         "without": "Required together with the BioCyc email."
       }
     },
@@ -211,6 +352,53 @@
         },
         "data": {
           "type": "object"
+        },
+        "error_details": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Structured detail for the failure, present alongside 'error' whenever ToolUniverse itself refused the call: 'type' (e.g. 'ToolUnavailableError'), 'message', 'retriable' (false for a missing API key -- retrying will not help), 'next_steps' (what the caller can actually do) and 'details'. The error string alone does not say whether a retry is worth attempting.",
+          "properties": {
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The error class, e.g. 'ToolUnavailableError'."
+            },
+            "message": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The same text as 'error'."
+            },
+            "retriable": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "False when retrying cannot succeed, as for a missing credential."
+            },
+            "next_steps": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Concrete actions that would make the call work."
+            },
+            "details": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Any extra machine-readable context; frequently empty."
+            }
+          }
         }
       }
     },
@@ -228,14 +416,14 @@
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account email \u2014 unlocks MetaCyc pathway/compound/reaction web services.",
+        "purpose": "BioCyc account email — unlocks MetaCyc pathway/compound/reaction web services.",
         "without": "MetaCyc tools are blocked without an account (paired with the password)."
       },
       "BIOCYC_PASSWORD": {
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account password \u2014 authenticates the MetaCyc web-service session.",
+        "purpose": "BioCyc account password — authenticates the MetaCyc web-service session.",
         "without": "Required together with the BioCyc email."
       }
     },

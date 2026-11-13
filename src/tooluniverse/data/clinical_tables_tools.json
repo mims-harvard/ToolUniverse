@@ -309,38 +309,66 @@
           "default": 20
         }
       },
-      "required": ["terms"]
+      "required": [
+        "terms"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "total_count": {"type": "integer"},
-            "count": {"type": "integer"},
-            "search_terms": {"type": "string"},
+            "total_count": {
+              "type": "integer"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "search_terms": {
+              "type": "string"
+            },
             "results": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "code": {"type": "string", "description": "HCPCS Level II code."},
-                  "display": {"type": "string", "description": "Official short description."}
+                  "code": {
+                    "type": "string",
+                    "description": "HCPCS Level II code."
+                  },
+                  "display": {
+                    "type": "string",
+                    "description": "Official short description."
+                  }
                 }
               }
             }
           },
-          "required": ["results"]
+          "required": [
+            "results"
+          ]
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"terms": "wheelchair", "max_results": 5}
+      {
+        "terms": "wheelchair",
+        "max_results": 5
+      }
     ]
   },
   {
@@ -360,41 +388,81 @@
           "default": 20
         }
       },
-      "required": ["terms"]
+      "required": [
+        "terms"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "total_count": {"type": "integer"},
-            "count": {"type": "integer"},
-            "search_terms": {"type": "string"},
+            "total_count": {
+              "type": "integer"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "search_terms": {
+              "type": "string"
+            },
             "results": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "code": {"type": "string", "description": "Star allele designation, e.g. 'CYP2D6*18'."},
-                  "allele": {"type": "string"},
-                  "nucleotide_change": {"type": "string"},
-                  "alternate_name": {"type": "string"},
-                  "protein_change": {"type": "string"}
+                  "code": {
+                    "type": "string",
+                    "description": "Star allele designation, e.g. 'CYP2D6*18'."
+                  },
+                  "allele": {
+                    "type": "string"
+                  },
+                  "nucleotide_change": {
+                    "type": "string"
+                  },
+                  "alternate_name": {
+                    "type": "string"
+                  },
+                  "protein_change": {
+                    "type": "string"
+                  },
+                  "unused": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "A field the upstream returns and never populates - measured NULL on all 5 results. Declared so that its emptiness is a documented fact rather than a suspected dropped field."
+                  }
                 }
               }
             }
           },
-          "required": ["results"]
+          "required": [
+            "results"
+          ]
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"terms": "CYP2D6", "max_results": 5}
+      {
+        "terms": "CYP2D6",
+        "max_results": 5
+      }
     ]
   },
   {
@@ -409,7 +477,10 @@
           "description": "Provider or organization name to search, e.g. 'Smith', 'Mayo Clinic'."
         },
         "organization": {
-          "type": ["boolean", "null"],
+          "type": [
+            "boolean",
+            "null"
+          ],
           "description": "Search organizations (hospitals, clinics) instead of individual providers. Default false."
         },
         "max_results": {
@@ -418,43 +489,82 @@
           "default": 20
         }
       },
-      "required": ["terms"]
+      "required": [
+        "terms"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "total_count": {"type": "integer"},
-            "count": {"type": "integer"},
-            "search_terms": {"type": "string"},
+            "total_count": {
+              "type": "integer"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "search_terms": {
+              "type": "string"
+            },
             "results": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "code": {"type": "string", "description": "National Provider Identifier (NPI)."},
-                  "name.full": {"type": "string"},
-                  "NPI": {"type": "string"},
-                  "provider_type": {"type": "string"},
-                  "addr_practice.full": {"type": "string"},
-                  "is_organization": {"type": "boolean"}
+                  "code": {
+                    "type": "string",
+                    "description": "National Provider Identifier (NPI)."
+                  },
+                  "name.full": {
+                    "type": "string"
+                  },
+                  "NPI": {
+                    "type": "string"
+                  },
+                  "provider_type": {
+                    "type": "string"
+                  },
+                  "addr_practice.full": {
+                    "type": "string"
+                  },
+                  "is_organization": {
+                    "type": "boolean"
+                  }
                 }
               }
             }
           },
-          "required": ["results"]
+          "required": [
+            "results"
+          ]
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"terms": "Smith", "max_results": 5},
-      {"terms": "Mayo Clinic", "organization": true, "max_results": 5}
+      {
+        "terms": "Smith",
+        "max_results": 5
+      },
+      {
+        "terms": "Mayo Clinic",
+        "organization": true,
+        "max_results": 5
+      }
     ]
   }
 ]

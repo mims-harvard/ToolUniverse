@@ -17,12 +17,21 @@
                 "mhc_class": {
                     "type": "string",
                     "description": "MHC class restriction (I or II).",
-                    "enum": ["I", "II"]
+                    "enum": [
+                        "I",
+                        "II"
+                    ]
                 },
                 "qualitative_measure": {
                     "type": "string",
                     "description": "Filter by assay result.",
-                    "enum": ["Positive", "Negative", "Positive-High", "Positive-Intermediate", "Positive-Low"]
+                    "enum": [
+                        "Positive",
+                        "Negative",
+                        "Positive-High",
+                        "Positive-Intermediate",
+                        "Positive-Low"
+                    ]
                 },
                 "limit": {
                     "type": "integer",
@@ -37,14 +46,23 @@
                 "select": {
                     "description": "Columns to return (array of strings). Example: ['tcell_id','linear_sequence','mhc_restriction','qualitative_measure'].",
                     "oneOf": [
-                        {"type": "string"},
-                        {"type": "array", "items": {"type": "string"}}
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
                     ]
                 },
                 "filters": {
                     "type": "object",
                     "description": "Advanced PostgREST filters (e.g., {\"source_organism_iri\":\"eq.NCBITaxon:11320\"}).",
-                    "additionalProperties": {"type": "string"}
+                    "additionalProperties": {
+                        "type": "string"
+                    }
                 }
             },
             "required": []
@@ -55,14 +73,54 @@
             "items": {
                 "type": "object",
                 "properties": {
-                    "tcell_id": {"type": ["integer", "null"]},
-                    "linear_sequence": {"type": ["string", "null"]},
-                    "structure_type": {"type": ["string", "null"]},
-                    "mhc_restriction": {"type": ["string", "null"]},
-                    "mhc_class": {"type": ["string", "null"]},
-                    "qualitative_measure": {"type": ["string", "null"]},
-                    "pubmed_id": {"type": ["string", "null"]},
-                    "journal_name": {"type": ["string", "null"]}
+                    "tcell_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "linear_sequence": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "structure_type": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "mhc_restriction": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "mhc_class": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "qualitative_measure": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "pubmed_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "journal_name": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
                 },
                 "additionalProperties": true
             }
@@ -71,7 +129,13 @@
             {
                 "sequence": "GILGFVFTL",
                 "limit": 3,
-                "select": ["tcell_id", "linear_sequence", "mhc_restriction", "qualitative_measure", "pubmed_id"]
+                "select": [
+                    "tcell_id",
+                    "linear_sequence",
+                    "mhc_restriction",
+                    "qualitative_measure",
+                    "pubmed_id"
+                ]
             },
             {
                 "sequence_contains": "SIINFEKL",
@@ -81,12 +145,26 @@
         ],
         "fields": {
             "endpoint": "/tcell_search",
-            "default_params": {"order": "tcell_id.asc"},
+            "default_params": {
+                "order": "tcell_id.asc"
+            },
             "shorthand_filters": {
-                "sequence": {"column": "linear_sequence", "op": "eq"},
-                "sequence_contains": {"column": "linear_sequence", "op": "ilike_contains"},
-                "mhc_class": {"column": "mhc_class", "op": "eq"},
-                "qualitative_measure": {"column": "qualitative_measure", "op": "eq"}
+                "sequence": {
+                    "column": "linear_sequence",
+                    "op": "eq"
+                },
+                "sequence_contains": {
+                    "column": "linear_sequence",
+                    "op": "ilike_contains"
+                },
+                "mhc_class": {
+                    "column": "mhc_class",
+                    "op": "eq"
+                },
+                "qualitative_measure": {
+                    "column": "qualitative_measure",
+                    "op": "eq"
+                }
             }
         }
     },
@@ -110,14 +188,23 @@
                 "select": {
                     "description": "Columns to return.",
                     "oneOf": [
-                        {"type": "string"},
-                        {"type": "array", "items": {"type": "string"}}
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
                     ]
                 },
                 "filters": {
                     "type": "object",
                     "description": "PostgREST filters, e.g. {\"chain2_cdr3_seq\": \"eq.ASSQDRDTQY\"}. Key columns: receptor_group_id, receptor_type (e.g. alphabeta), chain1_cdr3_seq (alpha/gamma CDR3), chain2_cdr3_seq (beta/delta CDR3), receptor_chain1_types, receptor_chain2_types, receptor_species_names, receptor_names, pubmed_ids. There are no cdr3_alpha, cdr3_beta, v_gene or j_gene columns.",
-                    "additionalProperties": {"type": "string"}
+                    "additionalProperties": {
+                        "type": "string"
+                    }
                 }
             },
             "required": []
@@ -128,9 +215,24 @@
             "items": {
                 "type": "object",
                 "properties": {
-                    "receptor_group_id": {"type": ["integer", "null"]},
-                    "receptor_type": {"type": ["string", "null"]},
-                    "receptor_name": {"type": ["string", "null"]}
+                    "receptor_group_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "receptor_type": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "receptor_name": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
                 },
                 "additionalProperties": true
             }
@@ -138,12 +240,18 @@
         "test_examples": [
             {
                 "limit": 5,
-                "select": ["receptor_group_id", "receptor_type", "receptor_name"]
+                "select": [
+                    "receptor_group_id",
+                    "receptor_type",
+                    "receptor_name"
+                ]
             }
         ],
         "fields": {
             "endpoint": "/tcr_search",
-            "default_params": {"order": "receptor_group_id.asc"}
+            "default_params": {
+                "order": "receptor_group_id.asc"
+            }
         }
     },
     {
@@ -166,14 +274,23 @@
                 "select": {
                     "description": "Columns to return.",
                     "oneOf": [
-                        {"type": "string"},
-                        {"type": "array", "items": {"type": "string"}}
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
                     ]
                 },
                 "filters": {
                     "type": "object",
                     "description": "PostgREST filters. Key columns: receptor_group_id, receptor_type, receptor_name, chain_type, v_gene, j_gene.",
-                    "additionalProperties": {"type": "string"}
+                    "additionalProperties": {
+                        "type": "string"
+                    }
                 }
             },
             "required": []
@@ -184,9 +301,24 @@
             "items": {
                 "type": "object",
                 "properties": {
-                    "receptor_group_id": {"type": ["integer", "null"]},
-                    "receptor_type": {"type": ["string", "null"]},
-                    "receptor_name": {"type": ["string", "null"]}
+                    "receptor_group_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "receptor_type": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "receptor_name": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
                 },
                 "additionalProperties": true
             }
@@ -194,12 +326,18 @@
         "test_examples": [
             {
                 "limit": 5,
-                "select": ["receptor_group_id", "receptor_type", "receptor_name"]
+                "select": [
+                    "receptor_group_id",
+                    "receptor_type",
+                    "receptor_name"
+                ]
             }
         ],
         "fields": {
             "endpoint": "/bcr_search",
-            "default_params": {"order": "receptor_group_id.asc"}
+            "default_params": {
+                "order": "receptor_group_id.asc"
+            }
         }
     },
     {
@@ -226,17 +364,28 @@
                 "select": {
                     "description": "Columns to return.",
                     "oneOf": [
-                        {"type": "string"},
-                        {"type": "array", "items": {"type": "string"}}
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
                     ]
                 },
                 "filters": {
                     "type": "object",
                     "description": "Additional PostgREST filters.",
-                    "additionalProperties": {"type": "string"}
+                    "additionalProperties": {
+                        "type": "string"
+                    }
                 }
             },
-            "required": ["epitope_id"]
+            "required": [
+                "epitope_id"
+            ]
         },
         "return_schema": {
             "type": "array",
@@ -244,11 +393,43 @@
             "items": {
                 "type": "object",
                 "properties": {
-                    "tcell_id": {"type": ["integer", "null"]},
-                    "structure_id": {"type": ["integer", "null"]},
-                    "linear_sequence": {"type": ["string", "null"]},
-                    "mhc_restriction": {"type": ["string", "null"]},
-                    "qualitative_measure": {"type": ["string", "null"]}
+                    "tcell_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "structure_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "linear_sequence": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "mhc_restriction": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "qualitative_measure": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "pubmed_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "PubMed ID of the paper the assay was reported in, as a STRING, e.g. '15585874'. The provenance of the assay result."
+                    }
                 },
                 "additionalProperties": true
             }
@@ -257,14 +438,25 @@
             {
                 "epitope_id": 20354,
                 "limit": 5,
-                "select": ["tcell_id", "linear_sequence", "mhc_restriction", "qualitative_measure", "pubmed_id"]
+                "select": [
+                    "tcell_id",
+                    "linear_sequence",
+                    "mhc_restriction",
+                    "qualitative_measure",
+                    "pubmed_id"
+                ]
             }
         ],
         "fields": {
             "endpoint": "/tcell_search",
-            "default_params": {"order": "tcell_id.asc"},
+            "default_params": {
+                "order": "tcell_id.asc"
+            },
             "shorthand_filters": {
-                "epitope_id": {"column": "structure_id", "op": "eq"}
+                "epitope_id": {
+                    "column": "structure_id",
+                    "op": "eq"
+                }
             }
         }
     }

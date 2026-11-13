@@ -111,7 +111,39 @@
     },
     "return_schema": {
       "type": "object",
-      "description": "The GraphQL data object: one key per root field requested"
+      "description": "The GraphQL data object: one key per root field requested",
+      "properties": {
+        "target": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The target block, when the query asked for one. The shape of this reply is whatever the SUBMITTED GraphQL query selected, so it varies by call -- this declares the fields the tool's own example requests.",
+          "properties": {
+            "id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Ensembl gene id."
+            },
+            "approvedSymbol": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Approved gene symbol."
+            },
+            "biotype": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gene biotype."
+            }
+          }
+        }
+      }
     },
     "test_examples": [
       {

@@ -117,6 +117,103 @@
                     }
                   }
                 }
+              },
+              "resource_doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DOI of the published work the item belongs to"
+              },
+              "resource_title": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Title of that published work"
+              },
+              "defined_type": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Figshare's numeric item type, named by defined_type_name"
+              },
+              "group_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Figshare group or institution the item sits under"
+              },
+              "handle": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Handle identifier, where assigned"
+              },
+              "created_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the record was created"
+              },
+              "modified_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When it last changed"
+              },
+              "timeline": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Dates in the item's life - posted, firstOnline and so on",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "thumb": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Thumbnail image URL"
+              },
+              "url_public_html": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The page a person should be sent to"
+              },
+              "url_public_api": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Public API URL"
+              },
+              "url_private_html": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Private page URL, usable only by the owner"
+              },
+              "url_private_api": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Private API URL, usable only by the owner"
               }
             }
           }
@@ -204,18 +301,63 @@
               ]
             },
             "authors": {
-              "type": "array",
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The dataset's authors, each with an ORCID where linked",
               "items": {
                 "type": "object",
+                "description": "One author of the dataset",
                 "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Figshare author id"
+                  },
                   "full_name": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Name as Figshare displays it"
+                  },
+                  "first_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Given name"
+                  },
+                  "last_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Family name"
                   },
                   "orcid_id": {
                     "type": [
                       "string",
                       "null"
-                    ]
+                    ],
+                    "description": "ORCID, where the author has linked one"
+                  },
+                  "url_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Slug for the author's Figshare page"
+                  },
+                  "is_active": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether the Figshare account is active"
                   }
                 }
               }
@@ -228,34 +370,152 @@
               "description": "Keywords/tags"
             },
             "categories": {
-              "type": "array",
-              "description": "Research categories"
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Subject categories, each with its place in the taxonomy",
+              "items": {
+                "type": "object",
+                "description": "One subject category",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Category id"
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Category name"
+                  },
+                  "parent_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Parent category id"
+                  },
+                  "path": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Path through the taxonomy"
+                  },
+                  "taxonomy_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Which taxonomy the category belongs to"
+                  },
+                  "source_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Source identifier for the category"
+                  }
+                }
+              }
             },
             "license": {
               "type": "object",
               "properties": {
                 "name": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Licence name, e.g. 'CC BY 4.0'"
                 },
                 "url": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Licence text URL"
+                },
+                "value": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Figshare's numeric licence id"
                 }
-              }
+              },
+              "description": "The licence the dataset is released under; a caller redistributing it needs this"
             },
             "files": {
-              "type": "array",
-              "description": "Available files for download",
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The files in the dataset, each with its download URL and both MD5s",
               "items": {
                 "type": "object",
+                "description": "One file in the dataset",
                 "properties": {
-                  "name": {
-                    "type": "string"
+                  "id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Figshare file id"
                   },
-                  "download_url": {
-                    "type": "string"
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "File name"
                   },
                   "size": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Size in bytes"
+                  },
+                  "mimetype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Media type"
+                  },
+                  "download_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where the bytes are. Without this the record describes a dataset the caller cannot fetch"
+                  },
+                  "computed_md5": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MD5 Figshare computed over the stored bytes; check a download against this"
+                  },
+                  "supplied_md5": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MD5 the depositor supplied. A mismatch with computed_md5 is a provenance problem, so both are returned rather than one"
+                  },
+                  "is_link_only": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the entry is a link to data held elsewhere, with no bytes in Figshare"
                   }
                 }
               }
@@ -270,6 +530,287 @@
             "figshare_url": {
               "type": "string",
               "description": "URL to view on Figshare"
+            },
+            "is_public": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the record is public"
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Figshare's own status for the record, e.g. 'public'"
+            },
+            "is_embargoed": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the dataset is under embargo. A record that does not say this describes data the caller cannot have yet"
+            },
+            "embargo_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the embargo lifts"
+            },
+            "embargo_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What is embargoed - the whole article or its files"
+            },
+            "embargo_title": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Title shown while the embargo holds"
+            },
+            "embargo_reason": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Why it is embargoed"
+            },
+            "embargo_options": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The embargo's configured options",
+              "items": {
+                "type": "object"
+              }
+            },
+            "is_confidential": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the record is confidential"
+            },
+            "confidential_reason": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Why it is confidential"
+            },
+            "download_disabled": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether Figshare has disabled downloading"
+            },
+            "is_metadata_record": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the record is metadata only: there is no data behind it, however complete the description looks"
+            },
+            "metadata_reason": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Why it is metadata only"
+            },
+            "has_linked_file": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the files are links to data held elsewhere"
+            },
+            "resource_doi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "DOI of the published work this dataset belongs to; the join from a dataset to its paper"
+            },
+            "resource_title": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Title of that published work"
+            },
+            "references": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "URLs and DOIs the depositor cited",
+              "items": {
+                "type": "string"
+              }
+            },
+            "related_materials": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Related items, each with its identifier, relation and type",
+              "items": {
+                "type": "object"
+              }
+            },
+            "funding": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Funding as free text, where given"
+            },
+            "funding_list": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Structured funding records",
+              "items": {
+                "type": "object"
+              }
+            },
+            "keywords": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Depositor-supplied keywords",
+              "items": {
+                "type": "string"
+              }
+            },
+            "version": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Which version of the dataset this is"
+            },
+            "size": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total size in bytes across the files"
+            },
+            "created_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the record was created"
+            },
+            "modified_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When it was last modified"
+            },
+            "timeline": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Dates in the record's life - posted, firstOnline, revision and so on",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "defined_type": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Figshare's numeric item type, named by defined_type_name"
+            },
+            "group_id": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The Figshare group or institution the record sits under"
+            },
+            "handle": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Handle identifier, where one is assigned"
+            },
+            "folder_structure": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Folder layout of the files, where the deposit has one",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "array",
+                  "object",
+                  "null"
+                ]
+              }
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL for the record"
+            },
+            "url_public_api": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Public API URL"
+            },
+            "url_public_html": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The page a person should be sent to"
+            },
+            "url_private_api": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Private API URL, usable only by the owner"
+            },
+            "url_private_html": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Private page URL, usable only by the owner"
+            },
+            "thumb": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Thumbnail image URL"
             }
           },
           "not": {

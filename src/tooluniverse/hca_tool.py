@@ -5,6 +5,54 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 
+def _strings(value: Any) -> list:
+    """Azul answers every facet as a list, even a one-value one."""
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return [str(v) for v in value if v not in (None, "")]
+    return [str(value)]
+
+
+def _facet(records: list, key: str) -> list:
+    """One facet across every nested record, de-duplicated, order kept."""
+    out = []
+    for record in records or []:
+        if not isinstance(record, dict):
+            continue
+        for value in _strings(record.get(key)):
+            if value not in out:
+                out.append(value)
+    return out
+
+
+def _total(records: list, key: str):
+    """Sum a count across nested records; None when none of them carry it."""
+    values = [
+        r.get(key)
+        for r in records or []
+        if isinstance(r, dict) and isinstance(r.get(key), (int, float))
+    ]
+    return sum(values) if values else None
+
+
+def _ages(donors: list) -> list:
+    """organismAge is a list of {value, unit} per donor, not a string."""
+    out = []
+    for donor in donors or []:
+        if not isinstance(donor, dict):
+            continue
+        for age in donor.get("organismAge") or []:
+            if not isinstance(age, dict):
+                continue
+            text = " ".join(
+                str(age.get(part)) for part in ("value", "unit") if age.get(part)
+            )
+            if text and text not in out:
+                out.append(text)
+    return out
+
+
 @register_tool("HCATool")
 class HCATool(BaseTool):
     """
@@ -91,16 +139,50 @@ class HCATool(BaseTool):
                 # "donorDisease" dict keys (confirmed live) -- those top-level
                 # keys don't exist in the hit at all, so reading them always
                 # silently returned None.
-                specimens = hit.get("specimens") or [{}]
-                donors = hit.get("donorOrganisms") or [{}]
+                #
+                # Four fields were not enough to tell one project from
+                # another, and one omission made the answer misleading: the
+                # first project this endpoint returns is "1M Neurons", which
+                # is Mus musculus, and the row never said the species. A tool
+                # that searches "single-cell projects" also has to say which
+                # single-cell assay: the protocol block carries
+                # libraryConstructionApproach ("10x 3' v2"), and the
+                # cellSuspensions block the cell count the project is worth
+                # opening for.
+                specimens = hit.get("specimens") or []
+                donors = hit.get("donorOrganisms") or []
+                protocols = hit.get("protocols") or []
+                suspensions = hit.get("cellSuspensions") or []
+                project = (hit.get("projects") or [{}])[0] or {}
                 projects.append(
                     {
                         "entryId": hit.get("entryId"),
-                        "projectTitle": hit.get("projects", [{}])[0].get(
-                            "projectTitle"
+                        "projectTitle": project.get("projectTitle"),
+                        "projectShortname": project.get("projectShortname"),
+                        "laboratory": _strings(project.get("laboratory")),
+                        "estimatedCellCount": project.get("estimatedCellCount"),
+                        "accessible": project.get("accessible"),
+                        "dataUseRestriction": project.get("dataUseRestriction"),
+                        # A project can span several specimens, donors and
+                        # protocols; the row reported the first of each.
+                        "organ": _facet(specimens, "organ"),
+                        "organPart": _facet(suspensions, "organPart"),
+                        "selectedCellType": _facet(suspensions, "selectedCellType"),
+                        "totalCells": _total(suspensions, "totalCells"),
+                        "donorDisease": _facet(donors, "disease"),
+                        "genusSpecies": _facet(donors, "genusSpecies"),
+                        "biologicalSex": _facet(donors, "biologicalSex"),
+                        "developmentStage": _facet(donors, "developmentStage"),
+                        "organismAge": _ages(donors),
+                        "donorCount": _total(donors, "donorCount"),
+                        "libraryConstructionApproach": _facet(
+                            protocols, "libraryConstructionApproach"
                         ),
-                        "organ": specimens[0].get("organ"),
-                        "donorDisease": donors[0].get("disease"),
+                        "nucleicAcidSource": _facet(protocols, "nucleicAcidSource"),
+                        "instrumentManufacturerModel": _facet(
+                            protocols, "instrumentManufacturerModel"
+                        ),
+                        "pairedEnd": _facet(protocols, "pairedEnd"),
                     }
                 )
 
@@ -134,6 +216,20 @@ class HCATool(BaseTool):
                             "format": f.get("format"),
                             "size": f.get("size"),
                             "url": f.get("azul_url"),
+                            # A manifest of downloads with no way to verify
+                            # one, identify its version, or tell a final
+                            # matrix from an intermediate.
+                            "uuid": f.get("uuid"),
+                            "version": f.get("version"),
+                            "sha256": f.get("sha256"),
+                            "accessible": f.get("accessible"),
+                            "is_intermediate": f.get("isIntermediate"),
+                            "content_description": _strings(
+                                f.get("contentDescription")
+                            ),
+                            "matrix_cell_count": f.get("matrixCellCount"),
+                            "file_source": f.get("fileSource"),
+                            "drs_uri": f.get("drs_uri"),
                         }
                     )
 

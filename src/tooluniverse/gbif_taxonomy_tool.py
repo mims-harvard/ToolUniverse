@@ -85,14 +85,33 @@ def _http_post_json(url: str, body: Any, timeout: int):
 
 
 def _slim_usage(rec: Dict[str, Any]) -> Dict[str, Any]:
-    """Project a GBIF name-usage record onto a stable, useful subset of fields."""
+    """Project a GBIF name-usage record onto a stable, useful subset of fields.
+
+    The subset used to carry the seven rank *names* and none of the seven rank
+    *keys* beside them, which for a tool whose job is to "navigate the GBIF
+    Backbone Taxonomy tree" meant the names were there and the handles to walk
+    them were not. It also dropped `issues` -- GBIF's own data-quality flags,
+    e.g. NAME_PARENT_MISMATCH on Passer domesticus bactrianus -- the dataset
+    the record came from, and the vernacular name GBIF had already attached.
+    """
     keys = [
         "key",
+        "nubKey",
+        "nameKey",
+        "taxonID",
+        "sourceTaxonKey",
         "scientificName",
         "canonicalName",
+        "vernacularName",
         "authorship",
+        "publishedIn",
         "rank",
+        "nameType",
+        "origin",
         "taxonomicStatus",
+        "nomenclaturalStatus",
+        "synonym",
+        "remarks",
         "kingdom",
         "phylum",
         "class",
@@ -100,10 +119,25 @@ def _slim_usage(rec: Dict[str, Any]) -> Dict[str, Any]:
         "family",
         "genus",
         "species",
+        "kingdomKey",
+        "phylumKey",
+        "classKey",
+        "orderKey",
+        "familyKey",
+        "genusKey",
+        "speciesKey",
+        "parent",
         "parentKey",
         "acceptedKey",
         "accepted",
+        "basionym",
+        "basionymKey",
+        "datasetKey",
+        "constituentKey",
         "numDescendants",
+        "issues",
+        "lastCrawled",
+        "lastInterpreted",
     ]
     return {k: rec.get(k) for k in keys}
 
@@ -113,7 +147,16 @@ def _slim_vernacular(rec: Dict[str, Any]) -> Dict[str, Any]:
         "vernacularName": rec.get("vernacularName"),
         "language": rec.get("language"),
         "country": rec.get("country"),
+        "area": rec.get("area"),
         "source": rec.get("source"),
+        # `preferred` is which of a taxon's many common names GBIF marks as
+        # the one to show, and the rows were otherwise interchangeable.
+        "preferred": rec.get("preferred"),
+        "taxonKey": rec.get("taxonKey"),
+        # Which checklist dataset's taxon the name came from, so a name can be
+        # traced to the source that supplied it.
+        "sourceTaxonKey": rec.get("sourceTaxonKey"),
+        "sourceReference": rec.get("sourceReference"),
     }
 
 

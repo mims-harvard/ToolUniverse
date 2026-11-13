@@ -199,6 +199,17 @@ class BgeeTool(BaseTool):
                     "common_name": species.get("name"),
                     "gene_biotype": gene.get("geneBioType", {}).get("name"),
                     "match_source": match.get("matchSource"),
+                    # match_source said "SYNONYM" without saying which synonym:
+                    # the matched string is a separate field, and it is the only
+                    # thing that explains why a hit is in the list at all.
+                    "matched_text": match.get("match"),
+                    "synonyms": [
+                        syn for syn in (gene.get("synonyms") or []) if syn
+                    ],
+                    "cross_references": gene.get("xRefs") or [],
+                    "genes_mapped_to_same_gene_id": gene.get(
+                        "geneMappedToSameGeneIdCount"
+                    ),
                 }
             )
 
@@ -296,6 +307,13 @@ class BgeeTool(BaseTool):
                 "expression_state": call.get("expressionState"),
                 "quality": call.get("expressionQuality"),
                 "data_types": call.get("dataTypesWithData", []),
+                # The FDR is the statistic the present/absent call rests on, and
+                # it was dropped from every one of the 145 calls for TP53 while
+                # the qualitative "gold" that summarises it was kept.
+                "fdr": call.get("fdr"),
+                # Bgee groups tissues into expression-level clusters and the
+                # index is how its own display orders them.
+                "cluster_index": call.get("clusterIndex"),
             }
             if cell_type.get("id"):
                 entry["cell_type_id"] = cell_type.get("id")
@@ -322,6 +340,22 @@ class BgeeTool(BaseTool):
                 "result_set_complete": offset == 0 and len(results) == len(calls),
                 "pagination_stalled": False,
                 "data_types": expr_data.get("requestedDataTypes", []),
+                "call_type": expr_data.get("requestedCallType"),
+                "condition_parameters": expr_data.get(
+                    "requestedConditionParameters", []
+                ),
+                # The response names the gene it answered for; without it a
+                # caller cannot tell a wrong gene_id from a gene with no calls.
+                "gene": {
+                    "gene_id": (expr_data.get("gene") or {}).get("geneId"),
+                    "name": (expr_data.get("gene") or {}).get("name"),
+                    "description": (expr_data.get("gene") or {}).get("description"),
+                    "synonyms": [
+                        syn
+                        for syn in ((expr_data.get("gene") or {}).get("synonyms") or [])
+                        if syn
+                    ],
+                },
             },
         }
 
@@ -354,6 +388,9 @@ class BgeeTool(BaseTool):
                     "common_name": sp.get("name"),
                     "genome_version": sp.get("genomeVersion"),
                     "full_name": f"{sp.get('genus', '')} {sp.get('speciesName', '')}".strip(),
+                    "genome_assembly_url": sp.get("genomeAssemblyXRef"),
+                    "parent_taxon_id": sp.get("parentTaxonId"),
+                    "genome_species_id": sp.get("genomeSpeciesId"),
                 }
             )
 

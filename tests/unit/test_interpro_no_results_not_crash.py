@@ -113,14 +113,15 @@ class TestPfamSearchFamiliesNoResults:
         assert result["status"] == "success"
         assert result["data"]["total_results"] == 304
         assert result["data"]["returned"] == 1
-        assert result["data"]["families"] == [
-            {
-                "accession": "PF00069",
-                "name": "Protein kinase domain",
-                "type": "domain",
-                "integrated_interpro": "IPR000719",
-            }
-        ]
+        # The four fields this guard was written for, asserted by key: the row
+        # also carries the entry's source database, its member databases, its
+        # GO terms and its description, which this stub response does not set.
+        family = result["data"]["families"][0]
+        assert family["accession"] == "PF00069"
+        assert family["name"] == "Protein kinase domain"
+        assert family["type"] == "domain"
+        assert family["integrated_interpro"] == "IPR000719"
+        assert len(result["data"]["families"]) == 1
 
 
 class TestInterProSearchEntriesNoResults:

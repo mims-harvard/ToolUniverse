@@ -82,6 +82,34 @@
                 },
                 "verdict": {
                   "type": "string"
+                },
+                "Z": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Formula units per unit cell, e.g. 4. The density scales linearly with it, so a wrong Z is a whole-number-factor error."
+                },
+                "cell_params": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The unit cell used - a, b, c, alpha, beta, gamma. The inputs the density was computed from."
+                },
+                "difference_g_cm3": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Difference between computed and reported density, e.g. 0.0036 g/cm3. The actual verdict; a 'valid' label without the magnitude cannot be judged against a tolerance."
+                },
+                "mw": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Formula weight used, e.g. 58.44."
                 }
               }
             }

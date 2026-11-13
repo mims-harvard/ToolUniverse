@@ -21,7 +21,7 @@ def ClinGen_search_gene_validity(
     Parameters
     ----------
     gene : str
-        Gene symbol to search (e.g., BRCA1, TP53, CFTR)
+        Gene symbol to search (e.g., BRCA1, TP53, CFTR). HGNC symbol only (e.g. BRCA1...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

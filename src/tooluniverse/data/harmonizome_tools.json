@@ -198,15 +198,83 @@
           "type": "array",
           "items": {
             "type": "object",
+            "description": "One gene set in the dataset",
             "properties": {
               "name": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The attribute the gene set is for, with Harmonizome's dataset suffix removed"
+              },
+              "href": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "API path to the gene set's genes, with their threshold and standardized values"
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Resolvable URL for that gene set; without it nothing in the catalogue can retrieve one"
               }
             }
           }
         },
         "total_gene_sets": {
           "type": "integer"
+        },
+        "source_resource": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The database the harmonized data came from, e.g. Comparative Toxicogenomics Database"
+        },
+        "source_resource_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Resolvable URL for that source database"
+        },
+        "gene_sets_returned": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Gene sets on this page"
+        },
+        "gene_set_limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page size used"
+        },
+        "gene_set_offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset of this page"
+        },
+        "has_more_gene_sets": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when more gene sets remain"
+        },
+        "next_gene_set_offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset to pass for the next page, or null at the end"
         }
       }
     }
@@ -260,7 +328,47 @@
     ],
     "return_schema": {
       "type": "array",
-      "items": {}
+      "description": "Matching genes, each as the record Harmonizome holds",
+      "items": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The gene's current symbol, which is what the other Harmonizome tools take"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The gene's full name"
+          },
+          "ncbi_entrez_gene_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "NCBI Entrez Gene id"
+          },
+          "synonyms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The gene's other symbols. Harmonizome resolves by exact symbol, so these are what a caller holding a renamed or aliased symbol needs"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "RefSeq or Alliance summary of the gene"
+          }
+        }
+      }
     }
   },
   {
@@ -304,14 +412,44 @@
     ],
     "return_schema": {
       "type": "array",
+      "description": "Genes whose symbol or synonyms match the query, each as the record Harmonizome holds",
       "items": {
         "type": "object",
         "properties": {
           "symbol": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The gene's current symbol, which is what the other Harmonizome tools take"
           },
-          "href": {
-            "type": "string"
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The gene's full name"
+          },
+          "ncbi_entrez_gene_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "NCBI Entrez Gene id"
+          },
+          "synonyms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The gene's other symbols. Harmonizome resolves by exact symbol, so these are what a caller holding a renamed or aliased symbol needs"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "RefSeq or Alliance summary of the gene"
           }
         }
       }

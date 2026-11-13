@@ -79,6 +79,48 @@
                 },
                 "is_integer": {
                   "type": "boolean"
+                },
+                "C": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Carbon count used in the calculation, e.g. 6."
+                },
+                "H": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Hydrogen count used, e.g. 6."
+                },
+                "N": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Nitrogen count used."
+                },
+                "O": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Oxygen count used - it does not affect the degree of unsaturation, and echoing it shows it was parsed rather than ignored."
+                },
+                "S": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Sulfur count used; likewise does not affect the result."
+                },
+                "halogens": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Total halogen count used. Halogens count like hydrogens, so a mis-parsed halogen shifts the answer by a whole degree."
                 }
               }
             }

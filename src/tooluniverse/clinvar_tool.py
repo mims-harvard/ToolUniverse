@@ -313,6 +313,28 @@ class ClinVarRESTTool(BaseTool):
             "genes": [g.get("symbol", "") for g in vdata.get("genes", [])],
             "clinical_significance": gc.get("description", ""),
             "review_status": gc.get("review_status", ""),
+            # WHAT the classification is for. The row said "Uncertain
+            # significance" and never named a condition, while the esummary
+            # record carried "BRCA1-related disorder" in trait_set. The same
+            # variant can be pathogenic for one condition and benign for
+            # another, so a significance without its condition is not an
+            # answer -- it is a word.
+            "conditions": [
+                t.get("trait_name", "")
+                for t in (gc.get("trait_set") or [])
+                if isinstance(t, dict)
+            ],
+            # And the identifiers that resolve them. A condition name is
+            # ambiguous on its own: "Hereditary cancer-predisposing syndrome"
+            # is one string over many MedGen concepts. Empty for a condition
+            # ClinVar has not cross-referenced.
+            "condition_xrefs": [
+                {"db_source": x.get("db_source"), "db_id": x.get("db_id")}
+                for t in (gc.get("trait_set") or [])
+                if isinstance(t, dict)
+                for x in (t.get("trait_xrefs") or [])
+                if isinstance(x, dict)
+            ],
         }
 
     def _fetch_variant(self, variant_id: str) -> Dict[str, Any]:
@@ -1118,6 +1140,27 @@ class ClinVarGetClinicalSignificance(ClinVarRESTTool):
                     trait.get("trait_name", "")
                     for trait in germline_class.get("trait_set", [])
                 ],
+                # The same conditions with the identifiers that resolve them.
+                # `traits` is a list of names, and a name alone is ambiguous
+                # -- "Hereditary cancer-predisposing syndrome" is one string
+                # covering many MedGen concepts -- so a caller could not join
+                # a ClinVar condition to a disease ontology, or tell two
+                # different conditions sharing a name apart. `traits` keeps
+                # its shape; this is beside it.
+                "trait_details": [
+                    {
+                        "trait_name": trait.get("trait_name", ""),
+                        "xrefs": [
+                            {
+                                "db_source": x.get("db_source"),
+                                "db_id": x.get("db_id"),
+                            }
+                            for x in (trait.get("trait_xrefs") or [])
+                            if isinstance(x, dict)
+                        ],
+                    }
+                    for trait in germline_class.get("trait_set", [])
+                ],
             },
             "clinical_impact": {
                 "description": clinical_impact.get("description", ""),
@@ -1342,6 +1385,21 @@ def clinvar_variants_overlapping(
                                 "classification": (
                                     rec.get("germline_classification") or {}
                                 ).get("description"),
+                                "review_status": (
+                                    rec.get("germline_classification") or {}
+                                ).get("review_status"),
+                                # WHICH GENES the variant covers. A 30 kb
+                                # pathogenic deletion reported as a span and a
+                                # title told a caller nothing about what it
+                                # removes; record 147398 lists 696 genes.
+                                "genes": _gene_rows(rec),
+                                "gene_count": len(rec.get("genes") or []),
+                                "genes_truncated": len(rec.get("genes") or [])
+                                > len(_gene_rows(rec)),
+                                # The ClinVar accession, which is how the
+                                # record is cited and fetched.
+                                "accession": rec.get("accession"),
+                                "accession_version": rec.get("accession_version"),
                             }
                         )
                     break
@@ -1373,6 +1431,36 @@ def clinvar_variants_overlapping(
         "variants": result_page,
         "note": _OVERLAP_NOTE,
     }
+
+
+# Genes per overlapping variant. A copy-number loss spanning 30,531 bases
+# overlaps hundreds of them -- ClinVar record 147398 lists 696 -- and WHICH
+# genes a deletion hits is the clinical question the span only hints at.
+GENES_PER_OVERLAP_ROW = 50
+
+
+def _gene_rows(record: dict, limit: int = GENES_PER_OVERLAP_ROW) -> list:
+    """A variant's genes, with the ids and provenance beside the symbols.
+
+    `geneid` is the NCBI Gene id a caller joins on, and `source` says whether
+    the gene assignment came from the submitter or was calculated from the
+    coordinates -- a different claim, and neither reached the caller.
+    """
+    rows = []
+    for gene in record.get("genes") or []:
+        if not isinstance(gene, dict) or not gene.get("symbol"):
+            continue
+        rows.append(
+            {
+                "symbol": gene.get("symbol"),
+                "gene_id": gene.get("geneid"),
+                "strand": gene.get("strand"),
+                "source": gene.get("source"),
+            }
+        )
+        if len(rows) >= limit:
+            break
+    return rows
 
 
 @register_tool("ClinVarSearchByRegion")

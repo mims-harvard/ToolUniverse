@@ -176,6 +176,27 @@
         },
         "per_source_pagination": {
           "type": "object"
+        },
+        "association_limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The cap applied to the association list, e.g. 50."
+        },
+        "association_offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The offset the association list started at, e.g. 0."
+        },
+        "associations_has_more": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when further associations exist beyond this page, e.g. false. The field that says whether the gathered profile is complete."
         }
       },
       "required": [

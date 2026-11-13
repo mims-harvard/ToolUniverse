@@ -123,6 +123,13 @@ class RGDStrainTool(BaseTool):
             "background_strain_rgd_id": rec.get("backgroundStrainRgdId"),
             "research_use": rec.get("researchUse"),
             "description": rec.get("description"),
+            # Whether the strain still exists. RGD records a status on all
+            # 4,749 of them -- live, cryopreserved, or no longer available --
+            # and a strain search that cannot say which is answering about
+            # animals a caller may not be able to obtain.
+            "last_status": rec.get("lastStatus"),
+            "availability": rec.get("availability"),
+            "nomenclature_source": rec.get("nomenSource"),
         }
 
     # ------------------------------------------------------------------ #
@@ -255,6 +262,18 @@ class RGDStrainTool(BaseTool):
                     "evidence": a.get("evidence"),
                     "data_source": a.get("dataSrc"),
                     "ref_rgd_id": a.get("refRgdId"),
+                    # Which strain the annotation is on, by name. The row
+                    # carried the term and the reference id and left the
+                    # object unnamed.
+                    "object_symbol": a.get("objectSymbol"),
+                    "object_name": a.get("objectName"),
+                    "annotated_object_rgd_id": a.get("annotatedObjectRgdId"),
+                    "notes": a.get("notes"),
+                    "with_from": a.get("withInfo") or a.get("associatedWith"),
+                    # When the annotation was made and last touched, as the
+                    # gene annotations already report.
+                    "created_date": a.get("createdDate"),
+                    "last_modified_date": a.get("lastModifiedDate"),
                 }
             )
 

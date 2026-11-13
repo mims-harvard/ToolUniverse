@@ -17,6 +17,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 HARMONIZOME_BASE_URL = "https://maayanlab.cloud/Harmonizome/api/1.0"
+HARMONIZOME_SITE = "https://maayanlab.cloud/Harmonizome"
 
 
 @register_tool("HarmonizomeTool")
@@ -196,9 +197,23 @@ class HarmonizomeTool(BaseTool):
         # thousands, e.g. CTD disease associations).
         gene_sets_raw = data.get("geneSets", [])
         gene_sets = [
-            {"name": gs.get("name", "").split("/")[0]}
+            {
+                # Harmonizome qualifies every gene-set name with its dataset
+                # ("Spastic paraplegia 24/CTD Gene-Disease Associations"); the
+                # suffix is this dataset, so only the attribute is kept.
+                "name": gs.get("name", "").split("/")[0],
+                # The path that fetches the gene set's actual genes, with
+                # their threshold and standardized values. Nothing in the
+                # catalogue can retrieve a gene set without it, so a dataset
+                # naming 5218 of them was a list of dead ends.
+                "href": gs.get("href"),
+                "url": (
+                    f"{HARMONIZOME_SITE}{gs['href']}" if gs.get("href") else None
+                ),
+            }
             for gs in gene_sets_raw[gene_set_offset : gene_set_offset + gene_set_limit]
         ]
+        resource = data.get("resource") or {}
         next_gene_set_offset = gene_set_offset + len(gene_sets)
         has_more_gene_sets = next_gene_set_offset < len(gene_sets_raw)
 
@@ -213,6 +228,15 @@ class HarmonizomeTool(BaseTool):
                 "attribute_group": data.get("attributeGroup"),
                 "dataset_group": data.get("datasetGroup"),
                 "pubmed_ids": data.get("pubMedIds", []),
+                # Which database the harmonized data came from. A Harmonizome
+                # dataset is a processed view of someone else's work, and the
+                # tool reported the processing and not the origin.
+                "source_resource": resource.get("name"),
+                "source_resource_url": (
+                    f"{HARMONIZOME_SITE}{resource['href']}"
+                    if resource.get("href")
+                    else None
+                ),
                 "gene_sets": gene_sets,
                 "total_gene_sets": len(gene_sets_raw),
                 "gene_sets_returned": len(gene_sets),
@@ -292,6 +316,14 @@ class HarmonizomeTool(BaseTool):
                                 "symbol": g.get("symbol"),
                                 "name": g.get("name"),
                                 "ncbi_entrez_gene_id": g.get("ncbiEntrezGeneId"),
+                                # The gene's other symbols, which the record
+                                # carries and a symbol search needs most: the
+                                # tool resolves by EXACT symbol, so a caller
+                                # holding a renamed or aliased symbol gets
+                                # nothing and is never told what the gene is
+                                # also called.
+                                "synonyms": g.get("synonyms") or [],
+                                "description": g.get("description"),
                             }
                         )
                 elif gene_resp.status_code != 404:
@@ -389,6 +421,8 @@ class HarmonizomeTool(BaseTool):
                         "symbol": g.get("symbol"),
                         "name": g.get("name"),
                         "ncbi_entrez_gene_id": g.get("ncbiEntrezGeneId"),
+                        "synonyms": g.get("synonyms") or [],
+                        "description": g.get("description"),
                     }
                 )
 

@@ -246,6 +246,27 @@
                       }
                     },
                     "description": "Parent's parent terms"
+                  },
+                  "cross_references": {
+                    "type": "array",
+                    "description": "The parent term's mappings to other vocabularies, e.g. ICD10CM:E08-E13, ICD9CM:250, MESH:D003920, NCI:C2985, SNOMEDCT for DOID:9351. This handler already fetches each parent's whole term record to read its name and definition, so these cost no extra request.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "synonyms": {
+                    "type": "array",
+                    "description": "The parent term's synonyms, as DO writes them (\"name TYPE []\"), so the parent can be recognised under the name a caller's own data uses.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "subsets": {
+                    "type": "array",
+                    "description": "DO subsets the parent belongs to, e.g. DO_cancer_slim.",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               },

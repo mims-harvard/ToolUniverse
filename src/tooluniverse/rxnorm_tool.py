@@ -145,6 +145,7 @@ class RxNormTool(BaseTool):
             Dictionary containing all names or error
         """
         names = []
+        concepts = []
 
         # Method 1: Get names from allProperties endpoint
         try:
@@ -200,6 +201,25 @@ class RxNormTool(BaseTool):
                             brand_name = prop.get("name")
                             if brand_name:
                                 names.append(brand_name)
+                                # `names` is a flat list of strings, so
+                                # "aspirin" the ingredient and "Pamprin Max
+                                # Formula" the brand arrive indistinguishable
+                                # -- and RxNorm had labelled every one. `tty`
+                                # is the term type (IN ingredient, BN brand,
+                                # SCD clinical drug, SBD branded drug), and
+                                # each concept carries its own rxcui, which
+                                # is how it is looked up. `names` keeps its
+                                # shape; the labelled form goes beside it.
+                                concepts.append(
+                                    {
+                                        "rxcui": prop.get("rxcui"),
+                                        "name": brand_name,
+                                        "tty": prop.get("tty"),
+                                        "language": prop.get("language"),
+                                        "suppress": prop.get("suppress"),
+                                        "synonym": prop.get("synonym") or None,
+                                    }
+                                )
         except Exception:
             # Continue even if this endpoint fails
             pass
@@ -240,7 +260,17 @@ class RxNormTool(BaseTool):
                 unique_names.append(normalized)
                 seen.add(normalized.lower())
 
-        return {"rxcui": rxcui, "names": unique_names}
+        # Same de-duplication for the labelled form, on the same key, so the
+        # two lists stay in step.
+        unique_concepts = []
+        seen_concepts = set()
+        for concept in concepts:
+            key = str(concept.get("name") or "").strip().lower()
+            if key and key not in seen_concepts:
+                unique_concepts.append(concept)
+                seen_concepts.add(key)
+
+        return {"rxcui": rxcui, "names": unique_names, "concepts": unique_concepts}
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -321,6 +351,7 @@ class RxNormTool(BaseTool):
             "rxcui": rxcui,
             "drug_name": drug_name,
             "names": names_result["names"],
+            "concepts": names_result.get("concepts", []),
             "all_rxcuis": rxcui_result.get("all_rxcuis", []),
         }
 

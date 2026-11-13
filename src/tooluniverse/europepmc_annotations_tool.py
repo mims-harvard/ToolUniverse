@@ -46,6 +46,41 @@ def _paginate(items, limit: int, offset: Any):
     }
 
 
+def _annotation_row(ann: dict) -> dict:
+    """One annotation with the provenance that says how much it is worth.
+
+    Europe PMC answers `section`, `provider`, `frequency`, `fileName` and a
+    resolvable `id` for every annotation, and knowing them changes what the
+    annotation means: "polysaccharides" on MED:24295277 was found 4 times by
+    Biostudies in `1476-069X-12-103-S1.doc`, a supplementary Word document,
+    not in the article text. Two handlers read this block and each dropped a
+    different part of it -- the per-article one kept section and provider and
+    lost the id, the batch one kept neither -- so both now use this reader.
+    """
+    tags = []
+    for tag in ann.get("tags") or []:
+        if isinstance(tag, dict):
+            tags.append({"name": tag.get("name", ""), "uri": tag.get("uri", "")})
+    return {
+        "exact": ann.get("exact", ""),
+        "prefix": ann.get("prefix"),
+        "postfix": ann.get("postfix"),
+        "type": ann.get("type", ""),
+        # Which part of the article the term was found in, as an IAO term:
+        # Title, Abstract, Introduction, Methods, Results, Table, Figure or
+        # "Supplementary material".
+        "section": ann.get("section"),
+        "provider": ann.get("provider"),
+        # How many times the term occurs in that section.
+        "frequency": ann.get("frequency"),
+        # Set only for an annotation found in a supplementary file.
+        "file_name": ann.get("fileName"),
+        # Resolves to the annotated passage in the article.
+        "id": ann.get("id"),
+        "tags": tags,
+    }
+
+
 @register_tool("EuroPMCAnnotationsTool")
 class EuroPMCAnnotationsTool(BaseTool):
     """
@@ -248,27 +283,7 @@ class EuroPMCAnnotationsTool(BaseTool):
             self._annotation_cap(arguments.get("limit"), ARTICLE_ANNOTATION_CAP),
             arguments.get("offset"),
         )
-        annotations = []
-        for ann in page:
-            tags = []
-            for tag in ann.get("tags", []):
-                tags.append(
-                    {
-                        "name": tag.get("name", ""),
-                        "uri": tag.get("uri", ""),
-                    }
-                )
-            annotations.append(
-                {
-                    "exact": ann.get("exact", ""),
-                    "prefix": ann.get("prefix"),
-                    "postfix": ann.get("postfix"),
-                    "type": ann.get("type", ""),
-                    "section": ann.get("section"),
-                    "provider": ann.get("provider"),
-                    "tags": tags,
-                }
-            )
+        annotations = [_annotation_row(ann) for ann in page]
 
         return {
             "status": "success",
@@ -339,15 +354,7 @@ class EuroPMCAnnotationsTool(BaseTool):
             page, paging = _paginate(
                 annotations_raw, page_size, arguments.get("offset")
             )
-            annotations = []
-            for ann in page:
-                annotations.append(
-                    {
-                        "exact": ann.get("exact", ""),
-                        "type": ann.get("type", ""),
-                        "tags": ann.get("tags", []),
-                    }
-                )
+            annotations = [_annotation_row(ann) for ann in page]
 
             articles.append(
                 {

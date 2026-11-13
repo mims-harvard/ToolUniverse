@@ -19,6 +19,44 @@ from .tool_registry import register_tool
 
 ANNOTATIONS_BASE = "https://www.ebi.ac.uk/europepmc/annotations_api"
 
+# Each distinct mention carries its own sentence context and section. The
+# deduplicated entity keeps this many of them, and discloses the count and the
+# cut, so "tocilizumab, 11 mentions" is no longer the whole of what was mined.
+MENTIONS_PER_ENTITY = 5
+
+
+def _section_name(section: Any) -> "str | None":
+    """'Abstract (http://purl.org/dc/terms/abstract)' -> 'Abstract'."""
+    if not isinstance(section, str) or not section.strip():
+        return None
+    return section.split(" (", 1)[0].strip() or None
+
+
+def _tags(ann: dict) -> list:
+    """Every grounded concept, not only the first.
+
+    An Open Targets 'Gene Disease Relationship' annotation carries two tags --
+    the gene and the disease -- and reading `tags[0]` returned the gene and
+    dropped the disease the relationship is about.
+    """
+    return [
+        {"name": tag.get("name"), "uri": tag.get("uri")}
+        for tag in (ann.get("tags") or [])
+        if isinstance(tag, dict)
+    ]
+
+
+def _mention(ann: dict) -> dict:
+    """One occurrence: the sentence around it, where it was, and who mined it."""
+    return {
+        "prefix": ann.get("prefix"),
+        "exact": ann.get("exact"),
+        "postfix": ann.get("postfix"),
+        "section": _section_name(ann.get("section")),
+        "provider": ann.get("provider"),
+        "annotation_id": ann.get("id"),
+    }
+
 
 @register_tool("EPMCAnnotationsTool")
 class EPMCAnnotationsTool(BaseRESTTool):
@@ -127,25 +165,51 @@ class EPMCAnnotationsTool(BaseRESTTool):
         article = data[0] if isinstance(data, list) else data
         raw_annotations = article.get("annotations", [])
 
-        # Group by type and deduplicate
+        # Group by type and deduplicate. Deduplication is by the mined text, so
+        # everything that distinguishes one occurrence from another -- the
+        # section it is in, the provider that mined it, the sentence around it
+        # -- is collected across the occurrences rather than taken from the
+        # first and discarded for the rest.
         by_type: dict[str, dict[str, dict]] = {}
         for ann in raw_annotations:
             ann_type = ann.get("type", "Unknown")
             exact = ann.get("exact", "")
-            if ann_type not in by_type:
-                by_type[ann_type] = {}
-            if exact and exact not in by_type[ann_type]:
-                tags = ann.get("tags", [])
-                uri = tags[0].get("uri", "") if tags else ""
-                tag_name = tags[0].get("name", "") if tags else ""
-                by_type[ann_type][exact] = {
+            if not exact:
+                continue
+            bucket = by_type.setdefault(ann_type, {})
+            tags = _tags(ann)
+            entry = bucket.get(exact)
+            if entry is None:
+                entry = bucket[exact] = {
                     "text": exact,
-                    "tag_name": tag_name,
-                    "uri": uri,
+                    "tag_name": tags[0]["name"] if tags else "",
+                    "uri": tags[0]["uri"] if tags else "",
+                    "tags": tags,
+                    "tag_count": len(tags),
                     "count": 1,
+                    "sections": [],
+                    "providers": [],
+                    "sub_types": [],
+                    "mentions": [],
+                    "mentions_truncated": False,
                 }
-            elif exact in by_type.get(ann_type, {}):
-                by_type[ann_type][exact]["count"] += 1
+            else:
+                entry["count"] += 1
+                for tag in tags:
+                    if tag not in entry["tags"]:
+                        entry["tags"].append(tag)
+                entry["tag_count"] = len(entry["tags"])
+            for key, value in (
+                ("sections", _section_name(ann.get("section"))),
+                ("providers", ann.get("provider")),
+                ("sub_types", ann.get("subType")),
+            ):
+                if value and value not in entry[key]:
+                    entry[key].append(value)
+            if len(entry["mentions"]) < MENTIONS_PER_ENTITY:
+                entry["mentions"].append(_mention(ann))
+            else:
+                entry["mentions_truncated"] = True
 
         # Build structured output
         annotation_groups = {}
@@ -155,20 +219,43 @@ class EPMCAnnotationsTool(BaseRESTTool):
             annotation_groups[ann_type] = sorted_entities
             annotation_counts[ann_type] = len(entities)
 
+        sections = sorted(
+            {
+                name
+                for ann in raw_annotations
+                if (name := _section_name(ann.get("section")))
+            }
+        )
+        providers = sorted(
+            {ann["provider"] for ann in raw_annotations if ann.get("provider")}
+        )
+
         return {
             "status": "success",
             "data": {
                 "article_id": article_id,
                 "pmcid": article.get("pmcid"),
+                "article_source": article.get("source"),
+                "ext_id": article.get("extId"),
+                "full_text_ids": article.get("fullTextIdList") or [],
                 "annotations": annotation_groups,
                 "annotation_counts": annotation_counts,
+                "total_annotations": len(raw_annotations),
+                "sections": sections,
+                "providers": providers,
             },
             "metadata": {
                 "source": "Europe PMC Annotations",
+                "mentions_per_entity": MENTIONS_PER_ENTITY,
                 "description": (
                     "Text-mined annotations from biomedical literature. "
                     "Types include Gene_Proteins, Diseases, Chemicals, Organisms, "
-                    "Gene_Ontology, EFO. count = number of mentions in the article."
+                    "Gene_Ontology, EFO. count = number of mentions in the article; "
+                    "mentions carries up to mentions_per_entity of them with the "
+                    "sentence context, the article section and the mining provider, "
+                    "and mentions_truncated says when there were more. tags holds "
+                    "every grounded concept, which for a relationship annotation is "
+                    "both ends of the relationship."
                 ),
             },
         }

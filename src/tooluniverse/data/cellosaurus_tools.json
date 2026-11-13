@@ -37,7 +37,10 @@
       ]
     },
     "return_schema": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "properties": {
         "success": {
           "type": "boolean",
@@ -48,7 +51,122 @@
           "properties": {
             "cell_lines": {
               "type": "array",
-              "description": "List of matching cell lines"
+              "description": "Matching cell lines. Each row is Cellosaurus's own record, passed through as it comes, so its keys are Cellosaurus's and are not declared by name -- except 'publications', which this wrapper adds.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "publications": {
+                    "type": "array",
+                    "description": "The row's references, resolved. Cellosaurus answers with two top-level keys, cell-line-list and publication-list, and the row's own 'reference-list' holds only bare pointers into the second -- {\"resource-internal-ref\": \"CelloPub=CLPUB00047\"}. HeLa carries 83 of them, all 83 resolvable, and many are Cellosaurus-internal ids that resolve to nothing public. A reference the response does not inline is still listed, as its bare internal_id with a null title, so an unresolved citation is visible rather than dropped.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "internal_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Cellosaurus's pointer for the reference, e.g. 'CelloPub=CLPUB00047' or 'PubMed=9892199'."
+                        },
+                        "type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Publication type, e.g. 'article'."
+                        },
+                        "title": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Title. Null when the response did not inline this publication."
+                        },
+                        "journal_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Journal name."
+                        },
+                        "date": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Year of publication."
+                        },
+                        "volume": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Journal volume."
+                        },
+                        "first_page": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "First page."
+                        },
+                        "last_page": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Last page."
+                        },
+                        "authors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Author names, in order."
+                        },
+                        "author_count": {
+                          "type": "integer",
+                          "description": "Length of 'authors'."
+                        },
+                        "cross_references": {
+                          "type": "array",
+                          "description": "Identifiers for the publication -- PubMed, DOI, CelloPub -- each with a resolvable url where one exists.",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "database": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "accession": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "category": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "url": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "additionalProperties": true
+              }
             },
             "total": {
               "type": "integer",
@@ -107,7 +225,10 @@
       ]
     },
     "return_schema": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "properties": {
         "success": {
           "type": "boolean",
@@ -237,7 +358,168 @@
         },
         "data": {
           "type": "object",
-          "description": "Cell line data (structure depends on format and fields requested)"
+          "description": "The Cellosaurus cell-line record as the API sends it. Which keys are present depends on the fields argument; the keys below are those a full record carries.",
+          "properties": {
+            "accession-list": {
+              "type": "array",
+              "description": "Every accession the cell line holds; one is type 'primary', the others are secondary accessions kept for lookups.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "child-list": {
+              "type": "array",
+              "description": "Cell lines derived from this one (2273 for CVCL_0030), each with its accession and name.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "comment-list": {
+              "type": "array",
+              "description": "Curator comments by category: 'Problematic cell line', 'Misspelling', 'Omics', 'Karyotypic information' and others. This is where Cellosaurus records a contamination or misidentification warning.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "derived-from-site-list": {
+              "type": "array",
+              "description": "Body site the line was derived from, with its site-type (In situ, Metastatic).",
+              "items": {
+                "type": "object"
+              }
+            },
+            "disease-list": {
+              "type": "array",
+              "description": "Diseases of the donor as NCI Thesaurus terms with accessions.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "doubling-time-list": {
+              "type": "array",
+              "description": "Reported doubling times with the reference each came from; values disagree between sources.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "hla-typing-list": {
+              "type": "array",
+              "description": "HLA alleles per gene, each typing with its source.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "microsatellite-instability-list": {
+              "type": "array",
+              "description": "MSI status (e.g. 'Stable (MSS)') with its source.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "name-list": {
+              "type": "array",
+              "description": "Names of the cell line: one 'identifier' plus synonyms.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "omics-list": {
+              "type": "array",
+              "description": "Omics studies available for the line, by branch (Genomics, Transcriptomics, ...).",
+              "items": {
+                "type": "object"
+              }
+            },
+            "reference-list": {
+              "type": "array",
+              "description": "The cell line's references as Cellosaurus internal pointers ({'resource-internal-ref': 'CelloPub=CLPUB00047'}). Read publications for the records these point at.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "species-list": {
+              "type": "array",
+              "description": "Species of origin as NCBI Taxonomy cross-references.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "transformant-list": {
+              "type": "array",
+              "description": "Transforming agent (virus, oncogene) as a cross-reference; for CVCL_0030 human papillomavirus type 18.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "web-page-list": {
+              "type": "array",
+              "description": "External pages about the line, by category and institution.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "xref-list": {
+              "type": "array",
+              "description": "Cross-references to other resources (233 for CVCL_0030): cell line catalogues, anatomy and cell-type ontologies, omics repositories.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "age": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Donor age at sampling, as Cellosaurus writes it (e.g. '30Y6M')."
+            },
+            "category": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cell line category, e.g. 'Cancer cell line', 'Hybridoma', 'Finite cell line'."
+            },
+            "created": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Date the entry was created (YYYY-MM-DD)."
+            },
+            "entry-version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cellosaurus version number of this entry."
+            },
+            "last-updated": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Date the entry was last updated."
+            },
+            "sex": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Sex of the donor."
+            },
+            "doubling-time-range": {
+              "type": "object",
+              "description": "Doubling time as a range where Cellosaurus records one."
+            },
+            "genome-ancestry": {
+              "type": "object",
+              "description": "Estimated genome ancestry proportions with the study they came from."
+            },
+            "str-list": {
+              "type": "object",
+              "description": "Short tandem repeat profile: the marker/allele pairs used to authenticate the line, with their sources."
+            }
+          }
         },
         "format": {
           "type": "string",
@@ -246,6 +528,127 @@
         "error": {
           "type": "string",
           "description": "Error message if request failed"
+        },
+        "publications": {
+          "type": "array",
+          "description": "The publications the cell line's reference-list points at, resolved against the response's own publication list. Cellosaurus sends the references as internal pointers ('CelloPub=CLPUB00047') and the publication records separately, so the pointers alone carry no title, journal or PubMed id. An unresolvable pointer is reported as its bare internal id.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "internal_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The Cellosaurus internal reference the cell line pointed at."
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Publication type (article, thesis, patent, book chapter)."
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Title."
+              },
+              "journal_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Journal name."
+              },
+              "date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Year."
+              },
+              "authors": {
+                "type": "array",
+                "description": "Author names, at most AUTHORS_PER_PUBLICATION of them.",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "author_count": {
+                "type": "integer",
+                "description": "Number of authors the record carries."
+              },
+              "cross_references": {
+                "type": "array",
+                "description": "Identifiers for the publication: its PubMed id, DOI and the resolvable URL for each.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "database": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "PubMed, DOI, PMCID."
+                    },
+                    "category": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Cellosaurus's category for the resource, e.g. 'Reference resources'."
+                    },
+                    "accession": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The identifier in that database."
+                    },
+                    "url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Resolvable URL."
+                    }
+                  }
+                }
+              },
+              "volume": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Journal volume."
+              },
+              "first_page": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "First page."
+              },
+              "last_page": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Last page."
+              }
+            }
+          }
+        },
+        "publication_count": {
+          "type": "integer",
+          "description": "Number of references the cell line carries (83 for CVCL_0030); publications holds at most the first PUBLICATIONS_PER_CELL_LINE of them."
+        },
+        "publications_truncated": {
+          "type": "boolean",
+          "description": "True when publication_count exceeds the number of records in publications."
         }
       }
     },

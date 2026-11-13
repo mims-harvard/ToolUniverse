@@ -709,8 +709,20 @@ class TestToolConcurrency:
         # Should not have created more than 1000 new objects
         assert object_growth < 1000
 
+    @pytest.mark.network
     def test_tool_performance_real(self):
-        """Test real tool performance."""
+        """Test real tool performance.
+
+        Marked `network` for the same reason as
+        `test_compose_tool_performance_real` above it, which was marked on
+        2026-11-07 for exactly this: `assert execution_time < 30` around a
+        live UniProt_get_entry_by_accession call measures UniProt, not this
+        repository. Both branches of its try/except assert only the timing,
+        so the test has no other claim to make. It has now failed CI at
+        53.07 s, 54.85 s and 49.20 s on three separate runs of a branch that
+        touches no UniProt code, and `main` itself failed its own run the
+        same day.
+        """
 
         # Test execution time
         start_time = time.time()

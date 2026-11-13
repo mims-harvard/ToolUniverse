@@ -613,6 +613,14 @@ class ENCORITool(BaseTool):
                     "region": d.get("Region"),
                     "cell_tissue": d.get("CellLine/Tissue"),
                     "main_accession": d.get("MainAccession"),
+                    # ENCORI answers these three on every row and the wrapper
+                    # dropped all of them. Without `properties` two rows can be
+                    # identical on everything returned and still be different
+                    # measurements: the UGCAUG scan comes back with MBNL2 in
+                    # brain twice, one hippocampus and one frontal cortex.
+                    "properties": d.get("Properties"),
+                    "sub_accession": d.get("SubAccession"),
+                    "citation": d.get("Citation"),
                 }
             )
 

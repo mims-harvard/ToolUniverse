@@ -8,7 +8,9 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["accession"],
+      "required": [
+        "accession"
+      ],
       "properties": {
         "accession": {
           "type": "string",
@@ -26,26 +28,73 @@
           },
           "type": "object",
           "properties": {
-            "accession_id": {"type": ["string", "null"]},
-            "title": {"type": ["string", "null"]},
-            "description": {"type": ["string", "null"]},
-            "study_type": {"type": ["string", "null"]},
-            "pubmed_ids": {"type": "array"},
-            "is_released": {"type": ["boolean", "null"]},
-            "released_date": {"type": ["string", "null"]},
-            "is_deprecated": {"type": ["boolean", "null"]}
+            "accession_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "study_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pubmed_ids": {
+              "type": "array"
+            },
+            "is_released": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "released_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "is_deprecated": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"accession": "EGAS00000000001"},
-      {"accession": "EGAS00000000002"}
+      {
+        "accession": "EGAS00000000001"
+      },
+      {
+        "accession": "EGAS00000000002"
+      }
     ]
   },
   {
@@ -57,7 +106,9 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["accession"],
+      "required": [
+        "accession"
+      ],
       "properties": {
         "accession": {
           "type": "string",
@@ -75,28 +126,85 @@
           },
           "type": "object",
           "properties": {
-            "accession_id": {"type": ["string", "null"]},
-            "title": {"type": ["string", "null"]},
-            "description": {"type": ["string", "null"]},
-            "dataset_types": {"type": "array"},
-            "technologies": {"type": "array", "items": {"type": "string"}},
-            "num_samples": {"type": ["integer", "null"]},
-            "access_type": {"type": ["string", "null"]},
-            "policy_accession_id": {"type": ["string", "null"]},
-            "is_released": {"type": ["boolean", "null"]},
-            "released_date": {"type": ["string", "null"]}
+            "accession_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "dataset_types": {
+              "type": "array"
+            },
+            "technologies": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "num_samples": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "access_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "policy_accession_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "is_released": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "released_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"accession": "EGAD00000000001"},
-      {"accession": "EGAD00000000002"}
+      {
+        "accession": "EGAD00000000001"
+      },
+      {
+        "accession": "EGAD00000000002"
+      }
     ]
   },
   {
@@ -108,7 +216,9 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["accession"],
+      "required": [
+        "accession"
+      ],
       "properties": {
         "accession": {
           "type": "string",
@@ -123,24 +233,66 @@
           "items": {
             "type": "object",
             "properties": {
-              "accession_id": {"type": ["string", "null"]},
-              "title": {"type": ["string", "null"]},
-              "technologies": {"type": "array", "items": {"type": "string"}},
-              "num_samples": {"type": ["integer", "null"]},
-              "access_type": {"type": ["string", "null"]}
+              "accession_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "technologies": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "num_samples": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "access_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What the dataset contains, in EGA's words. Named in this tool's own promise of 'title, description, technology, sample' metadata and returned by its two sibling operations, but not by the listing."
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"accession": "EGAS00000000001"},
-      {"accession": "EGAS00000000002"}
+      {
+        "accession": "EGAS00000000001"
+      },
+      {
+        "accession": "EGAS00000000002"
+      }
     ]
   }
 ]

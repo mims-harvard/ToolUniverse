@@ -96,11 +96,146 @@
                     "description": "Feature description (interaction partner, binding specificity, etc.)"
                   },
                   "evidences": {
-                    "type": "array",
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Evidence for the feature, each an ECO code with its source",
                     "items": {
-                      "type": "object"
-                    },
-                    "description": "Literature evidence"
+                      "type": "object",
+                      "description": "One piece of evidence for the feature",
+                      "properties": {
+                        "code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Evidence Code Ontology term, e.g. ECO:0000269 for experimental evidence"
+                        },
+                        "source": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Where the evidence comes from, e.g. PubMed"
+                        },
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Identifier in that source"
+                        }
+                      }
+                    }
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The feature category, as upstream labels it"
+                  },
+                  "feature_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "UniProt feature id, e.g. PRO_0000015819 for the insulin B chain; how a processed chain is cited"
+                  },
+                  "molecule": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Isoform the feature applies to; empty on the canonical sequence"
+                  },
+                  "ligand": {
+                    "type": "object",
+                    "description": "What binds at this site. EGFR 718-726 binds ATP (CHEBI:30616) and the whole of that was dropped from a category whose own description is 'binding sites'.",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "part": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Usually ChEBI"
+                      },
+                      "database_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "ligand_part": {
+                    "type": "object",
+                    "description": "The part of the ligand that binds, where UniProt distinguishes it",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "raw_evidences": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "The same evidence as UniProt sends it, with the source object intact",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    }
                   }
                 }
               },
@@ -111,8 +246,67 @@
               "description": "Total feature count"
             },
             "feature_type_counts": {
-              "type": "object",
-              "description": "Count of each feature type (DNA_BIND, BINDING, REGION, MOTIF, SITE)"
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How many features of each type the entry has, keyed by UniProt feature type such as DNA_BIND, REGION or MOTIF",
+              "additionalProperties": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Count for that feature type"
+              }
+            },
+            "taxid": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "NCBI taxon id of the organism, which the response carries"
+            },
+            "sequence_checksum": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "CRC64 of the sequence the positions are against"
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether more features remain beyond this page"
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied"
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of this page"
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Features on this page"
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the feature list was cut. Declared because a caller reading the schema otherwise has no way to know the result is paged at all"
             }
           },
           "not": {
@@ -237,6 +431,104 @@
                       "type": "object"
                     },
                     "description": "Evidence references"
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The feature category, as upstream labels it"
+                  },
+                  "feature_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "UniProt feature id, e.g. PRO_0000015819 for the insulin B chain; how a processed chain is cited"
+                  },
+                  "molecule": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Isoform the feature applies to; empty on the canonical sequence"
+                  },
+                  "ligand": {
+                    "type": "object",
+                    "description": "What binds at this site. EGFR 718-726 binds ATP (CHEBI:30616) and the whole of that was dropped from a category whose own description is 'binding sites'.",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "part": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Usually ChEBI"
+                      },
+                      "database_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "ligand_part": {
+                    "type": "object",
+                    "description": "The part of the ligand that binds, where UniProt distinguishes it",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "raw_evidences": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Evidence for the processing feature, each with an ECO code and its source."
                   }
                 }
               },
@@ -249,6 +541,55 @@
             "feature_type_counts": {
               "type": "object",
               "description": "Count of each processing type (SIGNAL, CHAIN, PEPTIDE, PROPEP, etc.)"
+            },
+            "taxid": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "NCBI taxon id of the organism, which the response carries"
+            },
+            "sequence_checksum": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "CRC64 of the sequence the positions are against"
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more records match than this response carries. The field that says the answer is a page and not the whole set."
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to this call."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Records skipped before this page."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records are in this response."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result was cut by a cap rather than reaching the end of the data."
             }
           },
           "not": {
@@ -366,6 +707,114 @@
                       "null"
                     ],
                     "description": "Additional description"
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The feature category, as upstream labels it"
+                  },
+                  "feature_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "UniProt feature id, e.g. PRO_0000015819 for the insulin B chain; how a processed chain is cited"
+                  },
+                  "molecule": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Isoform the feature applies to; empty on the canonical sequence"
+                  },
+                  "ligand": {
+                    "type": "object",
+                    "description": "What binds at this site. EGFR 718-726 binds ATP (CHEBI:30616) and the whole of that was dropped from a category whose own description is 'binding sites'.",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "part": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Usually ChEBI"
+                      },
+                      "database_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "ligand_part": {
+                    "type": "object",
+                    "description": "The part of the ligand that binds, where UniProt distinguishes it",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "evidences": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Evidence for the feature, each with an ECO code and source, e.g. ECO:0007829 from PDB. A feature with experimental evidence and one predicted by similarity are not the same claim."
+                  },
+                  "raw_evidences": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "The same evidence before normalisation, with the source's own name and id."
                   }
                 }
               },
@@ -378,6 +827,55 @@
             "feature_type_counts": {
               "type": "object",
               "description": "Count of each type (HELIX, STRAND, TURN)"
+            },
+            "taxid": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "NCBI taxon id of the organism, which the response carries"
+            },
+            "sequence_checksum": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "CRC64 of the sequence the positions are against"
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more records match than this response carries. The field that says the answer is a page and not the whole set."
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to this call."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Records skipped before this page."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records are in this response."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result was cut by a cap rather than reaching the end of the data."
             }
           },
           "not": {

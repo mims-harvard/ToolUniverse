@@ -137,6 +137,70 @@
                   "null"
                 ],
                 "description": "Literature reference"
+              },
+              "annotation_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "with_from": {
+                "type": "array",
+                "description": "What an IEA or IC was inferred FROM, which is the difference between a computed annotation a reader can check and one they cannot",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "gene_product_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "taxon_id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ]
+              },
+              "target_sets": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "go_definition": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What the GO term means, from the term record the name backfill already fetches"
+              },
+              "go_is_obsolete": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "go_child_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Children of the GO term; the terms themselves are in QuickGO_get_term_children"
+              },
+              "go_synonym_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
               }
             }
           }
@@ -287,6 +351,45 @@
                   "null"
                 ],
                 "description": "Annotating database"
+              },
+              "annotation_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "with_from": {
+                "type": "array",
+                "description": "What an IEA or IC was inferred FROM, which is the difference between a computed annotation a reader can check and one they cannot",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "gene_product_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reference": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The paper. `assigned_by` is the database that made the annotation; this is what it cites."
+              },
+              "interacting_taxon_id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -416,6 +519,37 @@
             "num_children": {
               "type": "integer",
               "description": "Number of child terms"
+            },
+            "children": {
+              "type": "array",
+              "description": "The children themselves, with the relation to each: `is_a` against `part_of` is the whole meaning of the edge, and a count cannot be walked",
+              "items": {
+                "type": "object"
+              }
+            },
+            "comment": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subsets": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "replaced_by": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "considers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           "not": {

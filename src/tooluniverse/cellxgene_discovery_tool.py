@@ -18,6 +18,76 @@ from .base_tool import BaseTool
 CXG_BASE_URL = "https://api.cellxgene.cziscience.com"
 
 
+# A collection can list hundreds of authors and dozens of tissues across its
+# datasets. Each summary list is capped at this and the full count reported.
+AUTHORS_PER_COLLECTION = 25
+TERMS_PER_COLLECTION = 25
+
+
+def _publication(collection: Dict[str, Any]) -> Dict[str, Any]:
+    """The paper a collection belongs to.
+
+    `publisher_metadata` carries the journal, the year and the full author
+    list -- 12 names on the retina collection -- and the row reported the
+    DOI and the contact name only, so a collection could not be cited.
+    """
+    meta = collection.get("publisher_metadata")
+    if not isinstance(meta, dict):
+        return {}
+    authors = [
+        " ".join(
+            part
+            for part in (author.get("given"), author.get("family"))
+            if isinstance(part, str) and part
+        )
+        or author.get("name")
+        for author in (meta.get("authors") or [])
+        if isinstance(author, dict)
+    ]
+    authors = [name for name in authors if name]
+    return {
+        "journal": meta.get("journal"),
+        "publication_year": meta.get("published_year") or meta.get("year"),
+        "publication_month": meta.get("published_month"),
+        "publication_day": meta.get("published_day"),
+        "is_preprint": meta.get("is_preprint"),
+        "authors": authors[:AUTHORS_PER_COLLECTION],
+        "author_count": len(authors),
+        "authors_truncated": len(authors) > AUTHORS_PER_COLLECTION,
+    }
+
+
+def _ontology_terms(datasets: Any, key: str) -> Dict[str, Any]:
+    """The distinct labels across a collection's datasets, with their ids.
+
+    The sibling dataset-search handler reads these for each dataset; the
+    collection row did not, so "which collections cover retina" could not be
+    answered from a listing.
+    """
+    seen: Dict[str, Dict[str, Any]] = {}
+    for dataset in datasets if isinstance(datasets, list) else []:
+        if not isinstance(dataset, dict):
+            continue
+        for term in dataset.get(key) or []:
+            if not isinstance(term, dict):
+                continue
+            label = term.get("label")
+            if not label or label in seen:
+                continue
+            seen[label] = {
+                "label": label,
+                "ontology_term_id": term.get("ontology_term_id"),
+            }
+            if term.get("tissue_type"):
+                seen[label]["tissue_type"] = term.get("tissue_type")
+    rows = list(seen.values())
+    return {
+        "rows": rows[:TERMS_PER_COLLECTION],
+        "total": len(rows),
+        "truncated": len(rows) > TERMS_PER_COLLECTION,
+    }
+
+
 class CellxGeneDiscoveryTool(BaseTool):
     """
     Tool for CZI CellxGene Discovery API providing access to single-cell
@@ -89,9 +159,20 @@ class CellxGeneDiscoveryTool(BaseTool):
         results = []
         for c in collections[offset : offset + limit]:
             datasets = c.get("datasets", [])
-            total_cells = sum(
-                ds.get("cell_count", 0) for ds in datasets if ds.get("cell_count")
-            )
+            # The /collections listing's datasets carry no cell_count, so this
+            # sum was 0 on every row -- and a 0 reads as "no cells", not as
+            # "the listing does not say". Report None when nothing counted,
+            # and say how many of the datasets did.
+            counted = [
+                ds.get("cell_count")
+                for ds in datasets
+                if isinstance(ds, dict) and isinstance(ds.get("cell_count"), int)
+            ]
+            total_cells = sum(counted) if counted else None
+            tissue_terms = _ontology_terms(datasets, "tissue")
+            disease_terms = _ontology_terms(datasets, "disease")
+            organism_terms = _ontology_terms(datasets, "organism")
+            assay_terms = _ontology_terms(datasets, "assay")
             results.append(
                 {
                     "collection_id": c.get("collection_id"),
@@ -104,7 +185,21 @@ class CellxGeneDiscoveryTool(BaseTool):
                     "consortia": c.get("consortia"),
                     "dataset_count": len(datasets),
                     "total_cells": total_cells,
+                    "datasets_with_cell_count": len(counted),
                     "created_at": c.get("created_at"),
+                    "collection_url": c.get("collection_url"),
+                    "contact_email": c.get("contact_email"),
+                    "published_at": c.get("published_at"),
+                    "revised_at": c.get("revised_at"),
+                    "publication": _publication(c),
+                    "tissues": tissue_terms["rows"],
+                    "tissue_count": tissue_terms["total"],
+                    "tissues_truncated": tissue_terms["truncated"],
+                    "diseases": disease_terms["rows"],
+                    "disease_count": disease_terms["total"],
+                    "organisms": organism_terms["rows"],
+                    "assays": assay_terms["rows"],
+                    "assay_count": assay_terms["total"],
                 }
             )
 

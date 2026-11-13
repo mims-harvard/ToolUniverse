@@ -171,6 +171,34 @@
               },
               "download_url": {
                 "type": "string"
+              },
+              "component": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which NHANES component the dataset belongs to, e.g. 'Questionnaire', 'Examination', 'Laboratory'. Self-reported questionnaire data and measured laboratory data are different evidence."
+              },
+              "file_description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The dataset's own description, e.g. 'Diabetes'."
+              },
+              "matching_variable": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which variable matched the search, e.g. 'DID040'. The dataset may be returned for one variable out of hundreds, and this says which."
+              },
+              "variable_description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "That variable's full text, e.g. 'How old {was SP/were you} when a doctor or other h...'. NHANES question text carries interviewer substitution braces, so it is not a plain sentence."
               }
             }
           }
@@ -207,6 +235,13 @@
         },
         "result_set_complete": {
           "type": "boolean"
+        },
+        "search_term": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The term as searched, e.g. 'diabetes'. Echoed so a surprising result set can be traced to what was actually queried."
         }
       }
     },

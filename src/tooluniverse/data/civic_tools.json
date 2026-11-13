@@ -120,6 +120,48 @@
             },
             "format": {
               "type": "string"
+            },
+            "endpoint": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The CIViC GraphQL endpoint the data came from, e.g. 'https://civicdb.org/api/graphql'."
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when further pages exist, e.g. true."
+            },
+            "next_cursor": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Opaque cursor for the next page, e.g. 'NQ'. CIViC pages by cursor, not by offset, so this value must be passed through verbatim."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many rows this reply contains, e.g. 5."
+            },
+            "total_results": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many genes match the query in total, e.g. 754 -- against the 5 rows returned. This is the field that says the reply is a page."
+            },
+            "total_results_is_exact": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when total_results is an exact count rather than a lower bound, e.g. true."
             }
           }
         }
@@ -308,7 +350,7 @@
   },
   {
     "name": "civic_get_variant",
-    "description": "Get a specific CIViC variant by variant ID. Returns the variant's aliases and types, its genomic coordinates (reference build, chromosome, start, stop, reference and variant bases, representative transcript), the ClinGen allele registry id, the MANE Select transcript, the gene feature, ClinVar ids and HGVS descriptions. Associated molecular profiles are cursor-paginated: when metadata.molecular_profiles_has_more is true, pass metadata.next_molecular_profile_cursor as molecular_profile_after.",
+    "description": "Get one CIViC variant by id, including its MyVariant.info annotation. Returns the variant's name, aliases, types, feature, genomic coordinates (with reference build and coordinate type), ClinVar ids, HGVS descriptions, allele registry id, MANE Select transcript, OpenCRAVAT link, its molecular profiles -- and `deprecated`, `deprecationReason` and `flagged`, so a retired or flagged variant is distinguishable from a current one. `myVariantInfo` carries 62 annotation fields: gnomAD and ExAC allele frequencies, pathogenicity predictors with both score and call (SIFT, PolyPhen-2, PROVEAN, FATHMM, MutationTaster, MutationAssessor, MetaSVM, MetaLR, LRT, CADD, REVEL, fitCons), conservation (GERP, phyloP, phastCons, SiPhy), and dbSNP, COSMIC and ClinVar cross-references. No other tool in the catalogue exposes it.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
@@ -338,7 +380,7 @@
       "additionalProperties": false
     },
     "fields": {
-      "query": "query GetVariant($variant_id: Int!, $molecular_profile_limit: Int, $molecular_profile_after: String) { variant(id: $variant_id) { id name link variantAliases variantTypes { id name soid } molecularProfiles(first: $molecular_profile_limit, after: $molecular_profile_after) { totalCount pageInfo { hasNextPage endCursor } nodes { id name molecularProfileScore } } ... on GeneVariant { clinvarIds hgvsDescriptions alleleRegistryId maneSelectTranscript feature { id name } coordinates { referenceBuild ensemblVersion chromosome start stop representativeTranscript referenceBases variantBases coordinateType } } } }",
+      "query": "query GetVariant($variant_id: Int!, $molecular_profile_limit: Int, $molecular_profile_after: String) { variant(id: $variant_id) { id name link deprecated deprecationReason flagged openRevisionCount singleVariantMolecularProfileId variantAliases variantTypes { id name soid } molecularProfiles(first: $molecular_profile_limit, after: $molecular_profile_after) { totalCount pageInfo { hasNextPage endCursor } nodes { id name molecularProfileScore } } ... on GeneVariant { clinvarIds hgvsDescriptions alleleRegistryId maneSelectTranscript openCravatUrl feature { id name } coordinates { referenceBuild ensemblVersion chromosome start stop representativeTranscript referenceBases variantBases coordinateType } myVariantInfo { myVariantInfoId caddConsequence caddDetail caddPhred caddScore clinvarClinicalSignificance clinvarHgvsCoding clinvarHgvsGenomic clinvarHgvsNonCoding clinvarHgvsProtein clinvarId clinvarOmim cosmicId dbnsfpInterproDomain dbsnpRsid eglClass eglHgvs eglProtein eglTranscript exacAlleleCount exacAlleleFrequency exacAlleleNumber fathmmMklPrediction fathmmMklScore fathmmPrediction fathmmScore fitconsScore gerp gnomadExomeAlleleCount gnomadExomeAlleleFrequency gnomadExomeAlleleNumber gnomadExomeFilter gnomadGenomeAlleleCount gnomadGenomeAlleleFrequency gnomadGenomeAlleleNumber gnomadGenomeFilter lrtPrediction lrtScore metalrPrediction metalrScore metasvmPrediction metasvmScore mutationassessorPrediction mutationassessorScore mutationtasterPrediction mutationtasterScore phastcons100way phastcons30way phyloP100way phyloP30way polyphen2HdivPrediction polyphen2HdivScore polyphen2HvarPrediction polyphen2HvarScore proveanPrediction proveanScore revelScore siftPrediction siftScore siphy snpeffSnpEffect snpeffSnpImpact } } } }",
       "operation_name": "GetVariant"
     },
     "return_schema": {
@@ -511,6 +553,153 @@
                       ]
                     }
                   }
+                },
+                "clinvarIds": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "ClinVar variation ids for the variant, e.g. ['12624']. The join to clinical significance assertions outside CIViC."
+                },
+                "hgvsDescriptions": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "HGVS strings for the variant, e.g. ['NM_007313.2:c.1001C>T', ...] - 4 of them, across transcripts and at protein level. Which transcript each is on decides whether a caller's own HGVS matches."
+                },
+                "variantAliases": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Other names for the variant, e.g. ['THR334ILE', ...]. Non-HGVS forms that appear in papers, which is how a literature mention is matched."
+                },
+                "variantTypes": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "The variant's classes, each with id and name, e.g. 'Missense Variant'. A list, since one variant can be several things at once."
+                },
+                "deprecated": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when CIViC has retired this variant. A deprecated variant used to come back looking exactly like a current one."
+                },
+                "deprecationReason": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Why it was deprecated, e.g. DUPLICATE or REVISED."
+                },
+                "flagged": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when a curator has flagged this variant for review."
+                },
+                "openRevisionCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many revisions are open against this variant."
+                },
+                "singleVariantMolecularProfileId": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "The molecular profile of this variant alone, as opposed to the profiles that combine it with others."
+                },
+                "openCravatUrl": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "OpenCRAVAT annotation page for this variant."
+                },
+                "myVariantInfo": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The MyVariant.info annotation CIViC carries for this variant: 62 fields covering population frequency (gnomadExome/gnomadGenome/exac allele counts, numbers, frequencies and filters), pathogenicity predictors with both score and call (sift, polyphen2 Hdiv and Hvar, provean, fathmm, fathmmMkl, mutationtaster, mutationassessor, metasvm, metalr, lrt, cadd, revel, fitcons), conservation (gerp, phyloP 30/100-way, phastcons 30/100-way, siphy), and the cross-references dbsnpRsid, cosmicId, clinvarId, clinvarOmim, clinvarClinicalSignificance and the ClinVar HGVS lists. None of it was reachable before: no other tool in the catalogue exposes it. A predictor's score and its call are separate fields and both are returned, because a call without its score cannot be weighed.",
+                  "properties": {
+                    "myVariantInfoId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The MyVariant.info key, e.g. 'chr7:g.140453136A>T'."
+                    },
+                    "dbsnpRsid": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "cosmicId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "clinvarId": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "clinvarClinicalSignificance": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Every significance ClinVar holds for this variant, which may disagree with itself."
+                    },
+                    "gnomadExomeAlleleFrequency": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "gnomadGenomeAlleleFrequency": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "revelScore": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "caddPhred": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -589,6 +778,13 @@
                     "hasNextPage": {
                       "type": "boolean",
                       "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                    },
+                    "endCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Cursor for the next page of results. Required to page a GraphQL connection; a page count will not do it."
                     }
                   }
                 },
@@ -602,6 +798,19 @@
                       },
                       "name": {
                         "type": "string"
+                      },
+                      "feature": {
+                        "type": "object",
+                        "description": "Parent gene feature",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Gene name"
+                          }
+                        }
                       }
                     }
                   }
@@ -627,7 +836,7 @@
   },
   {
     "name": "civic_get_evidence_item",
-    "description": "Get a specific CIViC evidence item by evidence ID. Evidence items link molecular profiles or variants to clinical outcomes, therapies, or disease states with curated literature support. Returns the evidence level (A-E), type, direction, significance and curator rating, the disease (with DOID), therapies, phenotypes (with HPO ids) and molecular profile, variant origin, and the full source record: PubMed/ASCO id (citationId), title, journal, authors, publication year and URL -- including whether the source has been RETRACTED (retracted, retractionDate, retractionNature, retractionReasons), which a caller must check before relying on the evidence.",
+    "description": "Get one CIViC evidence item by id, with THE ASSERTIONS THAT CITE IT. Returns the evidence level, type, direction, significance and curator rating, the disease (with DOID), therapies, phenotypes, molecular profile, the curator `flagged` flag, a fully resolvable source (citationId is the PMID for PUBMED sources, with retraction status and date), and `assertions` -- each assertion built on this item, with its status, type, direction, significance, AMP tier and FDA/regulatory flags.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
@@ -642,7 +851,7 @@
       ]
     },
     "fields": {
-      "query": "query GetEvidenceItem($evidence_id: Int!) { evidenceItem(id: $evidence_id) { id name description status link evidenceLevel evidenceType evidenceDirection significance evidenceRating variantOrigin therapyInteractionType disease { id name doid link } therapies { id name ncitId link } phenotypes { id name hpoId } molecularProfile { id name link } source { id citation citationId sourceType title journal fullJournalTitle authorString publicationYear publicationDate pmcId sourceUrl link openAccess isPreprint retracted retractionDate retractionNature retractionReasons } } }",
+      "query": "query GetEvidenceItem($evidence_id: Int!) { evidenceItem(id: $evidence_id) { id name description status link evidenceLevel evidenceType evidenceDirection significance evidenceRating variantOrigin flagged openRevisionCount therapyInteractionType disease { id name doid link } therapies { id name ncitId link } phenotypes { id name hpoId } molecularProfile { id name link } assertions { id name status link assertionType assertionDirection significance ampLevel fdaCompanionTest regulatoryApproval } source { id citation citationId sourceType title journal fullJournalTitle authorString publicationYear publicationDate pmcId sourceUrl link openAccess isPreprint retracted retractionDate retractionNature retractionReasons } } }",
       "operation_name": "GetEvidenceItem"
     },
     "return_schema": {
@@ -981,6 +1190,30 @@
                       ]
                     }
                   }
+                },
+                "flagged": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when a curator has flagged this evidence item for review."
+                },
+                "openRevisionCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many revisions are open against this evidence item."
+                },
+                "assertions": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "THE ASSERTIONS THAT CITE THIS EVIDENCE ITEM, each with id, name, status, link, assertionType, assertionDirection, significance, ampLevel, fdaCompanionTest and regulatoryApproval. The reverse of civic_get_assertion's evidenceItems, and the join that used to be severed in this direction too. `status` matters: EID3758 is cited by AID7 (ACCEPTED) and AID12 (REJECTED).",
+                  "items": {
+                    "type": "object"
+                  }
                 }
               }
             }
@@ -996,7 +1229,7 @@
   },
   {
     "name": "civic_search_evidence_items",
-    "description": "Search CIViC evidence items with exact totalCount and cursor pagination. Each row carries the evidence level, type, direction, significance and curator rating, the disease (with DOID), therapies and molecular profile, and a resolvable source: citationId (the PMID for PUBMED sources), title, journal, year, URL, and whether the publication has been RETRACTED. When metadata.has_more is true, pass metadata.next_cursor as after with the same filters.",
+    "description": "Search CIViC evidence items with exact totalCount and cursor pagination. Each row carries the evidence level, type, direction, significance and curator rating, the disease (with DOID), therapies and molecular profile, and a resolvable source: citationId (the PMID for PUBMED sources), title, journal, year, URL, and whether the publication has been RETRACTED. When metadata.has_more is true, pass metadata.next_cursor as after with the same filters. The `disease` filter is a name substring that unions every matching CIViC disease; metadata.disease_filter names the ones present in the page returned.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
@@ -1025,11 +1258,11 @@
         },
         "disease": {
           "type": "string",
-          "description": "Filter by disease name (e.g., 'leukemia', 'melanoma', 'lung cancer'). Alias: disease_name. Note: CIViC uses specific disease names (e.g., 'Lung Non-small Cell Carcinoma', not 'NSCLC'); try partial names or multiple searches if results are empty."
+          "description": "Filter by disease NAME (e.g. 'leukemia', 'melanoma', 'lung cancer'). Alias: disease_name. This is a case-insensitive SUBSTRING MATCH that UNIONS every CIViC disease whose name contains it -- 'Melanoma' returns 235 evidence items drawn from seven diseases (Melanoma, Skin Melanoma, Uveal, Acral Lentiginous, Mucosal, Spitzoid, Malignant Anus Melanoma), which is neither Melanoma's own 304 nor any ontology subtree. It does not expand subtypes either: a related disease whose name does not contain the string is absent. metadata.disease_filter lists the diseases actually present in the page returned; call civic_search_diseases with the same string for the full match list with each disease's evidenceItemCount. CIViC uses specific names ('Lung Non-small Cell Carcinoma', not 'NSCLC')."
         },
         "disease_name": {
           "type": "string",
-          "description": "Alias for disease. Filter by disease name."
+          "description": "Filter by disease NAME (e.g. 'leukemia', 'melanoma', 'lung cancer'). Alias: disease_name. This is a case-insensitive SUBSTRING MATCH that UNIONS every CIViC disease whose name contains it -- 'Melanoma' returns 235 evidence items drawn from seven diseases (Melanoma, Skin Melanoma, Uveal, Acral Lentiginous, Mucosal, Spitzoid, Malignant Anus Melanoma), which is neither Melanoma's own 304 nor any ontology subtree. It does not expand subtypes either: a related disease whose name does not contain the string is absent. metadata.disease_filter lists the diseases actually present in the page returned; call civic_search_diseases with the same string for the full match list with each disease's evidenceItemCount. CIViC uses specific names ('Lung Non-small Cell Carcinoma', not 'NSCLC')."
         },
         "molecular_profile": {
           "type": "string",
@@ -1109,6 +1342,13 @@
                     "hasNextPage": {
                       "type": "boolean",
                       "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                    },
+                    "endCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Cursor for the next page of results. Required to page a GraphQL connection; a page count will not do it."
                     }
                   }
                 },
@@ -1319,6 +1559,20 @@
               }
             }
           }
+        },
+        "normalization_note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "What the tool changed about the query before running it, e.g. \"Input auto-normalized: therapy 'imatinib' -> ...\". The search that ran is not the search that was asked for, and this is the only record of the difference."
+        },
+        "status_note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which evidence items were included, e.g. 'Showing 5 ACCEPTED (peer-reviewed) evidence items...'. CIViC also holds submitted and rejected items; a count read without this reads as the whole evidence base."
         }
       }
     },
@@ -1332,7 +1586,7 @@
   },
   {
     "name": "civic_get_assertion",
-    "description": "Get a specific CIViC assertion by assertion ID. Assertions are higher-level clinical interpretations that integrate multiple evidence items into formal statements about clinical actionability. Returns the assertion's type and direction, its clinical significance, its AMP/ASCO/CAP tier (ampLevel) and any ACMG/ClinGen codes, the disease (with DOID) and therapies it concerns, the molecular profile it is made on, variant origin, whether an FDA companion test and regulatory approval exist, the NCCN guideline and version, how many evidence items support it (evidenceItemsCount), and the curated description and summary.",
+    "description": "Get one CIViC assertion by id, with THE EVIDENCE IT IS MADE FROM. Returns the assertion's type, direction, significance, AMP/ASCO/CAP tier, variant origin, FDA companion-test and regulatory-approval flags with the dates they were last checked, NCCN guideline, ACMG and ClinGen codes, phenotypes, disease, therapies, molecular profile, the curator `flagged` flag -- and `evidenceItems`, every evidence item the assertion cites, each with its own level, type, direction, significance, rating, status, disease, therapies and source. Check each item's `status`: an assertion can cite an item that was later REJECTED.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
@@ -1347,7 +1601,7 @@
       ]
     },
     "fields": {
-      "query": "query GetAssertion($assertion_id: Int!) { assertion(id: $assertion_id) { id name description summary status link assertionType assertionDirection significance ampLevel variantOrigin fdaCompanionTest regulatoryApproval evidenceItemsCount nccnGuideline { id name } nccnGuidelineVersion therapyInteractionType acmgCodes { code description } clingenCodes { code description } disease { id name doid link } therapies { id name ncitId link } molecularProfile { id name link } } }",
+      "query": "query GetAssertion($assertion_id: Int!) { assertion(id: $assertion_id) { id name description summary status link assertionType assertionDirection significance ampLevel variantOrigin fdaCompanionTest fdaCompanionTestLastUpdated regulatoryApproval regulatoryApprovalLastUpdated flagged openRevisionCount evidenceItemsCount nccnGuideline { id name } nccnGuidelineVersion therapyInteractionType acmgCodes { code description } clingenCodes { code description } phenotypes { id name hpoId } disease { id name doid link } therapies { id name ncitId link } molecularProfile { id name link } evidenceItems { id name status link evidenceType evidenceLevel evidenceDirection significance evidenceRating variantOrigin disease { id name doid } therapies { id name ncitId } source { id citation citationId sourceType publicationYear sourceUrl } } } }",
       "operation_name": "GetAssertion"
     },
     "return_schema": {
@@ -1621,6 +1875,54 @@
                         "null"
                       ]
                     }
+                  }
+                },
+                "flagged": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when a curator has flagged this assertion for review. A flagged assertion reads exactly like an unflagged one without this field."
+                },
+                "openRevisionCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many revisions are open against this assertion."
+                },
+                "fdaCompanionTestLastUpdated": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When fdaCompanionTest was last checked. The flag without its date cannot be aged."
+                },
+                "regulatoryApprovalLastUpdated": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When regulatoryApproval was last checked."
+                },
+                "phenotypes": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "HPO phenotypes attached to the assertion, each with id, name and hpoId.",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "evidenceItems": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "THE EVIDENCE THE ASSERTION IS MADE FROM, one entry per item: id, name, status, link, evidenceType, evidenceLevel, evidenceDirection, significance, evidenceRating, variantOrigin, its own disease and therapies, and its source. `evidenceItemsCount` used to be returned without these and no other tool could fetch them -- civic_search_evidence_items has no assertion filter -- so the count named evidence that could not be reached. Check each item's `status`: an assertion can cite an item that was later REJECTED.",
+                  "items": {
+                    "type": "object"
                   }
                 }
               }
@@ -2134,7 +2436,7 @@
   },
   {
     "name": "civic_search_diseases",
-    "description": "Search CIViC diseases with cursor pagination. CIViC publishes no filter-aware total for this browse table, so metadata.has_more is the completeness signal; continue with metadata.next_cursor as after while has_more is true.",
+    "description": "Search CIViC's disease list by name substring. Each disease returns its id, name, display name, DOID, aliases, link, deprecation flag, and HOW MUCH IS ATTACHED TO IT: evidenceItemCount, assertionCount, variantCount and featureCount -- the numbers that make a result list usable, since 'Melanoma' matches nine CIViC diseases whose evidence ranges from 304 items to 1. The connection reports `filteredCount` (how many diseases match) beside `totalCount` (how many CIViC holds in all). The match is a case-insensitive substring of the name, not an ontology lookup: it does not walk the Disease Ontology, so a subtype whose name does not contain the string is not returned, and several unrelated diseases that happen to share a word are.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
@@ -2166,7 +2468,7 @@
       "additionalProperties": false
     },
     "fields": {
-      "query": "query SearchDiseases($limit: Int, $after: String, $name: String) { browseDiseases(first: $limit, after: $after, name: $name) { pageInfo { hasNextPage endCursor } nodes { id name } } }",
+      "query": "query SearchDiseases($limit: Int, $after: String, $name: String) { browseDiseases(first: $limit, after: $after, name: $name) { totalCount filteredCount pageCount pageInfo { hasNextPage endCursor } nodes { id name displayName doid diseaseAliases diseaseUrl link deprecated evidenceItemCount assertionCount variantCount featureCount } } }",
       "operation_name": "SearchDiseases",
       "param_map": {
         "query": "name"
@@ -2187,11 +2489,11 @@
               "properties": {
                 "pageInfo": {
                   "type": "object",
-                  "description": "Pagination state for this connection. This connection reports no filter-aware total, so hasNextPage is the only completeness signal available.",
+                  "description": "Pagination state for this connection. `filteredCount` beside it is the filter-aware total, so hasNextPage is no longer the only completeness signal.",
                   "properties": {
                     "hasNextPage": {
                       "type": "boolean",
-                      "description": "True when more records match than were returned. This connection publishes no filter-aware total, so this is the only completeness signal available."
+                      "description": "True when more records match than were returned. Read `filteredCount` for how many."
                     },
                     "endCursor": {
                       "type": [
@@ -2211,9 +2513,98 @@
                       },
                       "name": {
                         "type": "string"
+                      },
+                      "displayName": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "doid": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Disease Ontology id, e.g. '1909' for Melanoma. The identifier to join on; the name is not one."
+                      },
+                      "diseaseAliases": {
+                        "type": [
+                          "array",
+                          "string",
+                          "null"
+                        ],
+                        "description": "Other names for the disease. A search by name misses a disease whose name does not contain the string but whose alias does."
+                      },
+                      "diseaseUrl": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "link": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "deprecated": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when CIViC has retired this disease term."
+                      },
+                      "evidenceItemCount": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "HOW MUCH EVIDENCE THIS DISEASE HAS. The field that makes a list of nine melanomas usable: Melanoma 304, Skin Melanoma 68, Uveal 20, Acral Lentiginous 6, Mucosal 4, Spitzoid 2, and three with one each. Without it the tool returned nine ids and nine names and nothing to choose between them."
+                      },
+                      "assertionCount": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "How many assertions are attached to this disease."
+                      },
+                      "variantCount": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "How many variants have evidence in this disease."
+                      },
+                      "featureCount": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "How many genes/features have evidence in this disease."
                       }
                     }
                   }
+                },
+                "totalCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many diseases CIViC holds in all (466 as measured 2026-11-13). NOT filter-aware: it is the same for every query, so it is not a denominator. `filteredCount` is."
+                },
+                "filteredCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "HOW MANY MATCH THE FILTER. The schema used to state that this connection 'reports no filter-aware total'; it does, and this is it. `name='Melanoma'` -> 9."
+                },
+                "pageCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many pages the filtered set spans at the requested page size."
                 }
               }
             }
@@ -2262,7 +2653,7 @@
       "additionalProperties": false
     },
     "fields": {
-      "query": "query SearchTherapies($limit: Int, $after: String, $name: String) { browseTherapies(first: $limit, after: $after, name: $name) { pageInfo { hasNextPage endCursor } nodes { id name } } }",
+      "query": "query SearchTherapies($limit: Int, $after: String, $name: String) { browseTherapies(first: $limit, after: $after, name: $name) { totalCount filteredCount pageCount pageInfo { hasNextPage endCursor } nodes { id name } } }",
       "operation_name": "SearchTherapies",
       "param_map": {
         "query": "name"
@@ -2283,11 +2674,11 @@
               "properties": {
                 "pageInfo": {
                   "type": "object",
-                  "description": "Pagination state for this connection. This connection reports no filter-aware total, so hasNextPage is the only completeness signal available.",
+                  "description": "Pagination state for this connection. `filteredCount` beside it is the filter-aware total.",
                   "properties": {
                     "hasNextPage": {
                       "type": "boolean",
-                      "description": "True when more records match than were returned. This connection publishes no filter-aware total, so this is the only completeness signal available."
+                      "description": "True when more records match than were returned. Read `filteredCount` for how many."
                     },
                     "endCursor": {
                       "type": [
@@ -2310,6 +2701,27 @@
                       }
                     }
                   }
+                },
+                "totalCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many therapies CIViC holds in all (674 as measured 2026-11-13). NOT filter-aware: it is the same for every query. Do not divide by it."
+                },
+                "filteredCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "HOW MANY MATCH THE FILTER -- 'imatinib' 2, 'zzzzznotatherapy' 0, no filter 674. This is the denominator; totalCount is not."
+                },
+                "pageCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many pages the filtered set spans at the requested page size."
                 }
               }
             }
