@@ -460,7 +460,7 @@
   },
   {
     "name": "KEGG_get_module",
-    "description": "Retrieve a KEGG MODULE entry: a functional reaction-unit (a defined set of reaction steps) that is a building block of metabolism. Returns the NAME, the DEFINITION (the K-number boolean expression of ordered reaction steps), the CLASS hierarchy, the member REACTIONs, the participating COMPOUNDs, the ORTHOLOGY (KO/EC mappings), and the parent PATHWAYs. KEGG modules are central to metabolic reconstruction and completeness analysis. Example: M00001 = 'Glycolysis (Embden-Meyerhof pathway), glucose => pyruvate', DEFINITION '(K00844,K12407,K00845,...) (K01810,...) ...', CLASS 'Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism'.",
+    "description": "Retrieve a KEGG MODULE entry: a functional reaction-unit (a defined set of reaction steps) that is a building block of metabolism. Returns the NAME, the DEFINITION (the K-number expression of ordered reaction steps: SPACE means AND between steps, COMMA means OR between alternatives for one step, PLUS marks a required complex subunit, MINUS an optional component), the CLASS hierarchy, the member REACTIONs, the participating COMPOUNDs, the ORTHOLOGY (KO/EC mappings), and the parent PATHWAYs. KEGG modules are central to metabolic reconstruction and completeness analysis, and this tool returns the DEFINITION string for you to evaluate -- it does not compute completeness, so read the operator rules on the `definition` field before counting anything: a module is complete when every space-separated step has at least one alternative present, and M00001's first step lists seven alternative hexokinases, not seven requirements. KEGG's own BlastKOALA, /mapper/reconstruct and /annotate, which would do the reconstruction for you, are web-UI only and answer 404 on rest.kegg.jp (measured 2026-11-12), so the evaluation is yours. Example: M00001 = 'Glycolysis (Embden-Meyerhof pathway), glucose => pyruvate', DEFINITION '(K00844,K12407,K00845,...) (K01810,...) ...', CLASS 'Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism'.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -506,7 +506,7 @@
             },
             "definition": {
               "type": "string",
-              "description": "Boolean K-number reaction-step expression"
+              "description": "The K-number expression of the module's reaction steps, and the thing most often misread, because its operators are punctuation. Reading left to right: a SPACE separates sequential steps and means AND -- every space-separated block must be satisfied; a COMMA separates alternatives within a step and means OR -- any one of them satisfies it; a PLUS joins a required subunit of a complex to the K number before it, so both are needed; a MINUS marks an OPTIONAL component, which is NOT needed; parentheses group. A module is complete for a genome when every space-separated step has at least one of its alternatives present, counting + components as required and - components as not. M00001 (glycolysis) is nine steps: '(K00844,K12407,K00845,K25026,K00886,K08074,K00918) (K01810,...) ...' means seven alternative hexokinases for step one, not seven required genes. Counting the K numbers in the string, or treating the commas as AND, overstates what a genome needs by severalfold; treating the spaces as OR understates it to one."
             },
             "class": {
               "type": "string",

@@ -1075,7 +1075,7 @@
   "KEGG_get_drug_targets": "ef8865733a9225e732c61974c69637f3",
   "KEGG_get_enzyme": "94c8ae48661429ce2dd3d4d044506667",
   "KEGG_get_gene_pathways": "299a4c1f26253ae069870a0643150a59",
-  "KEGG_get_module": "d64093189e79655cbf082b53581672f0",
+  "KEGG_get_module": "a1a7135bfddef4cfa710bdad8b23d936",
   "KEGG_get_network": "b666aa75a83befdfd225b1cd748e763a",
   "KEGG_get_pathway_genes": "a17e13fadcd51536e60c51950242c52a",
   "KEGG_get_reaction": "d8f26c24e8e03ae65250efeccc230d9d",
