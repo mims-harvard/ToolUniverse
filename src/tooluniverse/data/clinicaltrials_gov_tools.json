@@ -16,7 +16,7 @@
         },
         "query_term": {
           "type": "string",
-          "description": "Query for 'other terms' with Essie expression syntax (e.g., 'combination', 'AREA[LastUpdatePostDate]RANGE[2023-01-15,MAX]', 'Phase II'). Can be used to search for all other protocol fields, including but not limited to title, outcome measures, status, phase, location, etc."
+          "description": "Query for 'other terms' with Essie expression syntax (e.g., 'combination', 'AREA[LastUpdatePostDate]RANGE[2023-01-15,MAX]', 'Phase II'). Can be used to search for all other protocol fields, including but not limited to title, outcome measures, status, phase, location, etc. Words are combined with AND against the indexed record text, so every word must appear somewhere in the record. A descriptive multi-word query therefore returns ZERO studies rather than a ranked list: 'KEYNOTE-045' finds NCT02256436, while 'KEYNOTE-045 pembrolizumab urothelial carcinoma second-line platinum' finds nothing, although every word of it is true of that trial. Search on the most distinctive term alone -- an NCT id, a trial acronym or one drug name -- and narrow with the dedicated condition/intervention/status parameters, or pass Essie syntax ('a OR b') to widen. When a many-worded query returns nothing, the response carries `term_match_check`, which counts how many studies match any one of the words and so tells a too-specific query apart from an absence of trials."
         },
         "pageSize": {
           "type": "integer",
@@ -185,6 +185,35 @@
                 "note": {
                   "type": "string",
                   "description": "Plain-language reading of the check, naming the escape hatch when the zero is an artifact of the rewrite."
+                }
+              }
+            },
+            "term_match_check": {
+              "type": "object",
+              "description": "Present ONLY when a plain multi-word `query_term` returned zero studies. query.term combines its words with AND, so an empty result may mean the query was too specific rather than that no such trial exists. The looser results are never substituted for the ones you asked for -- follow `note`.",
+              "properties": {
+                "submitted": {
+                  "type": "string",
+                  "description": "The query_term you sent."
+                },
+                "terms_are_combined_with": {
+                  "type": "string",
+                  "description": "Always 'AND'; stated so the empty result is readable."
+                },
+                "relaxed_query": {
+                  "type": "string",
+                  "description": "The same words combined with OR, used for the count below."
+                },
+                "studies_matching_any_term": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Studies matching at least one word. A large number beside zero studies means the AND was the cause. Zero means the words match nothing at all, so the empty result is genuine. Null if the check request failed, and `note` says why."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "What the counts mean and how to widen the query."
                 }
               }
             }
@@ -1194,7 +1223,7 @@
             "string",
             "null"
           ],
-          "description": "Free-text search across all study fields. Use for general keyword search."
+          "description": "Free-text search across all study fields. Use for general keyword search. Words are combined with AND against the indexed record text, so every word must appear somewhere in the record. A descriptive multi-word query therefore returns ZERO studies rather than a ranked list: 'KEYNOTE-045' finds NCT02256436, while 'KEYNOTE-045 pembrolizumab urothelial carcinoma second-line platinum' finds nothing, although every word of it is true of that trial. Search on the most distinctive term alone -- an NCT id, a trial acronym or one drug name -- and narrow with the dedicated condition/intervention/status parameters, or pass Essie syntax ('a OR b') to widen. When a many-worded query returns nothing, the response carries `term_match_check`, which counts how many studies match any one of the words and so tells a too-specific query apart from an absence of trials."
         },
         "filter_status": {
           "type": [
@@ -1696,6 +1725,35 @@
                 "note": {
                   "type": "string",
                   "description": "Plain-language reading of the check, naming the escape hatch when the zero is an artifact of the rewrite."
+                }
+              }
+            },
+            "term_match_check": {
+              "type": "object",
+              "description": "Present ONLY when a plain multi-word `query_term` returned zero studies. query.term combines its words with AND, so an empty result may mean the query was too specific rather than that no such trial exists. The looser results are never substituted for the ones you asked for -- follow `note`.",
+              "properties": {
+                "submitted": {
+                  "type": "string",
+                  "description": "The query_term you sent."
+                },
+                "terms_are_combined_with": {
+                  "type": "string",
+                  "description": "Always 'AND'; stated so the empty result is readable."
+                },
+                "relaxed_query": {
+                  "type": "string",
+                  "description": "The same words combined with OR, used for the count below."
+                },
+                "studies_matching_any_term": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Studies matching at least one word. A large number beside zero studies means the AND was the cause. Zero means the words match nothing at all, so the empty result is genuine. Null if the check request failed, and `note` says why."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "What the counts mean and how to widen the query."
                 }
               }
             }
