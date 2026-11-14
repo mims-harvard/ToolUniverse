@@ -108,6 +108,20 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the match IS, e.g. 'cellular tumor antigen p53 isoform a'. Distinct from 'track_description', which describes the TRACK the hit came from ('MANE Select') - the row carried that one and not this, so a caller had a field called description that never said what the hit was."
+                  },
+                  "canonical": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether this is the canonical transcript for the gene, which is how to pick one of several hits."
                   }
                 }
               }
@@ -404,6 +418,27 @@
             },
             "dna": {
               "type": "string"
+            },
+            "region_1based": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The same region in 1-based inclusive notation, e.g. 'chr14:89000000-89000100'. The two conventions differ by one and mixing them is the commonest coordinate error; both are stated so neither has to be guessed."
+            },
+            "requested_length": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Length of the requested region, e.g. 101. Compare with the returned sequence to see whether it was clipped."
+            },
+            "start_0based": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Start as UCSC's own 0-based half-open coordinate, e.g. 88999999."
             }
           },
           "not": {
@@ -520,10 +555,56 @@
               "type": "integer"
             },
             "items": {
-              "type": "array",
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
-                "type": "object"
-              }
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "One feature",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              },
+              "description": "The track's features for the requested region"
+            },
+            "items_returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Features on this page"
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the feature list was cut"
+            },
+            "max_items_limit_reached": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the cut was the wrapper's own cap rather than the end of the data. A region that hit the cap has more features than were returned, and the two cases are not the same answer"
+            },
+            "truncation_note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the truncation means in UCSC's terms: it reports maxItemsLimit and offers no continuation cursor, so the only way to see the rest is a smaller region or a higher limit. Without this a caller cannot tell a complete answer from a capped one"
             }
           },
           "not": {

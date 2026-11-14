@@ -399,6 +399,15 @@
                   },
                   "expert_db": {
                     "type": "boolean"
+                  },
+                  "pub_id": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "string",
+                      "null"
+                    ],
+                    "description": "LNCipedia's OWN publication id, e.g. 546614. An internal key: it is not a PubMed id and does not resolve anywhere outside LNCipedia, so it cannot be used to cite the paper."
                   }
                 }
               }
@@ -570,7 +579,10 @@
                     "type": "boolean"
                   },
                   "expert_db_url": {
-                    "type": ["string", "null"]
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "mirbase_mature_products": {
                     "type": [
@@ -583,6 +595,79 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "citations_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL listing the publications behind this cross-reference. RNAcentral's key is called `citations` but holds a URL, not a count."
+                  },
+                  "disease_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many diseases the cross-reference names, before truncation. 0 on every row of the measured example."
+                  },
+                  "diseases": {
+                    "type": "array",
+                    "description": "Diseases the MalaCards cross-reference names for this transcript. RNAcentral returns MalaCards as one row among the cross-references and the row's payload is this list; at most 150 are returned per row. Empty on every row of the MALAT1 example, whose cross-references are expression and sequence databases.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Disease name as MalaCards gives it."
+                        },
+                        "url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The MalaCards card for that disease."
+                        }
+                      }
+                    }
+                  },
+                  "diseases_truncated": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when more than 150 diseases were named and `diseases` holds only the first 150."
+                  },
+                  "first_seen": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When RNAcentral first recorded this mapping ('2026-06-19 00:00:00')."
+                  },
+                  "last_seen": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When RNAcentral last confirmed it ('2026-09-18 00:00:00'). A cross-reference that stopped being confirmed is not the same as a current one."
+                  },
+                  "ncbi_gene_id": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
+                    "description": "NCBI Gene id where the source database supplies one. Sparse: null on all six rows of the measured example."
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "RNAcentral's own resolvable link for this accession. `expert_db_url` points OUT to the source database; this one points back at the record being described."
                   }
                 }
               }

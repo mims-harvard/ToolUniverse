@@ -12,7 +12,7 @@
         },
         "similarity_threshold": {
           "type": "integer",
-          "description": "Similarity threshold (0\u2013100).",
+          "description": "Similarity threshold (0–100).",
           "default": 80
         },
         "max_results": {
@@ -100,7 +100,9 @@
         }
       ]
     },
-    "required_packages": ["epam.indigo"]
+    "required_packages": [
+      "epam.indigo"
+    ]
   },
   {
     "type": "ChEMBLRESTTool",
@@ -143,6 +145,85 @@
         "data": {
           "type": "object",
           "description": "Molecule data including structures, properties, synonyms"
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -231,7 +312,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -249,7 +331,87 @@
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -318,7 +480,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -347,11 +510,142 @@
                   "target_chembl_id"
                 ]
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
+        },
+        "molecule_chembl_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ChEMBL id of the drug the row is about, e.g. 'CHEMBL1201581'."
         }
       }
     },
@@ -395,11 +689,91 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
           "description": "Target information including name, organism, target type"
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -468,7 +842,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -514,11 +889,135 @@
                   "tax_id"
                 ]
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -607,7 +1106,9 @@
         },
         "fields": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Optional list of assay fields to include in each returned assay object (projection). Mapped to ChEMBL's `only` query parameter (comma-separated)."
         }
       },
@@ -619,7 +1120,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -739,11 +1241,135 @@
                   "variant_sequence"
                 ]
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -815,7 +1441,7 @@
   {
     "type": "ChEMBLRESTTool",
     "name": "ChEMBL_get_target_activities",
-    "description": "Get all activity data for a target by ChEMBL target ID. Returns bioactivity measurements (IC50, Ki, etc.) for molecules tested against this target. Note: activity values may be in different units (nM or uM) depending on the assay \u2014 check the 'standard_units' field in each result. To find a target ID, use ChEMBL_search_targets with a target name or gene symbol.",
+    "description": "Get all activity data for a target by ChEMBL target ID. Returns bioactivity measurements (IC50, Ki, etc.) for molecules tested against this target. Note: activity values may be in different units (nM or uM) depending on the assay — check the 'standard_units' field in each result. To find a target ID, use ChEMBL_search_targets with a target name or gene symbol.",
     "fields": {
       "endpoint": "/activity.json"
     },
@@ -859,7 +1485,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -1074,11 +1701,135 @@
                   "value"
                 ]
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -1122,11 +1873,91 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
           "description": "Assay information including description, assay type, target"
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -1193,7 +2024,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -1313,11 +2145,135 @@
                   "variant_sequence"
                 ]
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -1411,7 +2367,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -1421,11 +2378,135 @@
               "items": {
                 "type": "object"
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload: limit, offset, total_count, next and previous. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. The wrapper also copies this block to the top of the envelope.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -1508,7 +2589,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -1538,16 +2620,353 @@
                     "type": "string"
                   },
                   "standard_units": {
-                    "type": ["string", "null"],
+                    "type": [
+                      "string",
+                      "null"
+                    ],
                     "description": "Unit of standard_value, null where ChEMBL recorded the activity without one. Null in 5 of 216 rows across five targets -- and in 0 of 150 rows for three of those five, so a sample from one target shows none of them however many pages it covers."
+                  },
+                  "parent_molecule_chembl_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ChEMBL id of the parent compound. It differs from molecule_chembl_id for a salt, an ester or a prodrug, and the mechanism belongs to the parent - so a lookup keyed on the salt alone can miss it."
+                  },
+                  "record_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "ChEMBL's internal record id for the source document this mechanism was curated from."
+                  },
+                  "activity_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "ChEMBL's id for this one measurement, e.g. 306817."
+                  },
+                  "assay_chembl_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The assay the measurement came from, e.g. 'CHEMBL649260'."
+                  },
+                  "assay_description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the assay did, e.g. 'Inhibitory activity measured against alpha-glucosidase...'. Two IC50s from different assays are not comparable, and this is the only field that says how each was obtained."
+                  },
+                  "assay_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Assay class: 'B' binding, 'F' functional, 'A' ADMET, 'T' toxicity, 'P' physicochemical. A binding IC50 and a functional one measure different things."
+                  },
+                  "bao_endpoint": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "BioAssay Ontology id for the endpoint measured, e.g. 'BAO_0000190'. The machine-readable form of `type`."
+                  },
+                  "bao_format": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "BAO id for the assay format, e.g. 'BAO_0000357'."
+                  },
+                  "bao_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Readable form of that format, e.g. 'single protein format'. A single-protein assay and a cell-based one give different numbers for the same compound."
+                  },
+                  "canonical_smiles": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Structure of the compound measured, e.g. 'OC[C@H]1N[C@H](CO)[C@@H](O)C(O)[C@@H]1O'. Confirms which compound the number belongs to."
+                  },
+                  "data_validity_comment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ChEMBL's flag that the measurement is suspect, e.g. 'Outside typical range'. Measured on 1 of 3 rows. The single most important field here: a flagged value should not enter an average, and nothing else in the row warns of it."
+                  },
+                  "data_validity_description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The explanation behind that flag, e.g. 'Values for this activity type are unusually large...'."
+                  },
+                  "document_chembl_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The publication the measurement came from, e.g. 'CHEMBL1131015'."
+                  },
+                  "document_journal": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Journal of that publication, e.g. 'J Med Chem'."
+                  },
+                  "document_year": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Year of publication, e.g. 1998. Assay methods have changed, and an old value may not be comparable with a recent one."
+                  },
+                  "ligand_efficiency": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Efficiency metrics for the measurement - bei, le, lle and sei. Measured on 2 of 3 rows. Potency normalised by size or lipophilicity, which is how a large greasy hit is told from a genuinely efficient one."
+                  },
+                  "pchembl_value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "-log10 of the standard value in molar, e.g. '5.21'. The form potencies are compared and averaged in; absent where the measurement could not be normalised."
+                  },
+                  "potential_duplicate": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "1 when ChEMBL believes the measurement is a duplicate of another. Counting duplicates inflates the evidence for a potency."
+                  },
+                  "qudt_units": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The units as a QUDT URI, e.g. 'http://www.openphacts.org/units/Nanomolar'. Unambiguous where the 'uM' string is not."
+                  },
+                  "relation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The depositor's relation, e.g. '=', '>', '<'. A '>' means the true value is beyond the number, so treating it as an equality understates potency."
+                  },
+                  "src_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Which ChEMBL source the row came from, e.g. 1 for the literature. Separates curated literature data from a deposited dataset."
+                  },
+                  "standard_flag": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "1 when ChEMBL could normalise the measurement to its standard type and units. 0 means standard_value is not comparable with other rows."
+                  },
+                  "standard_relation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The same relation after ChEMBL's normalisation. Use this one with standard_value."
+                  },
+                  "target_organism": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Species of the target, e.g. 'Homo sapiens'. An IC50 against a rat orthologue is not a human IC50."
+                  },
+                  "target_pref_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The target's preferred name, e.g. 'Maltase-glucoamylase'."
+                  },
+                  "target_tax_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "NCBI taxon id of that organism, e.g. '9606'. A string."
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What was measured, e.g. 'IC50', 'Ki', 'EC50'. The number is meaningless without it."
+                  },
+                  "units": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The units as the depositor wrote them, e.g. 'uM'. Compare with standard_units: the same assay can be deposited in uM or nM."
+                  },
+                  "uo_units": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The units as a Units Ontology id, e.g. 'UO_0000065'."
+                  },
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The reported value as a STRING, e.g. '110.0'. Needs converting before arithmetic."
                   }
+                }
+              }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
                 }
               }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -1660,11 +3079,308 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
           "description": "Activity data including molecule, target, assay, and activity values"
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
+        },
+        "activity_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "ChEMBL's id for this single measurement, e.g. 1139592. The key for the row, not for the compound or the assay."
+        },
+        "record_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "ChEMBL's id for the underlying extracted record, e.g. 206172. One record can give rise to several activities."
+        },
+        "molecule_chembl_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The compound measured, e.g. 'CHEMBL113081'."
+        },
+        "parent_molecule_chembl_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The parent compound, e.g. 'CHEMBL113081'. Differs from molecule_chembl_id when the measured entity is a salt or mixture, so two rows that look like different compounds can be the same parent."
+        },
+        "canonical_smiles": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Structure of the measured compound as SMILES."
+        },
+        "target_chembl_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The target the activity was measured against, e.g. 'CHEMBL1806'."
+        },
+        "target_pref_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "That target's preferred name, e.g. 'DNA topoisomerase 2-alpha'."
+        },
+        "target_organism": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Organism the target comes from, e.g. 'Homo sapiens'. A potency against the rodent orthologue is not interchangeable with the human one."
+        },
+        "target_tax_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "NCBI taxon id of that organism as a STRING, e.g. '9606'."
+        },
+        "assay_chembl_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The assay the measurement came from, e.g. 'CHEMBL663853'. Values from different assays are not directly comparable."
+        },
+        "assay_description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The assay in the depositor's words, e.g. 'Inhibitory concentration against human DNA topoisomerase II, alpha mediated relaxation of pBR322; no measurable activity'. Often the only place a caveat like 'no measurable activity' is recorded."
+        },
+        "assay_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ChEMBL assay class: 'B' binding, 'F' functional, 'A' ADMET, 'T' toxicity, 'P' physicochemical, 'U' unclassified. A binding IC50 and a functional one answer different questions."
+        },
+        "relation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The relation for the raw `value`, e.g. '>', '<', '=', '~'. Anything other than '=' means the measurement is CENSORED and the number is a bound, not a result."
+        },
+        "standard_relation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The relation for `standard_value`, e.g. '>'. The measured record reads standard_value 100000.0 nM with standard_relation '>', which means the compound was INACTIVE above 100 uM. Ignoring this field turns that into an IC50 of 100 uM -- the opposite conclusion -- and it is the single most important field in this reply."
+        },
+        "standard_value": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The measurement normalised to ChEMBL's standard units, as a STRING, e.g. '100000.0'. Meaningless without standard_relation and standard_units."
+        },
+        "standard_units": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Units of standard_value, e.g. 'nM'."
+        },
+        "standard_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The normalised endpoint, e.g. 'IC50', 'Ki', 'EC50'. Comparing an IC50 with a Ki across rows is a category error."
+        },
+        "standard_flag": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "1 when ChEMBL could normalise the measurement to its standard type and units, 0 when not. A 0 row's standard_value is not comparable with other rows."
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The endpoint as the depositor named it, e.g. 'IC50'. May differ from standard_type where ChEMBL mapped it."
+        },
+        "units": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The units as deposited, e.g. 'uM' -- note the measured row is 'uM' here and 'nM' in standard_units, a thousandfold difference between the two value fields."
+        },
+        "qudt_units": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The standard units as a QUDT URI, e.g. 'http://www.openphacts.org/units/Nanomolar'."
+        },
+        "uo_units": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The standard units as a Units Ontology term, e.g. 'UO_0000065'."
+        },
+        "potential_duplicate": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "1 when ChEMBL suspects the activity duplicates another row, 0 otherwise. Averaging without excluding these double-counts a single experiment."
+        },
+        "bao_endpoint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "BioAssay Ontology term for the endpoint, e.g. 'BAO_0000190'."
+        },
+        "bao_format": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "BioAssay Ontology term for the assay format, e.g. 'BAO_0000357'."
+        },
+        "bao_label": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "That format in words, e.g. 'single protein format'. A cell-based and a single-protein assay give different numbers for the same compound."
+        },
+        "document_chembl_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The source document, e.g. 'CHEMBL1137930'."
+        },
+        "document_journal": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Journal the measurement was published in, e.g. 'Bioorg Med Chem Lett'."
+        },
+        "document_year": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Year of publication, e.g. 2004."
+        },
+        "src_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Numeric id of the ChEMBL source the data came from, e.g. 1 for scientific literature. Deposited datasets carry other ids and different curation."
+        },
+        "data_validity_comment": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ChEMBL's flag that the value is suspect, e.g. 'Outside typical range' or 'Potential author error'. Null on the measured row, and a non-null value here is reason not to use the number."
         }
       }
     },
@@ -1707,11 +3423,91 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
           "description": "Drug information including approval status, indications, mechanisms"
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -1761,7 +3557,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -1933,11 +3730,135 @@
                   "withdrawn_flag"
                 ]
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -1951,7 +3872,7 @@
   {
     "type": "ChEMBLRESTTool",
     "name": "ChEMBL_get_drug_mechanisms",
-    "description": "Get mechanisms of action for a drug by ChEMBL drug ID or drug name. Accepts drug_chembl_id (e.g., 'CHEMBL1201581') or drug_name (e.g., 'trastuzumab') \u2014 drug_name triggers automatic ChEMBL ID lookup.",
+    "description": "Get mechanisms of action for a drug by ChEMBL drug ID or drug name. Accepts drug_chembl_id (e.g., 'CHEMBL1201581') or drug_name (e.g., 'trastuzumab') — drug_name triggers automatic ChEMBL ID lookup.",
     "fields": {
       "endpoint": "/mechanism.json"
     },
@@ -1975,7 +3896,7 @@
         },
         "drug_name": {
           "type": "string",
-          "description": "Drug name for automatic ChEMBL ID lookup (e.g., \"trastuzumab\", \"lapatinib\", \"aspirin\"). Case-insensitive. Triggers internal ChEMBL molecule search \u2014 use drug_chembl_id if you already know the ID."
+          "description": "Drug name for automatic ChEMBL ID lookup (e.g., \"trastuzumab\", \"lapatinib\", \"aspirin\"). Case-insensitive. Triggers internal ChEMBL molecule search — use drug_chembl_id if you already know the ID."
         },
         "molecule_chembl_id": {
           "type": "string",
@@ -1992,7 +3913,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -2006,12 +3928,223 @@
                     "type": "string"
                   },
                   "target_chembl_id": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "ChEMBL id of the target the drug acts on."
+                  },
+                  "mec_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "ChEMBL's id for the mechanism record, e.g. 180. The key for the assertion itself, as distinct from the drug or the target."
+                  },
+                  "action_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the drug does to the target, e.g. 'INHIBITOR', 'AGONIST', 'ANTAGONIST', 'BLOCKER'. The direction of the effect; mechanism_of_action gives the prose, this gives the machine-readable verb. Null where ChEMBL records none."
+                  },
+                  "direct_interaction": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "1 when the drug acts on the target directly, 0 when the effect is indirect. Read as a direct interaction when it is not, a mechanism row overstates the pharmacology."
+                  },
+                  "molecular_mechanism": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "1 when the mechanism is established at the molecular level rather than inferred."
+                  },
+                  "disease_efficacy": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "1 when the target is believed to mediate the drug's efficacy in the approved indication, 0 when the interaction is real but not the therapeutic one."
+                  },
+                  "max_phase": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "The furthest clinical phase the drug has reached, e.g. 4 for approved. Says whether a mechanism belongs to a marketed drug or to one abandoned in phase 1."
+                  },
+                  "mechanism_refs": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "The sources for the assertion, each with ref_type ('DailyMed', 'PubMed', 'ISBN'), ref_id and ref_url. The citation, without which the mechanism cannot be checked."
+                  },
+                  "mechanism_comment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ChEMBL's free-text caveat on the mechanism, where one is recorded."
+                  },
+                  "binding_site_comment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Free-text note on where the drug binds, where one is recorded."
+                  },
+                  "molecule_chembl_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ChEMBL id of the drug the row is about, e.g. 'CHEMBL1201581'."
+                  },
+                  "parent_molecule_chembl_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ChEMBL id of the parent compound. It differs from molecule_chembl_id for a salt, an ester or a prodrug, and the mechanism belongs to the parent - so a lookup keyed on the salt alone can miss it."
+                  },
+                  "record_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "ChEMBL's internal record id for the source document this mechanism was curated from."
                   }
+                }
+              }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
                 }
               }
             }
           }
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -2062,7 +4195,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -2072,11 +4206,135 @@
               "items": {
                 "type": "object"
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -2119,7 +4377,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -2140,11 +4399,135 @@
                   }
                 }
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -2228,7 +4611,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -2315,11 +4699,135 @@
                   }
                 }
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -2371,7 +4879,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -2389,14 +4898,327 @@
                       "number",
                       "string"
                     ]
+                  },
+                  "max_phase": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "The furthest clinical phase the drug has reached, e.g. 4 for approved. Says whether a mechanism belongs to a marketed drug or to one abandoned in phase 1."
+                  },
+                  "pref_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Preferred name"
+                  },
+                  "atc_classifications": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "WHO ATC codes for the molecule, e.g. ['B01AC06', 'A01AD05', ...] (5 codes for aspirin). Present on 3 of the 9 similarity hits -- only molecules that reached the clinic have one, so an empty list means unapproved, not unclassified."
+                  },
+                  "availability_type": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Prescription status code: -1 unknown, 0 discontinued, 1 prescription only, 2 over the counter. Measured -1 on 5 of 9 hits."
+                  },
+                  "black_box_warning": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "1 when the drug carries a boxed warning, 0 when it does not, e.g. 0. The strongest safety signal in this record."
+                  },
+                  "chemical_probe": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "1 when the compound is a recognised chemical probe, else 0."
+                  },
+                  "chirality": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Stereochemistry code: -1 unknown, 0 racemic mixture, 1 single stereoisomer, 2 achiral. Measured -1 on all 9 hits, so a similarity list gives no basis for assuming a stereochemically defined compound."
+                  },
+                  "cross_references": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Links out to other resources, each entry {xref_id, xref_name, xref_src}, e.g. {'xref_id': 'aspirin', 'xref_name': 'aspirin', 'xref_src': 'DailyMed'}. Present on 1 of the 9 hits."
+                  },
+                  "dosed_ingredient": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the molecule is an ingredient actually dosed in a product, rather than the parent form a product is named after."
+                  },
+                  "first_approval": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Year of first regulatory approval anywhere, e.g. 1950. Present on 1 of the 9 hits; null for everything never approved."
+                  },
+                  "first_in_class": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Whether the drug was first in its class. ChEMBL's three-state flag: -1 UNKNOWN, 0 no, 1 yes. -1 is the common value and it is NOT a no -- testing this field for truth silently turns every unknown into a negative."
+                  },
+                  "inorganic_flag": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Whether the molecule is inorganic. ChEMBL's three-state flag: -1 UNKNOWN, 0 no, 1 yes. -1 is the common value and it is NOT a no -- testing this field for truth silently turns every unknown into a negative."
+                  },
+                  "molecule_hierarchy": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "How this ChEMBL id relates to its parent: {active_chembl_id, molecule_chembl_id, parent_chembl_id}. Present on 8 of 9 hits. When parent_chembl_id differs from molecule_chembl_id the hit is a SALT or mixture of the parent, so two rows that look like separate analogues can be the same compound."
+                  },
+                  "molecule_properties": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Computed physicochemical properties: alogp, aromatic_rings, full_molformula, full_mwt, hba, hbd, heavy_atoms, mw_freebase and the rest of ChEMBL's calculated set. Present on all 9 hits; these are the numbers a similarity list is normally filtered on."
+                  },
+                  "molecule_structures": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The structure itself: canonical_smiles, standard_inchi, standard_inchi_key and the full molfile. Present on all 9 hits. standard_inchi_key is the right key for matching against another database."
+                  },
+                  "molecule_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What kind of entity it is, e.g. 'Small molecule'. Present on 8 of 9; the other values ChEMBL uses include 'Protein', 'Antibody', 'Oligosaccharide' and 'Unknown'."
+                  },
+                  "natural_product": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Whether the molecule is a natural product. ChEMBL's three-state flag: -1 UNKNOWN, 0 no, 1 yes. -1 is the common value and it is NOT a no -- testing this field for truth silently turns every unknown into a negative."
+                  },
+                  "oral": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when an oral formulation exists."
+                  },
+                  "parenteral": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when a parenteral (injected) formulation exists."
+                  },
+                  "topical": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when a topical formulation exists."
+                  },
+                  "orphan": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Whether the drug holds an orphan-drug designation. ChEMBL's three-state flag: -1 UNKNOWN, 0 no, 1 yes. -1 is the common value and it is NOT a no -- testing this field for truth silently turns every unknown into a negative."
+                  },
+                  "polymer_flag": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "1 when the entry is a polymer rather than a single defined structure, else 0."
+                  },
+                  "prodrug": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Whether the molecule is a prodrug of another. ChEMBL's three-state flag: -1 UNKNOWN, 0 no, 1 yes. -1 is the common value and it is NOT a no -- testing this field for truth silently turns every unknown into a negative."
+                  },
+                  "structure_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What kind of structure is stored, e.g. 'MOL' for a connection table, 'SEQ' for a sequence, 'NONE' when none is held. A 'NONE' row has no molecule_structures to match on."
+                  },
+                  "therapeutic_flag": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the molecule is used therapeutically rather than only as a research compound."
+                  },
+                  "veterinary": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Whether the drug is used in veterinary medicine. ChEMBL's three-state flag: -1 UNKNOWN, 0 no, 1 yes. -1 is the common value and it is NOT a no -- testing this field for truth silently turns every unknown into a negative."
+                  },
+                  "withdrawn_flag": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the drug has been withdrawn from a market. False here means 'not recorded as withdrawn', which includes everything that was never approved at all."
                   }
+                }
+              }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
                 }
               }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -2431,11 +5253,91 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
           "description": "Compound record information"
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -2479,7 +5381,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -2489,11 +5392,135 @@
               "items": {
                 "type": "object"
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload: limit, offset, total_count, next and previous. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. The wrapper also copies this block to the top of the envelope.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -2536,7 +5563,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -2546,11 +5574,135 @@
               "items": {
                 "type": "object"
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -2593,7 +5745,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -2603,11 +5756,145 @@
               "items": {
                 "type": "object"
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
+            },
+            "atc": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "The ATC classification levels, each with level1 through level5 and their descriptions - 5 entries on the measured call. The full therapeutic hierarchy; the code alone is opaque."
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -2654,7 +5941,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -2664,11 +5952,135 @@
               "items": {
                 "type": "object"
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -2715,7 +6127,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -2766,11 +6179,135 @@
                   }
                 }
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -2817,7 +6354,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -2827,11 +6365,135 @@
               "items": {
                 "type": "object"
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },
@@ -2878,7 +6540,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "'success' or 'error'. The only field present on both the success and the failure shape, so it is what should be checked first."
         },
         "data": {
           "type": "object",
@@ -2888,11 +6551,143 @@
               "items": {
                 "type": "object"
               }
+            },
+            "page_meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "ChEMBL's pagination block as it arrives inside the payload. 'total_count' is how many records MATCH, while the list beside it is one page, so the two disagree whenever the answer was cut. `ChEMBLRESTTool` copies this block to the top of the envelope when ChEMBL sends it, so it appears in both places.",
+              "properties": {
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Page size ChEMBL applied."
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Records skipped before this page."
+                },
+                "total_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many records match the query in total."
+                },
+                "next": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the next page, or null on the last one."
+                },
+                "previous": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path of the previous page, or null on the first one."
+                }
+              }
+            },
+            "compound_structural_alerts": {
+              "type": [
+                "array",
+                "object",
+                "null"
+              ],
+              "description": "The structural alerts matched on the compound: substructures associated with toxicity or with assay interference. AN EMPTY RESULT IS THE GOOD OUTCOME, so an absent or empty value here is a finding rather than a gap -- it means ChEMBL flagged nothing, not that nothing was checked."
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many records came back in this page. Not the number that matched - page_meta.total_count is that, and it is frequently larger."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The exact ChEMBL URL that produced this reply, filters and page size included. The record of what was actually asked, which the arguments alone do not pin down once defaults are applied."
+        },
+        "page_meta": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's own pagination block, copied through when ChEMBL sends one. 'total_count' is how many records MATCH; the list in data is only the page that came back, so these two numbers disagree whenever the answer is truncated and nothing else in the reply says so.",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size ChEMBL applied."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many matching records were skipped before this page."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records match the query in total. Compare with 'count' to tell a complete answer from a first page."
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the next page, or null on the last one."
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Path of the previous page, or null on the first one."
+            }
+          }
+        },
+        "pagination": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ChEMBL's alternative pagination block, copied through for the endpoints that send 'page' instead of 'page_meta'. Only one of the two is ever present."
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the call failed, e.g. 'ChEMBL API returned HTTP 500'. Present only on a failure, where 'status' reads 'error' and 'data' is absent."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The HTTP status ChEMBL returned on a failed call, e.g. 500 or 404. Separates a malformed query from an upstream outage, which the error text alone does not."
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first 500 characters of ChEMBL's response body on a failure. Often an HTML error page rather than JSON, so it is for diagnosis, not parsing."
         }
       }
     },

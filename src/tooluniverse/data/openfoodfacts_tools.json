@@ -1262,213 +1262,264 @@
                           "integer",
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated alcohol per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "beta-carotene_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated beta carotene per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "calcium_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated calcium per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "cholesterol_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated cholesterol per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "copper_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated copper per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "fiber_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated fiber per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "fructose_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated fructose per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "galactose_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated galactose per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "glucose_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated glucose per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "iodine_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated iodine per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "iron_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated iron per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "lactose_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated lactose per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "magnesium_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated magnesium per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "maltose_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated maltose per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "manganese_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated manganese per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "pantothenic-acid_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated pantothenic acid per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "phosphorus_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated phosphorus per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "phylloquinone_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated phylloquinone per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "polyols_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated polyols per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "potassium_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated potassium per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "selenium_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated selenium per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "starch_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated starch per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "sucrose_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated sucrose per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-a_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin a per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-b12_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin b12 per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-b1_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin b1 per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-b2_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin b2 per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-b6_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin b6 per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-b9_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin b9 per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-c_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin c per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-d_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin d per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-e_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin e per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "vitamin-pp_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated vitamin pp per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "water_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated water per 100 g, modelled from the ingredient list rather than taken from the label."
                       },
                       "zinc_100g": {
                         "type": [
                           "number",
                           "string"
-                        ]
+                        ],
+                        "description": "Estimated zinc per 100 g, modelled from the ingredient list rather than taken from the label."
                       }
+                    },
+                    "description": "Nutrient values Open Food Facts ESTIMATED from the ingredient list rather than read off the label, keyed by nutrient and basis (e.g. 'palmitic-acid_100g'). The 35 keys named below are not the whole set: measured on a hazelnut spread, the reply also carried palmitic-acid_100g, stearic-acid_100g, oleic-acid_100g, linoleic-acid_100g, alpha-linolenic-acid_100g, arachidonic-acid_100g, lauric-acid_100g, myristic-acid_100g, butyric-acid_100g, caproic-acid_100g, caprylic-acid_100g, capric-acid_100g, docosahexaenoic-acid_100g, eicosapentaenoic-acid_100g, monounsaturated-fat_100g, polyunsaturated-fat_100g, crude-ash_100g and chloride_100g -- some on 2 of 3 products, some on all 3. The key set varies per product, so this level is open by nature. These figures are MODELLED and must not be reported as declared nutrition.",
+                    "additionalProperties": {
+                      "type": [
+                        "number",
+                        "string",
+                        "null"
+                      ],
+                      "description": "An estimated value for a nutrient not named above. Numeric for a quantity; a string where Open Food Facts recorded the figure as text."
                     }
+                  },
+                  "categories": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The product's categories as a single comma-delimited STRING, not a list, e.g. 'Hazelnut spreads, Confectionary based spreads, fr:Nutella'. Entries can carry a language prefix such as 'fr:', and the string must be split on ', ' before any entry can be matched."
                   }
                 }
               }
@@ -4410,6 +4461,41 @@
                       },
                       "has_sub_ingredients": {
                         "type": "string"
+                      },
+                      "ecobalyse_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Ecobalyse identifier for the ingredient, used for the environmental computation. Measured on 1 of 2 ingredients."
+                      },
+                      "ecobalyse_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The Ecobalyse ingredient it was matched to, e.g. 'Sucre de betterave par defaut -2025-'. The match is approximate and in French; checking it is the only way to know the footprint used the right ingredient."
+                      },
+                      "ecobalyse_proxy_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Identifier of the PROXY ingredient used when Ecobalyse has no entry for the real one."
+                      },
+                      "ecobalyse_proxy_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The proxy's name, e.g. 'Huile de palme -raffinee- par defaut'. A footprint computed from a proxy is an approximation of an approximation, and this is the only field that says a proxy was used."
+                      },
+                      "quantity_estimate": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "The estimated percentage of this ingredient in the product, e.g. 76.47. Estimated by the recipe estimator rather than declared, so it can total over 100 across ingredients."
                       }
                     }
                   }
@@ -4435,7 +4521,14 @@
                         "type": "string"
                       }
                     }
-                  }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "description": "Which ingredients drive each dietary classification, keyed by the analysis tag - 'en:maybe-vegan', 'en:palm-oil', 'en:non-vegetarian'. The value lists the ingredients responsible, e.g. ['en:sugar'] for 'en:maybe-vegan'. A 'maybe' verdict and its reason are different things, and only this says which ingredient caused it."
                 },
                 "ingredients_analysis_tags": {
                   "type": "array",
@@ -4785,7 +4878,14 @@
                         "number"
                       ]
                     }
-                  }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "description": "How many fields carry text in each language, keyed by the language's taxonomy tag - 'en:hindi', 'en:odia', 'en:french'. The keys are data, so the level is open. Use it to judge whether a language's text is complete enough to show."
                 },
                 "languages_codes": {
                   "type": "object",
@@ -4850,7 +4950,14 @@
                         "number"
                       ]
                     }
-                  }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "description": "The same counts keyed by two-letter language code - 'hi', 'or', 'fr'. These codes are the suffixes the '<field>_<lang>' variants use, so this is the index of which variants exist."
                 },
                 "languages_hierarchy": {
                   "type": "array",
@@ -5529,8 +5636,23 @@
                     },
                     "cocoa_value": {
                       "type": "number"
+                    },
+                    "sodium_modifier": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "A modifier on the sodium figure, e.g. '~' for approximate, '<' for less-than, '>' for greater-than. The number beside it is then not an exact value, and reading it as one is how a '<0.01' becomes '0.01'. Other nutrients carry their own '<nutrient>_modifier' key on the same open level."
                     }
-                  }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "number",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": "The nutrient values from the product's own label, keyed by nutrient name. Each nutrient appears with several suffixes - bare, '_100g', '_serving', '_unit', '_value', '_modifier'. The named properties are the 106 measured on one product; the list is open."
                 },
                 "nutriscore": {
                   "type": "object",
@@ -5730,6 +5852,20 @@
                                 "number",
                                 "null"
                               ]
+                            },
+                            "negative_points_max": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ],
+                              "description": "The maximum negative points the Nutri-Score algorithm could have assigned, e.g. 0. The score alone does not say what it was out of."
+                            },
+                            "positive_points_max": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ],
+                              "description": "The maximum positive points available, e.g. 0."
                             }
                           }
                         },
@@ -5972,7 +6108,14 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "description": "Nutri-Score computations keyed by the ALGORITHM YEAR - '2021', '2023'. The 2023 algorithm scores many products differently from the 2021 one, so a Nutri-Score quoted without its year is ambiguous. Each value holds the grade, score and the points data it was computed from."
                 },
                 "nutriscore_2021_tags": {
                   "type": "array",
@@ -6717,7 +6860,14 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "description": "Packaging weight per material, keyed by the material's taxonomy tag - 'en:plastic', 'en:glass', 'all'. Each value carries weight_100g and related figures. The keys depend on the packaging, so the level is open."
                 },
                 "packagings_materials_main": {
                   "type": "string"
@@ -7111,7 +7261,28 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": "URLs keyed by LANGUAGE code, e.g. {'fr': 'https://images.openfoodfacts.org/...'}. A product photographed only in French has no 'en' entry."
+                    },
+                    "description": "Sizes for that image type - 'display', 'small', 'thumb' - each a map of language code to URL."
+                  },
+                  "description": "Chosen images keyed by image TYPE ('front', 'ingredients', 'nutrition', 'packaging'), then by SIZE, then by LANGUAGE. Three nested open levels, all keyed by data: which types exist depends on what was photographed and which languages on who uploaded it."
                 },
                 "serving_quantity_unit": {
                   "type": "string"
@@ -7514,8 +7685,57 @@
                     "zinc_100g": {
                       "type": "number"
                     }
-                  }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "number",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": "OpenFoodFacts's ESTIMATED nutrient values, keyed by nutrient name with the '_100g' suffix - 'sugars_100g', 'calcium_100g'. The named properties below are the 34 measured on one product; the list is open, so the level declares its VALUE shape here. Estimated from the category average where the label gave no figure, which is why it must not be mixed with `nutriments`."
+                },
+                "environmental_impact": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Ecobalyse life-cycle inputs and results for the product, under ecobalyse_input and ecobalyse_request. The environmental score and what it was computed from."
+                },
+                "estimate_ingredients_percent_service": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which service estimated the ingredient percentages, e.g. 'recipe_estimator_cvxpy'. The percentages are MODELLED from the ingredient order and known densities, not declared by the manufacturer, and this names the model that produced them."
+                },
+                "forest_footprint_2026": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Deforestation footprint for the 2026 methodology, with its grade, the primary ingredients driving it and the computation. Note the YEAR in the field name: a different methodology year is a different field, not an update of this one."
+                },
+                "recipe_estimator": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Diagnostics from that estimator - ingredient_count, whether it fell back to a US recipe, and its fit quality. What says whether the estimated percentages are trustworthy."
+                },
+                "taxonomies_enhancer_tags": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Warnings from Open Food Facts' taxonomy matcher, e.g. ['possible-stop-word-after-ar-...']. Where ingredient parsing is known to be shaky, which is what qualifies the ingredient list and every percentage derived from it."
                 }
+              },
+              "additionalProperties": {
+                "description": "Open Food Facts emits a PER-LANGUAGE variant of every text field, named '<field>_<lang>' -- product_name_hi, generic_name_or, ingredients_text_with_allergens_hi and so on, one for each language in `languages_codes`. The set therefore depends on the product, which is why this level is open rather than enumerated. An absent variant means the field has no text in that language, which is not the same as the product having no name."
               }
             },
             "status": {

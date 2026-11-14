@@ -195,6 +195,13 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "ncbiTaxonId": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Taxon the enrichment was computed in, e.g. 9606. STRING's background set is species-specific, so the same gene list enriches differently under a different taxon."
                   }
                 }
               }

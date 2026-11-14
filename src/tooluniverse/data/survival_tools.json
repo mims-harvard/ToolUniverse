@@ -70,6 +70,20 @@
         },
         "follow_up_time": {
           "type": "number"
+        },
+        "ci_method": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which confidence interval was computed, e.g. 'Greenwood log-log (Collett 2015 / R survfit default)'. Intervals from different methods are not interchangeable, and this is the only statement of which one the numbers are."
+        },
+        "km_censored_convention_note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A counting convention that changes how the survival table reads. Measured value begins: \"The survival table 'censored' column records only subjects censored AT observed event times ...\" -- so the column is not a running total of all censoring, and summing it will not give the number censored overall."
         }
       }
     },
@@ -289,6 +303,20 @@
         },
         "convergence": {
           "type": "boolean"
+        },
+        "low_epv_warning": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Raised when the model has too few events per covariate to be reliable. Measured value: 'Low events-per-variable (EPV = 6 events / 2 covariate(s) = 3.0). Standard practice recommends ...'. Present only when the problem exists, so its ABSENCE is the signal that the fit is adequately powered -- and a caller that never saw this field declared could not know to look."
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "How to read the hazard ratios. Measured value: 'HR > 1 indicates increased hazard (worse survival); HR < 1 indicates decreased hazard (better survival)'. Without it the direction of every coefficient in the result is a guess."
         }
       }
     },

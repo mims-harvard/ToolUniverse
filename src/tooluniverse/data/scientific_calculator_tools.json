@@ -187,6 +187,16 @@
             },
             "elemental_composition": {
               "type": "object"
+            },
+            "atoms": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "description": "Atom counts keyed by element symbol, e.g. {'C': 6, 'H': 12, 'O': 6}. The keys are whichever elements the formula contains, so the level is open by nature."
             }
           },
           "not": {
@@ -294,6 +304,34 @@
             },
             "solubility_mol_per_L": {
               "type": "number"
+            },
+            "Ksp": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The solubility product used, e.g. 1.8e-10. The constant the answer depends on; a different source's Ksp gives a different answer."
+            },
+            "anion_conc": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Equilibrium anion concentration. Equal to the cation figure for a 1:1 salt and not otherwise."
+            },
+            "cation_conc": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Equilibrium cation concentration, e.g. 1.3416407864998738e-05 mol/L."
+            },
+            "expression": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The equilibrium expression that was solved, e.g. 'Ksp = (1s)^1 * (1s)^1 = 1 * s^2'. Shows the stoichiometry assumed, which is where a wrong answer usually comes from."
             }
           },
           "required": [
@@ -432,6 +470,41 @@
             },
             "Vmax": {
               "type": "number"
+            },
+            "catalytic_efficiency": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "kcat/Km, e.g. 0.785714, in the units implied by the inputs. Computed from the fit, so it inherits whatever the fit's uncertainty is."
+            },
+            "lineweaver_burk": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The double-reciprocal linear fit: {Vmax, Km, R2}. The reciprocal transform inflates the weight of the lowest substrate concentrations, so its Vmax and Km routinely differ from nonlinear_fit's; it is reported for historical comparability, not as the better estimate."
+            },
+            "nonlinear_fit": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The direct nonlinear least-squares fit of the Michaelis-Menten equation: {Vmax, Km, R2, SSE}. This is the fit to trust -- the Lineweaver-Burk one below is included for comparison only."
+            },
+            "predicted_velocities": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The velocity the fitted model predicts at each supplied substrate concentration, one entry per input point, e.g. 0.532258. Positionally parallel to the input data."
+            },
+            "residuals": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Observed minus predicted velocity at each input point, e.g. -0.032258. Parallel to predicted_velocities; a residual pattern that is not scattered about zero means Michaelis-Menten is the wrong model, which R2 alone will not show."
             }
           },
           "required": [
@@ -634,6 +707,47 @@
             },
             "p_value": {
               "type": "number"
+            },
+            "chi2": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The chi-square statistic, e.g. 2.0. The p-value alone cannot be rechecked or converted to an effect size without it."
+            },
+            "contributions": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "number"
+              },
+              "description": "Each cell's contribution to the statistic, e.g. [1.0, ...]. Which cell drives a significant result."
+            },
+            "df": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Degrees of freedom, e.g. 1. Required to interpret the statistic at all."
+            },
+            "expected_scaled": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "number"
+              },
+              "description": "The expected counts under the null, e.g. [100.0, ...]. Chi-square is unreliable when any expected count is small, and this is the only way to check that."
+            },
+            "significant_at_005": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the test is significant at alpha = 0.05 - the threshold applied, stated rather than left to the reader."
             }
           },
           "required": [

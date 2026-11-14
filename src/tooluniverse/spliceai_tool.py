@@ -99,6 +99,72 @@ class SpliceAITool(BaseTool):
             return f"Invalid variant format: {variant}. Expected format: chr-pos-ref-alt (e.g., chr8-140300616-T-G)"
         return None
 
+    @staticmethod
+    def _as_float(value: Any) -> Optional[float]:
+        """SpliceAI sends the delta scores as strings: "DS_AL": "0.827".
+
+        The previous maximum guarded on isinstance(val, (int, float)), which
+        is False for every one of them, so the maximum stayed at its 0.0
+        seed and every variant was reported as benign. For
+        chr8-140300616-T-G -- this tool's own test example -- DS_AL is 0.827
+        and the answer returned was "benign", where the tool's own
+        thresholds make 0.827 high_pathogenicity.
+        """
+        if isinstance(value, bool) or value is None:
+            return None
+        if isinstance(value, (int, float)):
+            return float(value)
+        try:
+            return float(str(value).strip())
+        except (TypeError, ValueError):
+            return None
+
+    DELTA_KEYS = {
+        "DS_AG": ("acceptor_gain", "DP_AG"),
+        "DS_AL": ("acceptor_loss", "DP_AL"),
+        "DS_DG": ("donor_gain", "DP_DG"),
+        "DS_DL": ("donor_loss", "DP_DL"),
+    }
+
+    def _max_delta(self, scores: Any) -> Dict[str, Any]:
+        """The largest delta, which effect produced it, and where.
+
+        A bare maximum does not say what changed, and 0.91 by acceptor loss
+        is a different consequence from 0.91 by donor gain. Returns None for
+        the score when nothing parseable was present, so that "no prediction"
+        stops being reported as 0.0 and therefore benign.
+        """
+        best: Dict[str, Any] = {
+            "max_delta_score": None,
+            "max_delta_effect": None,
+            "max_delta_key": None,
+            "max_delta_offset": None,
+            "max_delta_gene": None,
+            "max_delta_transcript": None,
+        }
+        per_effect: Dict[str, Optional[float]] = {}
+        for entry in scores or []:
+            if not isinstance(entry, dict):
+                continue
+            for key, (effect, pos_key) in self.DELTA_KEYS.items():
+                val = self._as_float(entry.get(key))
+                if val is None:
+                    continue
+                prev = per_effect.get(effect)
+                if prev is None or val > prev:
+                    per_effect[effect] = val
+                if best["max_delta_score"] is None or val > best["max_delta_score"]:
+                    best = {
+                        "max_delta_score": val,
+                        "max_delta_effect": effect,
+                        "max_delta_key": key,
+                        "max_delta_offset": entry.get(pos_key),
+                        "max_delta_gene": entry.get("g_name"),
+                        "max_delta_transcript": entry.get("t_id"),
+                    }
+        best["delta_by_effect"] = per_effect
+        return best
+
     def _interpret_score(self, delta_score: float) -> str:
         """Interpret SpliceAI delta score."""
         if delta_score is None:
@@ -151,14 +217,8 @@ class SpliceAITool(BaseTool):
             # Extract and interpret scores
             scores = data.get("scores", [])
 
-            # Find maximum delta score
-            max_delta = 0.0
-            for score_entry in scores:
-                if isinstance(score_entry, dict):
-                    for key in ["DS_AG", "DS_AL", "DS_DG", "DS_DL"]:
-                        val = score_entry.get(key)
-                        if val is not None and isinstance(val, (int, float)):
-                            max_delta = max(max_delta, val)
+            summary = self._max_delta(scores)
+            max_delta = summary["max_delta_score"]
 
             return {
                 "status": "success",
@@ -168,6 +228,15 @@ class SpliceAITool(BaseTool):
                     "scores": scores,
                     "max_delta_score": max_delta,
                     "interpretation": self._interpret_score(max_delta),
+                    # Which of the four splice effects produced that score,
+                    # where it is relative to the variant, and in which gene
+                    # and transcript.
+                    "max_delta_effect": summary["max_delta_effect"],
+                    "max_delta_key": summary["max_delta_key"],
+                    "max_delta_offset": summary["max_delta_offset"],
+                    "max_delta_gene": summary["max_delta_gene"],
+                    "max_delta_transcript": summary["max_delta_transcript"],
+                    "delta_by_effect": summary["delta_by_effect"],
                     "raw_response": data,
                 },
                 "source": "SpliceAI Lookup (Broad Institute)",
@@ -256,6 +325,15 @@ class SpliceAITool(BaseTool):
                 "max_delta_score": data["max_delta_score"],
                 "interpretation": data["interpretation"],
                 "pathogenicity_threshold": "≥0.2 (low), ≥0.5 (moderate), ≥0.8 (high)",
+                # A triage answer of 0.83 does not say what changed. These
+                # name the effect behind it and give all four, which is the
+                # difference between "high" and "high, by acceptor loss two
+                # bases away".
+                "max_delta_effect": data["max_delta_effect"],
+                "max_delta_offset": data["max_delta_offset"],
+                "max_delta_gene": data["max_delta_gene"],
+                "max_delta_transcript": data["max_delta_transcript"],
+                "delta_by_effect": data["delta_by_effect"],
             },
             "source": "SpliceAI Lookup (Broad Institute)",
         }

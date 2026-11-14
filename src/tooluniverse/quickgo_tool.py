@@ -155,6 +155,12 @@ class QuickGOTool(BaseTool):
                     "evidence_code": r.get("evidenceCode"),
                     "assigned_by": r.get("assignedBy"),
                     "reference": r.get("reference"),
+                    "annotation_id": r.get("id"),
+                    "date": r.get("date"),
+                    "with_from": r.get("withFrom") or [],
+                    "taxon_id": r.get("taxonId"),
+                    "gene_product_type": r.get("geneProductType"),
+                    "target_sets": r.get("targetSets") or [],
                 }
             )
 
@@ -172,14 +178,32 @@ class QuickGOTool(BaseTool):
                     timeout=self.timeout,
                 )
                 if term_resp.ok:
-                    id_to_name = {
-                        t["id"]: t.get("name")
+                    # The backfill fetches the whole term record to recover a
+                    # name. What it also holds -- the definition, the aspect,
+                    # whether the term is obsolete -- was discarded, so an
+                    # annotation to GO:0005515 came back as "protein binding"
+                    # with no statement of what that means. The record is
+                    # already paid for.
+                    id_to_term = {
+                        t["id"]: t
                         for t in term_resp.json().get("results", [])
-                        if "id" in t
+                        if isinstance(t, dict) and "id" in t
                     }
                     for a in annotations:
-                        if a["go_name"] is None and a["go_id"] in id_to_name:
-                            a["go_name"] = id_to_name[a["go_id"]]
+                        term = id_to_term.get(a["go_id"]) or {}
+                        if a["go_name"] is None and term.get("name"):
+                            a["go_name"] = term["name"]
+                        if term:
+                            definition = term.get("definition")
+                            a["go_definition"] = (
+                                definition.get("text")
+                                if isinstance(definition, dict)
+                                else definition
+                            )
+                            a["go_is_obsolete"] = term.get("isObsolete", False)
+                            a["go_aspect"] = a.get("go_aspect") or term.get("aspect")
+                            a["go_child_count"] = len(term.get("children") or [])
+                            a["go_synonym_count"] = len(term.get("synonyms") or [])
             except Exception:
                 pass  # Best-effort; don't fail if name resolution fails
 
@@ -240,6 +264,18 @@ class QuickGOTool(BaseTool):
                     "evidence_code": r.get("evidenceCode"),
                     "taxon_id": r.get("taxonId"),
                     "assigned_by": r.get("assignedBy"),
+                    # The paper. `assigned_by` is the database that made the
+                    # annotation; `reference` is what it cites, and the
+                    # by-gene direction of this same tool already reports it.
+                    "reference": r.get("reference"),
+                    "annotation_id": r.get("id"),
+                    "date": r.get("date"),
+                    # What an IEA or an IC was inferred FROM, which is the
+                    # difference between a computed annotation a reader can
+                    # check and one they cannot.
+                    "with_from": r.get("withFrom") or [],
+                    "interacting_taxon_id": r.get("interactingTaxonId"),
+                    "gene_product_type": r.get("geneProductType"),
                 }
             )
 
@@ -319,6 +355,23 @@ class QuickGOTool(BaseTool):
             "xrefs": xrefs,
             "usage": term.get("usage"),
             "num_children": len(term.get("children", [])),
+            # The children themselves, with the relation to each. A term
+            # detail that reports only how many children there are cannot be
+            # walked, and `is_a` against `part_of` is the whole meaning of
+            # the edge.
+            "children": [
+                {
+                    "id": child.get("id"),
+                    "name": child.get("name"),
+                    "relation": child.get("relation"),
+                }
+                for child in (term.get("children") or [])
+                if isinstance(child, dict)
+            ],
+            "comment": term.get("comment"),
+            "subsets": term.get("subsets") or [],
+            "replaced_by": term.get("replacedBy"),
+            "considers": term.get("considers") or [],
         }
 
         return {

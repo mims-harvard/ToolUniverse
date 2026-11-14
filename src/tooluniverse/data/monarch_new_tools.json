@@ -10,31 +10,130 @@
           "description": "Entity CURIE identifier. Examples: 'HGNC:11998' (TP53), 'MONDO:0007739' (Huntington disease), 'MONDO:0005148' (type 2 diabetes), 'HP:0001250' (seizure)."
         }
       },
-      "required": ["id"]
+      "required": [
+        "id"
+      ]
     },
     "fields": {
       "endpoint": "entity"
     },
     "type": "MonarchV3Tool",
     "test_examples": [
-      {"id": "HGNC:11998"},
-      {"id": "MONDO:0007739"}
+      {
+        "id": "HGNC:11998"
+      },
+      {
+        "id": "MONDO:0007739"
+      }
     ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "id": {"type": ["string", "null"]},
-        "name": {"type": ["string", "null"]},
-        "full_name": {"type": ["string", "null"]},
-        "category": {"type": ["string", "null"]},
-        "description": {"type": ["string", "null"]},
-        "symbol": {"type": ["string", "null"]},
-        "synonyms": {"type": "array", "items": {"type": "string"}},
-        "xrefs": {"type": "array", "items": {"type": "string"}},
-        "taxon": {"type": ["string", "null"]},
-        "taxon_label": {"type": ["string", "null"]},
-        "provided_by": {"type": ["string", "null"]},
-        "deprecated": {"type": "boolean", "description": "True if this ontology term is obsolete. Obsolete terms remain queryable but carry no annotations."}
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "full_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "symbol": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "synonyms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "xrefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "taxon": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "taxon_label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "provided_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "deprecated": {
+          "type": "boolean",
+          "description": "True if this ontology term is obsolete. Obsolete terms remain queryable but carry no annotations."
+        },
+        "association_counts": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "How many associations the entity has in each category, each {label, category, count}, 13 entries e.g. {'label': 'Gene to Phenotype', 'category': 'biolink:GeneToPhenotypicFeatureAssociation', ...}. Read this before paging associations, to know what is there."
+        },
+        "causes_disease": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Diseases this entity causes, each {id, name, category}, e.g. {'id': 'MONDO:0016419', 'name': 'hereditary breast carcinoma'} -- 7 entries for TP53."
+        },
+        "has_phenotype": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "HPO ids of the phenotypes associated with the entity, e.g. 'HP:0006572' (41 entries for TP53). Positionally parallel to has_phenotype_label."
+        },
+        "has_phenotype_label": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The same phenotypes by name, e.g. 'Pure red cell aplasia'. Parallel to has_phenotype -- zip the two; neither is ordered by relevance."
+        },
+        "node_relationships": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Typed relationships from this node, each {relation, relation_label, ...}, e.g. {'relation': 'RO:0004003', 'relation_label': 'has material basis in germline mutation in'}. The relation is what makes a gene-disease pair mean something specific."
+        }
       }
     }
   },
@@ -78,23 +177,152 @@
     },
     "type": "MonarchV3Tool",
     "test_examples": [
-      {"subject": "HGNC:11998", "limit": 5},
-      {"subject": "MONDO:0005148", "category": "biolink:DiseaseToPhenotypicFeatureAssociation", "limit": 5}
+      {
+        "subject": "HGNC:11998",
+        "limit": 5
+      },
+      {
+        "subject": "MONDO:0005148",
+        "category": "biolink:DiseaseToPhenotypicFeatureAssociation",
+        "limit": 5
+      }
     ],
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "subject": {"type": ["string", "null"]},
-          "subject_label": {"type": ["string", "null"]},
-          "object": {"type": ["string", "null"]},
-          "object_label": {"type": ["string", "null"]},
-          "category": {"type": ["string", "null"]},
-          "predicate": {"type": ["string", "null"]},
-          "negated": {"type": ["boolean", "null"]},
-          "provided_by": {"type": ["string", "null"]},
-          "primary_knowledge_source": {"type": ["string", "null"]}
+          "subject": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "subject_label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "object": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "object_label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "category": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "predicate": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "negated": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "provided_by": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "primary_knowledge_source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "agent_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Who or what produced the claim, e.g. 'manual_agent' (a human curator) versus an automated or text-mining agent."
+          },
+          "aggregator_knowledge_source": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "description": "Infores ids of the aggregators the claim passed through, e.g. ['infores:monarchinitiative']. The primary source is in primary_knowledge_source; this is the chain after it."
+          },
+          "association_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Monarch's id for this association, e.g. 'uuid:a769ddb6-bed6-11f1-9774-6045bd00b3c3'. A fresh UUID per build, so do not store it as a stable key."
+          },
+          "evidence_count": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "How many pieces of evidence Monarch holds for the association, e.g. 0. Zero is common and does NOT mean the assertion is unsupported -- a manually curated assertion often carries no separate evidence rows."
+          },
+          "knowledge_level": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Biolink knowledge level, e.g. 'knowledge_assertion' -- a curated claim -- as opposed to 'prediction' or 'statistical_association'. The single best field for deciding how much weight an association deserves."
+          },
+          "object_category": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Biolink category of the object, e.g. 'biolink:Disease'."
+          },
+          "original_object": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The object id as the source recorded it, e.g. 'Orphanet:251579'. Monarch's `object` is usually the MONDO equivalent, so this is the only trace of which source vocabulary the claim was actually made in."
+          },
+          "original_subject": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The subject id as the SOURCE recorded it, before Monarch normalised it, e.g. 'NCBIGene:7157'. Compare with `subject` to see what the normalisation changed."
+          },
+          "subject_category": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Biolink category of the subject, e.g. 'biolink:Gene'."
+          },
+          "subject_taxon": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Taxon of the subject, e.g. 'NCBITaxon:9606'. A non-human taxon means the association is a model-organism finding."
+          },
+          "subject_taxon_label": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The same taxon by name, e.g. 'Homo sapiens'."
+          }
         }
       }
     }
@@ -127,7 +355,9 @@
           "description": "Zero-based offset. Continue with metadata.next_offset."
         }
       },
-      "required": ["query"],
+      "required": [
+        "query"
+      ],
       "additionalProperties": false
     },
     "fields": {
@@ -135,22 +365,108 @@
     },
     "type": "MonarchV3Tool",
     "test_examples": [
-      {"query": "Alzheimer", "category": "biolink:Disease", "limit": 5},
-      {"query": "BRCA1", "limit": 5}
+      {
+        "query": "Alzheimer",
+        "category": "biolink:Disease",
+        "limit": 5
+      },
+      {
+        "query": "BRCA1",
+        "limit": 5
+      }
     ],
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "id": {"type": ["string", "null"]},
-          "name": {"type": ["string", "null"]},
-          "category": {"type": ["string", "null"]},
-          "symbol": {"type": ["string", "null"]},
-          "description": {"type": ["string", "null"]},
-          "taxon": {"type": ["string", "null"]},
-          "taxon_label": {"type": ["string", "null"]},
-          "deprecated": {"type": "boolean", "description": "True if this ontology term is obsolete. Obsolete terms remain queryable but carry no annotations."}
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "category": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "symbol": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "taxon": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "taxon_label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "deprecated": {
+            "type": "boolean",
+            "description": "True if this ontology term is obsolete. Obsolete terms remain queryable but carry no annotations."
+          },
+          "namespace": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Which ontology the hit belongs to, e.g. 'MONDO', 'HP', 'MP'. One search returns terms from several, and mixing a human phenotype with a mouse one is a common error."
+          },
+          "provided_by": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Which Monarch data source supplied the node, e.g. 'phenio_nodes'."
+          },
+          "score": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Relevance score, e.g. 40.130344. The order is by it."
+          },
+          "synonyms": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Other names for the term, e.g. ['AD', ...] - 8 on the measured hit. Explains why a term whose label does not resemble the query was returned."
+          },
+          "xrefs": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Equivalent identifiers in other vocabularies, e.g. ['DOID:10652', ...] - 14 on the measured hit. The join to any other resource."
+          }
         }
       }
     }

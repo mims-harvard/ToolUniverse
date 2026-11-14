@@ -12,14 +12,14 @@
         "domain": "Drugs & Chemistry",
         "type": "secret",
         "register_url": "https://www.brenda-enzymes.org/register.php",
-        "purpose": "BRENDA account email \u2014 retrieves enzyme kinetics, substrates, and parameters.",
+        "purpose": "BRENDA account email — retrieves enzyme kinetics, substrates, and parameters.",
         "without": "BRENDA tools are blocked without an account (paired with the password)."
       },
       "BRENDA_PASSWORD": {
         "domain": "Drugs & Chemistry",
         "type": "secret",
         "register_url": "https://www.brenda-enzymes.org/register.php",
-        "purpose": "BRENDA account password \u2014 authenticates the enzyme-data SOAP API.",
+        "purpose": "BRENDA account password — authenticates the enzyme-data SOAP API.",
         "without": "Required together with the BRENDA email."
       }
     },
@@ -64,6 +64,53 @@
             },
             "count": {
               "type": "integer"
+            }
+          }
+        },
+        "error_details": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Structured detail for the failure, present alongside 'error' whenever ToolUniverse itself refused the call: 'type' (e.g. 'ToolUnavailableError'), 'message', 'retriable' (false for a missing API key -- retrying will not help), 'next_steps' (what the caller can actually do) and 'details'. The error string alone does not say whether a retry is worth attempting.",
+          "properties": {
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The error class, e.g. 'ToolUnavailableError'."
+            },
+            "message": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The same text as 'error'."
+            },
+            "retriable": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "False when retrying cannot succeed, as for a missing credential."
+            },
+            "next_steps": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Concrete actions that would make the call work."
+            },
+            "details": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Any extra machine-readable context; frequently empty."
             }
           }
         }
@@ -129,6 +176,53 @@
               "type": "integer"
             }
           }
+        },
+        "error_details": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Structured detail for the failure, present alongside 'error' whenever ToolUniverse itself refused the call: 'type' (e.g. 'ToolUnavailableError'), 'message', 'retriable' (false for a missing API key -- retrying will not help), 'next_steps' (what the caller can actually do) and 'details'. The error string alone does not say whether a retry is worth attempting.",
+          "properties": {
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The error class, e.g. 'ToolUnavailableError'."
+            },
+            "message": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The same text as 'error'."
+            },
+            "retriable": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "False when retrying cannot succeed, as for a missing credential."
+            },
+            "next_steps": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Concrete actions that would make the call work."
+            },
+            "details": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Any extra machine-readable context; frequently empty."
+            }
+          }
         }
       }
     },
@@ -189,6 +283,53 @@
               "type": "integer"
             }
           }
+        },
+        "error_details": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Structured detail for the failure, present alongside 'error' whenever ToolUniverse itself refused the call: 'type' (e.g. 'ToolUnavailableError'), 'message', 'retriable' (false for a missing API key -- retrying will not help), 'next_steps' (what the caller can actually do) and 'details'. The error string alone does not say whether a retry is worth attempting.",
+          "properties": {
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The error class, e.g. 'ToolUnavailableError'."
+            },
+            "message": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The same text as 'error'."
+            },
+            "retriable": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "False when retrying cannot succeed, as for a missing credential."
+            },
+            "next_steps": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Concrete actions that would make the call work."
+            },
+            "details": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Any extra machine-readable context; frequently empty."
+            }
+          }
         }
       }
     },
@@ -243,6 +384,53 @@
             },
             "info": {
               "type": "array"
+            }
+          }
+        },
+        "error_details": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Structured detail for the failure, present alongside 'error' whenever ToolUniverse itself refused the call: 'type' (e.g. 'ToolUnavailableError'), 'message', 'retriable' (false for a missing API key -- retrying will not help), 'next_steps' (what the caller can actually do) and 'details'. The error string alone does not say whether a retry is worth attempting.",
+          "properties": {
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The error class, e.g. 'ToolUnavailableError'."
+            },
+            "message": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The same text as 'error'."
+            },
+            "retriable": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "False when retrying cannot succeed, as for a missing credential."
+            },
+            "next_steps": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Concrete actions that would make the call work."
+            },
+            "details": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Any extra machine-readable context; frequently empty."
             }
           }
         }
@@ -388,6 +576,78 @@
               "conditions": {
                 "type": "object",
                 "description": "Assay conditions: ph, temperature, temperature_unit (when reported)"
+              },
+              "ec_number": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "EC number the parameter belongs to, e.g. '1.1.1.1'."
+              },
+              "enzyme_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Enzyme name as recorded, e.g. 'ADH'."
+              },
+              "organism": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source organism, e.g. 'Saimiri sciureus'. A Km from a squirrel monkey enzyme is not a human Km, and the number alone does not say."
+              },
+              "parameter_types": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Which kinds of parameter the row carries, e.g. ['concentration', ...]. Says whether the row is a Km, a kcat or something else."
+              },
+              "products": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Products of that reaction, e.g. ['beta-NADH', ...] - 8 on the measured row."
+              },
+              "pubmed_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PubMed id of the paper the value came from, e.g. '7011375'. The citation for the measurement."
+              },
+              "sabiork_entry_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SABIO-RK entry id for the same measurement, e.g. '11794'. The route to the full kinetic record and its assay conditions."
+              },
+              "substrates": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Substrates in the measured reaction, e.g. ['beta-NAD+', ...] - 9 on the measured row. A Km is meaningless without the substrate it was measured for."
+              },
+              "tissue": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Tissue the preparation came from, e.g. 'liver'. Measured on 19 of 20 rows."
               }
             }
           }

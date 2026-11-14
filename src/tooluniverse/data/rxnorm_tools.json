@@ -49,6 +49,57 @@
           "items": {
             "type": "string"
           }
+        },
+        "concepts": {
+          "type": "array",
+          "description": "The same names RxNorm returned, with the labels it attached to them. `names` is a flat list of strings, so 'aspirin' the ingredient and 'Pamprin Max Formula' the brand arrive indistinguishable and neither carries the rxcui that would let it be looked up. NOTE: `names` holds one entry more than this list - the concept's own main name, which comes from RxNorm's properties endpoint rather than its related-concepts endpoint, so it has no term type to report. The difference is not a dropped row.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rxcui": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "RxNorm identifier of THIS concept, e.g. '1052413'. Distinct from the top-level rxcui, which is the concept that was searched for."
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The name, as it appears in `names`."
+              },
+              "tty": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "RxNorm term type: 'IN' ingredient, 'BN' brand name, 'SCD' semantic clinical drug, 'SBD' semantic branded drug, 'PIN' precise ingredient. This is what separates an ingredient from a branded pack, and the flat list of names could not."
+              },
+              "language": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Language of the name, e.g. 'ENG'."
+              },
+              "suppress": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "RxNorm's suppression flag: 'N' is active. A suppressed concept is obsolete and should not be presented as current."
+              },
+              "synonym": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "RxNorm's synonym for the concept, when it records one."
+              }
+            }
+          }
         }
       }
     }

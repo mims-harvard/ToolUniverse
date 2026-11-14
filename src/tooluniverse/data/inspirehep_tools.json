@@ -101,6 +101,20 @@
                               "properties": {
                                 "title": {
                                   "type": "string"
+                                },
+                                "source": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "description": "Which source supplied this title, e.g. 'arXiv'. A record carries several titles and this is what distinguishes the published one from the preprint's."
+                                },
+                                "subtitle": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "description": "Subtitle of the work, e.g. 'Future Circular Collider Conceptual Design Report'. Measured on 2 of 8 titles - for a report series the subtitle carries the actual identity."
                                 }
                               }
                             }
@@ -136,6 +150,16 @@
                               "properties": {
                                 "value": {
                                   "type": "string"
+                                },
+                                "categories": {
+                                  "type": [
+                                    "array",
+                                    "null"
+                                  ],
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "description": "arXiv categories for the eprint, e.g. ['hep-ph', ...]. Which subfield the work was posted to."
                                 }
                               }
                             }
@@ -147,6 +171,13 @@
                               "properties": {
                                 "value": {
                                   "type": "string"
+                                },
+                                "source": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "description": "Which source supplied the DOI, e.g. 'bibmatch'. Measured on 2 of 5 records. A DOI matched automatically rather than deposited can be wrong."
                                 }
                               }
                             }
@@ -156,13 +187,379 @@
                           },
                           "publication_info": {
                             "type": "array"
+                          },
+                          "$schema": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The INSPIRE schema the record follows, e.g. 'https://inspirehep.net/schemas/records/hep.json'. Which record type it is, and so which fields may be present."
+                          },
+                          "_oai": {
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "description": "OAI-PMH harvesting metadata - sets, id and updated. Which OAI sets the record belongs to, for anyone mirroring INSPIRE."
+                          },
+                          "abstracts": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "The record's abstracts, each with its 'source' and 'value' - 2 on the measured record, from the publisher and from arXiv. They differ, and which one is quoted matters."
+                          },
+                          "accelerator_experiments": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "Experiments or collaborations the work belongs to, each with a legacy_name and record link, e.g. 'NNPDF'. Measured on 4 of 5 records - which collaboration produced the result."
+                          },
+                          "author_count": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ],
+                            "description": "How many authors the work has, e.g. 11. A 3000-author collaboration paper and a 2-author one are different objects, and the truncated author list does not reveal which."
+                          },
+                          "book_series": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "The series the work belongs to, e.g. 'CERN Yellow Reports'. Measured on 1 of 5 - and for a report the series is how it is actually cited."
+                          },
+                          "citeable": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when INSPIRE counts the record in citation statistics. A non-citeable record's citations are not tracked, so a count of 0 may mean 'not counted' rather than 'uncited'."
+                          },
+                          "control_number": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ],
+                            "description": "INSPIRE's own record id, e.g. 1325552. The stable key; the DOI may be absent on a preprint."
+                          },
+                          "core": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when the record is in INSPIRE's CORE set - the curated subset of genuine HEP literature. False means it was harvested but not vetted."
+                          },
+                          "curated": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when a human has checked the record. An uncurated record's author affiliations and references are machine-extracted."
+                          },
+                          "deleted_records": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "Records this one superseded, each as a $ref. Measured on 1 of 5 - a merged duplicate, which is why two INSPIRE ids can resolve to one work."
+                          },
+                          "document_type": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "What kind of document it is, e.g. ['article'], 'thesis', 'conference paper', 'book'. A conference proceeding and a journal article carry very different weight in HEP."
+                          },
+                          "documents": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "Attached full-text documents, each with a filename and description. Measured on 4 of 5 records - the fulltext INSPIRE actually holds, as distinct from a publisher link."
+                          },
+                          "earliest_date": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The earliest date of any version, e.g. '2014-10-31'. What a chronological sort should use; the publication date can be months later."
+                          },
+                          "energy_ranges": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "Collision energy ranges the work concerns, e.g. ['1-10 TeV']. Measured on 1 of 5 records. In HEP the energy range is a primary filter, and nothing else in the record carries it."
+                          },
+                          "external_system_identifiers": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "Ids in other systems, each with its schema and value, e.g. {'schema': 'ADS', 'value': '2015...'} - 2 on the measured record. The join to ADS, Semantic Scholar and the publisher."
+                          },
+                          "facet_author_name": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "Author names in INSPIRE's disambiguated 'bai_name' form, e.g. ['1000999_Jose Ignacio Latorre', ...]. The id prefix is what distinguishes two physicists with the same name."
+                          },
+                          "figures": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "Extracted figures, each with a filename and caption. Measured on 3 of 5 records."
+                          },
+                          "first_author": {
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "description": "The first author, with their full name, affiliations and identifiers. Who the work is cited as in HEP convention, which for a large collaboration is not meaningful."
+                          },
+                          "imprints": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "Publisher imprint details, each with its date, e.g. {'date': '2015-04-08'}. Measured on 3 of 5 records."
+                          },
+                          "inspire_categories": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "INSPIRE's own subject terms, each with a 'term', e.g. 'Phenomenology-HEP'. Curated rather than author-assigned, so they are consistent across the corpus where arXiv categories are not."
+                          },
+                          "isbns": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "ISBNs where the work is a book or report, e.g. [{'value': '9789290833895'}]. Measured on 1 of 5."
+                          },
+                          "journal_title_variants": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "Abbreviations the journal is known by, e.g. ['JHEP']. Measured on 4 of 5 records, and what lets a reference string be matched."
+                          },
+                          "keywords": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "Keywords for the work, each with its 'source' and 'value' - 21 on the measured record. The source matters: author keywords and INSPIRE's curated ones are different vocabularies."
+                          },
+                          "legacy_creation_date": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "When the record was created in the legacy INSPIRE system, e.g. '2014-11-03'."
+                          },
+                          "legacy_version": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Version string from that legacy system, e.g. '20181121144046.0'."
+                          },
+                          "license": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "Licence terms, each with the imposing party and a URL, e.g. {'imposing': 'arXiv', ...}. Measured on 4 of 5 records. Whether the text and figures can be reused."
+                          },
+                          "number_of_pages": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ],
+                            "description": "Page count, e.g. 138. A 138-page record is a report or a review, not a letter."
+                          },
+                          "preprint_date": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "When the preprint appeared, e.g. '2014-10-31'. Priority in HEP is usually claimed from this date, not from publication."
+                          },
+                          "primary_arxiv_category": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "The primary arXiv category, e.g. ['hep-ph']. Measured on 3 of 5 records - the one the authors chose as principal, where `categories` is the full list."
+                          },
+                          "public_notes": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "Public notes on the record, each with its source and value, e.g. an arXiv comment. Measured on 3 of 5 records - where 'submitted to', 'proceedings of' and page-count corrections live."
+                          },
+                          "publication_type": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "A finer type, e.g. ['review']. Measured on 1 of 5 records. A review's citation count is not comparable with a research paper's."
+                          },
+                          "refereed": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when the work is peer-reviewed. Measured on 4 of 5 records. The difference between a preprint and a published paper, and nothing else in the record states it."
+                          },
+                          "referenced_authors_bais": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "Disambiguated ids of every author cited by this work - 9142 on the measured record. The basis of any co-citation or influence analysis."
+                          },
+                          "references": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "The work's reference list, each with its label, raw reference and a link to the INSPIRE record where resolved - 180 on the measured record. The citation graph, and the schema named none of it."
+                          },
+                          "report_numbers": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "Institutional report numbers, each with its value, e.g. 'EDINBURGH-2014-15' - 5 on the measured record. How the work is referenced inside the issuing laboratories."
+                          },
+                          "texkeys": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "INSPIRE's BibTeX keys for the record, e.g. ['NNPDF:2014otw']. What a LaTeX \\cite actually uses, and the first entry is the canonical one."
+                          },
+                          "urls": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "External links for the work, each with a description, e.g. an Interactions.org page. Measured on 2 of 5."
                           }
                         }
+                      },
+                      "created": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the INSPIRE record was created, e.g. '2014-11-03T00:00:00+00:00'."
+                      },
+                      "links": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "Export links for the record or the result set - bibtex, latex-eu, latex-us, json and the rest. How a citation is obtained in the form a journal wants, and 'next' pages the search."
+                      },
+                      "updated": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When it was last changed, e.g. '2023-03-07T06:50:50.626309+00:00'. Nine years after creation on the measured record - INSPIRE records are curated continuously."
                       }
                     }
                   }
                 }
               }
+            },
+            "links": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Export links for the record or the result set - bibtex, latex-eu, latex-us, json and the rest. How a citation is obtained in the form a journal wants, and 'next' pages the search."
             }
           },
           "not": {

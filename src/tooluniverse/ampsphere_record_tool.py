@@ -219,20 +219,47 @@ class AMPSphereGetAmpTool(BaseTool):
         if not isinstance(payload, dict) or not payload.get("accession"):
             return _err(f"No AMPSphere record for accession {accession!r}.", url=url)
 
-        meta = payload.get("metadata")
-        gene_rows = meta.get("data") if isinstance(meta, dict) else None
+        meta = payload.get("metadata") if isinstance(payload, dict) else None
+        meta = meta if isinstance(meta, dict) else {}
+        gene_rows = meta.get("data")
+        gene_rows = gene_rows if isinstance(gene_rows, list) else []
+        info = meta.get("info") if isinstance(meta.get("info"), dict) else {}
+        total_genes = info.get("totalItem")
+
+        # `metadata.data` is PAGE ZERO of a paged connection, and `gene_count`
+        # used to be the length of that page: AMP10.000_000 was reported as 5
+        # genes and has 15,523. The page info sits right beside the rows in
+        # the same response and says so. A page reported as a total is the
+        # catalogue's own recurring defect, and this was an instance of it.
+        result_metadata = {
+            "source": _SOURCE,
+            "url": url,
+            "accession": payload.get("accession"),
+            "family": payload.get("family"),
+            "length": payload.get("length"),
+            "gene_rows_returned": len(gene_rows),
+            "gene_count": total_genes if total_genes is not None else len(gene_rows),
+            "count_semantics": (
+                "gene_count is every gene/sample row for this AMP; "
+                "gene_rows_returned is how many of them metadata.data carries"
+            ),
+        }
+        if total_genes is not None and len(gene_rows) < total_genes:
+            result_metadata["truncated"] = True
+            result_metadata["note"] = (
+                f"metadata.data carries {len(gene_rows)} of {total_genes} "
+                f"gene/sample rows for {accession}. Call "
+                f"AMPSphere_get_amp_metadata with accession={accession!r} to "
+                "page through the rest -- that is where this peptide's "
+                "habitats, geography and microbial sources are."
+            )
+        else:
+            result_metadata["truncated"] = False
 
         return {
             "status": "success",
             "data": payload,
-            "metadata": {
-                "source": _SOURCE,
-                "url": url,
-                "accession": payload.get("accession"),
-                "family": payload.get("family"),
-                "length": payload.get("length"),
-                "gene_count": len(gene_rows) if isinstance(gene_rows, list) else 0,
-            },
+            "metadata": result_metadata,
         }
 
 
@@ -245,8 +272,12 @@ class AMPSphereGetAmpTool(BaseTool):
             "Check whether an exact amino-acid sequence already exists in "
             "AMPSphere (the global survey of 863,498 metagenomic antimicrobial "
             "peptides) and, if so, return its AMPSphere accession. This is an "
-            "exact-match membership test, not a homology search (for homology "
-            "use AMPSphere's /search/mmseqs or /search/hmmer endpoints). "
+            "exact-match membership test, not a homology search. AMPSphere "
+            "publishes /search/mmseqs and /search/hmmer for homology, but both "
+            "answer HTTP 500 for every query including the API's own default "
+            "(measured 2026-11-13), so there is no homology search to fall "
+            "back on here; use an external search against the AMPSphere FASTA "
+            "download instead. "
             "Returns {query, result, matched}: result is the AMPSphere "
             "accession (e.g. 'AMP10.000_000') when the sequence is a catalog "
             "member, or null when it is not present. The match is case-"

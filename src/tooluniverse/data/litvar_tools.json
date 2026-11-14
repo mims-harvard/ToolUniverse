@@ -86,6 +86,20 @@
               "match": {
                 "type": "string",
                 "description": "How the query matched this variant"
+              },
+              "flag_clingen_variant": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the variant is in ClinGen, so a clinical interpretation exists."
+              },
+              "flag_gene_variant": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the hit is a gene-level concept rather than a specific variant. Its literature count is for the gene, which makes a gene-level hit look far better supported than any variant."
               }
             }
           }
@@ -317,6 +331,41 @@
                 "null"
               ],
               "description": "ALFA minor allele frequency data, when available."
+            },
+            "flag_rsid_variant": {
+              "type": "boolean",
+              "description": "Whether this variant has an rsID"
+            },
+            "concept": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What kind of entity the record describes, e.g. 'variant'."
+            },
+            "data_snp_id": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "dbSNP ids for the variant WITHOUT the 'rs' prefix, e.g. ['113488022']. It must be prefixed before it will match an rsID anywhere else."
+            },
+            "flag_clingen_variant": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the variant is in ClinGen. Whether a clinical interpretation exists at all."
+            },
+            "flag_gene_variant": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when LitVar treats the record as a gene-level rather than a variant-level concept. A gene-level record's literature is about the gene, not this variant."
             }
           },
           "not": {

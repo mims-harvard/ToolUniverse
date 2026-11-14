@@ -61,6 +61,10 @@
                 "coordinates": {
                   "type": "array",
                   "description": "[longitude, latitude, altitude]"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "GeoJSON type: 'Feature'"
                 }
               }
             },
@@ -118,6 +122,13 @@
                                   "cloud_area_fraction": {
                                     "type": "number",
                                     "description": "Cloud cover in %"
+                                  },
+                                  "air_pressure_at_sea_level": {
+                                    "type": [
+                                      "number",
+                                      "null"
+                                    ],
+                                    "description": "Mean sea-level pressure at this timestep, in hPa, e.g. 1003.5."
                                   }
                                 }
                               }
@@ -144,6 +155,20 @@
                                 }
                               }
                             }
+                          },
+                          "next_12_hours": {
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "description": "The 12-hour aggregate from this timestep, {summary, details}. Present on 75 of 87 timesteps; sparser than next_6_hours for the same reason."
+                          },
+                          "next_6_hours": {
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "description": "The 6-hour aggregate from this timestep: {summary, details} with the symbol code and the precipitation/temperature extremes. Present on 81 of 87 timesteps -- it stops being issued near the end of the series, so the last few steps have instant values only."
                           }
                         }
                       }

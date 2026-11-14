@@ -36,14 +36,32 @@ _TERM_FIELDS = (
     "synonym",
 )
 
+# Planteome's annotation index is Solr, so most of a document is ancestor
+# expansions (`*_closure*`) that restate the term's own hierarchy and are left
+# out on purpose. These are the fields that are not: `assigned_by` is the
+# source database the tool's description promises alongside the evidence types,
+# `taxon` is the NCBITaxon id behind `taxon_label`, `evidence` and
+# `evidence_label` are the ECO term behind the three-letter code, and
+# `evidence_with` is what an IEA was actually inferred from -- InterPro:IPR001388
+# for VAMP711, which is the difference between a computed annotation a reader
+# can check and one they cannot.
 _ANNOTATION_FIELDS = (
     "bioentity",
     "bioentity_label",
+    "bioentity_name",
+    "synonym",
     "annotation_class",
     "annotation_class_label",
     "aspect",
+    "taxon",
     "taxon_label",
     "evidence_type",
+    "evidence",
+    "evidence_label",
+    "evidence_with",
+    "assigned_by",
+    "source",
+    "date",
     "reference",
 )
 
@@ -51,7 +69,9 @@ _ANNOTATION_FIELDS = (
 def _planteome_get(path: str, params: Dict[str, Any], timeout: int):
     """GET a Planteome endpoint, returning (payload, error_envelope)."""
     try:
-        resp = requests.get(f"{PLANTEOME_API_URL}{path}", params=params, timeout=timeout)
+        resp = requests.get(
+            f"{PLANTEOME_API_URL}{path}", params=params, timeout=timeout
+        )
     except requests.exceptions.Timeout:
         return None, {
             "status": "error",
@@ -63,7 +83,10 @@ def _planteome_get(path: str, params: Dict[str, Any], timeout: int):
     try:
         payload = resp.json()
     except ValueError:
-        return None, {"status": "error", "error": "Planteome returned a non-JSON response."}
+        return None, {
+            "status": "error",
+            "error": "Planteome returned a non-JSON response.",
+        }
     return payload, None
 
 
@@ -110,9 +133,7 @@ class PlanteomeTool(BaseTool):
                 "error": "query is required, e.g. 'pollen development'.",
             }
 
-        payload, err = _planteome_get(
-            "/search/ontology", {"q": query}, self.timeout
-        )
+        payload, err = _planteome_get("/search/ontology", {"q": query}, self.timeout)
         if err is not None:
             return err
 
@@ -136,7 +157,9 @@ class PlanteomeTool(BaseTool):
                 "error": "term_id is required, e.g. 'GO:0009555' or 'PO:0025281'.",
             }
 
-        payload, err = _planteome_get("/entity/terms", {"entity": term_id}, self.timeout)
+        payload, err = _planteome_get(
+            "/entity/terms", {"entity": term_id}, self.timeout
+        )
         if err is not None:
             return err
 
@@ -146,7 +169,11 @@ class PlanteomeTool(BaseTool):
                 "error": f"No Planteome ontology term found for '{term_id}'.",
             }
 
-        hits = payload["data"] if isinstance(payload["data"], list) else list(payload["data"].values())
+        hits = (
+            payload["data"]
+            if isinstance(payload["data"], list)
+            else list(payload["data"].values())
+        )
         if not hits:
             return {
                 "status": "error",
@@ -167,9 +194,7 @@ class PlanteomeTool(BaseTool):
                 "error": "query is required, e.g. a gene id like 'AT4G32150'.",
             }
 
-        payload, err = _planteome_get(
-            "/search/annotation", {"q": query}, self.timeout
-        )
+        payload, err = _planteome_get("/search/annotation", {"q": query}, self.timeout)
         if err is not None:
             return err
 

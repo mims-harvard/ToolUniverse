@@ -136,6 +136,13 @@
                   "null"
                 ],
                 "description": "Interaction type: post_translational, transcriptional, etc."
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The publications behind this record, as <resource>:<pmid> pairs (e.g. TRIP:11290752). OmniPath sends them semicolon-joined; split here. `sources` names the databases that assert it, these are the papers."
               }
             }
           }
@@ -310,6 +317,20 @@
               "plasma_membrane_transmembrane": {
                 "type": "boolean",
                 "description": "Whether protein is plasma membrane transmembrane"
+              },
+              "entity_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the row is about a protein, a complex or a miRNA"
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the role came from a resource-specific or a composite annotation"
               }
             }
           }
@@ -495,6 +516,13 @@
                   "null"
                 ],
                 "description": "Interaction type"
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The publications behind this record, as <resource>:<pmid> pairs (e.g. TRIP:11290752). OmniPath sends them semicolon-joined; split here. `sources` names the databases that assert it, these are the papers."
               }
             }
           }
@@ -886,6 +914,13 @@
                   "type": "string"
                 },
                 "description": "Supporting databases"
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The publications behind this record, as <resource>:<pmid> pairs (e.g. TRIP:11290752). OmniPath sends them semicolon-joined; split here. `sources` names the databases that assert it, these are the papers."
               }
             }
           }
@@ -976,6 +1011,41 @@
               },
               "curation_effort": {
                 "type": "integer"
+              },
+              "tf_uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt accession of the transcription factor"
+              },
+              "target_uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt accession of the target gene"
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Interaction type, e.g. transcriptional, post_transcriptional"
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The databases asserting this record"
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The publications behind this record, as <resource>:<pmid> pairs (e.g. TRIP:11290752). `sources` names the databases that assert it; these are the papers."
               }
             }
           }
@@ -1057,6 +1127,54 @@
                   "type": "string"
                 },
                 "description": "Confidence-level codes (A-E) this interaction is curated at; an interaction can carry more than one level."
+              },
+              "tf_uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt accession of the transcription factor; the rows named it by symbol only"
+              },
+              "target_uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt accession of the target gene"
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Interaction type, e.g. transcriptional"
+              },
+              "is_stimulation": {
+                "type": "boolean"
+              },
+              "is_inhibition": {
+                "type": "boolean"
+              },
+              "curation_effort": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many source-reference pairs support the interaction"
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The databases asserting this record"
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The publications behind this record, as <resource>:<pmid> pairs (e.g. TRIP:11290752). `sources` names the databases that assert it; these are the papers."
               }
             }
           }

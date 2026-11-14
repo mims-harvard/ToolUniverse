@@ -80,6 +80,20 @@
                                   "object",
                                   "null"
                                 ]
+                              },
+                              "created": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "When the dataset was created on OpenNeuro, e.g. '2016-10-12T23:40:22.670Z'."
+                              },
+                              "publishDate": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "When it was made public. Equal to created for a dataset published at upload; a later date means it was held private first."
                               }
                             }
                           }
@@ -209,8 +223,53 @@
                             "string",
                             "null"
                           ]
+                        },
+                        "created": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "When the latest snapshot was created, e.g. '2022-08-24T21:35:18.000Z'. Datasets keep changing, so this is the age of the version that would actually be downloaded."
+                        },
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Full id of the latest snapshot, e.g. 'ds000114:1.0.2' - the accession and tag joined. The form that pins a citation to one version."
+                        },
+                        "size": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Total size of the latest snapshot in bytes, e.g. 4665210986 - about 4.7 GB. What says whether a download is feasible before it is started."
+                        },
+                        "tag": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Version tag of the latest snapshot, e.g. '1.0.2'."
                         }
                       }
+                    },
+                    "created": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "When the dataset was first created on OpenNeuro, e.g. '2017-06-19T20:20:46.695Z'."
+                    },
+                    "stars": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "items": {
+                        "type": "object"
+                      },
+                      "description": "The users who have starred the dataset, each as {'userId': ...}; 11 on the measured record. The only popularity signal in the reply."
                     }
                   }
                 }

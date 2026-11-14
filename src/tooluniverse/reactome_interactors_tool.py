@@ -307,13 +307,16 @@ class ReactomeInteractorsTool(BaseTool):
                     "returned": len(entries),
                 }
             )
-            for entry in entries:
-                # Strip HTML highlighting
-                name = (
-                    (entry.get("name") or "")
+            def _unhighlight(text):
+                return (
+                    (text or "")
                     .replace('<span class="highlighting" >', "")
                     .replace("</span>", "")
                 )
+
+            for entry in entries:
+                # Strip HTML highlighting
+                name = _unhighlight(entry.get("name"))
                 results.append(
                     {
                         "stable_id": entry.get("stId"),
@@ -322,6 +325,20 @@ class ReactomeInteractorsTool(BaseTool):
                         "species": entry.get("species"),
                         "exact_type": entry.get("exactType"),
                         "compartment_names": entry.get("compartmentNames"),
+                        # The external accession. This tool's own description
+                        # says it searches "by name OR IDENTIFIER", and a
+                        # search for TP53 came back with Reactome's stId
+                        # R-HSA-69488 and nothing else -- while the entry
+                        # carried referenceIdentifier "P04637" and
+                        # databaseName "UniProt". Without it the result joins
+                        # to nothing outside Reactome, and the identifier the
+                        # caller searched with cannot be recovered from the
+                        # answer.
+                        "reference_identifier": entry.get("referenceIdentifier"),
+                        "reference_database": entry.get("databaseName"),
+                        "reference_name": _unhighlight(entry.get("referenceName"))
+                        or None,
+                        "reference_url": entry.get("referenceURL"),
                     }
                 )
 

@@ -74,6 +74,95 @@ def _p_activity_type(act_type: Any) -> "str | None":
         return act_type
     return f"p{act_type}"
 
+# DrugCentral ships a FAERS disproportionality row per MedDRA term -- 1,534 for
+# metformin -- so they are ranked by log-likelihood ratio and capped, with the
+# count and the cut disclosed. The rows are a signal measure, not a causal one.
+SIGNALS_PER_DRUG = 50
+
+
+def _signal_rows(records: Any) -> "tuple[list, int]":
+    """FAERS disproportionality rows, strongest signal first.
+
+    `llr` is the log-likelihood ratio and `llr_threshold` the value above which
+    DrugCentral calls the pair a signal, so returning the one without the other
+    says nothing. Both are strings upstream; the float is only for ordering.
+    """
+    if not isinstance(records, list):
+        records = [records] if records else []
+    rows = []
+    for rec in records:
+        if not isinstance(rec, dict):
+            continue
+        try:
+            llr = float(rec.get("llr"))
+        except (TypeError, ValueError):
+            llr = None
+        try:
+            threshold = float(rec.get("llr_threshold"))
+        except (TypeError, ValueError):
+            threshold = None
+        rows.append(
+            {
+                "meddra_term": rec.get("meddra_term"),
+                "meddra_code": rec.get("meddra_code"),
+                "meddra_level": rec.get("level"),
+                "llr": rec.get("llr"),
+                "llr_threshold": rec.get("llr_threshold"),
+                "is_signal": (
+                    None if llr is None or threshold is None else llr > threshold
+                ),
+                "reports_with_drug_and_event": rec.get("drug_ae"),
+                "reports_with_drug_without_event": rec.get("drug_no_ae"),
+                "reports_without_drug_with_event": rec.get("no_drug_ae"),
+                "reports_without_drug_without_event": rec.get("no_drug_no_ar"),
+                "_llr": llr,
+            }
+        )
+    rows.sort(key=lambda row: (row["_llr"] is None, -(row["_llr"] or 0.0)))
+    for row in rows:
+        row.pop("_llr", None)
+    return rows[:SIGNALS_PER_DRUG], len(rows)
+
+
+def _pharmacologic_classes(node: Any) -> list:
+    """The drug's classes, flattened across the systems that assign them.
+
+    DrugCentral keys them by system -- `fda_epc` (FDA Established
+    Pharmacologic Class), `mesh_pa` (MeSH pharmacologic action), `chebi`
+    (ChEBI role) -- and a system holds either one class or a list.
+    """
+    if not isinstance(node, dict):
+        return []
+    out = []
+    for system, value in node.items():
+        entries = value if isinstance(value, list) else [value]
+        for entry in entries:
+            if not isinstance(entry, dict):
+                continue
+            out.append(
+                {
+                    "system": system,
+                    "code": entry.get("code"),
+                    "name": entry.get("description"),
+                }
+            )
+    return out
+
+
+def _dosages(node: Any) -> list:
+    """Approved dose, unit and route, as DrugCentral lists them."""
+    entries = node if isinstance(node, list) else ([node] if node else [])
+    return [
+        {
+            "dosage": entry.get("dosage"),
+            "unit": entry.get("unit"),
+            "route": entry.get("route"),
+        }
+        for entry in entries
+        if isinstance(entry, dict)
+    ]
+
+
 # Fields to retrieve from MyChem for DrugCentral data
 DC_ALL_FIELDS = "drugcentral"
 DC_TARGET_FIELDS = "drugcentral.bioactivity"
@@ -206,6 +295,7 @@ class DrugCentralTool(BaseTool):
                     "drugbank_id": xrefs.get("drugbank_id"),
                     "chembl_id": xrefs.get("chembl_id"),
                     "pubchem_cid": xrefs.get("pubchem_cid"),
+                    "cross_references": xrefs,
                 }
             )
 
@@ -269,6 +359,7 @@ class DrugCentralTool(BaseTool):
             }
 
         structures = dc.get("structures", {})
+        signals, signal_count = _signal_rows(dc.get("fda_adverse_event"))
         drug_use = dc.get("drug_use", {})
         indications = (
             drug_use.get("indication", []) if isinstance(drug_use, dict) else []
@@ -319,10 +410,30 @@ class DrugCentralTool(BaseTool):
                     for o in (off_label if isinstance(off_label, list) else [off_label])
                 ],
                 "cross_references": dc.get("xrefs", {}),
+                "drugcentral_id": dc.get("id"),
+                "synonyms": (
+                    dc.get("synonyms")
+                    if isinstance(dc.get("synonyms"), list)
+                    else ([dc["synonyms"]] if dc.get("synonyms") else [])
+                ),
+                "pharmacologic_classes": _pharmacologic_classes(
+                    dc.get("pharmacology_class")
+                ),
+                "dosages": _dosages(dc.get("drug_dosage")),
+                "adverse_event_signals": signals,
+                "adverse_event_signal_count": signal_count,
+                "adverse_event_signals_truncated": signal_count > len(signals),
+                "license": dc.get("_license"),
             },
             "metadata": {
                 "query_id": chem_id,
                 "source": "DrugCentral via MyChem.info",
+                "signals_per_drug": SIGNALS_PER_DRUG,
+                "adverse_event_signal_scale": (
+                    "FAERS disproportionality: llr is a log-likelihood ratio and "
+                    "is_signal reports llr > llr_threshold. A signal is a reporting "
+                    "association, not evidence of causation."
+                ),
             },
         }
 
@@ -374,6 +485,11 @@ class DrugCentralTool(BaseTool):
             gene_symbols = [
                 u.get("gene_symbol") for u in uniprot_info if u.get("gene_symbol")
             ]
+            swissprot_entries = [
+                u.get("swissprot_entry")
+                for u in uniprot_info
+                if u.get("swissprot_entry")
+            ]
             act_type = ba.get("act_type")
             act_value = ba.get("act_value")
             targets.append(
@@ -395,6 +511,7 @@ class DrugCentralTool(BaseTool):
                     "source": ba.get("act_source"),
                     "uniprot_ids": uniprot_ids,
                     "gene_symbols": gene_symbols,
+                    "swissprot_entries": swissprot_entries,
                 }
             )
 

@@ -264,6 +264,13 @@
               },
               "description": {
                 "type": "string"
+              },
+              "matched_alias": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which alias of the registry matched the query, e.g. 'grprotein'. Measured on 1 of 10 hits, and the only explanation for a hit whose name does not resemble the query."
               }
             }
           }

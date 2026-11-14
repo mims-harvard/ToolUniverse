@@ -21,7 +21,7 @@ def RGD_resolve_symbol_or_region(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Resolve a gene symbol to its native RGD record, or list genes overlapping a genomic region. Symbo...
 
@@ -52,7 +52,7 @@ def RGD_resolve_symbol_or_region(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

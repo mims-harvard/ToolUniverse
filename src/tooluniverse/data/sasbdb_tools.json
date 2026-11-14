@@ -11,7 +11,10 @@
           "description": "Search query: UniProt accession (e.g., 'P02769' for BSA) or free-text term. Note: SASBDB has no full-text search API; UniProt accessions are resolved directly."
         },
         "max_results": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Page size when a free-text query falls back to listing the published-entry catalog. Default 50.",
           "minimum": 1
         },
@@ -22,12 +25,33 @@
           "default": 0
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SASBDB entry code."
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The entry's status."
+              }
+            }
+          }
         },
         {
           "type": "object",
@@ -43,8 +67,12 @@
       ]
     },
     "test_examples": [
-      {"query": "P02769"},
-      {"query": "BSA"}
+      {
+        "query": "P02769"
+      },
+      {
+        "query": "BSA"
+      }
     ]
   },
   {
@@ -162,6 +190,181 @@
             "string",
             "null"
           ]
+        },
+        "experiment_description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "What was measured, in the depositors' words."
+        },
+        "experimental_mw": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Molecular weight determined from the data, in kDa, e.g. 148.0. Compare with the sequence weight to see the oligomeric state."
+        },
+        "fits": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Model fits against the data, each with the model, its plot and the fit quality. This is what connects the curve to a structure."
+        },
+        "guinier_i0": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Forward scattering intensity I(0) from the Guinier fit, e.g. 0.000257. With the concentration this gives the molecular weight."
+        },
+        "guinier_i0_error": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Uncertainty on guinier_i0."
+        },
+        "guinier_point_first": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "First data point used in the Guinier fit, e.g. 1."
+        },
+        "guinier_point_last": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Last data point used, e.g. 35. The fit range is how a Guinier analysis is judged: too wide and the fit is invalid."
+        },
+        "guinier_rg": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Radius of gyration from the Guinier fit, in nm, e.g. 3.18. The headline size measurement of a SAXS experiment, and it was undeclared."
+        },
+        "guinier_rg_error": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Uncertainty on guinier_rg, e.g. 0.02. An Rg without its error cannot be compared with another."
+        },
+        "intensities_guinier_plot": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "URL of the Guinier plot, which is how the fit range above is checked by eye."
+        },
+        "intensities_kratky_plot": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "URL of the Kratky plot, which is how folded is told from disordered."
+        },
+        "intensities_log_log_plot": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filename or URL of the log-log plot."
+        },
+        "intensities_log_plot": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "URL of the log-intensity plot."
+        },
+        "intensity_unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Units of the scattering intensity, e.g. '1/cm'. Without it the intensities cannot be put on an absolute scale."
+        },
+        "last_modified": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When the entry was last changed, ISO 8601."
+        },
+        "pddf_dmax": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Maximum particle dimension from the P(r), in nm, e.g. 8.95. The second shape number after Rg."
+        },
+        "pddf_dmax_error": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Uncertainty on pddf_dmax."
+        },
+        "pddf_i0": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "I(0) from the P(r) analysis."
+        },
+        "pddf_i0_error": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Uncertainty on pddf_i0."
+        },
+        "pddf_plot": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "URL of the P(r) plot."
+        },
+        "pddf_rg": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Radius of gyration from the pair-distance distribution, e.g. 3.24. Compare with guinier_rg: a large disagreement means one of the analyses is wrong."
+        },
+        "pddf_rg_error": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Uncertainty on pddf_rg."
+        },
+        "pddf_software": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which program produced the P(r), e.g. 'ATSAS GNOM'. The result depends on it."
+        },
+        "porod_volume": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Porod volume in nm^3, e.g. 206.43. An independent estimate of particle volume."
+        },
+        "sascif_data": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "URL of the sasCIF file: the deposited data in its archival format."
         }
       }
     },
@@ -264,6 +467,60 @@
               "string",
               "null"
             ]
+          },
+          "detector": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The detector: its type, name and resolution. What the data was recorded on, and absent from the row before.",
+            "properties": {
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Detector technology, e.g. 'CCD', 'Pilatus'."
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Detector model."
+              },
+              "resolution": {
+                "description": "Detector resolution as SASBDB records it."
+              }
+            }
+          },
+          "beam_geometry": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Beam geometry as SASBDB records it, e.g. '0.60'."
+          },
+          "point_source": {
+            "description": "Set on point-collimation instruments; null on the others. Point and line collimation need different desmearing, so which one it is changes how the curve must be treated."
+          },
+          "line_collimation": {
+            "description": "Set on line-collimation instruments; null on the others."
+          },
+          "line_collimation_slitlength": {
+            "description": "Slit length, on line-collimation instruments."
+          },
+          "line_collimation_integrationwidth": {
+            "description": "Integration width, on line-collimation instruments."
+          },
+          "beam_profile_ah": {
+            "description": "Horizontal beam-profile parameter, where the instrument records one."
+          },
+          "beam_profile_al": {
+            "description": "Vertical beam-profile parameter, where the instrument records one."
+          },
+          "sample_path_length": {
+            "description": "Sample path length, where recorded. Null on most entries."
           }
         }
       }

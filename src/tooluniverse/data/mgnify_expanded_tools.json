@@ -63,6 +63,90 @@
             },
             "geographic_origin": {
               "type": "string"
+            },
+            "accession": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "MGnify accession for the genome, e.g. 'MGYG000000001'."
+            },
+            "ena_sample_accession": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ENA sample the genome was assembled from, e.g. 'ERS370061'. The link back to the raw data."
+            },
+            "num_contigs": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Contigs in the assembly, e.g. 129. With n50 this is how fragmented the genome is."
+            },
+            "rna_16s": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Percent coverage of the 16S rRNA gene, e.g. 99.74. A MAG missing its 16S cannot be placed by amplicon data."
+            },
+            "rna_23s": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Percent coverage of the 23S rRNA gene."
+            },
+            "trnas": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Number of tRNAs found, e.g. 20.0. Part of the standard MAG completeness assessment alongside completeness and contamination."
+            },
+            "ipr_coverage": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Percent of proteins with an InterPro annotation, e.g. 86.42."
+            },
+            "eggnog_coverage": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Percent of proteins with an eggNOG annotation, e.g. 93.78. These two say how much of the genome has any functional annotation at all."
+            },
+            "pangenome_size": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total gene families in the species pangenome, e.g. 3154."
+            },
+            "pangenome_core_size": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Gene families present in nearly all members, e.g. 1350."
+            },
+            "pangenome_accessory_size": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Gene families present in only some members, e.g. 1804. The core/accessory split is the pangenome's whole point and none of the three was declared."
+            },
+            "geographic_range": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Regions the species has been found in, e.g. ['North America', 'Europe']. Broader than geographic_origin, which is this genome's own provenance."
             }
           },
           "not": {
@@ -152,6 +236,129 @@
               },
               "num_proteins": {
                 "type": "integer"
+              },
+              "gc_content": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "accession": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ena_genome_accession": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ena_sample_accession": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ena_study_accession": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ncbi_genome_accession": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "geographic_origin": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "geographic_range": {
+                "type": "array"
+              },
+              "num_contigs": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "n_50": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "busco_completeness": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rna_5s": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "rna_16s": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "rna_23s": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "trnas": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "eggnog_coverage": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "ipr_coverage": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "first_created": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "num_genomes_total": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "pangenome_size": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "last_update": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -319,6 +526,13 @@
                 "integer",
                 "null"
               ]
+            },
+            "last_update": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When MGnify last changed the study, ISO 8601."
             }
           },
           "not": {
@@ -420,6 +634,15 @@
           },
           "lineage": {
             "type": "string"
+          },
+          "pipeline_version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hierarchy": {
+            "type": "object"
           }
         }
       }
@@ -721,6 +944,39 @@
                   "string",
                   "null"
                 ]
+              },
+              "sample_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sample_alias": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sample_desc": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "last_update": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sample_metadata": {
+                "type": "object"
               }
             }
           }
@@ -842,6 +1098,18 @@
                 ]
               },
               "download_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "alias": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "extension": {
                 "type": [
                   "string",
                   "null"

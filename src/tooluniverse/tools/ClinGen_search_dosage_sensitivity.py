@@ -21,7 +21,7 @@ def ClinGen_search_dosage_sensitivity(
     Parameters
     ----------
     gene : str
-        Gene symbol to search (e.g., MECP2, PMP22, RAI1)
+        Gene symbol to search (e.g., MECP2, PMP22, RAI1). HGNC symbol only (e.g. BRCA...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

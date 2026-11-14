@@ -84,27 +84,130 @@
                 "description": "Relevance score 0-1"
               },
               "address": {
-                "type": "object",
-                "description": "Structured address components",
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The address components Nominatim resolved, keyed by OSM place type. Which keys appear depends on the place: a building has house_number and road, a region has none of them",
                 "properties": {
+                  "amenity": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Amenity name, when the match is one"
+                  },
+                  "house_number": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "House number"
+                  },
                   "road": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Street"
+                  },
+                  "quarter": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Quarter"
+                  },
+                  "suburb": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Suburb"
+                  },
+                  "city_district": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "City district"
                   },
                   "city": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "City"
+                  },
+                  "county": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "County"
+                  },
+                  "region": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Region"
                   },
                   "state": {
-                    "type": "string"
-                  },
-                  "country": {
-                    "type": "string"
-                  },
-                  "country_code": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "State or province"
                   },
                   "postcode": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Postal code"
+                  },
+                  "country": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Country name"
+                  },
+                  "country_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ISO 3166-1 alpha-2 country code"
+                  },
+                  "man_made": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Man-made feature name, when the match is one"
+                  },
+                  "ISO3166-2-lvl4": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ISO 3166-2 subdivision code at level 4"
+                  },
+                  "ISO3166-2-lvl6": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ISO 3166-2 subdivision code at level 6"
                   }
+                },
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
               "boundingbox": {
@@ -113,6 +216,56 @@
                   "type": "string"
                 },
                 "description": "Bounding box [south, north, west, east]"
+              },
+              "licence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The data licence and required attribution: 'Data (c) OpenStreetMap contributors, ODbL 1.0'. ODbL requires attribution, so a caller redistributing this result needs it"
+              },
+              "osm_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OSM object type - node, way or relation - which with osm_id identifies the object in OpenStreetMap"
+              },
+              "osm_id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "OSM object id; the pair (osm_type, osm_id) is the key to the OSM object, where place_id is a Nominatim-internal number that changes between imports"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The place's own name, as against the full display_name"
+              },
+              "class": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OSM class of the match, e.g. amenity, highway, boundary"
+              },
+              "addresstype": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which address component the match itself is, e.g. amenity, road, city"
+              },
+              "place_rank": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Nominatim's rank for the match, 0 (continent) to 30 (building); how specific the result is"
               }
             }
           }
@@ -195,28 +348,205 @@
               "description": "Full address"
             },
             "address": {
-              "type": "object",
-              "description": "Structured address components",
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The address components Nominatim resolved, keyed by OSM place type. Which keys appear depends on the place: a building has house_number and road, a region has none of them",
               "properties": {
+                "amenity": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Amenity name, when the match is one"
+                },
+                "house_number": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "House number"
+                },
                 "road": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Street"
+                },
+                "quarter": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Quarter"
+                },
+                "suburb": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Suburb"
+                },
+                "city_district": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "City district"
                 },
                 "city": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "City"
+                },
+                "county": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "County"
+                },
+                "region": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Region"
                 },
                 "state": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "State or province"
                 },
                 "postcode": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Postal code"
                 },
                 "country": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Country name"
                 },
                 "country_code": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "ISO 3166-1 alpha-2 country code"
+                },
+                "man_made": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Man-made feature name, when the match is one"
+                },
+                "ISO3166-2-lvl4": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "ISO 3166-2 subdivision code at level 4"
+                },
+                "ISO3166-2-lvl6": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "ISO 3166-2 subdivision code at level 6"
                 }
+              },
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
+            },
+            "licence": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The data licence and required attribution: 'Data (c) OpenStreetMap contributors, ODbL 1.0'. ODbL requires attribution, so a caller redistributing this result needs it"
+            },
+            "osm_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "OSM object type - node, way or relation - which with osm_id identifies the object in OpenStreetMap"
+            },
+            "osm_id": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "OSM object id; the pair (osm_type, osm_id) is the key to the OSM object, where place_id is a Nominatim-internal number that changes between imports"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The place's own name, as against the full display_name"
+            },
+            "class": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "OSM class of the match, e.g. amenity, highway, boundary"
+            },
+            "addresstype": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which address component the match itself is, e.g. amenity, road, city"
+            },
+            "place_rank": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Nominatim's rank for the match, 0 (continent) to 30 (building); how specific the result is"
+            },
+            "boundingbox": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "South, north, west, east bounds as strings",
+              "items": {
+                "type": "string"
+              }
+            },
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "OSM type of the match within its class"
+            },
+            "importance": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Nominatim's importance score for the place, used to rank matches"
             }
           },
           "not": {

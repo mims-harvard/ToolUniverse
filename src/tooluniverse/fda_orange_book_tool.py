@@ -38,6 +38,41 @@ _AND = " AND "
 _OR = " OR "
 
 
+_SUBMISSION_SUMMARY_KEYS = (
+    "original_approval_date",
+    "original_approval_status",
+    "submission_count",
+    "latest_submission_date",
+)
+
+
+def _submission_summary(submissions):
+    """The approval date and submission count for one application.
+
+    Drugs@FDA gives the whole submission history per application and the
+    availability answer needs one fact from it: when the ORIG submission was
+    approved. The full history is FDA_OrangeBook_get_approval_history's job,
+    so this summarises rather than copies.
+    """
+    rows = submissions if isinstance(submissions, list) else []
+    rows = [row for row in rows if isinstance(row, dict)]
+    original = next(
+        (row for row in rows if str(row.get("submission_type")).upper() == "ORIG"),
+        None,
+    )
+    dates = sorted(
+        str(row.get("submission_status_date"))
+        for row in rows
+        if row.get("submission_status_date")
+    )
+    return {
+        "original_approval_date": (original or {}).get("submission_status_date"),
+        "original_approval_status": (original or {}).get("submission_status"),
+        "submission_count": len(rows),
+        "latest_submission_date": dates[-1] if dates else None,
+    }
+
+
 @register_tool("FDAOrangeBookTool")
 class FDAOrangeBookTool(BaseTool):
     """
@@ -97,6 +132,33 @@ class FDAOrangeBookTool(BaseTool):
 
         data = {k: v for k, v in result.items() if k != "status"}
         return {"status": "success", "data": data}
+
+    @staticmethod
+    def _identifiers(record: Dict[str, Any]) -> Dict[str, Any]:
+        """The codes a Drugs@FDA record is joined to the rest of the world by.
+
+        Every record carries an `openfda` block -- the NDC product and package
+        codes, RxCUI, UNII, the SPL set id, the substance and manufacturer
+        names -- and none of it reached the caller. Without the NDCs an
+        approval cannot be matched to a billing claim or a drug shortage
+        notice, and without the SPL set id it cannot be matched to the label.
+        """
+        openfda = record.get("openfda") or {}
+        keys = (
+            "product_ndc",
+            "package_ndc",
+            "rxcui",
+            "unii",
+            "spl_id",
+            "spl_set_id",
+            "substance_name",
+            "manufacturer_name",
+            "product_type",
+            "route",
+            "brand_name",
+            "generic_name",
+        )
+        return {key: openfda.get(key) for key in keys if key in openfda}
 
     @staticmethod
     def _openfda_get(params: Dict[str, Any]) -> Dict[str, Any]:
@@ -180,7 +242,14 @@ class FDAOrangeBookTool(BaseTool):
                 drug_info = {
                     "application_number": result.get("application_number"),
                     "sponsor_name": result.get("sponsor_name"),
+                    "identifiers": self._identifiers(result),
                     "products": [],
+                    # When the application was approved. Drugs@FDA sends the
+                    # whole submission history with every search result --
+                    # 284 rows across one availability check -- and the row
+                    # carried none of it, so "a generic exists" could not be
+                    # told from "a generic was approved in 2015".
+                    **_submission_summary(result.get("submissions")),
                 }
 
                 for product in result.get("products", []):
@@ -192,6 +261,12 @@ class FDAOrangeBookTool(BaseTool):
                         "marketing_status": product.get("marketing_status"),
                         "reference_drug": product.get("reference_drug"),
                         "te_code": product.get("te_code"),
+                        # Which product of the application this is, and
+                        # whether it is the reference standard that generics
+                        # are tested against -- a different thing from
+                        # `reference_drug`.
+                        "product_number": product.get("product_number"),
+                        "reference_standard": product.get("reference_standard"),
                     }
                     drug_info["products"].append(product_info)
 
@@ -263,6 +338,9 @@ class FDAOrangeBookTool(BaseTool):
                     "submission_status_date": sub.get("submission_status_date"),
                     "review_priority": sub.get("review_priority"),
                     "submission_class": sub.get("submission_class_code_description"),
+                    # The code behind that description, which is what the
+                    # FDA's own documentation and other datasets key on.
+                    "submission_class_code": sub.get("submission_class_code"),
                     "documents": [],
                 }
 
@@ -294,6 +372,26 @@ class FDAOrangeBookTool(BaseTool):
                 else None,
                 "submissions": approval_history,
                 "submission_count": len(approval_history),
+                "identifiers": self._identifiers(result),
+                # WHAT was approved. An approval history with no products is a
+                # list of dates: the strengths, dosage forms, routes and
+                # marketing status are in the same record, and the
+                # therapeutic-equivalence code with them.
+                "products": [
+                    {
+                        "product_number": product.get("product_number"),
+                        "brand_name": product.get("brand_name"),
+                        "active_ingredients": product.get("active_ingredients", []),
+                        "dosage_form": product.get("dosage_form"),
+                        "route": product.get("route"),
+                        "marketing_status": product.get("marketing_status"),
+                        "te_code": product.get("te_code"),
+                        "reference_drug": product.get("reference_drug"),
+                        "reference_standard": product.get("reference_standard"),
+                    }
+                    for product in (result.get("products") or [])
+                    if isinstance(product, dict)
+                ],
             }
 
         except requests.exceptions.RequestException as e:
@@ -623,6 +721,10 @@ class FDAOrangeBookTool(BaseTool):
                             "marketing_status": reference_product.get(
                                 "marketing_status"
                             ),
+                            **{
+                                key: drug.get(key)
+                                for key in _SUBMISSION_SUMMARY_KEYS
+                            },
                         }
                     )
 
@@ -635,6 +737,12 @@ class FDAOrangeBookTool(BaseTool):
                             "sponsor": drug.get("sponsor_name"),
                             "marketing_status": product.get("marketing_status"),
                             "te_code": product.get("te_code"),
+                            # When the ANDA was approved, carried down from
+                            # the search row.
+                            **{
+                                key: drug.get(key)
+                                for key in _SUBMISSION_SUMMARY_KEYS
+                            },
                         }
                     )
 
@@ -647,6 +755,12 @@ class FDAOrangeBookTool(BaseTool):
                 "generics_available": len(generic_drugs) > 0,
                 "applications_scanned": len(drugs),
                 "counts_complete": True,
+                "submission_history_tool": (
+                    "FDA_OrangeBook_get_approval_history returns every "
+                    "submission for one application_number; the rows here "
+                    "carry the original approval date and the submission "
+                    "count only."
+                ),
                 "classification_criteria": {
                     "generic": (
                         "application_number starts with ANDA (Abbreviated New "
@@ -745,6 +859,23 @@ class FDAOrangeBookTool(BaseTool):
                                 "application_number": drug.get("application_number"),
                                 "interpretation": self._interpret_te_code(te_code),
                                 "reference_drug": product.get("reference_drug"),
+                                # A TE code applies to a PRODUCT, not to a
+                                # brand: "AB" for the 80 mg tablet says
+                                # nothing about the oral solution of the same
+                                # name. The row named the brand and the code
+                                # and left out which product they belong to.
+                                "product_number": product.get("product_number"),
+                                "dosage_form": product.get("dosage_form"),
+                                "route": product.get("route"),
+                                "active_ingredients": product.get(
+                                    "active_ingredients", []
+                                ),
+                                "marketing_status": product.get("marketing_status"),
+                                "reference_standard": product.get(
+                                    "reference_standard"
+                                ),
+                                "sponsor_name": drug.get("sponsor_name"),
+                                "identifiers": drug.get("identifiers"),
                             }
                         )
 

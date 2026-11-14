@@ -43,6 +43,22 @@ def _drop_unset_param_noise(warnings: List[str]) -> List[str]:
     return [w for w in warnings if not _UNSET_PARAM_WARNING_RE.search(w)]
 
 
+def _or_none(value):
+    """DisGeNET writes an unknown string attribute as "", not as null."""
+    if isinstance(value, str) and not value.strip():
+        return None
+    return value
+
+
+# gnomAD frequencies arrive as -1.0 where the allele was never observed, and
+# -1.0 read as a frequency is a hundred million times too large.
+_NO_OBSERVATION = -1.0
+
+
+def _freqs(values):
+    return [None if v == _NO_OBSERVATION else v for v in values or []]
+
+
 @register_tool("DisGeNETTool")
 class DisGeNETTool(BaseTool):
     """
@@ -133,26 +149,183 @@ class DisGeNETTool(BaseTool):
         return payload, warnings
 
     @staticmethod
-    def _fmt_gda(row: Dict[str, Any]) -> Dict[str, Any]:
+    def _common_fields(row: Dict[str, Any]) -> Dict[str, Any]:
+        """The parts of a DisGeNET summary row shared by gene and variant hits.
+
+        A summary row carries 37 fields and seven were read. Three groups
+        mattered and are carried now:
+
+        * the disease's other identifiers. `diseaseUMLSCUI` alone pins the
+          disease in one vocabulary; `diseaseVocabularies` is where the MONDO,
+          DO, MeSH, ORDO and NCI ids are, and without them an association
+          cannot be joined to anything else.
+        * the evidence counts. The tool's own description promises "evidence
+          counts" and returned only the PMID count, while the same row states
+          how many clinical trials and dbSNP records support the association,
+          and over what years.
+        * what the score is made of. `scoreBreakdown` names the sources behind
+          each component and their weights, so a 1.25 can be read as five
+          curated sources at weight 0.7 plus one clinical at 0.1 rather than
+          taken on faith.
+        """
         return {
-            "gene_symbol": row.get("symbolOfGene"),
-            "gene_ncbi_id": row.get("geneNcbiID"),
+            "assoc_id": row.get("assocID"),
             "disease_name": row.get("diseaseName"),
             "disease_umls_cui": row.get("diseaseUMLSCUI"),
+            "disease_type": row.get("diseaseType"),
+            "disease_vocabularies": row.get("diseaseVocabularies") or [],
+            "disease_classes": {
+                "mesh": row.get("diseaseClasses_MSH") or [],
+                "do": row.get("diseaseClasses_DO") or [],
+                "hpo": row.get("diseaseClasses_HPO") or [],
+                "umls_semantic_type": row.get("diseaseClasses_UMLS_ST") or [],
+            },
             "score": row.get("score"),
+            "normalized_score": row.get("normalized_score"),
+            "score_breakdown": row.get("scoreBreakdown") or [],
             "n_pmids": row.get("numPMIDs"),
+            "n_clinical_trials": row.get("numCTsupportingAssociation"),
+            "n_dbsnps": row.get("numDBSNPsupportingAssociation"),
+            # The chemicals named in the evidence are a dimension of their own
+            # -- BRCA1 alone answers 727 of them with 3,206 cross-references --
+            # so the count is reported and the list is not. Query DisGeNET's
+            # chemical endpoints with `assoc_id` for the list itself.
+            "n_chemicals_in_evidence": row.get("numChemsIncludedInEvidences"),
+            "year_first": row.get("yearInitial"),
+            "year_last": row.get("yearFinal"),
             "ei": row.get("ei"),
+            "el": row.get("el"),
+            # The disease's own Orphanet attributes, on the same row. How a
+            # disease is inherited decides what a gene-disease association
+            # means for a family, and the prevalence says whether a "rare"
+            # label is 1 in 2,000 or 1 in a million. 10 of the 53 rows of a
+            # NOD2 query carry an inheritance mode; DisGeNET writes the rest
+            # as "" rather than null, which is why they are normalised here.
+            "disease_inheritance": _or_none(row.get("disease_inheritance")),
+            "disease_prevalence_class": _or_none(row.get("disease_prevalence_class")),
+            "disease_prevalence_type": _or_none(row.get("disease_prevalence_type")),
+            "disease_prevalence_geo_area": _or_none(
+                row.get("disease_prevalence_geo_area")
+            ),
         }
 
     @staticmethod
-    def _fmt_vda(row: Dict[str, Any]) -> Dict[str, Any]:
+    def _gene_fields(row: Dict[str, Any]) -> Dict[str, Any]:
+        """The gene's own identifiers and DisGeNET's gene-level indices.
+
+        A /vda/summary row names its gene under different keys from a
+        /gda/summary row -- `geneSymbol_keyword` and `geneNcbiIDs`, both
+        lists, where a GDA row has the scalars `symbolOfGene` and
+        `geneNcbiID`. Reading only the GDA spelling returned
+        `gene_symbol: null` on every variant-disease association, from a row
+        that said "KRAS": a variant tool that could not answer which gene the
+        variant is in. Both spellings are read now, and the list form is kept
+        because a variant can sit in more than one gene.
+        """
+        symbols = row.get("geneSymbol_keyword") or []
+        if isinstance(symbols, str):
+            symbols = [symbols]
+        if not symbols and row.get("symbolOfGene"):
+            symbols = [row["symbolOfGene"]]
+        ncbi_ids = row.get("geneNcbiIDs") or []
+        if not isinstance(ncbi_ids, list):
+            ncbi_ids = [ncbi_ids]
+        if not ncbi_ids and row.get("geneNcbiID") is not None:
+            ncbi_ids = [row["geneNcbiID"]]
+        class_ids = row.get("geneProteinClassIDs") or []
+        class_names = row.get("geneProteinClassNames") or []
+        return {
+            "gene_symbol": symbols[0] if symbols else None,
+            "gene_symbols": symbols,
+            "gene_ncbi_id": ncbi_ids[0] if ncbi_ids else None,
+            "gene_ncbi_ids": ncbi_ids,
+            "gene_ensembl_ids": row.get("geneEnsemblIDs") or [],
+            "gene_ncbi_type": row.get("geneNcbiType"),
+            "gene_uniprot_ids": row.get("geneProteinStrIDs") or [],
+            "gene_dsi": row.get("geneDSI"),
+            "gene_dpi": row.get("geneDPI"),
+            "gene_pli": row.get("genepLI"),
+            # What kind of protein the gene codes for -- "Enzyme",
+            # "Transcription factor", "GPCR" -- which is the first thing asked
+            # of a candidate gene and is on all 53 rows of a NOD2 query. The
+            # names drive the list rather than zip(), so a short id list
+            # cannot silently drop a class that was named.
+            "gene_protein_classes": [
+                {"id": class_ids[i] if i < len(class_ids) else None, "name": name}
+                for i, name in enumerate(class_names)
+            ],
+        }
+
+    @classmethod
+    def _fmt_gda(cls, row: Dict[str, Any]) -> Dict[str, Any]:
+        return {**cls._gene_fields(row), **cls._common_fields(row)}
+
+    @staticmethod
+    def _variant_fields(row: Dict[str, Any]) -> Dict[str, Any]:
+        """What the variant IS, which a /vda/summary row answers in full.
+
+        The tool returned the rsID and the disease and nothing between them:
+        no position, no consequence, no HGVS, no population frequency and
+        neither of the two pathogenicity predictions the same row carries.
+
+        Three of these lists must not be zipped together, which is why they
+        are reported as they arrive:
+
+        * `alleleFreqExome` / `alleleFreqGenome` run parallel to
+          `alleles_alt` on every variant checked (rs1801133's 0.3227 is the
+          first alternate allele, C677T; rs113488022's 1.37e-06 is the third,
+          V600E), so those are paired with the allele and -1.0 -- gnomAD
+          never observed it -- becomes null.
+        * `hgvsc` / `hgvsp` can be SHORTER than `alleles_alt`: rs1801133 has
+          three alternate alleles and two HGVS strings. Pairing them by
+          position would attach one allele's notation to another.
+        * `oneletterID` / `threeletterID` enumerate every transcript's
+          numbering of every allele, sorted and of a different length
+          again -- 12 labels for rs113488022's 3 alleles, naming V157, V299,
+          V600 and V640 for the same substitution. They are a set of names
+          for the variant, not a per-allele list.
+        """
+        alts = row.get("alleles_alt") or []
+        if isinstance(alts, str):
+            alts = [alts]
+        freq_exome = _freqs(row.get("alleleFreqExome"))
+        freq_genome = _freqs(row.get("alleleFreqGenome"))
+        per_allele = None
+        if alts and len(freq_exome) == len(alts) and len(freq_genome) == len(alts):
+            per_allele = [
+                {
+                    "allele": allele,
+                    "frequency_exome": exome,
+                    "frequency_genome": genome,
+                }
+                for allele, exome, genome in zip(alts, freq_exome, freq_genome)
+            ]
         return {
             "variant": row.get("variantStrID"),
-            "gene_symbol": row.get("symbolOfGene"),
-            "disease_name": row.get("diseaseName"),
-            "disease_umls_cui": row.get("diseaseUMLSCUI"),
-            "score": row.get("score"),
-            "n_pmids": row.get("numPMIDs"),
+            "chromosome": row.get("chromosome"),
+            "position": row.get("coord"),
+            "reference_allele": row.get("alleles_ref"),
+            "alternate_alleles": alts,
+            "most_severe_consequence": row.get("mostSevereConsequences"),
+            "hgvs_c": row.get("hgvsc") or [],
+            "hgvs_p": row.get("hgvsp") or [],
+            "protein_changes": row.get("oneletterID") or [],
+            "protein_changes_three_letter": row.get("threeletterID") or [],
+            "allele_frequencies": per_allele,
+            "allele_frequency_exome": freq_exome,
+            "allele_frequency_genome": freq_genome,
+            "sift_score": row.get("sift_score"),
+            "polyphen_score": row.get("polyphen_score"),
+            "variant_dsi": row.get("variantDSI"),
+            "variant_dpi": row.get("variantDPI"),
+        }
+
+    @classmethod
+    def _fmt_vda(cls, row: Dict[str, Any]) -> Dict[str, Any]:
+        return {
+            **cls._variant_fields(row),
+            **cls._gene_fields(row),
+            **cls._common_fields(row),
         }
 
     @staticmethod
@@ -321,6 +494,37 @@ class DisGeNETTool(BaseTool):
                         "ncbi_id": row.get("geneNcbiID"),
                         "score": row.get("score"),
                         "n_pmids": row.get("numPMIDs"),
+                        # Same row, same gap: the specificity indices are what
+                        # say whether a gene on a disease's list is specific to
+                        # it or associated with hundreds of diseases, and the
+                        # trial and dbSNP counts are evidence counts too.
+                        "ensembl_ids": row.get("geneEnsemblIDs") or [],
+                        "ncbi_type": row.get("geneNcbiType"),
+                        "dsi": row.get("geneDSI"),
+                        "dpi": row.get("geneDPI"),
+                        "pli": row.get("genepLI"),
+                        "n_clinical_trials": row.get("numCTsupportingAssociation"),
+                        "n_dbsnps": row.get("numDBSNPsupportingAssociation"),
+                        # The same three things the gene->disease direction
+                        # already carries, dropped only because this handler
+                        # built its own row: the association id needed to ask
+                        # DisGeNET anything further about it, the UniProt
+                        # accessions, the protein class, and what the score
+                        # is made of. A disease's gene list ranked by a score
+                        # whose composition is not shown cannot be triaged:
+                        # 0.8 from two curated sources and 0.8 from text
+                        # mining are not the same claim.
+                        "assoc_id": row.get("assocID"),
+                        "uniprot_ids": row.get("geneProteinStrIDs") or [],
+                        "protein_classes": row.get("geneProteinClassNames") or [],
+                        "score_breakdown": row.get("scoreBreakdown") or [],
+                        # When the association was first and last published.
+                        # A gene supported by 2,248 papers whose last one is
+                        # from 1998 is a different candidate from one whose
+                        # last is from this year, and the count alone cannot
+                        # tell them apart.
+                        "year_first": row.get("yearInitial"),
+                        "year_last": row.get("yearFinal"),
                     }
                 )
         genes = self._apply_filters(
@@ -328,11 +532,25 @@ class DisGeNETTool(BaseTool):
             arguments.get("min_score"),
             arguments.get("limit", self._declared_limit_default(50)),
         )
+        # The disease the code resolved to. Every row names it, and the tool
+        # echoed back only the code the caller already had -- so a caller who
+        # passed the wrong CUI got a gene list with nothing in it to say so.
+        first = payload[0] if payload else {}
         return {
             "status": "success",
             "data": {
                 "disease": disease,
                 "disease_code": code,
+                "disease_name": first.get("diseaseName"),
+                "disease_type": first.get("diseaseType"),
+                "disease_vocabularies": first.get("diseaseVocabularies") or [],
+                "disease_classes": {
+                    "mesh": first.get("diseaseClasses_MSH") or [],
+                    "do": first.get("diseaseClasses_DO") or [],
+                    "hpo": first.get("diseaseClasses_HPO") or [],
+                    "umls_semantic_type": first.get("diseaseClasses_UMLS_ST") or [],
+                },
+                "disease_inheritance": _or_none(first.get("disease_inheritance")),
                 "genes": genes,
                 "gene_count": len(genes),
             },

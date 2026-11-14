@@ -86,6 +86,13 @@
                 },
                 "inheritance": {
                   "type": "string"
+                },
+                "match": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "How well the disease name matched in Orphanet, e.g. 'approximate'. An 'approximate' match means the Orphanet section of this profile may describe a NEIGHBOURING disease, and nothing else in the reply flags that."
                 }
               }
             },

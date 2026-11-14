@@ -72,16 +72,31 @@ def _probe(raw: Dict[str, Any], max_associations: int) -> Dict[str, Any]:
         _association(a) for a in raw.get("associationList") or [] if isinstance(a, dict)
     ]
     genes = []
+    transcripts = []
     for transcript in raw.get("relatedTranscription") or []:
-        name = transcript.get("geneName") if isinstance(transcript, dict) else None
+        if not isinstance(transcript, dict):
+            continue
+        name = transcript.get("geneName")
         if name and name not in genes:
             genes.append(name)
+        # WHERE in the gene. A CpG probe's distance to the transcription
+        # start site is what separates a promoter site from one in the body
+        # of the gene, and which transcript it is measured against decides
+        # the number. `genes` was the deduplicated name list and lost both.
+        transcripts.append(
+            {
+                "gene_name": name,
+                "ensembl_transcript_id": transcript.get("ensemblTranscriptId"),
+                "position_to_tss": transcript.get("posToTss"),
+            }
+        )
     return {
         "probe_id": raw.get("probeId"),
         "chromosome": raw.get("chrHg19"),
         "position_hg19": raw.get("posHg19"),
         "cpg_island": raw.get("cpgIsland"),
         "genes": genes,
+        "transcripts": transcripts,
         "association_count": len(associations),
         "trait_count": len({a["trait"] for a in associations if a["trait"]}),
         "associations": associations[:max_associations],
@@ -119,6 +134,9 @@ def _study(raw: Dict[str, Any], max_associations: int) -> Dict[str, Any]:
             "platform": c.get("platform"),
             "description": c.get("description") or None,
             "mean_age": c.get("meanAge"),
+            # The spread behind that mean. A cohort with mean age 52 and SD 3
+            # is not the one with SD 20, and an EWAS is read against age.
+            "sd_age": c.get("sdAge"),
             "male_fraction": c.get("malePercentage"),
         }
         for c in raw.get("cohortList") or []

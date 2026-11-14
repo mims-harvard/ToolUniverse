@@ -134,6 +134,293 @@ def test_a_single_transformed_value_is_below_the_reporting_floor(audit, monkeypa
     assert rows[0]["total"] == 1  # below the default --min-values of 4
 
 
+def test_a_selected_field_that_is_null_on_this_page_is_not_a_drop(audit):
+    """The third false positive, and the one that cost real triage time.
+
+    MediaDive's wrapper does carry `description` and `reference`. Every medium
+    matching 'nutrient agar' is null in both, so neither had a value to
+    survive and both scored zero -- 0/68 and 0/36 -- in a list of candidates to
+    go and fix. A field whose own name reaches the caller was selected,
+    whatever this page happened to hold.
+    """
+    upstream = {"data": [{"reference": f"ref {i}"} for i in range(8)]}
+    returned = {"data": [{"reference": None} for _ in range(3)]}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+
+    assert rows["data[].reference"]["kept"] == 0
+    assert rows["data[].reference"]["mapped"] is True
+
+
+def test_a_field_never_asked_for_is_not_excused_by_the_split(audit):
+    """The same split must still report what the wrapper never selected."""
+    upstream = {"data": [{"link": f"https://example.org/{i}"} for i in range(8)]}
+    returned = {"data": [{"name": "medium"} for _ in range(3)]}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+
+    assert rows["data[].link"]["kept"] == 0
+    assert rows["data[].link"]["mapped"] is False
+
+
+def test_a_surviving_sibling_of_the_same_name_does_not_vouch_for_a_drop(audit):
+    """What the key-name signal gets wrong on its own, and the correction.
+
+    GEO's esummary carries `accession` twice: the series' own, which the tool
+    returns, and `samples[].accession`, which it dropped. A plain key-name
+    match found `accession` in the output and called the sample accessions
+    selected -- hiding the one finding worth having. A leaf name that already
+    reaches the caller from another path explains the match on its own and
+    cannot excuse this path.
+    """
+    upstream = {
+        "accession": "GSE313540",
+        "samples": [{"accession": f"GSM{i}"} for i in range(9000, 9008)],
+    }
+    returned = {"accession": "GSE313540"}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+
+    assert rows["accession"]["kept"] == 1
+    assert rows["samples[].accession"]["kept"] == 0
+    assert rows["samples[].accession"]["mapped"] is False
+
+
+def test_a_transformed_value_keeps_its_field_out_of_the_drop_list(audit):
+    """Synapse maps `type` through a shortener, so no value matches.
+
+    `org.sagebionetworks.repo.model.FileEntity` becomes `file`. The field is
+    there under its own name and nothing else in the output supplies a `type`,
+    so it is a transformation rather than a drop.
+    """
+    upstream = {
+        "page": [
+            {"type": f"org.sagebionetworks.repo.model.FileEntity{i}"} for i in range(6)
+        ]
+    }
+    returned = {"data": [{"type": "file"} for _ in range(6)]}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+
+    assert rows["page[].type"]["kept"] == 0
+    assert rows["page[].type"]["mapped"] is True
+
+
+def test_a_schema_document_is_not_a_record(audit):
+    """The largest single false-positive class after pagination.
+
+    ChEMBL's wrappers fetch `/molecule/CHEMBL25.json` and then
+    `/molecule/schema.json`. The second document's leaf values are FIELD
+    NAMES, so none of them reach the caller and all 20 ChEMBL tools were
+    reported as dropping data. None of them were.
+    """
+    assert audit.describes_the_api_not_a_record(
+        {
+            "method": "GET",
+            "url": "https://www.ebi.ac.uk/chembl/api/data/molecule/schema.json",
+        }
+    )
+    assert audit.describes_the_api_not_a_record(
+        {"method": "OPTIONS", "url": "https://x/y"}
+    )
+    assert not audit.describes_the_api_not_a_record(
+        {
+            "method": "GET",
+            "url": "https://www.ebi.ac.uk/chembl/api/data/molecule/CHEMBL25.json",
+        }
+    )
+
+
+def test_a_value_promoted_to_a_key_still_reached_the_caller(audit):
+    """Pivoting a long-format response into a map is not a loss.
+
+    `OmniPath_get_annotation_resource_geneset` turns rows of {label, value}
+    into `annotations: {<label>: <value>}`. All 9,755 `label` values reach the
+    caller as keys and none as values, which read as the biggest drop in the
+    catalogue.
+    """
+    upstream = {"rows": [{"label": f"annotation {i}"} for i in range(8)]}
+    returned = {"annotations": {f"annotation {i}": 1 for i in range(8)}}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+
+    assert rows["rows[].label"]["kept"] == 8
+
+
+def test_transport_and_search_machinery_are_not_the_record(audit):
+    """Reported apart from the candidates, because they are never the answer.
+
+    Alliance answers a `resourceDescriptorPage` per cross-reference holding
+    the URL template used to build the link the wrapper already returns, and a
+    `supplementalData.distinctFieldValues` holding the search facets. Both
+    scored as dropped fields on every Alliance tool.
+    """
+    for field in [
+        "gene.crossReferences[].resourceDescriptorPage.urlTemplate",
+        "supplementalData.distinctFieldValues.molecularConsequence[]",
+        "data[].links.self",
+        "data[].relationships.pipeline.links.related",
+        "results[].highlights.symbol[]",
+        "results[].subject.createdBy.dateCreated",
+        "doTerm.definition",
+        "esearchresult.translationstack[].term",
+    ]:
+        assert not audit.is_record_data(field), field
+    for field in [
+        "samples[].accession",
+        "profiles.rows[].expressionUnit",
+        "result[].effective_domain_size",
+        "participants[].linkedFeatures[].name",
+        "[].references",
+    ]:
+        assert audit.is_record_data(field), field
+
+
+def test_a_surrogate_id_beside_a_link_is_not_the_record(audit):
+    """SGD answers its own row number for every referenced object.
+
+    `{"id": 823128, "display_name": "CAA84998.1", "link": "/locus/S000000259"}`
+    -- the id is the database's row number and the identifier that means
+    something is in the link, which is what the wrapper reads. Scoped to this
+    shape on purpose: a bare numeric `id` IS the identifier in other APIs, and
+    those records carry no link beside it.
+    """
+    stub = {"rows": [{"id": 823128, "display_name": "X", "link": "/locus/S1"}]}
+    assert audit.surrogate_id_paths(stub) == {"rows[].id"}
+
+    # A PubChem-shaped record, where the numeric id is the identifier.
+    bare = {"rows": [{"id": 2244, "name": "aspirin"}]}
+    assert audit.surrogate_id_paths(bare) == set()
+
+
+def test_pages_of_one_endpoint_are_one_response(audit):
+    """Comparing each page against the merged output reported the same field
+    once per page, with a different total each time.
+
+    Every `disease_target_score` tool showed
+    `data.disease.associatedTargets.rows[].datasourceScores[].id` five times
+    over, and page 1's target symbols scored zero because the output holds a
+    later page's rows. Grouped by URL, a value that reached the caller from
+    any page counts once.
+    """
+    page_one = {"rows": [{"symbol": f"GENE{i}"} for i in range(6)]}
+    page_two = {"rows": [{"symbol": f"GENE{i}"} for i in range(6, 12)]}
+    returned = {"hits": [{"symbol": f"GENE{i}"} for i in range(12)]}
+
+    rows = {r["field"]: r for r in audit.compare([page_one, page_two], returned)}
+
+    assert rows["[].rows[].symbol"]["kept"] == 12
+    assert rows["[].rows[].symbol"]["total"] == 12
+
+
+def test_a_record_count_tells_a_cut_response_from_a_whole_one(audit):
+    """The longest list of dicts, which is as crude as it needs to be.
+
+    It exists for one decision: whether the response the caller got holds
+    fewer records than the endpoint answered. A single dict in a list is not
+    a record set -- one-element lists are how APIs wrap a single object -- so
+    two or more are required.
+    """
+    assert audit.record_count({"payload": [{"a": 1}, {"a": 2}, {"a": 3}]}) == 3
+    assert audit.record_count({"results": [{"x": [{"y": 1}, {"y": 2}]}]}) == 2
+    assert audit.record_count({"wrapped": [{"only": "one"}]}) == 0
+    assert audit.record_count({"scalars": [1, 2, 3]}) == 0
+
+    # The shallowest list of records, not the largest one anywhere. A MaveDB
+    # score-set search answers 44 score sets and one of their papers carries
+    # 100 authors; reading the author list as the record count made both
+    # sides look the same size and the cut invisible.
+    nested = {
+        "scoreSets": [
+            {"urn": f"urn:{i}", "authors": [{"name": str(n)} for n in range(100)]}
+            for i in range(44)
+        ]
+    }
+    assert audit.record_count(nested) == 44
+
+
+def test_stripping_a_curie_prefix_is_not_dropping_the_field(audit):
+    """WormBase's `_wb_id` turns "WB:WBGene00006818" into "WBGene00006818".
+
+    Alliance answers `primaryExternalId` in the prefixed form, so a value diff
+    reported it missing on every row of every WormBase tool while it was
+    plainly in the output. Only the tail is accepted, and only when it is
+    long enough to mean something -- a one-character tail would match by
+    accident.
+    """
+    upstream = {"rows": [{"primaryExternalId": f"WB:WBGene0000{i}"} for i in range(6)]}
+    returned = {"genes": [{"id": f"WBGene0000{i}"} for i in range(6)]}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+    assert rows["rows[].primaryExternalId"]["kept"] == 6
+
+    # And the reverse does not hold: a prefix alone is not the value.
+    only_prefix = {"genes": [{"id": "WB"} for _ in range(6)]}
+    rows = {r["field"]: r for r in audit.compare(upstream, only_prefix)}
+    assert rows["rows[].primaryExternalId"]["kept"] == 0
+
+
+def test_a_sparse_field_behind_a_declared_cut_is_not_a_drop(audit, monkeypatch):
+    """The last false-positive class the three families turned up.
+
+    DisGeNET's VDA example asks for 20 of 100 associations. `alleles_ref` is
+    multi-character on 14 of the 100 -- an indel rather than a SNV -- and all
+    14 sat outside the page, so a field the wrapper does carry scored 0/14.
+    The mapped-but-unseen signal cannot excuse it either, because the wrapper
+    renames it to `reference_allele`.
+
+    The rule is narrow on purpose: it applies only when the response was cut
+    (fewer records out than in) AND the field is not on every record. A field
+    present on all 100 and absent from the output is still reported, which is
+    how `yearInitial` stayed visible on the same response.
+    """
+    upstream = {
+        "payload": [
+            {"name": f"row{i}", "rare": "indel" if i > 50 else None}
+            for i in range(100)
+        ]
+    }
+    returned = {"rows": [{"label": f"row{i}"} for i in range(20)]}
+
+    captured = {
+        "method": "GET",
+        "url": "https://example.test/summary",
+        "status": 200,
+        "body": upstream,
+    }
+    findings = _run_audit_over(audit, monkeypatch, captured, returned)
+    buckets = findings[0]
+    assert buckets["thin_fields"] == []
+    assert [row["field"] for row in buckets["sparse_behind_a_cut"]] == [
+        "payload[].rare"
+    ]
+    assert buckets["sparse_behind_a_cut"][0]["upstream_records"] == 100
+    assert buckets["sparse_behind_a_cut"][0]["returned_records"] == 20
+
+
+def _run_audit_over(audit, monkeypatch, captured, returned):
+    """Drive audit() once with one captured response and one tool result."""
+
+    class FakeUniverse:
+        def load_tools(self, include_tools=None):
+            return None
+
+        def run(self, call):
+            return {"status": "success", "data": returned}
+
+    monkeypatch.setattr(
+        audit, "tool_configs", lambda *a, **k: {"T": {"test_examples": [{}]}}
+    )
+    monkeypatch.setattr(audit, "record_http", lambda: ([captured], lambda: None))
+    import sys
+    import types
+
+    module = types.ModuleType("tooluniverse")
+    module.ToolUniverse = FakeUniverse
+    monkeypatch.setitem(sys.modules, "tooluniverse", module)
+    return audit.audit(names=["T"], min_values=4)
+
+
 def test_the_summariser_merges_the_shards_and_records_the_count(summarize, tmp_path):
     """Measured and then thrown away is the failure mode to avoid."""
     shard = tmp_path / "shards" / "a"
@@ -190,3 +477,64 @@ def test_the_weekly_workflow_runs_the_audit_and_keeps_its_output():
     assert "--coverage 'shards/*/FIELD_COVERAGE_*.json'" in workflow
     # The sweep is a canary, not a gate, and so is this.
     assert workflow.count("continue-on-error: true") >= 3
+
+
+def test_a_serialisers_type_tag_is_not_a_dropped_field(audit):
+    """ITIS stamps the Java class of every nested object onto it.
+
+    `scientificNames[].class` is
+    "gov.usgs.itis.itis_service.data.SvcScientificName" on all four hits, and
+    the same tag sits on every hierarchy row, synonym, publication and
+    geographic division -- five ITIS tools flagged for it. The rule is scoped
+    to those list containers on purpose, because `class` elsewhere IS the
+    record: GBIF answers "class": "Aves".
+    """
+    assert not audit.is_record_data("scientificNames[].class")
+    assert not audit.is_record_data("hierarchyList[].class")
+    assert not audit.is_record_data("synonymList.synonyms[].class")
+    assert not audit.is_record_data("publicationList.publications[].referenceFor[].class")
+    # The taxonomic rank keeps counting.
+    assert audit.is_record_data("results[].class")
+    assert audit.is_record_data("class")
+    assert audit.is_record_data("gnCoordinate[].class")
+
+
+def test_the_elasticsearch_envelope_is_not_the_hit(audit):
+    """ChEBI's advanced_search wraps each hit in a Lucene document.
+
+    `_index` is "chebi-prod-compounds-07112026", `_type` is "_doc" and
+    `_source.structures` is the internal structure-row ids; the hit itself is
+    under `_source`. `_score` is the ranking, which the tool now reports as
+    relevance_score, and `_id` restates the accession -- both of those stay
+    countable, so only the envelope is filtered.
+    """
+    assert not audit.is_record_data("results[]._index")
+    assert not audit.is_record_data("results[]._type")
+    assert not audit.is_record_data("results[]._source.structures[]")
+    assert audit.is_record_data("results[]._source.smiles")
+    assert audit.is_record_data("results[]._source.chebi_accession")
+
+
+def test_alliances_class_tag_is_scoped_to_its_own_containers(audit):
+    """`type` on an Alliance nested object is the Java class name.
+
+    The allele-and-model response puts it on the allele, the model, the gene
+    and each variant -- five tools flagged for it. The rule is anchored on
+    `results[].` rather than added to the container list, because a bare
+    `gene.type` or `allele.type` on some other API could be a biotype or an
+    allele class, which would be the record.
+    """
+    assert not audit.is_record_data("results[].allele.type")
+    assert not audit.is_record_data("results[].model.type")
+    assert not audit.is_record_data("results[].gene.type")
+    assert not audit.is_record_data("results[].variantList[].type")
+    assert not audit.is_record_data(
+        "results[].variantList[].curatedVariantGenomicLocations[]"
+        ".variantGenomicLocationAssociationObject.type"
+    )
+    # Anywhere else, and for any other field, it still counts.
+    assert audit.is_record_data("gene.type")
+    assert audit.is_record_data("data[].gene.type")
+    assert audit.is_record_data("results[].allele.symbol")
+    assert audit.is_record_data("results[].variantList[].name")
+

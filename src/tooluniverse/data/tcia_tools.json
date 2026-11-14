@@ -36,7 +36,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -134,6 +136,76 @@
               },
               "SeriesDate": {
                 "type": "string"
+              },
+              "AnnotationsFlag": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the series carries annotations - segmentations or measurements. Measured on 918 of 1018 series, and the difference between raw images and a labelled dataset."
+              },
+              "CollectionURI": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DOI of the collection the series belongs to, e.g. 'https://doi.org/10.7937/K9/TCIA.2015.LO9QL9SX'. The citation the collection's own terms require."
+              },
+              "DateReleased": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When TCIA published the series, e.g. '2020-02-21 15:12:49.0'."
+              },
+              "LicenseName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Licence the images are released under, e.g. 'Creative Commons Attribution 3.0 Unported License'. Whether the data may be redistributed or used commercially - and nothing else in the row says."
+              },
+              "LicenseURI": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "URL of that licence, e.g. 'http://creativecommons.org/licenses/by/3.0/'."
+              },
+              "Manufacturer": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Scanner manufacturer, e.g. 'GE MEDICAL SYSTEMS'. Quantitative imaging features are not comparable across vendors."
+              },
+              "SeriesNumber": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "DICOM series number within the study, e.g. 3000566. Measured on 884 of 1018 series, so it cannot be relied on to order them."
+              },
+              "SoftwareVersions": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Scanner software version, e.g. 'LightSpeedApps2.4.2_H2.4M5'. Measured on 936 of 1018 series."
+              },
+              "StudyDate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Date of the study, e.g. '2000-01-01 00:00:00.0'. TCIA shifts dates during de-identification, so it preserves intervals rather than real dates."
+              },
+              "TimeStamp": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "TCIA's own record timestamp for the series."
               }
             }
           }
@@ -146,7 +218,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -215,6 +289,27 @@
               },
               "PatientSex": {
                 "type": "string"
+              },
+              "Collection": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The TCIA collection the study belongs to, e.g. 'LIDC-IDRI'. Each collection has its own licence and citation requirement."
+              },
+              "PatientName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DICOM PatientName. Measured NULL on every study: TCIA removes it during de-identification, so it is a declared-but-always-empty field rather than missing data."
+              },
+              "SeriesCount": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many series the study contains, e.g. 1. Says how much there is to fetch before fetching it."
               }
             }
           }
@@ -227,7 +322,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -285,7 +382,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -327,7 +426,16 @@
           "type": "array",
           "description": "List of body part objects",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "BodyPartExamined": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "One DICOM BodyPartExamined value, e.g. 'ABDOMEN'. Free text filled in by the acquiring site, so the same anatomy appears under several spellings."
+              }
+            }
           }
         },
         {
@@ -338,7 +446,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -373,7 +483,17 @@
           "type": "array",
           "description": "List of metadata key-value pairs for the series",
           "items": {
-            "type": "object"
+            "type": "object",
+            "description": "One DICOM series, keyed by the metadata field name as TCIA spells it -- 'Body Part Examined', 'Series Date', 'Number of Images'. The names contain SPACES and come from the DICOM dictionary, and which appear depends on the modality, so this is read as a map rather than by fixed attribute names.",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ],
+              "description": "The value of that DICOM field."
+            }
           }
         },
         {
@@ -384,7 +504,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -440,7 +562,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -512,7 +636,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -564,7 +690,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -631,7 +759,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

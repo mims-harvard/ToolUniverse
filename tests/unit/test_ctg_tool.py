@@ -176,7 +176,14 @@ def test_fetched_trial_with_no_matching_field_data_is_success_not_error(mock_get
     result = make_adverse_events_tool().run({"nct_ids": ["NCT07504601"]})
 
     assert result["status"] == "success"
-    assert result["data"] == [{"NCT ID": "NCT07504601"}]
+    # The bare `{"NCT ID": ...}` this used to assert was itself the silent
+    # failure arXiv 2609.26836 reports: an object with nothing in it reads as
+    # "asked and answered, no adverse events". The row now says which of the
+    # two it is.
+    row = result["data"][0]
+    assert row["NCT ID"] == "NCT07504601"
+    assert row["has_results"] is False
+    assert "no posted results" in row["note"]
 
 
 @pytest.mark.unit

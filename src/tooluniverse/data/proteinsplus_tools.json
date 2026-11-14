@@ -49,6 +49,42 @@
                   }
                 ]
               }
+            },
+            "descriptor_explanation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL or explanations of calculated descriptors"
+            },
+            "parameters": {
+              "type": "object",
+              "description": "Parameters used for the analysis"
+            },
+            "residues": {
+              "oneOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "description": "Mapping of pockets to constituent residues, or array of URL strings"
+            },
+            "result_table": {
+              "type": "string",
+              "description": "CSV table with binding site similarity analysis results"
+            },
+            "status_code": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "HTTP status the ProteinsPlus job returned, e.g. 200. Separates an empty result from a failed submission."
             }
           },
           "not": {
@@ -185,6 +221,13 @@
             "parameters": {
               "type": "object",
               "description": "Parameters used for the analysis"
+            },
+            "status_code": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "HTTP status the ProteinsPlus job returned, e.g. 200. Separates an empty result from a failed submission."
             }
           },
           "not": {
@@ -271,6 +314,13 @@
             "result_svg_picture": {
               "type": "string",
               "description": "URL or base64-encoded SVG interaction diagram"
+            },
+            "status_code": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "HTTP status the ProteinsPlus job returned, e.g. 200. Separates an empty result from a failed submission."
             }
           },
           "not": {
@@ -426,6 +476,13 @@
             "parameters": {
               "type": "object",
               "description": "Parameters used for the analysis"
+            },
+            "status_code": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "HTTP status the ProteinsPlus job returned, e.g. 200. Separates an empty result from a failed submission."
             }
           },
           "not": {
@@ -527,6 +584,13 @@
             "config": {
               "type": "string",
               "description": "URL to configuration and parameters used"
+            },
+            "status_code": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "HTTP status the ProteinsPlus job returned, e.g. 200. Separates an empty result from a failed submission."
             }
           },
           "not": {
@@ -638,6 +702,13 @@
             "log": {
               "type": "string",
               "description": "URL to the ProtoSS log file"
+            },
+            "status_code": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "HTTP status the ProteinsPlus job returned, e.g. 200. Separates an empty result from a failed submission."
             }
           },
           "not": {

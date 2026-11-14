@@ -15,6 +15,84 @@ from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
+
+# A heavily studied gene can carry dozens of phenotypes per mutant type, so
+# each bucket is capped and its full count reported.
+PHENOTYPES_PER_MUTANT_TYPE = 25
+
+
+def _sgd_id(link: Any) -> "str | None":
+    """The SGD identifier out of a link: "/allele/S000278213" -> S000278213."""
+    if not isinstance(link, str):
+        return None
+    for part in reversed(link.strip("/").split("/")):
+        if part.upper().startswith("S") and part[1:].isdigit():
+            return part
+    return None
+
+
+def _phenotype_terms(entries: Any) -> list:
+    """One bucket of phenotype annotations, as terms with their SGD links."""
+    out = []
+    for entry in entries if isinstance(entries, list) else []:
+        if not isinstance(entry, dict):
+            continue
+        if entry.get("display_name"):
+            out.append(
+                {"phenotype": entry.get("display_name"), "link": entry.get("link")}
+            )
+    return out
+
+
+def _phenotype_summary(overview: Any) -> Dict[str, Any]:
+    """The gene's phenotypes, by how the mutant was made.
+
+    `experiment_categories`, which the tool already returned, counts assay
+    kinds. This is what was observed: the classical annotations, and the
+    large-scale ones bucketed by mutant type, which is what distinguishes a
+    phenotype of losing the gene from one of over-expressing it.
+    """
+    if not isinstance(overview, dict):
+        return {}
+    classical = _phenotype_terms(overview.get("classical_phenotypes"))
+    if isinstance(overview.get("classical_phenotypes"), dict):
+        classical = []
+        for entries in overview["classical_phenotypes"].values():
+            classical.extend(_phenotype_terms(entries))
+    large_scale = {}
+    raw_large = overview.get("large_scale_phenotypes")
+    if isinstance(raw_large, dict):
+        for mutant_type, entries in raw_large.items():
+            terms = _phenotype_terms(entries)
+            if not terms:
+                continue
+            large_scale[mutant_type] = {
+                "phenotypes": terms[:PHENOTYPES_PER_MUTANT_TYPE],
+                "count": len(terms),
+                "truncated": len(terms) > PHENOTYPES_PER_MUTANT_TYPE,
+            }
+    return {
+        "paragraph": overview.get("paragraph"),
+        "classical_phenotypes": classical[:PHENOTYPES_PER_MUTANT_TYPE],
+        "classical_phenotype_count": len(classical),
+        "classical_phenotypes_truncated": len(classical)
+        > PHENOTYPES_PER_MUTANT_TYPE,
+        "large_scale_phenotypes": large_scale,
+        "strains": overview.get("strains") or [],
+    }
+
+
+
+def _go_accession(link: Any) -> "str | None":
+    """The GO accession out of an SGD link: "/go/GO:0046540" -> "GO:0046540"."""
+    if not isinstance(link, str):
+        return None
+    for part in reversed(link.strip("/").split("/")):
+        if part.upper().startswith("GO:"):
+            return part
+    return None
+
+
 SGD_BASE_URL = "https://www.yeastgenome.org/backend"
 
 
@@ -119,7 +197,23 @@ class SGDTool(BaseTool):
         response.raise_for_status()
         raw = response.json()
 
-        aliases = [a.get("display_name") for a in raw.get("aliases", [])]
+        # SGD's aliases are not all the same kind of thing: alongside gene
+        # synonyms the list holds "Protein version ID" (CAA84998.1),
+        # "NCBI protein name" and others, each with its own source database.
+        # Reducing every one to a bare display_name presented a GenBank
+        # accession and a gene synonym as the same fact. `aliases` keeps the
+        # names it always carried; `alias_details` says what each one is.
+        raw_aliases = [a for a in raw.get("aliases", []) if isinstance(a, dict)]
+        aliases = [a.get("display_name") for a in raw_aliases]
+        alias_details = [
+            {
+                "name": a.get("display_name"),
+                "category": a.get("category"),
+                "source": (a.get("source") or {}).get("display_name"),
+                "link": a.get("link"),
+            }
+            for a in raw_aliases
+        ]
         alias_limit = min(max(int(arguments.get("alias_limit", 10)), 1), 1000)
         alias_offset = max(int(arguments.get("alias_offset", 0)), 0)
         alias_page = aliases[alias_offset : alias_offset + alias_limit]
@@ -135,7 +229,72 @@ class SGDTool(BaseTool):
             "name_description": raw.get("name_description"),
             "uniprot_id": raw.get("uniprot_id"),
             "aliases": alias_page,
+            "alias_details": alias_details[alias_offset : alias_offset + alias_limit],
             "qualities": raw.get("qualities", []),
+            # SGD's own links out, grouped by what they are for. The record
+            # carries 78 of them -- sequence resources, interaction databases,
+            # protein localisation -- and the caller saw none.
+            "resource_links": [
+                {
+                    "category": u.get("category"),
+                    "name": u.get("display_name"),
+                    "link": u.get("link"),
+                }
+                for u in (raw.get("urls") or [])
+                if isinstance(u, dict)
+            ],
+            "paralogs": raw.get("paralogs") or [],
+            "alleles": [
+                a.get("display_name")
+                for a in (raw.get("alleles") or [])
+                if isinstance(a, dict) and a.get("display_name")
+            ],
+            # The same alleles with the SGD id out of `link_url`
+            # ("/allele/S000278213"), which is how one is looked up. The name
+            # list stays as it was.
+            "allele_records": [
+                {
+                    "name": a.get("display_name"),
+                    "sgd_id": _sgd_id(a.get("link_url")),
+                    "link": a.get("link_url"),
+                }
+                for a in (raw.get("alleles") or [])
+                if isinstance(a, dict) and a.get("display_name")
+            ],
+            "references_count": raw.get("references_count"),
+            # SGD's own summaries of the gene, which are the fastest answer to
+            # "what is known about this gene" and were dropped whole.
+            # Both fields of this row used to carry the wrong thing. `go_id`
+            # is SGD's internal numeric id (294137), not a GO accession, and
+            # `slim_name` is the name of the SLIM SET -- "Yeast GO-Slim",
+            # "Macromolecular complex terms" -- so every row read
+            # `term: "Yeast GO-Slim"`. The term is `display_name`
+            # ("U4/U6 x U5 tri-snRNP complex") and the GO accession is in
+            # `link` ("/go/GO:0046540"). Two plausible names over two wrong
+            # values is worse than the omission this replaced.
+            "go_slim": [
+                {
+                    "term": entry.get("display_name"),
+                    "go_id": _go_accession(entry.get("link")),
+                    "slim_set": entry.get("slim_name"),
+                    "sgd_internal_id": entry.get("go_id"),
+                    "link": entry.get("link"),
+                }
+                for entry in ((raw.get("go_overview") or {}).get("go_slim") or [])
+                if isinstance(entry, dict)
+            ],
+            "phenotype_experiment_categories": (
+                raw.get("phenotype_overview") or {}
+            ).get("experiment_categories")
+            or [],
+            # The phenotypes themselves. `experiment_categories` counts the
+            # kinds of assay; "toxin resistance: increased" is the phenotype,
+            # and SGD buckets the large-scale ones by mutant type -- null,
+            # repressible, reduction of function, conditional -- which is what
+            # says whether a phenotype follows from losing the gene or from
+            # over-expressing it. All of it was dropped.
+            "phenotype_summary": _phenotype_summary(raw.get("phenotype_overview")),
+            "protein_overview": raw.get("protein_overview") or {},
         }
 
         return {
@@ -182,6 +341,10 @@ class SGDTool(BaseTool):
                     "experiment_type": p.get("experiment", {}).get("display_name")
                     if p.get("experiment")
                     else None,
+                    # "classical genetics" or "large-scale survey": a
+                    # phenotype from a targeted experiment and one from a
+                    # genome-wide screen carry different weight.
+                    "experiment_category": (p.get("experiment") or {}).get("category"),
                     "strain_name": p.get("strain", {}).get("display_name")
                     if p.get("strain")
                     else None,
@@ -194,6 +357,38 @@ class SGDTool(BaseTool):
                     "reference": p.get("reference", {}).get("display_name")
                     if p.get("reference")
                     else None,
+                    "reference_pubmed_id": (p.get("reference") or {}).get("pubmed_id"),
+                    "reference_citation": (p.get("reference") or {}).get("citation"),
+                    # THE MEASUREMENT behind the qualitative call. 25 of
+                    # POL3's 65 annotations carry one: "Relative growth score:
+                    # 0.0044" under `haploproficient`, "Relative fitness
+                    # score: 1.000" under "competitive fitness: normal",
+                    # "metascore strong (multiple hit)" under a chromosome
+                    # instability call. The row reported the label alone.
+                    "note": p.get("note"),
+                    # And the experiment's own note, e.g. "mutants grown in
+                    # 96-well microtiter plates".
+                    "experiment_note": (p.get("experiment") or {}).get("note")
+                    or p.get("experiment_details"),
+                    # The experiment's own conditions. SGD lists these as
+                    # `properties`, each with a class_type (chemical, allele,
+                    # media), the item and the role it played -- which is the
+                    # difference between a phenotype seen under a drug and one
+                    # seen without it.
+                    "experiment_properties": [
+                        {
+                            "class_type": prop.get("class_type"),
+                            "role": prop.get("role"),
+                            "name": (prop.get("bioitem") or {}).get("display_name")
+                            or (prop.get("bioentity") or {}).get("display_name")
+                            or prop.get("note"),
+                            "value": prop.get("concentration") or prop.get("value"),
+                            "unit": prop.get("unit"),
+                        }
+                        for prop in (p.get("properties") or [])
+                        if isinstance(prop, dict)
+                    ],
+                    "details": p.get("details"),
                 }
             )
 
@@ -239,6 +434,10 @@ class SGDTool(BaseTool):
                     "reference": g.get("reference", {}).get("display_name")
                     if g.get("reference")
                     else None,
+                    # The PMID. A GO annotation with an evidence code and no
+                    # resolvable reference cannot be checked against the paper
+                    # the code refers to.
+                    "reference_pubmed_id": (g.get("reference") or {}).get("pubmed_id"),
                 }
             )
 
@@ -271,25 +470,60 @@ class SGDTool(BaseTool):
         for i in raw_page:
             locus1 = i.get("locus1", {})
             locus2 = i.get("locus2", {})
+            # SGD states the direction in `bait_hit`, and it is not always
+            # "Bait-Hit": on S000003219's 180 interactions, 83 are "Hit-Bait",
+            # meaning locus1 is the HIT. Labelling locus1 the bait
+            # unconditionally reported the roles backwards on 46% of rows,
+            # which for a two-hybrid result inverts which protein was the
+            # probe. Read the direction instead of assuming it.
+            bait_hit = i.get("bait_hit") or ""
+            if bait_hit.strip().lower().startswith("hit"):
+                bait, hit = locus2, locus1
+            else:
+                bait, hit = locus1, locus2
+            reference = i.get("reference") or {}
             results.append(
                 {
                     "interaction_type": i.get("interaction_type"),
-                    "experiment_type": i.get("experiment_type"),
-                    "bait_gene": locus1.get("display_name"),
-                    "hit_gene": locus2.get("display_name"),
-                    "bait_sgdid": locus1.get("link", "").split("/")[-1]
-                    if locus1.get("link")
-                    else None,
-                    "hit_sgdid": locus2.get("link", "").split("/")[-1]
-                    if locus2.get("link")
-                    else None,
+                    # Was `i.get("experiment_type")`, a key the API does not
+                    # send, so this was null on every row ever returned. The
+                    # experiment is under `experiment.display_name`:
+                    # "Two-hybrid", "Affinity Capture-MS".
+                    "experiment_type": (i.get("experiment") or {}).get("display_name"),
+                    "bait_hit": i.get("bait_hit"),
+                    "bait_gene": bait.get("display_name"),
+                    "hit_gene": hit.get("display_name"),
+                    "bait_sgdid": self._sgdid_from_link(bait.get("link")),
+                    "hit_sgdid": self._sgdid_from_link(hit.get("link")),
+                    "bait_systematic_name": bait.get("format_name"),
+                    "hit_systematic_name": hit.get("format_name"),
                     "annotation_type": i.get("annotation_type"),
-                    "source": i.get("source", {}).get("display_name")
-                    if i.get("source")
-                    else None,
-                    "reference": i.get("reference", {}).get("display_name")
-                    if i.get("reference")
-                    else None,
+                    # What was actually observed. A genetic interaction's
+                    # phenotype and the allele's mutant type are the result;
+                    # without them the row says only that a pair interacts.
+                    "phenotype": i.get("phenotype"),
+                    "mutant_type": i.get("mutant_type"),
+                    "modification": i.get("modification"),
+                    "note": i.get("note"),
+                    "source": (i.get("source") or {}).get("display_name"),
+                    "reference": reference.get("display_name"),
+                    "reference_pubmed_id": reference.get("pubmed_id"),
+                    "reference_sgdid": self._sgdid_from_link(reference.get("link")),
+                    # Which alleles were crossed, and how strong the
+                    # interaction was. SGD reports an SGA score and its
+                    # p-value per allele pair -- the quantitative result of the
+                    # experiment -- and the row carried neither, so a genetic
+                    # interaction arrived with no measure of its strength.
+                    "alleles": [
+                        {
+                            "allele1": a.get("allele1_name"),
+                            "allele2": a.get("allele2_name"),
+                            "sga_score": a.get("sga_score"),
+                            "p_value": a.get("pvalue"),
+                        }
+                        for a in (i.get("alleles") or [])
+                        if isinstance(a, dict)
+                    ],
                 }
             )
 
@@ -376,18 +610,41 @@ class SGDTool(BaseTool):
         raw = response.json() or {}
 
         def _first_block(entries):
-            """Take the reference (S288C) sequence block, falling back to first."""
+            """The reference (S288C) sequence block, falling back to the first.
+
+            SGD answers one block per sequenced strain. Which strain the
+            returned coordinates and residues belong to was never stated, and
+            when S288C is absent the fallback silently hands back a different
+            strain's sequence under the same field names -- so a caller
+            comparing positions to the reference genome could be comparing
+            against another isolate without any sign of it.
+            """
             if not isinstance(entries, list) or not entries:
-                return {}
+                return {}, None, 0
             for e in entries:
                 strain = e.get("strain") or {}
                 if "S288C" in (strain.get("display_name") or ""):
-                    return e
-            return entries[0]
+                    return e, True, len(entries)
+            return entries[0], False, len(entries)
 
-        genomic = _first_block(raw.get("genomic_dna"))
-        coding = _first_block(raw.get("coding_dna"))
-        protein = _first_block(raw.get("protein"))
+        def _provenance(block):
+            strain = block.get("strain") or {}
+            contig = block.get("contig") or {}
+            return {
+                "strain": strain.get("display_name"),
+                "contig": contig.get("display_name"),
+                "contig_systematic_name": contig.get("format_name"),
+            }
+
+        genomic, genomic_is_reference, genomic_strains = _first_block(
+            raw.get("genomic_dna")
+        )
+        coding, coding_is_reference, coding_strains = _first_block(
+            raw.get("coding_dna")
+        )
+        protein, protein_is_reference, protein_strains = _first_block(
+            raw.get("protein")
+        )
 
         result = {
             "sgd_id": sgd_id,
@@ -397,14 +654,23 @@ class SGDTool(BaseTool):
                 "strand": genomic.get("strand"),
                 "length": len(genomic.get("residues") or ""),
                 "residues": genomic.get("residues"),
+                **_provenance(genomic),
+                "is_reference_strain": genomic_is_reference,
+                "strains_available": genomic_strains,
             },
             "coding_dna": {
                 "length": len(coding.get("residues") or ""),
                 "residues": coding.get("residues"),
+                **_provenance(coding),
+                "is_reference_strain": coding_is_reference,
+                "strains_available": coding_strains,
             },
             "protein": {
                 "length": len(protein.get("residues") or ""),
                 "residues": protein.get("residues"),
+                **_provenance(protein),
+                "is_reference_strain": protein_is_reference,
+                "strains_available": protein_strains,
             },
         }
 
@@ -452,6 +718,21 @@ class SGDTool(BaseTool):
                     "source": source.get("display_name"),
                     "reference": reference.get("display_name"),
                     "pubmed_id": reference.get("pubmed_id"),
+                    "evidence_code": (r.get("evidence_code") or {}).get("display_name"),
+                    "experiment_type": (r.get("experiment") or {}).get("display_name"),
+                    # The same experiment-properties shape the phenotype rows
+                    # carry: which allele or construct, and the role it played.
+                    "experiment_properties": [
+                        {
+                            "class_type": prop.get("class_type"),
+                            "role": prop.get("role"),
+                            "name": (prop.get("bioentity") or {}).get("display_name")
+                            or (prop.get("bioitem") or {}).get("display_name")
+                            or prop.get("note"),
+                        }
+                        for prop in (r.get("properties") or [])
+                        if isinstance(prop, dict)
+                    ],
                 }
             )
 
@@ -514,6 +795,10 @@ class SGDTool(BaseTool):
                     "description_length": len(description),
                     "href": r.get("href"),
                     "aliases": r.get("aliases"),
+                    # "Active", "Uncharacterized", "Dubious": whether the hit
+                    # is a gene SGD still stands behind.
+                    "status": r.get("status"),
+                    "bioentity_id": r.get("bioentity_id"),
                 }
             )
 

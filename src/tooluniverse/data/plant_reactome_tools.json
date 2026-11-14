@@ -166,6 +166,69 @@
                 "array",
                 "null"
               ]
+            },
+            "className": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Human-readable class of the object, e.g. 'Pathway'."
+            },
+            "dbId": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Reactome's internal numeric database id, e.g. 1119312. Build-specific -- use stId for anything stored or cited."
+            },
+            "hasDiagram": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when a drawn diagram exists for this pathway, e.g. true. False means only the event hierarchy is available."
+            },
+            "literatureReference": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Publications the annotation rests on, each {dbId, displayName, pubMedIdentifier, ...} -- 17 entries on the measured pathway."
+            },
+            "name": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "All names for the pathway, e.g. ['Photorespiration', ...] (5 entries). displayName gives the preferred one; this is the full synonym list."
+            },
+            "orthologousEvent": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The same pathway inferred in other species, each {dbId, displayName, stId, speciesName} -- 138 entries on the measured pathway. These are INFERRED by orthology, not independently curated, which is what makes Plant Reactome wide."
+            },
+            "schemaClass": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reactome data-model class, e.g. 'Pathway'. Says which other fields to expect -- a 'Reaction' carries different ones."
+            },
+            "species": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Species the pathway is annotated in, each {dbId, displayName, name, ...}, e.g. 'Oryza sativa'."
+            },
+            "summation": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The pathway's prose summary, each entry {dbId, displayName, text}. The displayName holds the summary text itself."
             }
           },
           "not": {
@@ -408,6 +471,13 @@
                   "array",
                   "null"
                 ]
+              },
+              "diagram": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the pathway has a drawn diagram, e.g. true. False means only the event hierarchy exists for that node."
               }
             }
           }

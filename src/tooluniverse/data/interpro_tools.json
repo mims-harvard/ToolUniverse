@@ -266,51 +266,79 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Object keyed by member-database signature accession (e.g., 'PIRSR000617-2').",
+          "description": "Residue-level annotations keyed by signature accession. The schema declared no properties, so nothing said that this tool answers which residues of a protein are functional sites: for P00533 it reports BINDING: ATP at K745, the ATP-binding lysine of EGFR.",
           "additionalProperties": {
             "type": "object",
+            "description": "One signature's residue annotations for the protein. The key is the signature accession, e.g. PIRSR000605-51",
             "properties": {
               "accession": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The signature accession, repeating the key"
               },
               "name": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The signature's name"
               },
               "source_database": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which member database the signature comes from, e.g. pirsr or cdd"
               },
               "locations": {
-                "type": "array",
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "The annotated sites, each with its residue positions",
                 "items": {
                   "type": "object",
+                  "description": "One annotated site, with what it is and where",
                   "properties": {
                     "description": {
                       "type": [
                         "string",
                         "null"
                       ],
-                      "description": "Site type and label, e.g. 'BINDING: ATP' or 'ACT_SITE: Proton acceptor.'"
+                      "description": "What the site is, in the source database's own words, e.g. 'BINDING: ATP.' or 'NP_BIND: ATP'"
                     },
                     "fragments": {
-                      "type": "array",
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "The residue ranges this site covers",
                       "items": {
                         "type": "object",
+                        "description": "One stretch of residues the annotation covers",
                         "properties": {
+                          "residues": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The residue letters, e.g. 'K' for a single lysine"
+                          },
                           "start": {
                             "type": [
                               "integer",
-                              "number"
-                            ]
+                              "null"
+                            ],
+                            "description": "Start position in the protein sequence, 1-based"
                           },
                           "end": {
                             "type": [
                               "integer",
-                              "number"
-                            ]
-                          },
-                          "residues": {
-                            "type": "string",
-                            "description": "Residue letter(s) at this position"
+                              "null"
+                            ],
+                            "description": "End position, 1-based and inclusive"
                           }
                         }
                       }
@@ -712,7 +740,10 @@
                   "type": "string"
                 },
                 "go_terms": {
-                  "type": ["array", "null"],
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "description": "GO terms assigned to the entry, or null when the entry has none. Measured over 64 entries.",
                   "items": {
                     "type": "object",
@@ -953,7 +984,10 @@
                   "description": "Null for every integrated InterPro entry (measured on 258). Clan/set membership is a member-database property; see InterPro_get_member_signature."
                 },
                 "overlaps_with": {
-                  "type": ["array", "null"],
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "description": "Entries whose matches overlap this one, or null when there are none. Measured over 64 entries.",
                   "items": {
                     "type": "object",
@@ -1177,7 +1211,10 @@
                   "type": "boolean"
                 },
                 "representative_structure": {
-                  "type": ["object", "null"],
+                  "type": [
+                    "object",
+                    "null"
+                  ],
                   "description": "A representative PDB structure, or null when InterPro has not picked one. Measured over 64 entries.",
                   "properties": {
                     "accession": {

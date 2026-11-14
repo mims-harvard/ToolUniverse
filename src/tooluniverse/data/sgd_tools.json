@@ -75,6 +75,202 @@
               "items": {
                 "type": "string"
               }
+            },
+            "qualifier": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name_description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "alias_details": {
+              "type": "array"
+            },
+            "qualities": {
+              "type": "object"
+            },
+            "resource_links": {
+              "type": "array"
+            },
+            "paralogs": {
+              "type": "array"
+            },
+            "alleles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "references_count": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "go_slim": {
+              "type": "array",
+              "description": "The gene's GO Slim terms. Both fields of this row used to carry the wrong thing: `go_id` held SGD's internal numeric id and `term` held the name of the slim SET ('Yeast GO-Slim'), so every row read the same. The term is the annotation and the GO accession comes out of the link.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "term": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The GO term, e.g. 'U4/U6 x U5 tri-snRNP complex'"
+                  },
+                  "go_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The GO accession, e.g. GO:0046540"
+                  },
+                  "slim_set": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which slim set the term belongs to, e.g. 'Yeast GO-Slim'"
+                  },
+                  "sgd_internal_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "link": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "phenotype_experiment_categories": {
+              "type": "array"
+            },
+            "protein_overview": {
+              "type": "object"
+            },
+            "feature_type": {
+              "type": "object"
+            },
+            "id": {
+              "type": "object"
+            },
+            "citation": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pubmed_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "link": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "year": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "journal": {
+              "type": "object"
+            },
+            "authors": {
+              "type": "array"
+            },
+            "urls": {
+              "type": "array"
+            },
+            "category": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "allele_records": {
+              "type": "array",
+              "description": "The same alleles as `alleles`, with the SGD id out of the link so one can be looked up",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "sgd_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "link": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "phenotype_summary": {
+              "type": "object",
+              "description": "The phenotypes themselves. `phenotype_experiment_categories` counts assay kinds; 'toxin resistance: increased' is the phenotype, and SGD buckets the large-scale ones by mutant type (null, repressible, reduction of function, conditional), which says whether a phenotype follows from losing the gene or from over-expressing it.",
+              "properties": {
+                "paragraph": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "classical_phenotypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "classical_phenotype_count": {
+                  "type": "integer"
+                },
+                "classical_phenotypes_truncated": {
+                  "type": "boolean"
+                },
+                "large_scale_phenotypes": {
+                  "type": "object",
+                  "description": "Keyed by mutant type; each holds up to 25 phenotypes, the full count and whether it was cut"
+                },
+                "strains": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
             }
           },
           "not": {
@@ -184,6 +380,94 @@
                   "string",
                   "null"
                 ]
+              },
+              "qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "experiment_category": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reference_pubmed_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "experiment_properties": {
+                "type": "array",
+                "description": "The experiment's own properties (condition, reporter, allele and chemical details) as SGD records them.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "class_type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "What kind of property this is, e.g. BIOITEM, CHEMICAL, CONDITION."
+                    },
+                    "role": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The part it played in the experiment, e.g. Allele, Chemical pending, Media, Temperature."
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Name of the allele, chemical or condition."
+                    },
+                    "value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its value where the property is quantified."
+                    },
+                    "unit": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Unit of value."
+                    }
+                  }
+                }
+              },
+              "details": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reference_citation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "note": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The curator's note on this annotation: the measurement or observation behind the qualitative call, e.g. 'Relative growth score: 0.0044' under haploproficient or 'large budded cells with nuclei situated at the mother-bud neck'."
+              },
+              "experiment_note": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The note attached to the experiment rather than to the annotation, where SGD records one."
               }
             }
           }
@@ -289,6 +573,18 @@
                   "string",
                   "null"
                 ]
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reference_pubmed_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -389,6 +685,81 @@
                   "string",
                   "null"
                 ]
+              },
+              "bait_hit": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bait_sgdid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "hit_sgdid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bait_systematic_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "hit_systematic_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "phenotype": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "mutant_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "modification": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "note": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reference_pubmed_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "reference_sgdid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "alleles": {
+                "type": "array"
               }
             }
           }
@@ -481,6 +852,18 @@
               "aliases": {
                 "type": [
                   "array",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bioentity_id": {
+                "type": [
+                  "integer",
                   "null"
                 ]
               }
@@ -674,62 +1057,245 @@
               "type": "string"
             },
             "genomic_dna": {
-              "type": "object",
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The genomic DNA sequence with its strain and contig",
               "properties": {
+                "contig": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Contig the sequence came from"
+                },
+                "contig_systematic_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Systematic name of that contig"
+                },
+                "strain": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Strain the sequence is from"
+                },
+                "is_reference_strain": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether that strain is the S288C reference. A sequence from another strain is not interchangeable with the reference"
+                },
+                "residues": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The sequence itself. A tool called get_sequence that does not declare this declares everything about the sequence except the sequence"
+                },
+                "length": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Length in residues or bases"
+                },
+                "strains_available": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Other strains this sequence can be fetched for",
+                  "items": {
+                    "type": [
+                      "string",
+                      "object"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                },
                 "start": {
                   "type": [
                     "integer",
                     "null"
-                  ]
+                  ],
+                  "description": "Start coordinate on the contig"
                 },
                 "end": {
                   "type": [
                     "integer",
                     "null"
-                  ]
+                  ],
+                  "description": "End coordinate on the contig"
                 },
                 "strand": {
                   "type": [
                     "string",
                     "null"
-                  ]
-                },
-                "length": {
-                  "type": "integer"
-                },
-                "residues": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  ],
+                  "description": "Strand the feature is on"
                 }
               }
             },
             "coding_dna": {
-              "type": "object",
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The coding DNA sequence with the strain and contig it came from",
               "properties": {
-                "length": {
-                  "type": "integer"
+                "contig": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Contig the sequence came from"
+                },
+                "contig_systematic_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Systematic name of that contig"
+                },
+                "strain": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Strain the sequence is from"
+                },
+                "is_reference_strain": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether that strain is the S288C reference. A sequence from another strain is not interchangeable with the reference"
                 },
                 "residues": {
                   "type": [
                     "string",
                     "null"
-                  ]
+                  ],
+                  "description": "The sequence itself. A tool called get_sequence that does not declare this declares everything about the sequence except the sequence"
+                },
+                "length": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Length in residues or bases"
+                },
+                "strains_available": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Other strains this sequence can be fetched for",
+                  "items": {
+                    "type": [
+                      "string",
+                      "object"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
                 }
               }
             },
             "protein": {
-              "type": "object",
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The protein sequence with its strain and contig",
               "properties": {
-                "length": {
-                  "type": "integer"
+                "contig": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Contig the sequence came from"
+                },
+                "contig_systematic_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Systematic name of that contig"
+                },
+                "strain": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Strain the sequence is from"
+                },
+                "is_reference_strain": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether that strain is the S288C reference. A sequence from another strain is not interchangeable with the reference"
                 },
                 "residues": {
                   "type": [
                     "string",
                     "null"
-                  ]
+                  ],
+                  "description": "The sequence itself. A tool called get_sequence that does not declare this declares everything about the sequence except the sequence"
+                },
+                "length": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Length in residues or bases"
+                },
+                "strains_available": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Other strains this sequence can be fetched for",
+                  "items": {
+                    "type": [
+                      "string",
+                      "object"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -854,6 +1420,21 @@
                   "integer",
                   "null"
                 ]
+              },
+              "evidence_code": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "experiment_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "experiment_properties": {
+                "type": "array"
               }
             }
           }

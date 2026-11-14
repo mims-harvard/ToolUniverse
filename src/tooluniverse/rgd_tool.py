@@ -164,6 +164,25 @@ class RGDTool(BaseTool):
                     "species": r.get("species"),
                     "synonyms": r.get("synonyms", []) or [],
                     "synonym_count": len(r.get("synonyms", []) or []),
+                    # The diseases the hit is associated with -- 113 across one
+                    # page of results -- which is most of why a caller
+                    # searches for a gene in RGD, and the descriptions that
+                    # say what it does.
+                    "diseases": r.get("diseases") or [],
+                    "disease_count": len(r.get("diseases") or []),
+                    "description": r.get("geneDescription"),
+                    "automated_description": r.get("automatedGeneDescription"),
+                    "so_term_name": r.get("soTermName"),
+                    # The gene in other databases. The search answers 528
+                    # gene cross-references and 236 record ones, and a result
+                    # without them cannot be followed anywhere.
+                    "cross_references": r.get("crossReferences") or [],
+                    "gene_cross_references": r.get("geneCrossReferences") or [],
+                    # What else RGD holds for this gene, which is how a caller
+                    # knows whether to ask for annotations or orthologs next.
+                    "related_data": r.get("relatedData") or [],
+                    "search_score": r.get("score"),
+                    "category": r.get("category"),
                 }
             )
             if len(genes) >= int(limit):
@@ -220,6 +239,25 @@ class RGDTool(BaseTool):
                     "evidence": ann.get("evidence"),
                     "data_src": ann.get("dataSrc"),
                     "notes": ann.get("notes") or "",
+                    # WHAT the annotation is on, and WHAT SUPPORTS it. The row
+                    # carried the term and the evidence code and neither the
+                    # object nor the reference, so an annotation could not be
+                    # attributed or cited -- 1,114 of them on one gene.
+                    "object_symbol": ann.get("objectSymbol"),
+                    "object_name": ann.get("objectName"),
+                    "annotated_object_rgd_id": ann.get("annotatedObjectRgdId"),
+                    "reference_rgd_id": ann.get("refRgdId"),
+                    "with_from": ann.get("withInfo") or ann.get("associatedWith"),
+                    "qualifier2": ann.get("qualifier2"),
+                    # An annotation made against an allele or a specific
+                    # molecular entity is not the same claim as one against
+                    # the gene.
+                    "alteration": ann.get("alteration"),
+                    "alteration_location": ann.get("alterationLocation"),
+                    "molecular_entity": ann.get("molecularEntity"),
+                    "annotation_extension": ann.get("annotationExtension"),
+                    "created_date": ann.get("createdDate"),
+                    "last_modified_date": ann.get("lastModifiedDate"),
                 }
             )
 
@@ -285,6 +323,21 @@ class RGDTool(BaseTool):
                     "species": species_map.get(
                         o.get("speciesTypeKey"), str(o.get("speciesTypeKey"))
                     ),
+                    # What the ortholog IS, and how well it is annotated.
+                    # `type` separates a protein-coding ortholog from a
+                    # pseudogene, `refSeqStatus` says whether the RefSeq
+                    # record is VALIDATED or only PREDICTED, and `soAccId` is
+                    # the Sequence Ontology class.
+                    "type": o.get("type"),
+                    "so_acc_id": o.get("soAccId"),
+                    "refseq_status": o.get("refSeqStatus"),
+                    "ncbi_annotation_status": o.get("ncbiAnnotStatus"),
+                    "description": o.get("description") or o.get("mergedDescription"),
+                    "agr_description": o.get("agrDescription"),
+                    "ensembl_gene_symbol": o.get("ensemblGeneSymbol"),
+                    "ensembl_gene_type": o.get("ensemblGeneType"),
+                    "nomenclature_source": o.get("nomenSource"),
+                    "notes": o.get("notes"),
                 }
             )
 
@@ -354,6 +407,22 @@ class RGDTool(BaseTool):
                     "p_value": q.get("pvalue"),
                     "variance": q.get("variance"),
                     "inheritance_type": q.get("inheritanceType"),
+                    # WHERE the QTL is. A QTL is defined by its flanking
+                    # markers and its peak, and the row gave a chromosome: the
+                    # flank and peak marker ids (and their rs ids) are what
+                    # place it on the genome and let two studies' QTLs be
+                    # compared.
+                    "flank1_rgd_id": q.get("flank1RgdId"),
+                    "flank2_rgd_id": q.get("flank2RgdId"),
+                    "peak_rgd_id": q.get("peakRgdId"),
+                    "flank1_rs_id": q.get("flank1RsId"),
+                    "flank2_rs_id": q.get("flank2RsId"),
+                    "peak_rs_id": q.get("peakRsId"),
+                    "peak_offset": q.get("peakOffset"),
+                    "p_value_mlog": q.get("pValueMlog"),
+                    "most_significant_cmo_term": q.get("mostSignificantCmoTerm"),
+                    "notes": q.get("notes"),
+                    "source_url": q.get("sourceUrl"),
                 }
             )
 

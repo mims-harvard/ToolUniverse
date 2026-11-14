@@ -25,8 +25,12 @@ NEW_SHAPE = {
         "p": 1e-300,
         "rg": 0.9541,
         "rg_SE": 0.0034,
+        "rg_intercept": 0.9111,
+        "rg_intercept_SE": 0.01661,
         "h2": 0.203,
+        "h2_SE": 0.006928,
         "h2_intercept": 1.055,
+        "h2_intercept_SE": 0.0172,
     },
 }
 OLD_SHAPE = {
@@ -55,6 +59,15 @@ def test_current_api_shape_fills_every_field():
         "rg_pval": 1e-300,
         "h2": 0.203,
         "h2_intercept": 1.055,
+        # The LDSC statistics and the uncertainties, which the same `gc`
+        # object has always carried: rg arrived with its standard error and
+        # h2 without one, and the two intercepts -- away from 0 it is sample
+        # overlap, away from 1 it is stratification -- with neither.
+        "z": 278.9,
+        "rg_intercept": 0.9111,
+        "rg_intercept_se": 0.01661,
+        "h2_se": 0.006928,
+        "h2_intercept_se": 0.0172,
     }
 
 

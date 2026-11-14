@@ -188,13 +188,60 @@
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "description": "The coloring keys. A key is opaque -- 'gt' is genotype, 'num_date' is date -- so see `colorings` for each dimension's title, type and values."
             },
             "available_colorings_count": {
               "type": "integer"
             },
             "available_colorings_complete": {
               "type": "boolean"
+            },
+            "colorings": {
+              "type": "array",
+              "description": "One row per coloring dimension, with the title and type the same response gives and the values a categorical dimension covers: zika's `country` has 36. The display colour beside each value is not reported.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The human name, e.g. 'date' for num_date"
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "categorical, continuous, ordinal or boolean"
+                  },
+                  "values": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean"
+                      ]
+                    },
+                    "description": "Up to 50 values the build covers for this dimension; empty for a continuous one"
+                  },
+                  "value_count": {
+                    "type": "integer"
+                  },
+                  "values_truncated": {
+                    "type": "boolean"
+                  }
+                }
+              }
             }
           },
           "not": {

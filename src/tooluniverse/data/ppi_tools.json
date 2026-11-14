@@ -114,6 +114,13 @@
                   },
                   "tscore": {
                     "type": "string"
+                  },
+                  "partner": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The interaction partner's preferred name, e.g. 'TP73'. Present on 43 of the 50 interactions measured -- the rest carry only identifiers, so joining on this name alone silently drops them."
                   }
                 },
                 "additionalProperties": true
@@ -270,10 +277,18 @@
             "type": "integer"
           },
           "inputGenes": {
-            "type": ["string", "array", "null"]
+            "type": [
+              "string",
+              "array",
+              "null"
+            ]
           },
           "preferredNames": {
-            "type": ["string", "array", "null"]
+            "type": [
+              "string",
+              "array",
+              "null"
+            ]
           },
           "p_value": {
             "type": "number"
@@ -429,12 +444,31 @@
         {
           "type": "object",
           "properties": {
-            "number_of_nodes": {"type": "integer"},
-            "number_of_edges": {"type": "integer"},
-            "expected_number_of_edges": {"type": "number"},
-            "p_value": {"type": "number"},
-            "avg_node_degree": {"type": "number"},
-            "local_clustering_coefficient": {"type": "number"}
+            "number_of_nodes": {
+              "type": "integer"
+            },
+            "number_of_edges": {
+              "type": "integer"
+            },
+            "expected_number_of_edges": {
+              "type": "number"
+            },
+            "p_value": {
+              "type": "number"
+            },
+            "avg_node_degree": {
+              "type": "number"
+            },
+            "local_clustering_coefficient": {
+              "type": "number"
+            },
+            "average_node_degree": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Mean number of interactions per protein in the submitted network, e.g. 5.0. The observed side of STRING's enrichment test, which compares it with what a random set of the same size would give."
+            }
           }
         },
         {
@@ -442,12 +476,31 @@
           "items": {
             "type": "object",
             "properties": {
-              "number_of_nodes": {"type": "integer"},
-              "number_of_edges": {"type": "integer"},
-              "expected_number_of_edges": {"type": "number"},
-              "p_value": {"type": "number"},
-              "avg_node_degree": {"type": "number"},
-              "local_clustering_coefficient": {"type": "number"}
+              "number_of_nodes": {
+                "type": "integer"
+              },
+              "number_of_edges": {
+                "type": "integer"
+              },
+              "expected_number_of_edges": {
+                "type": "number"
+              },
+              "p_value": {
+                "type": "number"
+              },
+              "avg_node_degree": {
+                "type": "number"
+              },
+              "local_clustering_coefficient": {
+                "type": "number"
+              },
+              "average_node_degree": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Mean number of interactions per protein in the submitted network, e.g. 5.0. The observed side of STRING's enrichment test, which compares it with what a random set of the same size would give. Returned on the ARRAY form of this reply, which is the form the live call answers with."
+              }
             }
           }
         }

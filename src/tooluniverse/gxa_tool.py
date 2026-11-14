@@ -18,6 +18,32 @@ from .base_tool import BaseTool
 GXA_BASE_URL = "https://www.ebi.ac.uk/gxa/json"
 
 
+def _column(col: dict) -> dict:
+    """One assay group: the condition, and which factor it varies.
+
+    `factor_value` alone names the condition but not which factor it varies:
+    E-MTAB-2836's g1 is "adipose tissue" under `organism part`, with
+    `developmental stage`, `organism` and `sex` held fixed (FACTOR vs
+    SAMPLE in contrastPropertyType). Without the properties a caller cannot
+    tell the varied factor from the held-fixed sample annotation.
+    """
+    summary = col.get("assayGroupSummary") or {}
+    return {
+        "assay_group_id": col.get("assayGroupId"),
+        "factor_value": col.get("factorValue"),
+        "ontology_term_id": col.get("factorValueOntologyTermId"),
+        "replicates": summary.get("replicates"),
+        "properties": [
+            {
+                "property_name": prop.get("propertyName"),
+                "value": prop.get("testValue"),
+                "property_type": prop.get("contrastPropertyType"),
+            }
+            for prop in (summary.get("properties") or [])
+        ],
+    }
+
+
 class GxATool(BaseTool):
     """
     Tool for EBI Gene Expression Atlas API providing access to baseline
@@ -132,6 +158,11 @@ class GxATool(BaseTool):
                     "accession": exp.get("experimentAccession"),
                     "description": exp.get("experimentDescription"),
                     "species": exp.get("species"),
+                    # animals / plants / fungi / protists, on all 4562
+                    # experiments. A cross-kingdom atlas that answers only
+                    # the species name makes "are there plant experiments"
+                    # a question about 1026 rows the caller cannot see.
+                    "kingdom": exp.get("kingdom"),
                     "experiment_type": exp.get("rawExperimentType"),
                     "technology_type": exp.get("technologyType"),
                     "number_of_assays": exp.get("numberOfAssays"),
@@ -188,14 +219,7 @@ class GxATool(BaseTool):
         column_headers = data.get("columnHeaders", [])
         columns = []
         for col in column_headers:
-            columns.append(
-                {
-                    "assay_group_id": col.get("assayGroupId"),
-                    "factor_value": col.get("factorValue"),
-                    "ontology_term_id": col.get("factorValueOntologyTermId"),
-                    "replicates": col.get("assayGroupSummary", {}).get("replicates"),
-                }
-            )
+            columns.append(_column(col))
 
         # Build tissue name lookup by position
         tissue_names = [
@@ -265,6 +289,12 @@ class GxATool(BaseTool):
                     {
                         "gene_id": row.get("id"),
                         "gene_name": row.get("name"),
+                        # A bare 381.0 is not an expression level. Upstream
+                        # answers `expressionUnit` per row -- "tpms" for
+                        # E-MTAB-2836 -- and without it the number cannot be
+                        # compared to anything, including the other rows of
+                        # this same response when an experiment mixes units.
+                        "expression_unit": row.get("expressionUnit"),
                         "expressions": expressions,
                     }
                 )
@@ -287,6 +317,13 @@ class GxATool(BaseTool):
                     else None
                 ),
                 "gene_profiles": gene_profiles,
+                "expression_units": sorted(
+                    {
+                        profile["expression_unit"]
+                        for profile in gene_profiles
+                        if profile.get("expression_unit")
+                    }
+                ),
                 "profiles_returned_by_upstream": profiles_returned_by_upstream,
                 "profiles_available_upstream": profiles_available_upstream,
                 "coverage_warning": coverage_warning,
@@ -329,6 +366,14 @@ class GxATool(BaseTool):
                 "species": anatomogram.get("species") if anatomogram else None,
                 "total_genes": len(data.get("profiles", {}).get("rows", [])),
                 "total_conditions": len(data.get("columnHeaders", [])),
+                # This tool's own description promises "factor information",
+                # and it reported the conditions as a count: 29 for
+                # E-MTAB-2836, with columnGroupings empty. The conditions
+                # and the factor each varies were in the same reply, read by
+                # the sibling expression handler and dropped here.
+                "conditions": [
+                    _column(col) for col in data.get("columnHeaders", [])
+                ],
                 "column_groupings": groupings,
                 "config": {
                     "disclaimer": config.get("disclaimer"),

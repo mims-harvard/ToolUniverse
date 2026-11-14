@@ -199,6 +199,40 @@ def _normalize_curie(entity_id: str) -> str:
     return f"{m.group(1)}:{m.group(2)}" if m else stripped
 
 
+def _search_row(item: Dict[str, Any]) -> Dict[str, Any]:
+    """One hit of Monarch's /search endpoint.
+
+    Both search handlers in this module call that one endpoint and used to
+    build their own row from it: the general one kept fifteen fields and the
+    Mondo one six, so a disease search lost the score that orders the hits,
+    the match_type that says whether the name or a synonym matched, the
+    synonyms themselves, the namespace and who asserted the record. Same
+    endpoint, same row.
+    """
+    return {
+        "id": item.get("id"),
+        "name": item.get("name"),
+        "category": item.get("category"),
+        "symbol": item.get("symbol"),
+        "description": item.get("description"),
+        "taxon": item.get("in_taxon"),
+        "taxon_label": item.get("in_taxon_label"),
+        "deprecated": _is_deprecated(item),
+        # The order the hits come back in, and who asserted each one. A
+        # search that returns ten rows and no score gives no way to tell
+        # the best match from the tenth.
+        "score": item.get("score"),
+        "provided_by": item.get("provided_by"),
+        "namespace": item.get("namespace"),
+        "synonyms": item.get("synonym") or [],
+        "xrefs": item.get("xref") or [],
+        # Whether the row matched on the name, a synonym or the
+        # description, which is what separates an exact hit from a text
+        # match deep in a description.
+        "match_type": item.get("match_type"),
+    }
+
+
 @register_tool("MonarchV3Tool")
 class MonarchV3Tool(BaseTool):
     """
@@ -358,6 +392,50 @@ class MonarchV3Tool(BaseTool):
                 "taxon_label": data.get("in_taxon_label"),
                 "provided_by": data.get("provided_by"),
                 "deprecated": _is_deprecated(data),
+                # What the entity is linked to. The response carries 41
+                # phenotype curies with their labels for a disease, and an
+                # entity lookup that returns a name and a description and none
+                # of them is a stub of the record.
+                "has_phenotype": data.get("has_phenotype") or [],
+                "has_phenotype_label": data.get("has_phenotype_label") or [],
+                # How much of each kind of association the entity has, which
+                # is how a caller decides which follow-up call is worth making.
+                "association_counts": [
+                    {
+                        "label": count.get("label"),
+                        "category": count.get("category"),
+                        "count": count.get("count"),
+                    }
+                    for count in (data.get("association_counts") or [])
+                    if isinstance(count, dict)
+                ],
+                "iri": data.get("iri"),
+                "inheritance": data.get("inheritance"),
+                # For a gene entity, the diseases it causes -- the single most
+                # asked-for fact about a gene, present in the same response.
+                "causes_disease": [
+                    {
+                        "id": entry.get("id"),
+                        "name": entry.get("name"),
+                        "category": entry.get("category"),
+                    }
+                    for entry in (data.get("causes_disease") or [])
+                    if isinstance(entry, dict)
+                ],
+                "node_relationships": [
+                    {
+                        "relation": rel.get("relation"),
+                        "relation_label": rel.get("relation_label"),
+                        "related_entity_id": (rel.get("related_entity") or {}).get(
+                            "id"
+                        ),
+                        "related_entity_name": (rel.get("related_entity") or {}).get(
+                            "name"
+                        ),
+                    }
+                    for rel in (data.get("node_relationships") or [])
+                    if isinstance(rel, dict)
+                ],
             },
             "metadata": {
                 "source": "Monarch Initiative V3",
@@ -413,6 +491,44 @@ class MonarchV3Tool(BaseTool):
                     "negated": item.get("negated"),
                     "provided_by": item.get("provided_by"),
                     "primary_knowledge_source": item.get("primary_knowledge_source"),
+                    # Biolink records HOW an association was arrived at, and
+                    # none of it reached the caller. `knowledge_level`
+                    # separates a curated assertion from a prediction and
+                    # `agent_type` a human curator from an automated pipeline;
+                    # an agent weighing evidence cannot tell those apart from
+                    # the subject, object and predicate alone.
+                    "knowledge_level": item.get("knowledge_level"),
+                    "agent_type": item.get("agent_type"),
+                    "aggregator_knowledge_source": item.get(
+                        "aggregator_knowledge_source"
+                    )
+                    or [],
+                    "publications": item.get("publications") or [],
+                    "evidence_count": item.get("evidence_count"),
+                    "frequency_qualifier": item.get("frequency_qualifier"),
+                    # How often the phenotype occurs in the disease. HPO
+                    # annotations carry it as a percentage and as the raw
+                    # quotient; a disease-phenotype row without it says only
+                    # that the phenotype has been seen at all.
+                    "has_percentage": item.get("has_percentage"),
+                    "has_quotient": item.get("has_quotient"),
+                    "has_count": item.get("has_count"),
+                    "has_total": item.get("has_total"),
+                    "onset_qualifier": item.get("onset_qualifier"),
+                    "sex_qualifier": item.get("sex_qualifier"),
+                    "disease_context_qualifier": item.get("disease_context_qualifier"),
+                    "association_id": item.get("id"),
+                    # The subject as the source database wrote it, before
+                    # Monarch normalised the curie, and what kind of thing
+                    # each end is. A row whose subject came back as an
+                    # equivalent id is otherwise indistinguishable from one
+                    # that matched exactly.
+                    "original_subject": item.get("original_subject"),
+                    "original_object": item.get("original_object"),
+                    "subject_category": item.get("subject_category"),
+                    "object_category": item.get("object_category"),
+                    "subject_taxon": item.get("subject_taxon"),
+                    "subject_taxon_label": item.get("subject_taxon_label"),
                 }
             )
 
@@ -461,20 +577,7 @@ class MonarchV3Tool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        results = []
-        for item in data.get("items", []):
-            results.append(
-                {
-                    "id": item.get("id"),
-                    "name": item.get("name"),
-                    "category": item.get("category"),
-                    "symbol": item.get("symbol"),
-                    "description": item.get("description"),
-                    "taxon": item.get("in_taxon"),
-                    "taxon_label": item.get("in_taxon_label"),
-                    "deprecated": _is_deprecated(item),
-                }
-            )
+        results = [_search_row(item) for item in data.get("items", [])]
 
         metadata = self._pagination_metadata(data, len(results), limit, offset)
         metadata.update(
@@ -517,18 +620,13 @@ class MonarchV3Tool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
+        # `xref` was this handler's name for the same list the general
+        # search calls `xrefs`; both are returned so neither caller breaks.
         results = []
         for item in data.get("items", []):
-            results.append(
-                {
-                    "id": item.get("id"),
-                    "name": item.get("name"),
-                    "category": item.get("category"),
-                    "description": item.get("description"),
-                    "xref": item.get("xref", []),
-                    "deprecated": _is_deprecated(item),
-                }
-            )
+            row = _search_row(item)
+            row["xref"] = row["xrefs"]
+            results.append(row)
 
         metadata = self._pagination_metadata(data, len(results), limit, offset)
         metadata.update(
@@ -677,6 +775,26 @@ class MonarchV3Tool(BaseTool):
                     "predicate": item.get("predicate"),
                     "negated": item.get("negated"),
                     "primary_knowledge_source": item.get("primary_knowledge_source"),
+                    # How often the phenotype occurs in the disease. This is
+                    # the content of an HPO annotation: an obligate feature
+                    # and an occasional one are not the same claim, and
+                    # without it they arrive as identical rows.
+                    "frequency_id": item.get("frequency_qualifier"),
+                    "frequency": item.get("frequency_qualifier_label"),
+                    "observed_count": item.get("has_count"),
+                    "observed_total": item.get("has_total"),
+                    "observed_percentage": item.get("has_percentage"),
+                    # When it appears, and in whom.
+                    "onset_id": item.get("onset_qualifier"),
+                    "onset": item.get("onset_qualifier_label"),
+                    "sex": item.get("sex_qualifier_label") or item.get("sex_qualifier"),
+                    # What the claim rests on. knowledge_level separates a
+                    # curated assertion from a prediction, and agent_type says
+                    # whether a human made it.
+                    "evidence": item.get("has_evidence"),
+                    "knowledge_level": item.get("knowledge_level"),
+                    "agent_type": item.get("agent_type"),
+                    "publications": item.get("publications"),
                 }
             )
 
@@ -755,6 +873,15 @@ class MonarchV3Tool(BaseTool):
                     "object_id": item.get("object_id"),
                     "object_label": item.get("object_label"),
                     "mapping_source": item.get("mapping_source"),
+                    # SSSOM's `mapping_justification` is the difference
+                    # between a mapping a curator asserted
+                    # (ManualMappingCuration) and one a string match produced
+                    # (LexicalMatching). Returning the pair and the predicate
+                    # without it presents both as the same fact.
+                    "mapping_justification": item.get("mapping_justification"),
+                    "mapping_id": item.get("id"),
+                    "mapping_provider": item.get("mapping_provider"),
+                    "confidence": item.get("confidence"),
                 }
             )
 
@@ -799,10 +926,24 @@ class MonarchV3Tool(BaseTool):
                 {
                     "disease_id": subject.get("id"),
                     "disease_name": subject.get("name"),
+                    # The matched term's own cross-references and synonyms,
+                    # which is how a hit is carried into another ontology.
+                    "disease_category": subject.get("category"),
+                    "disease_iri": subject.get("iri"),
+                    "disease_xrefs": subject.get("xref") or [],
+                    "disease_provided_by": subject.get("provided_by"),
+                    "disease_synonyms": (subject.get("synonym") or [])
+                    + (subject.get("related_synonym") or []),
                     "score": item.get("score"),
                     "average_score": similarity.get("average_score"),
                     "best_score": similarity.get("best_score"),
                     "metric": similarity.get("metric"),
+                    # Which of the queried phenotypes each matched term
+                    # answered, and through which common ancestor. A score
+                    # with no subsuming term behind it cannot be explained.
+                    "object_best_matches": self._flatten_best_matches(
+                        similarity.get("object_best_matches")
+                    ),
                     "matched_phenotypes": [
                         {
                             "query_phenotype": v.get("match_source"),
@@ -855,6 +996,10 @@ class MonarchV3Tool(BaseTool):
                     "score": entry.get("score"),
                     "ancestor_id": sim.get("ancestor_id"),
                     "ancestor_label": sim.get("ancestor_label"),
+                    # The term that subsumes both sides of the match, which is
+                    # the reason the pair scored at all.
+                    "match_subsumer": entry.get("match_subsumer"),
+                    "match_subsumer_label": entry.get("match_subsumer_label"),
                     "jaccard_similarity": sim.get("jaccard_similarity"),
                     "phenodigm_score": sim.get("phenodigm_score"),
                 }

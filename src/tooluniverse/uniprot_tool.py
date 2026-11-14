@@ -653,6 +653,101 @@ class UniProtRESTTool(BaseTool):
                 sequence = entry.get("sequence", {})
                 formatted_entry["length"] = sequence.get("length", 0)
 
+                # REVIEWED OR NOT. `entryType` is "UniProtKB reviewed
+                # (Swiss-Prot)" or "UniProtKB unreviewed (TrEMBL)", which is
+                # the single biggest quality distinction in UniProt, and a
+                # search result that does not say which has hidden it. With
+                # it, the two other quality signals on the same entry: the
+                # annotation score and the evidence level for the protein's
+                # existence.
+                entry_type = entry.get("entryType") or ""
+                formatted_entry["entry_type"] = entry_type or None
+                # "unreviewed" CONTAINS "reviewed", so the obvious substring
+                # test calls every TrEMBL entry reviewed. Test for the
+                # negative string instead.
+                formatted_entry["reviewed"] = (
+                    "unreviewed" not in entry_type.lower() if entry_type else None
+                )
+                formatted_entry["annotation_score"] = entry.get("annotationScore")
+                formatted_entry["protein_existence"] = entry.get("proteinExistence")
+                formatted_entry["organism_taxon_id"] = organism_info.get("taxonId")
+                formatted_entry["organism_common_name"] = organism_info.get(
+                    "commonName"
+                )
+                formatted_entry["gene_synonyms"] = [
+                    synonym.get("value")
+                    for gene in genes
+                    for synonym in (gene.get("synonyms") or [])
+                    if synonym.get("value")
+                ]
+                formatted_entry["keywords"] = [
+                    keyword.get("name")
+                    for keyword in (entry.get("keywords") or [])
+                    if keyword.get("name")
+                ]
+                formatted_entry["secondary_accessions"] = (
+                    entry.get("secondaryAccessions") or []
+                )
+                # The sequence features -- 48 on human insulin: the signal
+                # peptide, the disulfide bonds, the natural variants. A search
+                # answers them in full for every hit, which is too much to
+                # repeat per row, so the count and the breakdown by type are
+                # reported here and the features themselves come from
+                # UniProt_get_entry_by_accession.
+                features = [
+                    feature
+                    for feature in (entry.get("features") or [])
+                    if isinstance(feature, dict)
+                ]
+                types = {}
+                for feature in features:
+                    kind = feature.get("type")
+                    if kind:
+                        types[kind] = types.get(kind, 0) + 1
+                formatted_entry["feature_count"] = len(features)
+                formatted_entry["feature_types"] = types
+                # Which databases the entry is linked to, and how many links.
+                # A search answers 1,012 cross-reference entries across a
+                # page, which is too much to repeat per row, but "this hit has
+                # PDB structures" is exactly what a search is scanned for.
+                cross_references = [
+                    xref
+                    for xref in (entry.get("uniProtKBCrossReferences") or [])
+                    if isinstance(xref, dict)
+                ]
+                databases = {}
+                for xref in cross_references:
+                    database = xref.get("database")
+                    if database:
+                        databases[database] = databases.get(database, 0) + 1
+                formatted_entry["cross_reference_count"] = len(cross_references)
+                formatted_entry["cross_reference_databases"] = databases
+                # And the literature: how many references the entry has, and
+                # the first one in full, so a hit can be cited without a
+                # second call.
+                references = [
+                    reference
+                    for reference in (entry.get("references") or [])
+                    if isinstance(reference, dict)
+                ]
+                formatted_entry["reference_count"] = len(references)
+                first = (references[0].get("citation") if references else {}) or {}
+                formatted_entry["first_reference"] = (
+                    {
+                        "id": first.get("id"),
+                        "title": first.get("title"),
+                        "journal": first.get("journal"),
+                        "publication_date": first.get("publicationDate"),
+                        "authors": first.get("authors") or [],
+                        "citation_cross_references": first.get(
+                            "citationCrossReferences"
+                        )
+                        or [],
+                    }
+                    if first
+                    else None
+                )
+
                 formatted_results.append(formatted_entry)
 
             payload = {

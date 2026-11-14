@@ -142,6 +142,27 @@
               "score": {
                 "type": "number",
                 "description": "Similarity score (if available)"
+              },
+              "method": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Experimental method, e.g. 'X-ray', 'NMR', 'Electron Microscopy'. Determines what the coordinates mean and whether a resolution figure applies at all."
+              },
+              "resolution": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Resolution in angstroms, e.g. 1.8. Lower is better, and below about 2.5 side-chain positions are reliable. Absent for NMR structures, which have no resolution."
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The structure's title, e.g. 'DEOXY HUMAN HEMOGLOBIN'. What the entry actually is; the id alone does not say."
               }
             }
           }

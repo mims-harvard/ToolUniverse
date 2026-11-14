@@ -247,6 +247,17 @@ class FoodDataCentralTool(BaseTool):
                         "name": n.get("nutrientName", ""),
                         "value": n.get("value"),
                         "unit": n.get("unitName", ""),
+                        # The USDA nutrient number is the stable identifier --
+                        # a name can be spelled several ways across datasets
+                        # and the number cannot -- and the derivation says
+                        # whether the value was analysed, calculated from
+                        # another value, or imputed, which is the difference
+                        # between a measurement and an estimate.
+                        "nutrient_id": n.get("nutrientId"),
+                        "nutrient_number": n.get("nutrientNumber"),
+                        "derivation_code": n.get("derivationCode"),
+                        "derivation_description": n.get("derivationDescription"),
+                        "percent_daily_value": n.get("percentDailyValue"),
                     }
                 )
             food_item["nutrients"] = nutrients

@@ -250,6 +250,27 @@ class IDRSearchEngineTool(BaseTool):
                     # IDR image rows carry the study under screen_name/project_name.
                     "study": r.get("screen_name") or r.get("project_name"),
                     "dataset_name": r.get("dataset_name"),
+                    "image_url": r.get("image_url"),
+                    "thumb_url": r.get("thumb_url"),
+                    # Where the image sits inside its study. A cross-study
+                    # search answers 1,000 images from two kinds of container
+                    # -- 475 wells of a screen's plates, 525 images of a
+                    # project's datasets -- and `study` alone names the
+                    # container, not the position. For a screen the plate and
+                    # well are how the image is referred to in the paper and
+                    # in the study's own files.
+                    "location": {
+                        "screen_id": r.get("screen_id"),
+                        "screen_name": r.get("screen_name"),
+                        "plate_id": r.get("plate_id"),
+                        "plate_name": r.get("plate_name"),
+                        "well_id": r.get("well_id"),
+                        "wellsample_id": r.get("wellsample_id"),
+                        "project_id": r.get("project_id"),
+                        "project_name": r.get("project_name"),
+                        "dataset_id": r.get("dataset_id"),
+                        "dataset_name": r.get("dataset_name"),
+                    },
                     "key_values": self._kv_pairs(r),
                 }
                 for r in rows

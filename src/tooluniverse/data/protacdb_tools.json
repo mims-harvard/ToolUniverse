@@ -41,7 +41,255 @@
         {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "id_in_database": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "ProtacDB's own identifier for the compound."
+              },
+              "common_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The PROTAC's published name, where it has one."
+              },
+              "smiles_canonical": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Canonical SMILES of the whole bifunctional molecule -- warhead, linker and E3 ligand together."
+              },
+              "e3_ligase": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The E3 ligase the PROTAC recruits, e.g. 'VHL', 'CRBN'. Determines which tissues can degrade the target at all, since ligase expression varies."
+              },
+              "short_target_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The degraded protein, e.g. 'BRD9'."
+              },
+              "uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt accession of the target."
+              },
+              "pdb": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PDB entry for the ternary complex, where one was solved."
+              },
+              "predicted_structure": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A modelled ternary-complex structure, where no experimental one exists. Not experimental evidence."
+              },
+              "paper": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The publication the data came from."
+              },
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its DOI."
+              },
+              "dc50": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DC50: the concentration that degrades half the target. The primary potency measure for a degrader -- and not an IC50, because degradation is catalytic. ProtacDB stores each measured value beside the ASSAY it came from, in a matching `assay_*` column. Two values of the same quantity from different assays are not comparable, so the value must never be read without its assay."
+              },
+              "dmax": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Dmax: the MAXIMUM degradation achieved, as a percentage. A PROTAC with a good DC50 and a Dmax of 40% leaves most of the target standing, so DC50 alone overstates it."
+              },
+              "percent_degradation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Degradation at a stated concentration, where the paper reported a single point rather than a curve."
+              },
+              "percent_degradation_assay": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay and conditions behind that percentage."
+              },
+              "wb_data": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The Western blot readout the degradation was measured from."
+              },
+              "wb_data_assay": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Description of that blot, e.g. 'WB analysis of BRD9 and BRD7 in HeLa cells'. Names which proteins were actually probed."
+              },
+              "assay_protac": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay used for the PROTAC itself."
+              },
+              "ic50": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "IC50 of the compound. ProtacDB stores each measured value beside the ASSAY it came from, in a matching `assay_*` column. Two values of the same quantity from different assays are not comparable, so the value must never be read without its assay."
+              },
+              "ic50_assay": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that IC50 was measured in."
+              },
+              "ec50": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "EC50 of the compound. ProtacDB stores each measured value beside the ASSAY it came from, in a matching `assay_*` column. Two values of the same quantity from different assays are not comparable, so the value must never be read without its assay."
+              },
+              "ec50_assay": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that EC50 was measured in."
+              },
+              "gi50": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "GI50: the concentration halving cell growth."
+              },
+              "gi50_assay": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay and cell line behind it. A GI50 without its cell line says nothing."
+              },
+              "ic50_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "IC50 measured against the ternary COMPLEX. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_ic50_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that ic50_ce was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "ic50_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "IC50 measured against the E3 ligase end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_ic50_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that ic50_pe was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "ic50_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "IC50 measured against the target end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_ic50_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that ic50_pt was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "kd_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "binding affinity measured against the ternary COMPLEX. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_kd_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that kd_ce was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "kd_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "binding affinity measured against the E3 ligase end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_kd_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that kd_pe was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "kd_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "binding affinity measured against the target end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_kd_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that kd_pt was measured in, e.g. 'ITC', 'ITC/FP'."
+              }
+            }
           }
         },
         {
@@ -97,7 +345,884 @@
         {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "id_in_database": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "ProtacDB's own identifier for the compound."
+              },
+              "common_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The PROTAC's published name, where it has one."
+              },
+              "smiles_canonical": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Canonical SMILES of the whole bifunctional molecule -- warhead, linker and E3 ligand together."
+              },
+              "e3_ligase": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The E3 ligase the PROTAC recruits, e.g. 'VHL', 'CRBN'. Determines which tissues can degrade the target at all, since ligase expression varies."
+              },
+              "e3_ligand_canonical": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SMILES of the E3-binding end alone."
+              },
+              "warhead_canonical": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SMILES of the target-binding end alone."
+              },
+              "linker_canonical": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SMILES of the linker. Linker length and composition are the usual determinant of whether a ternary complex forms."
+              },
+              "short_target_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The degraded protein, e.g. 'BRD9'."
+              },
+              "long_target_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its full name."
+              },
+              "uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt accession of the target."
+              },
+              "pdb": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PDB entry for the ternary complex, where one was solved."
+              },
+              "predicted_structure": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A modelled ternary-complex structure, where no experimental one exists. Not experimental evidence."
+              },
+              "paper": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The publication the data came from."
+              },
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its DOI."
+              },
+              "dc50": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DC50: the concentration that degrades half the target. The primary potency measure for a degrader -- and not an IC50, because degradation is catalytic. ProtacDB stores each measured value beside the ASSAY it came from, in a matching `assay_*` column. Two values of the same quantity from different assays are not comparable, so the value must never be read without its assay."
+              },
+              "dmax": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Dmax: the MAXIMUM degradation achieved, as a percentage. A PROTAC with a good DC50 and a Dmax of 40% leaves most of the target standing, so DC50 alone overstates it."
+              },
+              "percent_degradation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Degradation at a stated concentration, where the paper reported a single point rather than a curve."
+              },
+              "percent_degradation_assay": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay and conditions behind that percentage."
+              },
+              "wb_data": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The Western blot readout the degradation was measured from."
+              },
+              "wb_data_assay": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Description of that blot, e.g. 'WB analysis of BRD9 and BRD7 in HeLa cells'. Names which proteins were actually probed."
+              },
+              "assay_wb": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The Western blot assay description."
+              },
+              "assay_protac": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay used for the PROTAC itself."
+              },
+              "ic50": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "IC50 of the compound. ProtacDB stores each measured value beside the ASSAY it came from, in a matching `assay_*` column. Two values of the same quantity from different assays are not comparable, so the value must never be read without its assay."
+              },
+              "ic50_assay": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that IC50 was measured in."
+              },
+              "ec50": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "EC50 of the compound. ProtacDB stores each measured value beside the ASSAY it came from, in a matching `assay_*` column. Two values of the same quantity from different assays are not comparable, so the value must never be read without its assay."
+              },
+              "ec50_assay": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that EC50 was measured in."
+              },
+              "gi50": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "GI50: the concentration halving cell growth."
+              },
+              "gi50_assay": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay and cell line behind it. A GI50 without its cell line says nothing."
+              },
+              "bioavailability": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Oral bioavailability as a percentage. PROTACs are large and usually poorly bioavailable, so a null here is the common case, not an oversight."
+              },
+              "caco2_a2b": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Caco-2 permeability, apical to basolateral -- absorption."
+              },
+              "caco2_b2a": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Caco-2 permeability, basolateral to apical. A b2a far above a2b means active efflux, which no amount of dosing overcomes."
+              },
+              "pampa": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PAMPA passive permeability."
+              },
+              "cl": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Clearance."
+              },
+              "cl_f": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Apparent clearance after oral dosing, CL/F -- clearance divided by bioavailability, so it is not clearance."
+              },
+              "cmax": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Maximum plasma concentration reached."
+              },
+              "tmax": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Time to that maximum."
+              },
+              "auc_0_t": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Area under the curve to the last measured point."
+              },
+              "auc_0_infinity": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Area under the curve extrapolated to infinity. Larger than auc_0_t by the extrapolated tail, which is an estimate."
+              },
+              "ic50_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "IC50 measured against the ternary COMPLEX. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_ic50_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that ic50_ce was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "ic50_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "IC50 measured against the E3 ligase end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_ic50_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that ic50_pe was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "ic50_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "IC50 measured against the target end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_ic50_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that ic50_pt was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "kd_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "binding affinity measured against the ternary COMPLEX. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_kd_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that kd_ce was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "kd_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "binding affinity measured against the E3 ligase end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_kd_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that kd_pe was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "kd_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "binding affinity measured against the target end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_kd_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that kd_pt was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "ki_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "inhibition constant measured against the ternary COMPLEX. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_ki_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that ki_ce was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "ki_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "inhibition constant measured against the E3 ligase end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_ki_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that ki_pe was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "ki_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "inhibition constant measured against the target end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_ki_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that ki_pt was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "ec50_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "EC50 measured against the ternary COMPLEX. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_ec50_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that ec50_ce was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "ec50_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "EC50 measured against the E3 ligase end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_ec50_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that ec50_pe was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "ec50_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "EC50 measured against the target end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_ec50_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that ec50_pt was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "kon_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "association rate measured against the ternary COMPLEX. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_kon_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that kon_ce was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "kon_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "association rate measured against the E3 ligase end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_kon_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that kon_pe was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "kon_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "association rate measured against the target end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_kon_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that kon_pt was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "g_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "binding free energy measured against the ternary COMPLEX. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_g_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that g_ce was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "g_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "binding free energy measured against the E3 ligase end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_g_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that g_pe was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "g_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "binding free energy measured against the target end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
+              },
+              "assay_g_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay that g_pt was measured in, e.g. 'ITC', 'ITC/FP'."
+              },
+              "assay_caco2_a2b": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay behind caco2_a2b."
+              },
+              "assay_caco2_b2a": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay behind caco2_b2a."
+              },
+              "assay_pampa": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay behind pampa."
+              },
+              "assay_pk": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay behind pk."
+              },
+              "inchi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "InChI of the whole molecule."
+              },
+              "inchikey": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "InChIKey -- the hashed form, and the right key for matching against another database."
+              },
+              "iupac": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "IUPAC name."
+              },
+              "molformula": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Molecular formula."
+              },
+              "molwt": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "Average molecular weight. PROTACs sit far outside Lipinski space, so a weight near 1000 is normal here and is not a red flag by itself."
+              },
+              "exactmolwt": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "Monoisotopic weight, for mass spectrometry."
+              },
+              "heavyatomcount": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Number of non-hydrogen atoms."
+              },
+              "ringcount": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Number of rings."
+              },
+              "numhdonors": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Hydrogen-bond donors."
+              },
+              "numhacceptors": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Hydrogen-bond acceptors."
+              },
+              "numrotatablebonds": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Rotatable bonds. The linker dominates this, and it is what the entropic cost of forming a ternary complex is paid on."
+              },
+              "tpsa": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "Topological polar surface area. Above ~140 passive permeability is usually poor, and most PROTACs are well above it."
+              },
+              "xlogp3": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "Computed logP."
+              },
+              "target": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The degraded target, as ProtacDB names it."
+              },
+              "id_warhead": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "ProtacDB id of the warhead component, for finding other PROTACs built on the same binder."
+              },
+              "id_linker": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "ProtacDB id of the linker."
+              },
+              "id_e3_ligand": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "ProtacDB id of the E3 ligand."
+              },
+              "id_in_wb": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Id of the Western blot record the degradation data came from."
+              },
+              "wb_figure": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which figure of the paper the blot is."
+              },
+              "wb_ref": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The reference for the blot."
+              },
+              "wb_doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its DOI."
+              },
+              "permeability_ref": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reference for the permeability data, which often comes from a different paper than the potency."
+              },
+              "permeability_doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its DOI."
+              },
+              "ed50": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ED50, the dose producing half the maximal effect in vivo."
+              },
+              "ed50_assay": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The in vivo model it was measured in."
+              },
+              "gr50": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "GR50, the growth-rate-corrected analogue of GI50. Unlike GI50 it does not depend on how fast the cell line divides, so it compares across lines where GI50 cannot."
+              },
+              "gr50_assay": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The assay and cell line behind it."
+              },
+              "t1_2_pk": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Pharmacokinetic half-life."
+              },
+              "mrt_0_t": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Mean residence time to the last measured point."
+              },
+              "mrt_0_infinity": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Mean residence time extrapolated to infinity."
+              },
+              "vss": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Volume of distribution at steady state."
+              },
+              "vz": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Volume of distribution in the terminal phase."
+              },
+              "vz_f": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "That volume divided by bioavailability -- not a volume, and not comparable with vz."
+              },
+              "koff_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Dissociation rate constant against the ternary COMPLEX. The residence time of the ternary complex is what the degradation actually depends on, more than its affinity."
+              },
+              "h_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Binding enthalpy against the ternary COMPLEX, from calorimetry."
+              },
+              "ts_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The entropic term -TdS against the ternary COMPLEX. Enthalpy and entropy sum to the free energy, so a favourable dG can hide an unfavourable entropy the linker is paying for."
+              },
+              "t_ce": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Temperature the measurement against the ternary COMPLEX was made at. Thermodynamic terms are only comparable at the same temperature."
+              },
+              "koff_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Dissociation rate constant against the E3 ligase end alone. The residence time of the ternary complex is what the degradation actually depends on, more than its affinity."
+              },
+              "h_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Binding enthalpy against the E3 ligase end alone, from calorimetry."
+              },
+              "ts_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The entropic term -TdS against the E3 ligase end alone. Enthalpy and entropy sum to the free energy, so a favourable dG can hide an unfavourable entropy the linker is paying for."
+              },
+              "t_pe": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Temperature the measurement against the E3 ligase end alone was made at. Thermodynamic terms are only comparable at the same temperature."
+              },
+              "koff_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Dissociation rate constant against the target end alone. The residence time of the ternary complex is what the degradation actually depends on, more than its affinity."
+              },
+              "h_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Binding enthalpy against the target end alone, from calorimetry."
+              },
+              "ts_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The entropic term -TdS against the target end alone. Enthalpy and entropy sum to the free energy, so a favourable dG can hide an unfavourable entropy the linker is paying for."
+              },
+              "t_pt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Temperature the measurement against the target end alone was made at. Thermodynamic terms are only comparable at the same temperature."
+              }
+            }
           }
         },
         {
@@ -160,7 +1285,37 @@
         {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "short_target_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The degraded protein, e.g. 'BRD9'."
+              },
+              "long_target_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its full name."
+              },
+              "short_target_name_2": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A second target where the PROTAC degrades more than one. Its presence is the selectivity problem stated outright."
+              },
+              "short_target_name_3": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A third target, likewise."
+              }
+            }
           }
         },
         {

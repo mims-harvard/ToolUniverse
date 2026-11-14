@@ -150,6 +150,21 @@
                   "type": "string"
                 },
                 "description": "OLS API URLs for each semantic tag."
+              },
+              "derived_from": {
+                "type": "object"
+              },
+              "source_uri": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "annotator": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -232,6 +247,18 @@
                   "null"
                 ],
                 "description": "Home URI of the datasource."
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }

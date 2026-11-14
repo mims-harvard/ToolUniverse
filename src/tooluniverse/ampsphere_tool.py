@@ -859,3 +859,296 @@ class AMPSphereStatisticsTool(BaseTool):
             "data": payload,
             "metadata": {"source": _SOURCE, "url": url},
         }
+
+
+@register_tool(
+    "AMPSphereCopredictionTool",
+    config={
+        "name": "AMPSphere_get_amp_coprediction",
+        "type": "AMPSphereCopredictionTool",
+        "description": (
+            "Get the per-predictor antimicrobial scores for one AMPSphere "
+            "peptide: how each of the seven independent AMP predictors scored "
+            "it (APIN, AI4AMP, AMPScanner2, AMPlify, ampir, Macrel, amPEPpy). "
+            "AMPSphere's own membership is a Macrel call, and the predictors "
+            "DISAGREE -- AMP10.000_000 reads 1.0 from APIN and 0.989 from "
+            "AI4AMP but 0.604 from Macrel and 0.601 from amPEPpy -- so this is "
+            "the evidence for the question the resource exists to answer, and "
+            "it was not reachable from any tool. Treat a peptide scored high "
+            "by one predictor and low by six as weakly supported. Keyless "
+            "AMPSphere REST API (/v1/amps/{accession}/coprediction)."
+        ),
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "AMPSphere AMP accession. Example: 'AMP10.000_000'.",
+                }
+            },
+            "required": ["accession"],
+        },
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "accession": {"type": "string"},
+                        "predictions": {
+                            "type": "array",
+                            "description": "One entry per predictor, as returned.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "predictor": {
+                                        "type": "string",
+                                        "description": "APIN, AI4AMP, AMPScanner2, AMPlify, ampir, Macrel or amPEPpy.",
+                                    },
+                                    "value": {
+                                        "type": ["number", "null"],
+                                        "description": "That predictor's score. The scales are NOT comparable between predictors: each is its own model's probability or score, so read the spread as agreement or disagreement, not as an average.",
+                                    },
+                                },
+                            },
+                        },
+                        "predictors_agreeing": {
+                            "type": "integer",
+                            "description": "How many predictors scored above 0.5. Reported beside the count of predictors so the denominator is never missing.",
+                        },
+                        "predictors_total": {"type": "integer"},
+                        "score_range": {
+                            "type": ["array", "null"],
+                            "description": "[lowest, highest] score, so disagreement is visible without reading every row.",
+                        },
+                    },
+                    "required": ["accession", "predictions"],
+                },
+                {
+                    "type": "object",
+                    "properties": {"error": {"type": "string"}},
+                    "required": ["error"],
+                },
+            ]
+        },
+        "test_examples": [
+            {"accession": "AMP10.000_000"},
+            {"accession": "AMP10.000_001"},
+        ],
+        "label": ["AMPSphere", "AMP", "Prediction", "Peptide", "Antimicrobial"],
+        "metadata": {
+            "tags": [
+                "antimicrobial peptide",
+                "AMP",
+                "AMPSphere",
+                "prediction",
+                "coprediction",
+                "Macrel",
+            ],
+            "estimated_execution_time": "1-3 seconds",
+        },
+    },
+)
+class AMPSphereCopredictionTool(BaseTool):
+    """Seven independent predictors' scores for one peptide.
+
+    /v1/amps/{accession}/coprediction is a real endpoint that no tool
+    reached. Whether a peptide IS antimicrobial is the question AMPSphere
+    exists to answer, the seven predictors disagree about it, and a caller
+    had no way to see the disagreement.
+    """
+
+    _THRESHOLD = 0.5
+
+    def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        accession, error = _require_accession(arguments, "AMP10.000_000")
+        if error is not None:
+            return error
+
+        url = f"{_BASE_URL}/amps/{accession}/coprediction"
+        payload, error = _get(f"/amps/{accession}/coprediction")
+        if error is not None:
+            return error
+
+        rows = payload if isinstance(payload, list) else []
+        if not rows:
+            return _err(
+                f"AMPSphere returned no co-prediction scores for {accession!r}",
+                url=url,
+            )
+
+        scores = [
+            row.get("value")
+            for row in rows
+            if isinstance(row, dict) and isinstance(row.get("value"), (int, float))
+        ]
+        return {
+            "status": "success",
+            "data": {
+                "accession": accession,
+                "predictions": rows,
+                "predictors_total": len(rows),
+                "predictors_agreeing": sum(1 for s in scores if s > self._THRESHOLD),
+                "score_range": [min(scores), max(scores)] if scores else None,
+            },
+            "metadata": {
+                "source": _SOURCE,
+                "url": url,
+                "accession": accession,
+                "agreement_threshold": self._THRESHOLD,
+                "note": (
+                    "The seven predictors are independent models on their own "
+                    "scales, so `predictors_agreeing` counts how many exceed "
+                    f"{self._THRESHOLD} and is not a consensus probability. Do "
+                    "not average the scores."
+                ),
+            },
+        }
+
+
+@register_tool(
+    "AMPSphereAmpMetadataTool",
+    config={
+        "name": "AMPSphere_get_amp_metadata",
+        "type": "AMPSphereAmpMetadataTool",
+        "description": (
+            "Page through the samples one AMPSphere peptide was observed in: "
+            "per sample, the GMSC gene accession and gene sequence, the sample "
+            "id, whether it is metagenomic, the geographic location with "
+            "latitude/longitude, the habitat (general_envo_name, "
+            "environment_material) and the microbial source resolved down the "
+            "taxonomy (domain to species). This is where a peptide's ecology "
+            "and host range live, and nothing reached it: AMP10.000_000 has "
+            "15,523 such rows and AMPSphere_get_amp embeds five. Returns one "
+            "page plus the totals, so a page is never mistaken for the set. "
+            "Keyless AMPSphere REST API (/v1/amps/{accession}/metadata)."
+        ),
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "AMPSphere AMP accession. Example: 'AMP10.000_000'.",
+                },
+                "page": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "Zero-based page number.",
+                },
+                "page_size": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 20,
+                    "description": "Rows per page (upstream default 20).",
+                },
+            },
+            "required": ["accession"],
+        },
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "accession": {"type": "string"},
+                        "samples": {
+                            "type": "array",
+                            "description": "One row per observation of this peptide in a sample.",
+                            "items": {"type": "object"},
+                        },
+                        "returned": {"type": "integer"},
+                        "total_samples": {
+                            "type": ["integer", "null"],
+                            "description": "How many rows there are in all, across every page.",
+                        },
+                        "total_pages": {"type": ["integer", "null"]},
+                        "page": {"type": ["integer", "null"]},
+                        "page_size": {"type": ["integer", "null"]},
+                        "has_more": {"type": "boolean"},
+                        "next_page": {"type": ["integer", "null"]},
+                    },
+                    "required": ["accession", "samples", "returned"],
+                },
+                {
+                    "type": "object",
+                    "properties": {"error": {"type": "string"}},
+                    "required": ["error"],
+                },
+            ]
+        },
+        "test_examples": [
+            {"accession": "AMP10.000_000", "page_size": 5},
+            {"accession": "AMP10.000_001"},
+        ],
+        "label": ["AMPSphere", "AMP", "Sample", "Habitat", "Taxonomy"],
+        "metadata": {
+            "tags": [
+                "antimicrobial peptide",
+                "AMP",
+                "AMPSphere",
+                "habitat",
+                "metagenome",
+                "taxonomy",
+            ],
+            "estimated_execution_time": "1-3 seconds",
+        },
+    },
+)
+class AMPSphereAmpMetadataTool(BaseTool):
+    """The samples a peptide was seen in, paged, with the totals beside them."""
+
+    def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        accession, error = _require_accession(arguments, "AMP10.000_000")
+        if error is not None:
+            return error
+
+        arguments = arguments or {}
+        try:
+            page = max(0, int(arguments.get("page") or 0))
+        except (TypeError, ValueError):
+            return _err("page must be a non-negative integer")
+        try:
+            page_size = int(arguments.get("page_size") or 20)
+        except (TypeError, ValueError):
+            return _err("page_size must be an integer")
+        page_size = max(1, min(page_size, 100))
+
+        url = f"{_BASE_URL}/amps/{accession}/metadata"
+        payload, error = _get(
+            f"/amps/{accession}/metadata",
+            {"page": page, "page_size": page_size},
+        )
+        if error is not None:
+            return error
+
+        if not isinstance(payload, dict):
+            return _err(f"No AMPSphere sample metadata for {accession!r}", url=url)
+
+        rows = payload.get("data") or []
+        info = payload.get("info") or {}
+        total = info.get("totalItem")
+        total_pages = info.get("totalPage")
+        has_more = bool(total is not None and (page + 1) * page_size < total) or bool(
+            total_pages is not None and page + 1 < total_pages
+        )
+
+        return {
+            "status": "success",
+            "data": {
+                "accession": accession,
+                "samples": rows,
+                "returned": len(rows),
+                "total_samples": total,
+                "total_pages": total_pages,
+                "page": info.get("currentPage", page),
+                "page_size": info.get("pageSize", page_size),
+                "has_more": has_more,
+                "next_page": page + 1 if has_more else None,
+            },
+            "metadata": {
+                "source": _SOURCE,
+                "url": url,
+                "accession": accession,
+                "count_semantics": "rows_on_this_page_not_total; total_samples is the total",
+            },
+        }

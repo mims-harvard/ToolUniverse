@@ -40,8 +40,29 @@
           "properties": {
             "article_id": {"type": "string"},
             "pmcid": {"type": ["string", "null"]},
-            "annotations": {"type": ["object", "array"]},
-            "annotation_counts": {"type": "object"}
+            "annotations": {"type": ["object", "array"], "description": "Deduplicated entities keyed by annotation type; a bare array when annotation_type narrowed the request.", "additionalProperties": {"type": "array", "items": {
+                "type": "object",
+                "properties": {
+                  "text": {"type": "string", "description": "The mined text as it appears in the article"},
+                  "tag_name": {"type": "string", "description": "Name of the first grounded concept; see tags for all of them"},
+                  "uri": {"type": "string", "description": "URI of the first grounded concept"},
+                  "tags": {"type": "array", "description": "Every grounded concept for this text. A relationship annotation carries both ends, e.g. the gene and the disease of a Gene Disease Relationship.", "items": {"type": "object", "properties": {"name": {"type": ["string", "null"]}, "uri": {"type": ["string", "null"]}}}},
+                  "tag_count": {"type": "integer", "description": "How many grounded concepts this text was mapped to"},
+                  "count": {"type": "integer", "description": "Number of mentions of this text in the article"},
+                  "sections": {"type": "array", "items": {"type": "string"}, "description": "Article sections the mentions appear in (Title, Abstract, Methods, Results, Discussion, Article)"},
+                  "providers": {"type": "array", "items": {"type": "string"}, "description": "Text-mining providers that produced the mentions, e.g. Europe PMC, Open Targets Platform"},
+                  "sub_types": {"type": "array", "items": {"type": "string"}, "description": "Annotation subType values, where upstream sends one"},
+                  "mentions": {"type": "array", "description": "Up to 5 occurrences, each with the sentence around it, its section and its provider", "items": {"type": "object", "properties": {"prefix": {"type": ["string", "null"]}, "exact": {"type": ["string", "null"]}, "postfix": {"type": ["string", "null"]}, "section": {"type": ["string", "null"]}, "provider": {"type": ["string", "null"]}, "annotation_id": {"type": ["string", "null"]}}}},
+                  "mentions_truncated": {"type": "boolean", "description": "True when the entity has more mentions than mentions carries"}
+                }
+              }}},
+            "annotation_counts": {"type": "object", "description": "Number of distinct entities per annotation type"},
+            "article_source": {"type": ["string", "null"], "description": "Which Europe PMC source the article came from (MED, PMC, PPR)"},
+            "ext_id": {"type": ["string", "null"], "description": "The article id in that source"},
+            "full_text_ids": {"type": "array", "items": {"type": "string"}, "description": "PMC ids whose full text was mined; empty when only the abstract was"},
+            "total_annotations": {"type": "integer", "description": "Annotations upstream returned before deduplication by mined text"},
+            "sections": {"type": "array", "items": {"type": "string"}, "description": "Every article section an annotation came from"},
+            "providers": {"type": "array", "items": {"type": "string"}, "description": "Every text-mining provider that contributed"}
           },
           "required": ["article_id", "annotations"]
         },
@@ -88,10 +109,32 @@
           "properties": {
             "article_id": {"type": "string"},
             "pmcid": {"type": ["string", "null"]},
-            "annotations": {"type": "array"},
-            "annotation_counts": {"type": "object"},
+            "annotations": {"type": "array", "description": "Deduplicated entities of the requested type", "items": {
+                "type": "object",
+                "properties": {
+                  "text": {"type": "string", "description": "The mined text as it appears in the article"},
+                  "tag_name": {"type": "string", "description": "Name of the first grounded concept; see tags for all of them"},
+                  "uri": {"type": "string", "description": "URI of the first grounded concept"},
+                  "tags": {"type": "array", "description": "Every grounded concept for this text. A relationship annotation carries both ends, e.g. the gene and the disease of a Gene Disease Relationship.", "items": {"type": "object", "properties": {"name": {"type": ["string", "null"]}, "uri": {"type": ["string", "null"]}}}},
+                  "tag_count": {"type": "integer", "description": "How many grounded concepts this text was mapped to"},
+                  "count": {"type": "integer", "description": "Number of mentions of this text in the article"},
+                  "sections": {"type": "array", "items": {"type": "string"}, "description": "Article sections the mentions appear in (Title, Abstract, Methods, Results, Discussion, Article)"},
+                  "providers": {"type": "array", "items": {"type": "string"}, "description": "Text-mining providers that produced the mentions, e.g. Europe PMC, Open Targets Platform"},
+                  "sub_types": {"type": "array", "items": {"type": "string"}, "description": "Annotation subType values, where upstream sends one"},
+                  "mentions": {"type": "array", "description": "Up to 5 occurrences, each with the sentence around it, its section and its provider", "items": {"type": "object", "properties": {"prefix": {"type": ["string", "null"]}, "exact": {"type": ["string", "null"]}, "postfix": {"type": ["string", "null"]}, "section": {"type": ["string", "null"]}, "provider": {"type": ["string", "null"]}, "annotation_id": {"type": ["string", "null"]}}}},
+                  "mentions_truncated": {"type": "boolean", "description": "True when the entity has more mentions than mentions carries"}
+                }
+              }},
+            "annotation_counts": {"type": "object", "description": "Number of distinct entities per annotation type"},
             "total_entities": {"type": "integer"},
-            "entity_type": {"type": "string"}
+            "returned_entities": {"type": "integer", "description": "Entities in annotations; equal to total_entities, which this tool does not cap"},
+            "entity_type": {"type": "string"},
+            "article_source": {"type": ["string", "null"], "description": "Which Europe PMC source the article came from (MED, PMC, PPR)"},
+            "ext_id": {"type": ["string", "null"], "description": "The article id in that source"},
+            "full_text_ids": {"type": "array", "items": {"type": "string"}, "description": "PMC ids whose full text was mined; empty when only the abstract was"},
+            "total_annotations": {"type": "integer", "description": "Annotations upstream returned before deduplication by mined text"},
+            "sections": {"type": "array", "items": {"type": "string"}, "description": "Every article section an annotation came from"},
+            "providers": {"type": "array", "items": {"type": "string"}, "description": "Every text-mining provider that contributed"}
           },
           "required": ["article_id", "annotations"]
         },
@@ -138,10 +181,32 @@
           "properties": {
             "article_id": {"type": "string"},
             "pmcid": {"type": ["string", "null"]},
-            "annotations": {"type": "array"},
-            "annotation_counts": {"type": "object"},
+            "annotations": {"type": "array", "description": "Deduplicated entities of the requested type", "items": {
+                "type": "object",
+                "properties": {
+                  "text": {"type": "string", "description": "The mined text as it appears in the article"},
+                  "tag_name": {"type": "string", "description": "Name of the first grounded concept; see tags for all of them"},
+                  "uri": {"type": "string", "description": "URI of the first grounded concept"},
+                  "tags": {"type": "array", "description": "Every grounded concept for this text. A relationship annotation carries both ends, e.g. the gene and the disease of a Gene Disease Relationship.", "items": {"type": "object", "properties": {"name": {"type": ["string", "null"]}, "uri": {"type": ["string", "null"]}}}},
+                  "tag_count": {"type": "integer", "description": "How many grounded concepts this text was mapped to"},
+                  "count": {"type": "integer", "description": "Number of mentions of this text in the article"},
+                  "sections": {"type": "array", "items": {"type": "string"}, "description": "Article sections the mentions appear in (Title, Abstract, Methods, Results, Discussion, Article)"},
+                  "providers": {"type": "array", "items": {"type": "string"}, "description": "Text-mining providers that produced the mentions, e.g. Europe PMC, Open Targets Platform"},
+                  "sub_types": {"type": "array", "items": {"type": "string"}, "description": "Annotation subType values, where upstream sends one"},
+                  "mentions": {"type": "array", "description": "Up to 5 occurrences, each with the sentence around it, its section and its provider", "items": {"type": "object", "properties": {"prefix": {"type": ["string", "null"]}, "exact": {"type": ["string", "null"]}, "postfix": {"type": ["string", "null"]}, "section": {"type": ["string", "null"]}, "provider": {"type": ["string", "null"]}, "annotation_id": {"type": ["string", "null"]}}}},
+                  "mentions_truncated": {"type": "boolean", "description": "True when the entity has more mentions than mentions carries"}
+                }
+              }},
+            "annotation_counts": {"type": "object", "description": "Number of distinct entities per annotation type"},
             "total_entities": {"type": "integer"},
-            "entity_type": {"type": "string"}
+            "returned_entities": {"type": "integer", "description": "Entities in annotations; equal to total_entities, which this tool does not cap"},
+            "entity_type": {"type": "string"},
+            "article_source": {"type": ["string", "null"], "description": "Which Europe PMC source the article came from (MED, PMC, PPR)"},
+            "ext_id": {"type": ["string", "null"], "description": "The article id in that source"},
+            "full_text_ids": {"type": "array", "items": {"type": "string"}, "description": "PMC ids whose full text was mined; empty when only the abstract was"},
+            "total_annotations": {"type": "integer", "description": "Annotations upstream returned before deduplication by mined text"},
+            "sections": {"type": "array", "items": {"type": "string"}, "description": "Every article section an annotation came from"},
+            "providers": {"type": "array", "items": {"type": "string"}, "description": "Every text-mining provider that contributed"}
           },
           "required": ["article_id", "annotations"]
         },
@@ -188,10 +253,32 @@
           "properties": {
             "article_id": {"type": "string"},
             "pmcid": {"type": ["string", "null"]},
-            "annotations": {"type": "array"},
-            "annotation_counts": {"type": "object"},
+            "annotations": {"type": "array", "description": "Deduplicated entities of the requested type", "items": {
+                "type": "object",
+                "properties": {
+                  "text": {"type": "string", "description": "The mined text as it appears in the article"},
+                  "tag_name": {"type": "string", "description": "Name of the first grounded concept; see tags for all of them"},
+                  "uri": {"type": "string", "description": "URI of the first grounded concept"},
+                  "tags": {"type": "array", "description": "Every grounded concept for this text. A relationship annotation carries both ends, e.g. the gene and the disease of a Gene Disease Relationship.", "items": {"type": "object", "properties": {"name": {"type": ["string", "null"]}, "uri": {"type": ["string", "null"]}}}},
+                  "tag_count": {"type": "integer", "description": "How many grounded concepts this text was mapped to"},
+                  "count": {"type": "integer", "description": "Number of mentions of this text in the article"},
+                  "sections": {"type": "array", "items": {"type": "string"}, "description": "Article sections the mentions appear in (Title, Abstract, Methods, Results, Discussion, Article)"},
+                  "providers": {"type": "array", "items": {"type": "string"}, "description": "Text-mining providers that produced the mentions, e.g. Europe PMC, Open Targets Platform"},
+                  "sub_types": {"type": "array", "items": {"type": "string"}, "description": "Annotation subType values, where upstream sends one"},
+                  "mentions": {"type": "array", "description": "Up to 5 occurrences, each with the sentence around it, its section and its provider", "items": {"type": "object", "properties": {"prefix": {"type": ["string", "null"]}, "exact": {"type": ["string", "null"]}, "postfix": {"type": ["string", "null"]}, "section": {"type": ["string", "null"]}, "provider": {"type": ["string", "null"]}, "annotation_id": {"type": ["string", "null"]}}}},
+                  "mentions_truncated": {"type": "boolean", "description": "True when the entity has more mentions than mentions carries"}
+                }
+              }},
+            "annotation_counts": {"type": "object", "description": "Number of distinct entities per annotation type"},
             "total_entities": {"type": "integer"},
-            "entity_type": {"type": "string"}
+            "returned_entities": {"type": "integer", "description": "Entities in annotations; equal to total_entities, which this tool does not cap"},
+            "entity_type": {"type": "string"},
+            "article_source": {"type": ["string", "null"], "description": "Which Europe PMC source the article came from (MED, PMC, PPR)"},
+            "ext_id": {"type": ["string", "null"], "description": "The article id in that source"},
+            "full_text_ids": {"type": "array", "items": {"type": "string"}, "description": "PMC ids whose full text was mined; empty when only the abstract was"},
+            "total_annotations": {"type": "integer", "description": "Annotations upstream returned before deduplication by mined text"},
+            "sections": {"type": "array", "items": {"type": "string"}, "description": "Every article section an annotation came from"},
+            "providers": {"type": "array", "items": {"type": "string"}, "description": "Every text-mining provider that contributed"}
           },
           "required": ["article_id", "annotations"]
         },
@@ -238,10 +325,32 @@
           "properties": {
             "article_id": {"type": "string"},
             "pmcid": {"type": ["string", "null"]},
-            "annotations": {"type": "array"},
-            "annotation_counts": {"type": "object"},
+            "annotations": {"type": "array", "description": "Deduplicated entities of the requested type", "items": {
+                "type": "object",
+                "properties": {
+                  "text": {"type": "string", "description": "The mined text as it appears in the article"},
+                  "tag_name": {"type": "string", "description": "Name of the first grounded concept; see tags for all of them"},
+                  "uri": {"type": "string", "description": "URI of the first grounded concept"},
+                  "tags": {"type": "array", "description": "Every grounded concept for this text. A relationship annotation carries both ends, e.g. the gene and the disease of a Gene Disease Relationship.", "items": {"type": "object", "properties": {"name": {"type": ["string", "null"]}, "uri": {"type": ["string", "null"]}}}},
+                  "tag_count": {"type": "integer", "description": "How many grounded concepts this text was mapped to"},
+                  "count": {"type": "integer", "description": "Number of mentions of this text in the article"},
+                  "sections": {"type": "array", "items": {"type": "string"}, "description": "Article sections the mentions appear in (Title, Abstract, Methods, Results, Discussion, Article)"},
+                  "providers": {"type": "array", "items": {"type": "string"}, "description": "Text-mining providers that produced the mentions, e.g. Europe PMC, Open Targets Platform"},
+                  "sub_types": {"type": "array", "items": {"type": "string"}, "description": "Annotation subType values, where upstream sends one"},
+                  "mentions": {"type": "array", "description": "Up to 5 occurrences, each with the sentence around it, its section and its provider", "items": {"type": "object", "properties": {"prefix": {"type": ["string", "null"]}, "exact": {"type": ["string", "null"]}, "postfix": {"type": ["string", "null"]}, "section": {"type": ["string", "null"]}, "provider": {"type": ["string", "null"]}, "annotation_id": {"type": ["string", "null"]}}}},
+                  "mentions_truncated": {"type": "boolean", "description": "True when the entity has more mentions than mentions carries"}
+                }
+              }},
+            "annotation_counts": {"type": "object", "description": "Number of distinct entities per annotation type"},
             "total_entities": {"type": "integer"},
-            "entity_type": {"type": "string"}
+            "returned_entities": {"type": "integer", "description": "Entities in annotations; equal to total_entities, which this tool does not cap"},
+            "entity_type": {"type": "string"},
+            "article_source": {"type": ["string", "null"], "description": "Which Europe PMC source the article came from (MED, PMC, PPR)"},
+            "ext_id": {"type": ["string", "null"], "description": "The article id in that source"},
+            "full_text_ids": {"type": "array", "items": {"type": "string"}, "description": "PMC ids whose full text was mined; empty when only the abstract was"},
+            "total_annotations": {"type": "integer", "description": "Annotations upstream returned before deduplication by mined text"},
+            "sections": {"type": "array", "items": {"type": "string"}, "description": "Every article section an annotation came from"},
+            "providers": {"type": "array", "items": {"type": "string"}, "description": "Every text-mining provider that contributed"}
           },
           "required": ["article_id", "annotations"]
         },

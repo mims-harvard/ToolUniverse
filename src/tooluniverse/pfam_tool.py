@@ -164,6 +164,14 @@ class PfamTool(BaseTool):
                     "name": meta.get("name", ""),
                     "type": meta.get("type", ""),
                     "integrated_interpro": meta.get("integrated"),
+                    # Which member database the entry comes from. A Pfam
+                    # search answers Pfam entries, and the field says so for
+                    # every row -- which matters because the same endpoint
+                    # serves InterPro's other member databases.
+                    "source_database": meta.get("source_database"),
+                    "member_databases": meta.get("member_databases"),
+                    "go_terms": meta.get("go_terms") or [],
+                    "description": meta.get("description"),
                 }
             )
 
@@ -324,6 +332,14 @@ class PfamTool(BaseTool):
                                 {
                                     "start": frag.get("start"),
                                     "end": frag.get("end"),
+                                    # The match score and the model it was
+                                    # matched against. A domain position
+                                    # without them is a claim with no
+                                    # strength attached.
+                                    "score": loc.get("score"),
+                                    "model_accession": loc.get("model")
+                                    or loc.get("model_acc"),
+                                    "dc_status": frag.get("dc-status"),
                                 }
                             )
 
@@ -337,6 +353,47 @@ class PfamTool(BaseTool):
                     "tax_id": organism.get("taxId") if organism else None,
                     "domain_positions": domain_positions,
                     "in_alphafold": meta.get("in_alphafold", False),
+                    # Reviewed (Swiss-Prot) or not, which is the quality
+                    # distinction the `reviewed_only` filter is about and
+                    # which the rows never stated; plus the organism's full
+                    # name and the entry types matched.
+                    "source_database": meta.get("source_database"),
+                    "organism_full_name": organism.get("fullName")
+                    if organism
+                    else None,
+                    "entry_types": sorted(
+                        {
+                            entry.get("entry_type")
+                            for entry in entries
+                            if isinstance(entry, dict) and entry.get("entry_type")
+                        }
+                    ),
+                    "entry_source_databases": sorted(
+                        {
+                            entry.get("source_database")
+                            for entry in entries
+                            if isinstance(entry, dict)
+                            and entry.get("source_database")
+                        }
+                    ),
+                    "entries_integrated": sorted(
+                        {
+                            entry.get("entry_integrated")
+                            for entry in entries
+                            if isinstance(entry, dict)
+                            and entry.get("entry_integrated")
+                        }
+                    ),
+                    # The taxonomy rows the same response carries for the
+                    # organism, where the protein row gave a tax id.
+                    "taxa": [
+                        {
+                            "accession": taxon.get("accession"),
+                            "source_database": taxon.get("source_database"),
+                        }
+                        for taxon in (r.get("taxa") or [])
+                        if isinstance(taxon, dict)
+                    ],
                 }
             )
 
@@ -405,6 +462,27 @@ class PfamTool(BaseTool):
                                 "start": frag.get("start"),
                                 "end": frag.get("end"),
                                 "score": loc.get("score"),
+                                # Which protein the domain is on, and from
+                                # which database. The row named the Pfam
+                                # family and the coordinates and left the
+                                # protein unnamed, so a multi-protein answer
+                                # could not be split.
+                                "protein_accession": p.get("accession"),
+                                "protein_source_database": p.get("source_database"),
+                                "protein_organism": p.get("organism"),
+                                "protein_length": p.get("protein_length"),
+                                "protein_name": p.get("name"),
+                                "model_accession": loc.get("model")
+                                or loc.get("model_acc"),
+                                "fragment_dc_status": frag.get("dc-status"),
+                                # Which member database the entry is from and
+                                # what kind of entry it is: the same endpoint
+                                # serves InterPro's other member databases,
+                                # and "domain" against "family" changes what
+                                # the match means.
+                                "source_database": meta.get("source_database"),
+                                "entry_type": meta.get("type"),
+                                "go_terms": meta.get("go_terms") or [],
                             }
                         )
 
@@ -504,6 +582,39 @@ class PfamTool(BaseTool):
                     "organism_name": meta.get("name", ""),
                     "taxonomy_id": meta.get("taxonomy"),
                     "is_reference": meta.get("is_reference", False),
+                    # Where the proteome sits in the tree, and how the family
+                    # matches in it: a proteome row that cannot say which
+                    # proteins matched, how long they are or how well they
+                    # scored is a name and a tax id.
+                    "lineage": meta.get("lineage"),
+                    "source_database": meta.get("source_database"),
+                    "strain": meta.get("strain"),
+                    "assembly": meta.get("assembly"),
+                    "proteins": [
+                        {
+                            "accession": entry.get("accession"),
+                            "protein_length": entry.get("protein_length"),
+                            "source_database": entry.get("source_database"),
+                            "entry_type": entry.get("entry_type"),
+                            # The InterPro entry this Pfam family is
+                            # integrated into, which is how a Pfam match is
+                            # carried into InterPro's own classification.
+                            "entry_integrated": entry.get("entry_integrated"),
+                            "locations": [
+                                {
+                                    "start": fragment.get("start"),
+                                    "end": fragment.get("end"),
+                                    "score": location.get("score"),
+                                }
+                                for location in (
+                                    entry.get("entry_protein_locations") or []
+                                )
+                                for fragment in (location.get("fragments") or [])
+                            ],
+                        }
+                        for entry in (r.get("entries") or [])
+                        if isinstance(entry, dict)
+                    ],
                 }
             )
 

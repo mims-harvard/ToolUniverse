@@ -207,6 +207,11 @@ def parse_coverage(patterns: list) -> dict:
     mostly do not reach the caller. A thin field is a candidate and not a
     verdict -- whether it matters depends on what the tool's own description
     promises -- so this counts and lists them without deciding anything.
+
+    Only `thin_fields` is read. The auditor also records `mapped_but_unseen`:
+    fields the wrapper does select and that happened to be null on the page it
+    fetched. Those belong in the JSON artifact for anyone looking closely and
+    not in the summary, because they are not candidates.
     """
     audited, thin, skipped = 0, {}, 0
     for pattern in patterns or []:

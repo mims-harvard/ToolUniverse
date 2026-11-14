@@ -24,7 +24,9 @@
           "description": "Result offset for pagination. The wrapper enforces offset + limit <= 100000."
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "https://api.gbif.org/v1/species/search",
@@ -34,40 +36,448 @@
       "type": "object",
       "description": "GBIF species search response",
       "properties": {
-        "status": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
         "data": {
           "type": "object",
           "properties": {
-            "count": {"type": "integer"},
+            "count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total records matching the query, which is not the number returned"
+            },
             "results": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "key": {"type": "integer", "description": "taxonKey"},
-                  "scientificName": {"type": "string"},
-                  "rank": {"type": "string"},
-                  "kingdom": {"type": "string"},
-                  "phylum": {"type": "string"},
-                  "class": {"type": "string"},
-                  "order": {"type": "string"},
-                  "family": {"type": "string"},
-                  "genus": {"type": "string"}
+                  "key": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "GBIF key for this name record"
+                  },
+                  "scientificName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Full scientific name with authorship"
+                  },
+                  "rank": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Taxonomic rank"
+                  },
+                  "kingdom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Kingdom in the classification"
+                  },
+                  "phylum": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Phylum in the classification"
+                  },
+                  "class": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Class in the classification"
+                  },
+                  "order": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Order in the classification"
+                  },
+                  "family": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Family in the classification"
+                  },
+                  "genus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Genus in the classification"
+                  },
+                  "nubKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone taxon the name matched; for a synonym this differs from key"
+                  },
+                  "nameKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Key of the name itself"
+                  },
+                  "canonicalName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Name without authorship"
+                  },
+                  "authorship": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Authorship string"
+                  },
+                  "nameType": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How GBIF parsed the name, e.g. SCIENTIFIC or INFORMAL"
+                  },
+                  "taxonomicStatus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ACCEPTED, SYNONYM or DOUBTFUL"
+                  },
+                  "nomenclaturalStatus": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Nomenclatural status flags, e.g. illegitimate or superfluous",
+                    "items": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "synonym": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether this name is a synonym"
+                  },
+                  "origin": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where the name came from in GBIF's processing"
+                  },
+                  "parent": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Parent taxon name"
+                  },
+                  "parentKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Parent taxon key"
+                  },
+                  "datasetKey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Checklist dataset the name is from"
+                  },
+                  "numDescendants": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many taxa sit below this one"
+                  },
+                  "numOccurrences": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many occurrence records GBIF holds for the taxon"
+                  },
+                  "higherClassificationMap": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Classification above this taxon, keyed by backbone taxon key with the name as the value",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Taxon name for that key"
+                    }
+                  },
+                  "threatStatuses": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Threat statuses recorded for the taxon",
+                    "items": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "habitats": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Habitats recorded for the taxon",
+                    "items": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "descriptions": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Descriptive texts for the taxon",
+                    "items": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "vernacularNames": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Common names for the taxon",
+                    "items": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "kingdomKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone key of the kingdom"
+                  },
+                  "phylumKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone key of the phylum"
+                  },
+                  "classKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone key of the class"
+                  },
+                  "orderKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone key of the order"
+                  },
+                  "familyKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone key of the family"
+                  },
+                  "genusKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone key of the genus"
+                  }
+                }
+              }
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied"
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of this page"
+            },
+            "endOfRecords": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when this page is the last; the only signal that the result is complete"
+            },
+            "facets": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Facet counts GBIF computed for the query",
+              "items": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
                 }
               }
             }
           }
         },
-        "url": {"type": "string"}
+        "url": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The GBIF endpoint the wrapper called"
+        },
+        "metadata": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Wrapper metadata about the request",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ]
+          }
+        },
+        "query": {
+          "type": [
+            "object",
+            "string",
+            "null"
+          ],
+          "description": "The query as the wrapper sent it",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ]
+          }
+        },
+        "success": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether the wrapper's own call succeeded"
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which upstream the data came from"
+        }
       }
     },
     "test_examples": [
-      {"query": "Homo", "limit": 1},
-      {"query": "Gadus", "limit": 1}
+      {
+        "query": "Homo",
+        "limit": 1
+      },
+      {
+        "query": "Gadus",
+        "limit": 1
+      }
     ],
-    "label": ["GBIF", "Taxonomy", "Search"],
+    "label": [
+      "GBIF",
+      "Taxonomy",
+      "Search"
+    ],
     "metadata": {
-      "tags": ["biodiversity", "taxonomy", "species", "search"],
+      "tags": [
+        "biodiversity",
+        "taxonomy",
+        "species",
+        "search"
+      ],
       "estimated_execution_time": "< 2 seconds"
     }
   },
@@ -114,38 +524,882 @@
       "type": "object",
       "description": "GBIF occurrence search response",
       "properties": {
-        "status": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
         "data": {
           "type": "object",
           "properties": {
-            "count": {"type": "integer"},
+            "count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total records matching the query, which is not the number returned"
+            },
             "results": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "key": {"type": "integer"},
-                  "speciesKey": {"type": "integer"},
-                  "scientificName": {"type": "string"},
-                  "decimalLatitude": {"type": "number"},
-                  "decimalLongitude": {"type": "number"},
-                  "eventDate": {"type": "string"},
-                  "countryCode": {"type": "string"}
+                  "key": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "GBIF's key for this occurrence record"
+                  },
+                  "speciesKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone key of the species"
+                  },
+                  "scientificName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Scientific name as interpreted"
+                  },
+                  "decimalLatitude": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Latitude in decimal degrees"
+                  },
+                  "decimalLongitude": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Longitude in decimal degrees"
+                  },
+                  "eventDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the occurrence was recorded"
+                  },
+                  "countryCode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ISO country code"
+                  },
+                  "gbifID": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "null"
+                    ],
+                    "description": "GBIF identifier for the record"
+                  },
+                  "issues": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "GBIF's data-quality flags for this record, e.g. COORDINATE_ROUNDED or GEODETIC_DATUM_ASSUMED_WGS84. An occurrence carrying issues is not interchangeable with one that does not, and this was undeclared",
+                    "items": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "license": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Licence the record is published under, which a caller redistributing it is bound by"
+                  },
+                  "basisOfRecord": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the record is: PRESERVED_SPECIMEN, HUMAN_OBSERVATION, FOSSIL_SPECIMEN, MACHINE_OBSERVATION and so on. A specimen and a sighting are not the same evidence"
+                  },
+                  "taxonomicStatus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the name is ACCEPTED, SYNONYM or DOUBTFUL"
+                  },
+                  "iucnRedListCategory": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "IUCN Red List category for the taxon, where assessed"
+                  },
+                  "geodeticDatum": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Datum the coordinates are in"
+                  },
+                  "country": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Country name"
+                  },
+                  "continent": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Continent"
+                  },
+                  "locality": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Locality as recorded"
+                  },
+                  "gadm": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "GADM administrative areas the point falls in, keyed by level",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ],
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ],
+                        "additionalProperties": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "gbifRegion": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GBIF region of the record"
+                  },
+                  "publishingCountry": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Country of the publishing organisation"
+                  },
+                  "publishedByGbifRegion": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GBIF region of the publisher"
+                  },
+                  "year": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Year"
+                  },
+                  "month": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Month"
+                  },
+                  "day": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Day"
+                  },
+                  "startDayOfYear": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "First day of year of the event"
+                  },
+                  "endDayOfYear": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Last day of year of the event"
+                  },
+                  "datasetKey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Key of the dataset the record came from"
+                  },
+                  "datasetTitle": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Title of that dataset"
+                  },
+                  "datasetCategory": {
+                    "type": [
+                      "string",
+                      "array",
+                      "null"
+                    ],
+                    "description": "GBIF's category for the dataset"
+                  },
+                  "installationKey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Key of the installation serving the dataset"
+                  },
+                  "hostingOrganizationKey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Key of the hosting organisation"
+                  },
+                  "publishingOrgKey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Key of the publishing organisation"
+                  },
+                  "protocol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Protocol GBIF harvested the record over"
+                  },
+                  "crawlId": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "GBIF crawl that ingested it"
+                  },
+                  "lastCrawled": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When GBIF last harvested the record"
+                  },
+                  "lastInterpreted": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When GBIF last interpreted it"
+                  },
+                  "lastParsed": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When GBIF last parsed it"
+                  },
+                  "catalogNumber": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Catalogue number in the holding collection"
+                  },
+                  "collectionCode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Collection code"
+                  },
+                  "institutionCode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Institution code"
+                  },
+                  "recordedBy": {
+                    "type": [
+                      "string",
+                      "array",
+                      "null"
+                    ],
+                    "description": "Who made the record"
+                  },
+                  "recordedByIDs": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Identifiers for the recorders, e.g. ORCIDs",
+                    "items": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "identifiedByIDs": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Identifiers for those who identified the specimen",
+                    "items": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "isSequenced": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether sequence data is associated with the occurrence"
+                  },
+                  "nucleotideSequence": {
+                    "type": [
+                      "string",
+                      "array",
+                      "null"
+                    ],
+                    "description": "Associated nucleotide sequence, where present"
+                  },
+                  "dnaSequenceID": {
+                    "type": [
+                      "string",
+                      "array",
+                      "null"
+                    ],
+                    "description": "Identifier of the associated sequence"
+                  },
+                  "acceptedScientificName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Accepted name, where the recorded name is a synonym"
+                  },
+                  "acceptedTaxonKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone key of the accepted taxon"
+                  },
+                  "taxonKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone key of the matched taxon"
+                  },
+                  "taxonRank": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Rank of the match"
+                  },
+                  "genericName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Generic part of the name"
+                  },
+                  "specificEpithet": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Specific epithet"
+                  },
+                  "infraspecificEpithet": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Infraspecific epithet"
+                  },
+                  "classifications": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Classifications GBIF holds for the record, keyed by checklist",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ],
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ],
+                        "additionalProperties": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "media": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Media items attached to the record",
+                    "items": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "extensions": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Darwin Core extension records",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "facts": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Measurement or fact records",
+                    "items": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "relations": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Relationships to other records",
+                    "items": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "identifiers": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Alternative identifiers for the record",
+                    "items": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "isInCluster": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether GBIF clustered the record with duplicates"
+                  },
+                  "kingdom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Kingdom the record was matched to"
+                  },
+                  "kingdomKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone key of the kingdom"
+                  },
+                  "phylum": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Phylum the record was matched to"
+                  },
+                  "phylumKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone key of the phylum"
+                  },
+                  "class": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Class the record was matched to"
+                  },
+                  "classKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone key of the class"
+                  },
+                  "order": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Order the record was matched to"
+                  },
+                  "orderKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone key of the order"
+                  },
+                  "family": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Family the record was matched to"
+                  },
+                  "familyKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone key of the family"
+                  },
+                  "genus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Genus the record was matched to"
+                  },
+                  "genusKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Backbone key of the genus"
+                  },
+                  "species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Species the record was matched to"
+                  },
+                  "http://unknown.org/crawl_attempt": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "description": "GBIF verbatim-extension value, keyed by the term URI the publisher used"
+                  },
+                  "http://unknown.org/download": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "description": "GBIF verbatim-extension value, keyed by the term URI the publisher used"
+                  },
+                  "http://unknown.org/griddedDataset": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "description": "GBIF verbatim-extension value, keyed by the term URI the publisher used"
+                  },
+                  "http://unknown.org/orphanEndpoint": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "description": "GBIF verbatim-extension value, keyed by the term URI the publisher used"
+                  },
+                  "http://unknown.org/status": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "description": "GBIF verbatim-extension value, keyed by the term URI the publisher used"
+                  },
+                  "occurrenceStatus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "PRESENT or ABSENT: whether the record documents the taxon being there or demonstrably not there. An absence record counted as a presence is a wrong answer"
+                  }
+                },
+                "description": "One occurrence record. Darwin Core fields vary between records - a second query returned occurrenceStatus where the first did not - so fields beyond those named here can appear",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied"
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of this page"
+            },
+            "endOfRecords": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when this page is the last; the only signal that the result is complete"
+            },
+            "facets": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Facet counts GBIF computed for the query",
+              "items": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
                 }
               }
             }
           }
         },
-        "url": {"type": "string"}
+        "url": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The GBIF endpoint the wrapper called"
+        },
+        "metadata": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Wrapper metadata about the request",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ]
+          }
+        },
+        "query": {
+          "type": [
+            "object",
+            "string",
+            "null"
+          ],
+          "description": "The query as the wrapper sent it",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ]
+          }
+        },
+        "success": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether the wrapper's own call succeeded"
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which upstream the data came from"
+        }
       }
     },
     "test_examples": [
-      {"hasCoordinate": true, "limit": 1},
-      {"country": "US", "limit": 1}
+      {
+        "hasCoordinate": true,
+        "limit": 1
+      },
+      {
+        "country": "US",
+        "limit": 1
+      }
     ],
-    "label": ["GBIF", "Occurrence", "Geospatial"],
+    "label": [
+      "GBIF",
+      "Occurrence",
+      "Geospatial"
+    ],
     "metadata": {
-      "tags": ["biodiversity", "occurrence", "distribution", "geospatial"],
+      "tags": [
+        "biodiversity",
+        "occurrence",
+        "distribution",
+        "geospatial"
+      ],
       "estimated_execution_time": "< 3 seconds"
     }
   }

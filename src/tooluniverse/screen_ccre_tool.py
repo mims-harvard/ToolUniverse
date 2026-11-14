@@ -184,6 +184,10 @@ class ScreenCcreTool(BaseTool):
                     "end": (start_pos + length)
                     if (start_pos is not None and length is not None)
                     else None,
+                    # The element's own width. It was used to compute `end`
+                    # and then dropped, and a cCRE's length is one of its
+                    # reported properties rather than a derived convenience.
+                    "length": length,
                     "element_type": r.get("pct"),
                     "is_proximal": _is_proximal(r.get("pct"), info.get("isproximal")),
                     "dnase_zscore": r.get("dnase_zscore"),

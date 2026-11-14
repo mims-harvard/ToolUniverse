@@ -54,30 +54,47 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "count": {
+                                "type": [
+                                    "integer",
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "How many sequences match."
+                            },
+                            "geoLocCountry": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The country the count is for. Sequencing effort varies enormously by country, so these counts measure surveillance as much as incidence."
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     },
     {
         "name": "Pathoplexus_get_mutations",
-        "description": "Get characteristic amino-acid (default) or nucleotide mutations for a Pathoplexus organism above a proportion threshold, optionally filtered by country/lineage \u2014 for surveillance of mutation prevalence in emerging pathogens. Returns each mutation with gene, position, from/to residue, proportion (fraction of sequences carrying it), count, and coverage. Known organisms: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'. No API key required.",
+        "description": "Get characteristic amino-acid (default) or nucleotide mutations for a Pathoplexus organism above a proportion threshold, optionally filtered by country/lineage — for surveillance of mutation prevalence in emerging pathogens. Returns each mutation with gene, position, from/to residue, proportion (fraction of sequences carrying it), count, and coverage. Known organisms: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'. No API key required.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -164,25 +181,86 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "mutation": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The mutation in the project's own notation."
+                            },
+                            "gene": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The gene it falls in."
+                            },
+                            "position": {
+                                "type": [
+                                    "integer",
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Its position."
+                            },
+                            "from": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The reference base or residue."
+                            },
+                            "to": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The observed one."
+                            },
+                            "count": {
+                                "type": [
+                                    "integer",
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "How many sequences carry it."
+                            },
+                            "coverage": {
+                                "type": [
+                                    "integer",
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "How many sequences had usable data at that position -- the DENOMINATOR. A count without it says nothing about frequency."
+                            },
+                            "proportion": {
+                                "type": [
+                                    "number",
+                                    "null"
+                                ],
+                                "description": "count divided by coverage. Low coverage makes a high proportion unreliable, and only `coverage` reveals that."
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     },
     {
@@ -196,31 +274,48 @@
                     "description": "Pathoplexus organism slug: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'."
                 },
                 "country": {
-                    "type": ["string", "null"],
+                    "type": [
+                        "string",
+                        "null"
+                    ],
                     "description": "Filter by country (geoLocCountry), e.g. 'USA'."
                 },
                 "lineage": {
-                    "type": ["string", "null"],
+                    "type": [
+                        "string",
+                        "null"
+                    ],
                     "description": "Filter by lineage."
                 },
                 "fields": {
-                    "type": ["string", "null"],
+                    "type": [
+                        "string",
+                        "null"
+                    ],
                     "description": "Comma-separated metadata fields to return, e.g. 'accession,geoLocCountry,sampleCollectionDate,lineage'. Omit to return all available fields."
                 },
                 "limit": {
-                    "type": ["integer", "null"],
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
                     "minimum": 1,
                     "maximum": 1000,
                     "description": "Max sequence rows (default 50, max 1000)."
                 },
                 "offset": {
-                    "type": ["integer", "null"],
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
                     "minimum": 0,
                     "maximum": 10000000,
                     "description": "Zero-based row offset for pagination (default 0). Continue with metadata.next_offset when metadata.has_more is true."
                 }
             },
-            "required": ["organism"]
+            "required": [
+                "organism"
+            ]
         },
         "fields": {
             "timeout": 30,
@@ -239,25 +334,55 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "accession": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The sequence accession."
+                            },
+                            "lineage": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Its assigned lineage."
+                            },
+                            "geoLocCountry": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Country of collection."
+                            },
+                            "sampleCollectionDate": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "When the sample was collected -- not when it was submitted, which can be much later."
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     },
     {
@@ -271,15 +396,24 @@
                     "description": "Pathoplexus organism slug: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'."
                 },
                 "country": {
-                    "type": ["string", "null"],
+                    "type": [
+                        "string",
+                        "null"
+                    ],
                     "description": "Filter by country (geoLocCountry), e.g. 'USA'."
                 },
                 "lineage": {
-                    "type": ["string", "null"],
+                    "type": [
+                        "string",
+                        "null"
+                    ],
                     "description": "Filter by lineage."
                 },
                 "sequence_type": {
-                    "type": ["string", "null"],
+                    "type": [
+                        "string",
+                        "null"
+                    ],
                     "enum": [
                         "nucleotide",
                         "aminoAcid",
@@ -288,11 +422,17 @@
                     "description": "'nucleotide' (default) or 'aminoAcid'."
                 },
                 "aligned": {
-                    "type": ["boolean", "null"],
+                    "type": [
+                        "boolean",
+                        "null"
+                    ],
                     "description": "Return aligned sequences instead of unaligned (default false)."
                 },
                 "limit": {
-                    "type": ["integer", "null"],
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
                     "minimum": 1,
                     "maximum": 100,
                     "description": "Number of sequences to download (default 1, max 100)."
@@ -307,7 +447,9 @@
                     "description": "Zero-based sequence offset for pagination (default 0). For a full FASTA page, metadata.next_offset identifies the next page to probe."
                 }
             },
-            "required": ["organism"]
+            "required": [
+                "organism"
+            ]
         },
         "fields": {
             "timeout": 30,
@@ -325,33 +467,33 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "fasta": {
-                  "type": "string"
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "fasta": {
+                            "type": "string"
+                        },
+                        "num_records": {
+                            "type": "integer"
+                        }
+                    },
+                    "required": [
+                        "fasta"
+                    ]
                 },
-                "num_records": {
-                  "type": "integer"
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "fasta"
-              ]
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     }
 ]

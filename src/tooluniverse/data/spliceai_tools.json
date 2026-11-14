@@ -12,7 +12,10 @@
         },
         "genome": {
           "type": "string",
-          "enum": ["37", "38"],
+          "enum": [
+            "37",
+            "38"
+          ],
           "description": "Genome build: 37 (GRCh37/hg19) or 38 (GRCh38/hg38). Default: 38",
           "default": "38"
         },
@@ -27,7 +30,9 @@
           "default": false
         }
       },
-      "required": ["variant"]
+      "required": [
+        "variant"
+      ]
     },
     "fields": {
       "operation": "predict_splice",
@@ -43,18 +48,692 @@
         "data": {
           "type": "object",
           "properties": {
-            "variant": {"type": "string"},
-            "genome": {"type": "string"},
-            "scores": {"type": "array"},
-            "max_delta_score": {"type": "number"},
-            "interpretation": {"type": "string"}
+            "variant": {
+              "type": "string"
+            },
+            "genome": {
+              "type": "string"
+            },
+            "scores": {
+              "type": "array",
+              "description": "One entry per transcript overlapping the variant, as SpliceAI returns it. Note that SpliceAI sends every DS_* delta as a STRING, e.g. \"0.827\"",
+              "items": {
+                "type": "object",
+                "description": "SpliceAI's per-transcript prediction",
+                "properties": {
+                  "DS_AG": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Delta score, acceptor gain (a string in the upstream response)"
+                  },
+                  "DS_AL": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Delta score, acceptor loss"
+                  },
+                  "DS_DG": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Delta score, donor gain"
+                  },
+                  "DS_DL": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Delta score, donor loss"
+                  },
+                  "DP_AG": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Position of the acceptor gain, relative to the variant"
+                  },
+                  "DP_AL": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Position of the acceptor loss"
+                  },
+                  "DP_DG": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Position of the donor gain"
+                  },
+                  "DP_DL": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Position of the donor loss"
+                  },
+                  "g_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene symbol"
+                  },
+                  "g_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ensembl gene id"
+                  },
+                  "t_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ensembl transcript id"
+                  },
+                  "t_strand": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Transcript strand"
+                  },
+                  "t_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Transcript biotype"
+                  },
+                  "t_priority": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SpliceAI's transcript priority flag, e.g. MS for MANE Select"
+                  },
+                  "EXON_STARTS": {
+                    "type": [
+                      "array",
+                      "string",
+                      "null"
+                    ],
+                    "description": "Exon start coordinates for the transcript"
+                  },
+                  "EXON_ENDS": {
+                    "type": [
+                      "array",
+                      "string",
+                      "null"
+                    ],
+                    "description": "Exon end coordinates for the transcript"
+                  },
+                  "CDS_START": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "CDS start"
+                  },
+                  "CDS_END": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "CDS end"
+                  },
+                  "nNonZeroScores": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many non-zero scores this transcript carries"
+                  },
+                  "DS_AG_REF": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Acceptor-gain score for the reference allele"
+                  },
+                  "DS_AL_REF": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Acceptor-loss score for the reference allele"
+                  },
+                  "DS_DG_REF": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Donor-gain score for the reference allele"
+                  },
+                  "DS_DL_REF": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Donor-loss score for the reference allele"
+                  },
+                  "DS_AG_ALT": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Acceptor-gain score for the alternate allele"
+                  },
+                  "DS_AL_ALT": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Acceptor-loss score for the alternate allele"
+                  },
+                  "DS_DG_ALT": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Donor-gain score for the alternate allele"
+                  },
+                  "DS_DL_ALT": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Donor-loss score for the alternate allele"
+                  },
+                  "SCORES_FOR_INSERTED_BASES": {
+                    "type": [
+                      "array",
+                      "string",
+                      "null"
+                    ],
+                    "description": "Per-base scores when the variant is an insertion"
+                  },
+                  "t_refseq_ids": {
+                    "type": [
+                      "array",
+                      "string",
+                      "null"
+                    ],
+                    "description": "RefSeq transcript ids matching this transcript"
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "raw_response": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The upstream SpliceAI response, unmodified",
+              "properties": {
+                "variant": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The variant as SpliceAI parsed it"
+                },
+                "chrom": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Chromosome"
+                },
+                "pos": {
+                  "type": [
+                    "integer",
+                    "string",
+                    "null"
+                  ],
+                  "description": "Position"
+                },
+                "ref": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Reference allele"
+                },
+                "alt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Alternate allele"
+                },
+                "hg": {
+                  "type": [
+                    "string",
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Genome build requested"
+                },
+                "genomeVersion": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Genome build used"
+                },
+                "distance": {
+                  "type": [
+                    "integer",
+                    "string",
+                    "null"
+                  ],
+                  "description": "Scanning distance in bases"
+                },
+                "mask": {
+                  "type": [
+                    "integer",
+                    "string",
+                    "null"
+                  ],
+                  "description": "Whether scores were masked"
+                },
+                "scores": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Per-transcript predictions",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                },
+                "allNonZeroScores": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Every non-zero per-position score",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                },
+                "allNonZeroScoresStrand": {
+                  "type": [
+                    "array",
+                    "string",
+                    "null"
+                  ],
+                  "description": "Strand for each non-zero score"
+                },
+                "allNonZeroScoresTranscriptId": {
+                  "type": [
+                    "array",
+                    "string",
+                    "null"
+                  ],
+                  "description": "Transcript for each non-zero score"
+                },
+                "sai10kPredictions": {
+                  "type": [
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "description": "SpliceAI-10k predictions, when computed: the predicted aberration types for the variant",
+                  "properties": {
+                    "gene_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Gene the prediction is for"
+                    },
+                    "transcript_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Transcript the prediction is for"
+                    },
+                    "transcript_priority": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "SpliceAI's transcript priority flag"
+                    },
+                    "transcript_info": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "Transcript coordinates and structure",
+                      "properties": {
+                        "strand": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Transcript strand"
+                        },
+                        "tx_start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Transcript start"
+                        },
+                        "tx_end": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Transcript end"
+                        },
+                        "cds_start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "CDS start"
+                        },
+                        "cds_end": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "CDS end"
+                        },
+                        "num_exons": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Number of exons"
+                        },
+                        "is_coding": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "Whether the transcript is protein coding"
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "aberrations": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Predicted splicing aberrations, e.g. exon_skipping, with the affected region",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "aberration_type": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Predicted consequence, e.g. exon_skipping"
+                          },
+                          "affected_region": {
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "description": "Which exon or intron is affected and how far the variant is from its boundary",
+                            "additionalProperties": true
+                          },
+                          "aa_change": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The resulting amino-acid change, where one is predicted."
+                          },
+                          "affects_coding": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when the aberration falls in coding sequence. FALSE IS NOT BENIGN -- a splice change in a UTR or an intron can still abolish a transcript."
+                          },
+                          "altered_protein_window": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The predicted altered sequence over the same window. Comparing it with wt_protein_window shows the consequence directly."
+                          },
+                          "cds_size": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "string",
+                              "null"
+                            ],
+                            "description": "Size of the coding sequence the prediction is made against."
+                          },
+                          "delta_type": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Which of the four SpliceAI deltas this aberration follows from -- acceptor gain, acceptor loss, donor gain or donor loss. A delta score on its own does not say which splice site it moved."
+                          },
+                          "description": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The predicted aberration in words, e.g. 'exon skipping'."
+                          },
+                          "frameshift": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when the change shifts the reading frame. An in-frame exon skip and a frameshifting one are very different consequences for the same delta score."
+                          },
+                          "geo_ag": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "string",
+                              "null"
+                            ],
+                            "description": "Position of the predicted acceptor GAIN, relative to the variant."
+                          },
+                          "geo_al": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "string",
+                              "null"
+                            ],
+                            "description": "Position of the predicted acceptor LOSS, relative to the variant."
+                          },
+                          "geo_dg": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "string",
+                              "null"
+                            ],
+                            "description": "Position of the predicted donor GAIN, relative to the variant."
+                          },
+                          "geo_dl": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "string",
+                              "null"
+                            ],
+                            "description": "Position of the predicted donor LOSS, relative to the variant. The four geo_* offsets say WHERE each delta acts; a delta score without its position cannot be placed on a transcript."
+                          },
+                          "size": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "string",
+                              "null"
+                            ],
+                            "description": "How large the change is, in the unit `size_type` names."
+                          },
+                          "size_type": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "What `size` counts, e.g. bases or residues. The size is meaningless without it."
+                          },
+                          "start_codon_lost": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when the start codon is lost."
+                          },
+                          "stop_codon_introduced": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when a premature stop is introduced -- the usual route to nonsense-mediated decay, which removes the transcript rather than altering the protein."
+                          },
+                          "stop_codon_lost": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when the stop codon is lost, so translation reads through and extends the protein."
+                          },
+                          "wt_protein_window": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The wild-type protein sequence around the site."
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "sai10kPredictionsError": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Why the SpliceAI-10k prediction was not produced"
+                },
+                "source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which model produced the response"
+                }
+              },
+              "additionalProperties": true
+            },
+            "max_delta_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Largest SpliceAI delta across all splice effects and transcripts. Null when the response carried no parseable score, so an absent prediction is not reported as 0.0 and therefore benign"
+            },
+            "interpretation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "benign, low_pathogenicity, moderate_pathogenicity, high_pathogenicity, or unknown when no score was parseable"
+            },
+            "max_delta_effect": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which splice effect produced the maximum: acceptor_gain, acceptor_loss, donor_gain or donor_loss. A 0.91 by acceptor loss is a different consequence from a 0.91 by donor gain"
+            },
+            "max_delta_key": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The raw SpliceAI key behind the maximum, e.g. DS_AL"
+            },
+            "max_delta_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Position of that effect relative to the variant, in bases"
+            },
+            "max_delta_gene": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gene the maximum was called in"
+            },
+            "max_delta_transcript": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Transcript the maximum was called in"
+            },
+            "delta_by_effect": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The largest delta for each of the four splice effects",
+              "additionalProperties": {
+                "type": "number"
+              }
+            }
           }
         },
-        "source": {"type": "string"}
+        "source": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
-      {"variant": "chr8-140300616-T-G", "genome": "38"}
+      {
+        "variant": "chr8-140300616-T-G",
+        "genome": "38"
+      }
     ]
   },
   {
@@ -70,12 +749,17 @@
         },
         "genome": {
           "type": "string",
-          "enum": ["37", "38"],
+          "enum": [
+            "37",
+            "38"
+          ],
           "description": "Genome build: 37 or 38 (default: 38)",
           "default": "38"
         }
       },
-      "required": ["variant"]
+      "required": [
+        "variant"
+      ]
     },
     "fields": {
       "operation": "get_max_delta",
@@ -91,18 +775,85 @@
         "data": {
           "type": "object",
           "properties": {
-            "variant": {"type": "string"},
-            "genome": {"type": "string"},
-            "max_delta_score": {"type": "number"},
-            "interpretation": {"type": "string"},
-            "pathogenicity_threshold": {"type": "string"}
+            "variant": {
+              "type": "string"
+            },
+            "genome": {
+              "type": "string"
+            },
+            "max_delta_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Largest SpliceAI delta across all splice effects and transcripts. Null when the response carried no parseable score, so an absent prediction is not reported as 0.0 and therefore benign"
+            },
+            "interpretation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "benign, low_pathogenicity, moderate_pathogenicity, high_pathogenicity, or unknown when no score was parseable"
+            },
+            "max_delta_effect": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which splice effect produced the maximum: acceptor_gain, acceptor_loss, donor_gain or donor_loss. A 0.91 by acceptor loss is a different consequence from a 0.91 by donor gain"
+            },
+            "max_delta_key": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The raw SpliceAI key behind the maximum, e.g. DS_AL"
+            },
+            "max_delta_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Position of that effect relative to the variant, in bases"
+            },
+            "max_delta_gene": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gene the maximum was called in"
+            },
+            "max_delta_transcript": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Transcript the maximum was called in"
+            },
+            "delta_by_effect": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The largest delta for each of the four splice effects",
+              "additionalProperties": {
+                "type": "number"
+              }
+            },
+            "pathogenicity_threshold": {
+              "type": "string"
+            }
           }
         },
-        "source": {"type": "string"}
+        "source": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
-      {"variant": "chr8-140300616-T-G"}
+      {
+        "variant": "chr8-140300616-T-G"
+      }
     ]
   },
   {
@@ -118,7 +869,10 @@
         },
         "genome": {
           "type": "string",
-          "enum": ["37", "38"],
+          "enum": [
+            "37",
+            "38"
+          ],
           "description": "Genome build: 37 or 38 (default: 38)",
           "default": "38"
         },
@@ -133,7 +887,9 @@
           "default": false
         }
       },
-      "required": ["variant"]
+      "required": [
+        "variant"
+      ]
     },
     "fields": {
       "operation": "predict_splice_pangolin",
@@ -149,16 +905,30 @@
         "data": {
           "type": "object",
           "properties": {
-            "variant": {"type": "string"},
-            "genome": {"type": "string"},
-            "scores": {"type": "array"}
+            "variant": {
+              "type": "string"
+            },
+            "genome": {
+              "type": "string"
+            },
+            "scores": {
+              "type": "array"
+            },
+            "raw_response": {
+              "description": "The upstream's unmodified reply, kept so a prediction can be checked against what the service actually said."
+            }
           }
         },
-        "source": {"type": "string"}
+        "source": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
-      {"variant": "chr8-140300616-T-G", "genome": "38"}
+      {
+        "variant": "chr8-140300616-T-G",
+        "genome": "38"
+      }
     ]
   }
 ]

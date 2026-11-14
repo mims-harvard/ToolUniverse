@@ -41,37 +41,190 @@
           "description": "Citation data showing articles that cite the queried paper",
           "properties": {
             "version": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "hitCount": {
               "type": "integer",
               "description": "Total number of citing articles"
             },
             "request": {
-              "type": ["object", "null"]
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The request Europe PMC echoes back",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
             },
             "citationList": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
                 "citation": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": "object",
                     "properties": {
-                      "id": {"type": ["string", "null"]},
-                      "source": {"type": ["string", "null"]},
-                      "title": {"type": ["string", "null"]},
-                      "authorString": {"type": ["string", "null"]},
-                      "journalAbbreviation": {"type": ["string", "null"]},
-                      "pubYear": {"type": ["integer", "null"]},
-                      "citedByCount": {"type": ["integer", "null"]}
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "title": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "authorString": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "journalAbbreviation": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "pubYear": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "citedByCount": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "citationType": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Kind of citing item, e.g. 'research-article; journal article'"
+                      },
+                      "citedOrder": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Position in the citing paper's reference list, which is what makes a citation list ordered rather than a set"
+                      },
+                      "issn": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Print ISSN"
+                      },
+                      "essn": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Electronic ISSN"
+                      },
+                      "volume": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Volume"
+                      },
+                      "issue": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Issue"
+                      },
+                      "pageInfo": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Page range"
+                      },
+                      "externalLink": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Link out to the citing work"
+                      },
+                      "doi": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "DOI of the citing work"
+                      },
+                      "match": {
+                        "type": [
+                          "boolean",
+                          "string",
+                          "null"
+                        ],
+                        "description": "Whether Europe PMC matched the citation to an indexed record"
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
                     }
-                  }
+                  },
+                  "description": "One citing work"
                 }
-              }
+              },
+              "description": "The citation list itself"
             }
           },
-          "required": ["hitCount"]
+          "required": [
+            "hitCount"
+          ]
         },
         {
           "type": "object",
@@ -141,37 +294,184 @@
           "description": "Reference list (bibliography) of the queried paper",
           "properties": {
             "version": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API version that answered"
             },
             "hitCount": {
-              "type": "integer",
-              "description": "Total number of references in the paper"
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many references the paper has in total"
             },
             "request": {
-              "type": ["object", "null"]
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The request Europe PMC echoes back",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ]
+              }
             },
             "referenceList": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
                 "reference": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": "object",
                     "properties": {
-                      "id": {"type": ["string", "null"]},
-                      "source": {"type": ["string", "null"]},
-                      "title": {"type": ["string", "null"]},
-                      "authorString": {"type": ["string", "null"]},
-                      "journalAbbreviation": {"type": ["string", "null"]},
-                      "pubYear": {"type": ["integer", "null"]},
-                      "citedByCount": {"type": ["integer", "null"]}
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "title": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "authorString": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "journalAbbreviation": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "pubYear": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "citedByCount": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "citationType": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Kind of cited item, e.g. journal article"
+                      },
+                      "citedOrder": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Position in the citing paper's reference list, which is what makes a reference list ordered rather than a set"
+                      },
+                      "issn": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Print ISSN"
+                      },
+                      "essn": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Electronic ISSN"
+                      },
+                      "volume": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Volume"
+                      },
+                      "issue": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Issue"
+                      },
+                      "pageInfo": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Page range"
+                      },
+                      "externalLink": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Link out to the cited work"
+                      },
+                      "doi": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "DOI of the cited work"
+                      },
+                      "match": {
+                        "type": [
+                          "boolean",
+                          "string",
+                          "null"
+                        ],
+                        "description": "Whether Europe PMC matched the citation to an indexed record"
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
                     }
-                  }
+                  },
+                  "description": "One cited work"
                 }
-              }
+              },
+              "description": "The reference list itself"
             }
           },
-          "required": ["hitCount"]
+          "required": [
+            "hitCount"
+          ]
         },
         {
           "type": "object",
@@ -284,6 +584,20 @@
                           "array",
                           "null"
                         ]
+                      },
+                      "CategoryLinkCount": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "How many links the category holds."
+                      },
+                      "NameLong": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The category's full name, e.g. 'BioProject'. The short name alone does not say which archive a link points into."
                       }
                     }
                   }

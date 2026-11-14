@@ -95,6 +95,13 @@
                       }
                     }
                   }
+                },
+                "data": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "OpenML's own envelope around the hit list: {dataset: [...]}. The datasets are one level further down than the outer `data` suggests."
                 }
               }
             }
@@ -273,6 +280,31 @@
                     "null"
                   ],
                   "description": "MD5 checksum of the data file"
+                },
+                "file_id": {
+                  "type": "integer",
+                  "description": "Internal file ID for downloading"
+                },
+                "description_version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which revision of the DESCRIPTION text this is, e.g. '4'. Independent of version_label -- the prose can be revised without the data changing."
+                },
+                "processing_date": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When OpenML last processed the dataset, 'YYYY-MM-DD HH:MM:SS', e.g. '2020-11-20 19:02:18'. A space, not a 'T', and no timezone."
+                },
+                "version_label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The dataset's own version label as a STRING, e.g. '1'. What the uploader called this version."
                 }
               }
             }

@@ -79,9 +79,30 @@
                   "IndicatorName": {
                     "type": "string",
                     "description": "Full indicator name/description"
+                  },
+                  "Language": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Language of the indicator's labels, e.g. 'EN'. WHO publishes the same indicator in several languages, so a listing can contain apparent duplicates."
                   }
                 }
               }
+            },
+            "@odata.context": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The OData metadata URL for the collection, e.g. 'https://ghoapi.azureedge.net/api/$metadata#Collection(Default.DIMENSION_VALUE)'. It names which OData entity type the rows in 'value' are, which is the only statement of their shape. NOTE the property name contains a literal '.', so it is one key and not a path through '@odata'."
+            },
+            "@odata.count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total number of rows matching, as OData reports it - which is not the number returned when the query is paged. Same note on the name: the '.' is part of the key."
             }
           },
           "not": {
@@ -264,9 +285,86 @@
                       "null"
                     ],
                     "description": "Upper confidence interval"
+                  },
+                  "Date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When WHO last published the row, e.g. '2026-10-01T16:11:13.08+02:00'."
+                  },
+                  "Dim1Type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the first disaggregation is, e.g. 'SEX'. Without it the Dim1 value is an unlabelled code, and a sex-disaggregated row read as a total is wrong."
+                  },
+                  "Id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "WHO's row id for the observation, e.g. 5638229."
+                  },
+                  "ParentLocation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The region the place belongs to, e.g. 'Eastern Mediterranean'. Measured on 7 of 10 rows - absent for rows that are themselves regions."
+                  },
+                  "ParentLocationCode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "That region's WHO code, e.g. 'EMR'."
+                  },
+                  "SpatialDimType": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What kind of place the row is for, e.g. 'COUNTRY', 'REGION', 'WORLDBANKINCOMEGROUP'. Summing rows across dimension types double-counts, and the row otherwise looks the same."
+                  },
+                  "TimeDimType": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What kind of period the row covers, e.g. 'YEAR'."
+                  },
+                  "TimeDimensionBegin": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Start of the period, e.g. '2020-01-01T00:00:00+01:00'. Says whether '2020' means a calendar year or something else."
+                  },
+                  "TimeDimensionEnd": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "End of the period, e.g. '2020-12-31T00:00:00+01:00'."
+                  },
+                  "TimeDimensionValue": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The period as WHO labels it, e.g. '2020'. A string."
                   }
                 }
               }
+            },
+            "@odata.context": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The OData metadata URL for the collection, e.g. 'https://ghoapi.azureedge.net/api/$metadata#Collection(Default.DIMENSION_VALUE)'. It names which OData entity type the rows in 'value' are, which is the only statement of their shape. NOTE the property name contains a literal '.', so it is one key and not a path through '@odata'."
             }
           },
           "not": {
@@ -376,6 +474,13 @@
                   }
                 }
               }
+            },
+            "@odata.context": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The OData metadata URL for the collection, e.g. 'https://ghoapi.azureedge.net/api/$metadata#Collection(Default.DIMENSION_VALUE)'. It names which OData entity type the rows in 'value' are, which is the only statement of their shape. NOTE the property name contains a literal '.', so it is one key and not a path through '@odata'."
             }
           },
           "required": [

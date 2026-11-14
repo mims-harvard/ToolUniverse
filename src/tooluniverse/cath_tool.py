@@ -19,6 +19,37 @@ from .tool_registry import register_tool
 CATH_BASE_URL = "https://www.cathdb.info/version/v4_3_0/api/rest"
 
 
+# A GO definition runs to several sentences and the summary is a summary, so
+# the accession, the name, the aspect and the evidence code are kept and the
+# definition is trimmed to this.
+GO_DEFINITION_CHARACTERS = 300
+
+
+def _go_terms(terms: Any) -> list:
+    """GO annotations with the evidence code that qualifies each.
+
+    An IDA (direct assay) and an IEA (electronic annotation) are not the same
+    claim, and `term_type` is the aspect -- molecular_function against
+    biological_process -- so a list of names alone cannot be filtered.
+    """
+    out = []
+    for term in terms if isinstance(terms, list) else []:
+        if not isinstance(term, dict):
+            continue
+        definition = term.get("definition") or ""
+        out.append(
+            {
+                "go_acc": term.get("go_acc"),
+                "name": term.get("name"),
+                "term_type": term.get("term_type"),
+                "evidence": term.get("evidence"),
+                "definition": definition[:GO_DEFINITION_CHARACTERS],
+                "definition_truncated": len(definition) > GO_DEFINITION_CHARACTERS,
+            }
+        )
+    return out
+
+
 @register_tool("CATHTool")
 class CATHTool(BaseTool):
     """
@@ -150,6 +181,25 @@ class CATHTool(BaseTool):
             if len(cath_parts) > 3
             else None,
             "residue_count": len(data.get("residues", [])),
+            "pdb_code": data.get("pdb_code"),
+            # Which residue ranges of the chain the domain is. A domain IS its
+            # segments, and the summary reported only how many residues there
+            # were.
+            "pdb_segments": data.get("pdb_segments") or [],
+            "atom_length": data.get("atom_length"),
+            # The functional annotation: GO terms with the evidence code that
+            # qualifies each, and the EC numbers. The sibling handler
+            # `_get_funfam` in this module has always returned `go_terms`;
+            # this one dropped them, from a tool called "domain summary".
+            "go_terms": _go_terms(data.get("go_terms")),
+            "go_term_count": len(data.get("go_terms") or []),
+            "ec_terms": data.get("ec_terms") or [],
+            # Which FunFam and sequence-identity clusters the domain belongs
+            # to, so it can be followed to CATH_get_funfam.
+            "funfam_number": data.get("funfam_number"),
+            "s35_cluster_id": data.get("s35_id"),
+            "ssg5_number": data.get("ssg5_number"),
+            "ssg9_number": data.get("ssg9_number"),
         }
 
         # CATH class names

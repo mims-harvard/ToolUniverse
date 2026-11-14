@@ -42,10 +42,111 @@
               "type": "string"
             },
             "immune_infiltration": {
-              "type": "object"
+              "type": "object",
+              "description": "Per immune cell type: the marker gene, the mean and median of its expression over the sampled tumours, and the number of samples that had a value. With a correlate gene, also the Spearman r over the samples the two genes SHARE -- which is what n_paired_samples reports, and what the positional pairing it replaces did not compute.",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "marker_gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mean_expression": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "median_expression": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "n_samples": {
+                    "type": "integer"
+                  },
+                  "correlation_with_gene": {
+                    "type": "object",
+                    "properties": {
+                      "gene": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "spearman_r": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "p_value": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "n_paired_samples": {
+                        "type": "integer",
+                        "description": "Samples with a value for BOTH genes, which is what the correlation is over"
+                      }
+                    }
+                  }
+                }
+              }
             },
             "n_samples": {
+              "type": "integer",
+              "description": "How many samples were REQUESTED, which is the cap and not the study's size. See study_sample_total."
+            },
+            "samples_requested": {
               "type": "integer"
+            },
+            "study_sample_total": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many samples the study has. BRCA has over a thousand and the default estimate reads the first 100, so the mean and median are over a subset."
+            },
+            "samples_are_a_subset": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when fewer samples were used than the study has"
+            },
+            "sampling": {
+              "type": "string",
+              "description": "States that the samples are the first max_samples cBioPortal lists, in its own order, and not a random sample"
+            },
+            "max_samples": {
+              "type": "integer",
+              "description": "The cap in force, raisable up to 1000"
+            },
+            "method": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How the estimate was computed. Measured value: 'Marker gene expression (CD19, CD4, CD8A, FCGR3B, CD68, ITGAX) via cBioPortal TCGA data' -- six marker genes read off bulk expression, which is not a deconvolution and does not give cell fractions."
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Where the result actually came from. Measured value: 'TIMER2.0/3.0 API is unavailable; using cBioPortal TCGA expression as proxy'. The estimate is a fallback, not TIMER's own deconvolution -- read this before reporting it as a TIMER result."
+            },
+            "profile_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The expression profile used, e.g. 'brca_tcga_rna_seq_v2_mrna'. Names the study and assay behind the numbers."
             }
           },
           "required": [
@@ -134,6 +235,20 @@
             },
             "n_samples": {
               "type": "integer"
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Where the result came from. Measured value: 'TIMER2.0/3.0 API unavailable; correlation computed from cBioPortal TCGA expression'. The correlation is a fallback computed locally, not TIMER's own output."
+            },
+            "profile_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The expression profile the correlation was computed on, e.g. 'brca_tcga_rna_seq_v2_mrna'. Names the study and the assay."
             }
           },
           "required": [
@@ -220,6 +335,34 @@
             },
             "low_expression_group": {
               "type": "object"
+            },
+            "log_rank_statistic": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The log-rank test statistic, e.g. -2.1238. Signed, so it carries the direction as well as the magnitude; the p-value is reported separately."
+            },
+            "median_expression_cutoff": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The expression value patients were split into high and low groups at, e.g. 152.2146. This is a MEDIAN split, not an optimised cutpoint, so the split is cohort-specific and not transferable."
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Where the result actually came from. Measured value: 'TIMER2.0/3.0 API unavailable; survival computed from cBioPortal TCGA data' -- the tool fell back to a DIFFERENT database and recorded it only here. Read this field before attributing the result to TIMER."
+            },
+            "profile_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The expression profile the analysis ran on, e.g. 'brca_tcga_rna_seq_v2_mrna'. Names the study and the assay, which the gene name alone does not."
             }
           },
           "required": [

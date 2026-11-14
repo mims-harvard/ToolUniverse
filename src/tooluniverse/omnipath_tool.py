@@ -26,6 +26,26 @@ from .tool_registry import register_tool
 OMNIPATH_BASE_URL = "https://omnipathdb.org"
 
 
+def _omnipath_references(item):
+    """The publications behind an OmniPath record, as a list.
+
+    OmniPath answers `references` as one semicolon-joined string of
+    `<resource>:<pmid>` pairs -- "TRIP:11290752;TRIP:11983166;TRIP:12601176".
+    `sources` names the databases that assert the interaction and was carried;
+    the papers behind them were not, so a signalling edge arrived with its
+    curation_effort (3) and nothing to read. One query for TF-target
+    interactions dropped 1,070 of them.
+    """
+    raw = item.get("references")
+    if not raw:
+        return []
+    if isinstance(raw, list):
+        parts = [str(part) for part in raw]
+    else:
+        parts = str(raw).split(";")
+    return [part.strip() for part in parts if part.strip()]
+
+
 @register_tool("OmniPathTool")
 class OmniPathTool(BaseTool):
     """
@@ -195,6 +215,7 @@ class OmniPathTool(BaseTool):
                     "is_stimulation": bool(item.get("is_stimulation", 0)),
                     "is_inhibition": bool(item.get("is_inhibition", 0)),
                     "sources": item.get("sources", []),
+                    "references": _omnipath_references(item),
                     "curation_effort": item.get("curation_effort"),
                     "type": item.get("type"),
                 }
@@ -252,6 +273,10 @@ class OmniPathTool(BaseTool):
                     "database": item.get("database"),
                     "scope": item.get("scope"),
                     "aspect": item.get("aspect"),
+                    # Whether the row is about a protein, a complex or a
+                    # miRNA, and which kind of resource asserted the role.
+                    "entity_type": item.get("entity_type"),
+                    "source": item.get("source"),
                     "consensus_score": item.get("consensus_score"),
                     "transmitter": item.get("transmitter", False),
                     "receiver": item.get("receiver", False),
@@ -325,6 +350,7 @@ class OmniPathTool(BaseTool):
                     "consensus_stimulation": bool(item.get("consensus_stimulation", 0)),
                     "consensus_inhibition": bool(item.get("consensus_inhibition", 0)),
                     "sources": item.get("sources", []),
+                    "references": _omnipath_references(item),
                     "curation_effort": item.get("curation_effort"),
                     "type": item.get("type"),
                 }
@@ -372,7 +398,7 @@ class OmniPathTool(BaseTool):
                     "components_genesymbols": item.get("components_genesymbols"),
                     "stoichiometry": item.get("stoichiometry"),
                     "sources": item.get("sources", []),
-                    "references": item.get("references"),
+                    "references": _omnipath_references(item),
                     "identifiers": item.get("identifiers"),
                 }
             )
@@ -573,6 +599,7 @@ class OmniPathTool(BaseTool):
                     "residue_offset": item.get("residue_offset"),
                     "modification": item.get("modification"),
                     "sources": item.get("sources", []),
+                    "references": _omnipath_references(item),
                 }
             )
 
@@ -642,7 +669,9 @@ class OmniPathTool(BaseTool):
                     "is_stimulation": bool(item.get("is_stimulation", 0)),
                     "is_inhibition": bool(item.get("is_inhibition", 0)),
                     "dorothea_level": dorothea_levels,
+                    "type": item.get("type"),
                     "sources": item.get("sources", []),
+                    "references": _omnipath_references(item),
                     "curation_effort": item.get("curation_effort"),
                 }
             )
@@ -720,7 +749,12 @@ class OmniPathTool(BaseTool):
                     "is_stimulation": bool(item.get("is_stimulation", 0)),
                     "is_inhibition": bool(item.get("is_inhibition", 0)),
                     "dorothea_level": sorted(level_set) if level_set else None,
+                    # The regulon rows named the TF by symbol only; the
+                    # accession is what joins them to a protein-level source.
+                    "tf_uniprot": item.get("source"),
+                    "type": item.get("type"),
                     "sources": item.get("sources", []),
+                    "references": _omnipath_references(item),
                     "curation_effort": item.get("curation_effort"),
                 }
             )

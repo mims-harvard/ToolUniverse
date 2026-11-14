@@ -167,9 +167,102 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "citationHtml": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The dataset's formatted citation as HTML, e.g. 'Salomon, Erika, 2015, \"Climate Change Helplessness, Pilot Study\", <a href=...'. The form a repository expects it to be cited in."
+                  },
+                  "contacts": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Who to contact about the dataset, each with 'name' and 'affiliation'. For restricted data this is the only route to access."
+                  },
+                  "createdAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the dataset record was created, e.g. '2015-12-12T21:20:24Z'."
+                  },
+                  "identifier_of_dataverse": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "That collection's short identifier, e.g. 'cch'. The key for querying the collection itself."
+                  },
+                  "majorVersion": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Major version number, e.g. 1."
+                  },
+                  "minorVersion": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Minor version number, e.g. 0. With the major number this pins which version the files came from."
+                  },
+                  "name_of_dataverse": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The collection the dataset lives in, e.g. 'Climate Change Helplessness Dataverse'."
+                  },
+                  "publicationStatuses": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The dataset's states, e.g. ['Published'], or 'Draft'/'Unpublished'/'Deaccessioned'. A deaccessioned dataset still answers a search and should not be cited."
+                  },
+                  "publications": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Related publications the depositor listed. Measured present on 1 of 5 rows and empty there, so its absence says nothing."
+                  },
+                  "storageIdentifier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where the repository keeps the files, e.g. 's3://10.7910/DVN/HAEP2K'. Internal to the installation, not a download URL."
+                  },
+                  "updatedAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When it was last changed."
                   }
                 }
               }
+            },
+            "count_in_response": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many items this page holds, e.g. 5. The total matching count is reported separately, and the two differ whenever the answer is paged."
             }
           },
           "not": {
@@ -305,6 +398,20 @@
                   "description": "Contains citation metadata block with title, authors, description, subjects, keywords"
                 }
               }
+            },
+            "data": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The dataset record - id, identifier, persistentUrl, protocol, publication date, and the versioned metadata blocks. The payload."
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Dataverse's own status string, e.g. 'OK'. The envelope's success flag."
             }
           },
           "not": {

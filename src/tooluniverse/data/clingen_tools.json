@@ -1,17 +1,19 @@
 [
   {
     "name": "ClinGen_search_gene_validity",
-    "description": "Search ClinGen gene-disease validity curations by gene symbol. Returns classification (Definitive, Strong, Moderate, Limited, Disputed, Refuted), disease associations, and inheritance patterns. Essential for ACMG variant classification. Example: BRCA1 returns validity scores for hereditary breast/ovarian cancer.",
+    "description": "Search ClinGen gene-disease validity curations by gene symbol. Returns classification (Definitive, Strong, Moderate, Limited, Disputed, Refuted), disease associations, and inheritance patterns. Essential for ACMG variant classification. Example: BRCA1 returns validity scores for hereditary breast/ovarian cancer. The `gene` parameter takes an HGNC GENE SYMBOL only: this file carries no coordinate, transcript or ontology index, so a region, an Ensembl id, a RefSeq accession or an HGVS expression is refused with an error rather than answered with an empty result. Resolve a region to symbols first (Ensembl_get_region_features with feature_types='gene').",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
       "properties": {
         "gene": {
           "type": "string",
-          "description": "Gene symbol to search (e.g., BRCA1, TP53, CFTR)"
+          "description": "Gene symbol to search (e.g., BRCA1, TP53, CFTR). HGNC symbol only (e.g. BRCA1). A genomic range, Ensembl id, RefSeq accession or HGVS expression is refused with an error naming what to convert it with -- it is not answered with an empty list, which would be indistinguishable from an uncurated gene."
         }
       },
-      "required": ["gene"]
+      "required": [
+        "gene"
+      ]
     },
     "fields": {
       "operation": "search_gene_validity",
@@ -22,34 +24,88 @@
       "items": {
         "type": "object",
         "properties": {
-          "GENE SYMBOL": {"type": ["string", "null"]},
-          "GENE ID (HGNC)": {"type": ["string", "null"]},
-          "DISEASE LABEL": {"type": ["string", "null"]},
-          "DISEASE ID (MONDO)": {"type": ["string", "null"]},
-          "CLASSIFICATION": {"type": ["string", "null"]},
-          "MOI": {"type": ["string", "null"]},
-          "SOP": {"type": ["string", "null"]},
-          "GCEP": {"type": ["string", "null"]},
-          "ONLINE REPORT": {"type": ["string", "null"]},
-          "CLASSIFICATION DATE": {"type": ["string", "null"]}
+          "GENE SYMBOL": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "GENE ID (HGNC)": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "DISEASE LABEL": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "DISEASE ID (MONDO)": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "CLASSIFICATION": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "MOI": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "SOP": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "GCEP": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "ONLINE REPORT": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "CLASSIFICATION DATE": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     },
     "test_examples": [
-      {"gene": "BRCA1"},
-      {"gene": "TP53"}
+      {
+        "gene": "BRCA1"
+      },
+      {
+        "gene": "TP53"
+      }
     ]
   },
   {
     "name": "ClinGen_get_gene_validity",
-    "description": "Get ClinGen gene-disease validity curations with classifications (Definitive, Strong, Moderate, Limited). The full catalog contains thousands of rows and is paged with limit/offset; total and next_offset make every curation reachable. An optional exact gene-symbol filter is available.",
+    "description": "Get ClinGen gene-disease validity curations with classifications (Definitive, Strong, Moderate, Limited). The full catalog contains thousands of rows and is paged with limit/offset; total and next_offset make every curation reachable. An optional exact gene-symbol filter is available. The `gene` parameter takes an HGNC GENE SYMBOL only: this file carries no coordinate, transcript or ontology index, so a region, an Ensembl id, a RefSeq accession or an HGVS expression is refused with an error rather than answered with an empty result. Resolve a region to symbols first (Ensembl_get_region_features with feature_types='gene').",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
       "properties": {
         "gene": {
           "type": "string",
-          "description": "Optional: Filter by gene symbol"
+          "description": "Optional: Filter by gene symbol. HGNC symbol only (e.g. BRCA1). A genomic range, Ensembl id, RefSeq accession or HGVS expression is refused with an error naming what to convert it with -- it is not answered with an empty list, which would be indistinguishable from an uncurated gene."
         },
         "limit": {
           "type": "integer",
@@ -73,26 +129,104 @@
     },
     "return_schema": {
       "type": "array",
-      "items": {"type": "object"}
+      "items": {
+        "type": "object",
+        "properties": {
+          "GENE SYMBOL": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The gene, by HGNC symbol."
+          },
+          "GENE ID (HGNC)": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Its HGNC id."
+          },
+          "DISEASE LABEL": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The disease the gene was assessed for."
+          },
+          "DISEASE ID (MONDO)": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "That disease's MONDO id."
+          },
+          "MOI": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Mode of inheritance, e.g. 'AD', 'AR'. The validity classification is for THIS gene-disease-inheritance triple, not for the gene alone."
+          },
+          "SOP": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Which version of ClinGen's standard operating procedure was used. Classifications made under different SOPs are not strictly comparable."
+          },
+          "CLASSIFICATION": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The verdict: 'Definitive', 'Strong', 'Moderate', 'Limited', 'Disputed', 'Refuted', 'No Known Disease Relationship'. 'Limited' and 'Disputed' are not weak yeses -- they are reasons not to report a variant in that gene."
+          },
+          "CLASSIFICATION DATE": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "When it was classified. ClinGen re-curates, so an old date may predate the evidence that settled the question."
+          },
+          "GCEP": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The Gene Curation Expert Panel that made the call."
+          },
+          "ONLINE REPORT": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The full report, where the evidence behind the verdict is set out."
+          }
+        }
+      }
     },
     "test_examples": [
       {},
-      {"gene": "CFTR"}
+      {
+        "gene": "CFTR"
+      }
     ]
   },
   {
     "name": "ClinGen_search_dosage_sensitivity",
-    "description": "Search ClinGen dosage sensitivity curations by gene symbol. Returns haploinsufficiency (HI) and triplosensitivity (TS) scores (0-3 scale). Score 3 = Sufficient evidence for dosage pathogenicity. Critical for CNV interpretation. Example: MECP2 has HI score of 3.",
+    "description": "Search ClinGen dosage sensitivity curations by gene symbol. Returns haploinsufficiency (HI) and triplosensitivity (TS) scores (0-3 scale). Score 3 = Sufficient evidence for dosage pathogenicity. Critical for CNV interpretation. Example: MECP2 has HI score of 3. The `gene` parameter takes an HGNC GENE SYMBOL only: this file carries no coordinate, transcript or ontology index, so a region, an Ensembl id, a RefSeq accession or an HGVS expression is refused with an error rather than answered with an empty result. Resolve a region to symbols first (Ensembl_get_region_features with feature_types='gene').",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
       "properties": {
         "gene": {
           "type": "string",
-          "description": "Gene symbol to search (e.g., MECP2, PMP22, RAI1)"
+          "description": "Gene symbol to search (e.g., MECP2, PMP22, RAI1). HGNC symbol only (e.g. BRCA1). A genomic range, Ensembl id, RefSeq accession or HGVS expression is refused with an error naming what to convert it with -- it is not answered with an empty list, which would be indistinguishable from an uncurated gene."
         }
       },
-      "required": ["gene"]
+      "required": [
+        "gene"
+      ]
     },
     "fields": {
       "operation": "search_dosage_sensitivity",
@@ -103,30 +237,64 @@
       "items": {
         "type": "object",
         "properties": {
-          "GENE SYMBOL": {"type": ["string", "null"]},
-          "HGNC ID": {"type": ["string", "null"]},
-          "HAPLOINSUFFICIENCY": {"type": ["string", "null"]},
-          "TRIPLOSENSITIVITY": {"type": ["string", "null"]},
-          "ONLINE REPORT": {"type": ["string", "null"]},
-          "DATE": {"type": ["string", "null"]}
+          "GENE SYMBOL": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "HGNC ID": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "HAPLOINSUFFICIENCY": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "TRIPLOSENSITIVITY": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "ONLINE REPORT": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "DATE": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     },
     "test_examples": [
-      {"gene": "MECP2"},
-      {"gene": "PMP22"}
+      {
+        "gene": "MECP2"
+      },
+      {
+        "gene": "PMP22"
+      }
     ]
   },
   {
     "name": "ClinGen_get_dosage_sensitivity",
-    "description": "Get ClinGen dosage sensitivity curations, including haploinsufficiency and triplosensitivity scores. The catalog is paged with limit/offset; total and next_offset make every curation reachable. Set include_regions=true to include recurrent CNV regions.",
+    "description": "Get ClinGen dosage sensitivity curations, including haploinsufficiency and triplosensitivity scores. The catalog is paged with limit/offset; total and next_offset make every curation reachable. Set include_regions=true to include recurrent CNV regions. The `gene` parameter takes an HGNC GENE SYMBOL only: this file carries no coordinate, transcript or ontology index, so a region, an Ensembl id, a RefSeq accession or an HGVS expression is refused with an error rather than answered with an empty result. Resolve a region to symbols first (Ensembl_get_region_features with feature_types='gene').",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
       "properties": {
         "gene": {
           "type": "string",
-          "description": "Optional: Filter by gene symbol"
+          "description": "Optional: Filter by gene symbol. HGNC symbol only (e.g. BRCA1). A genomic range, Ensembl id, RefSeq accession or HGVS expression is refused with an error naming what to convert it with -- it is not answered with an empty list, which would be indistinguishable from an uncurated gene."
         },
         "include_regions": {
           "type": "boolean",
@@ -155,11 +323,59 @@
     },
     "return_schema": {
       "type": "array",
-      "items": {"type": "object"}
+      "items": {
+        "type": "object",
+        "properties": {
+          "GENE SYMBOL": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The gene."
+          },
+          "HGNC ID": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Its HGNC id."
+          },
+          "HAPLOINSUFFICIENCY": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Evidence that LOSS of one copy causes disease, as ClinGen's score. This is what decides whether a deletion is reportable."
+          },
+          "TRIPLOSENSITIVITY": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Evidence that GAIN of a copy causes disease. Independent of haploinsufficiency -- a gene can be one and not the other, so a duplication cannot be judged on the deletion score."
+          },
+          "DATE": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "When the assessment was made."
+          },
+          "ONLINE REPORT": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The full report."
+          }
+        }
+      }
     },
     "test_examples": [
       {},
-      {"include_regions": true}
+      {
+        "include_regions": true
+      }
     ]
   },
   {
@@ -198,39 +414,116 @@
       "items": {
         "type": "object",
         "properties": {
-          "docId": {"type": "string"},
-          "topicIri": {"type": "string"},
-          "curationType": {"type": "string"},
-          "latestSearchDate": {"type": "string"},
-          "lastUpdated": {"type": "string"},
-          "lastAuthor": {"type": "string"},
-          "context": {"type": "string"},
-          "contextIri": {"type": "string"},
-          "release": {"type": "string"},
-          "releaseDate": {"type": "string"},
-          "geneOrVariant": {"type": "string"},
-          "geneOmim": {"type": "string"},
-          "disease": {"type": "string"},
-          "omim": {"type": "string"},
-          "status-overall": {"type": "string"},
-          "status-stg1": {"type": "string"},
-          "status-stg2": {"type": "string"},
-          "status-scoring": {"type": "string"},
-          "outcome": {"type": ["string", "null"]},
-          "outcomeScoringGroup": {"type": "string"},
-          "intervention": {"type": ["string", "null"]},
-          "interventionScoringGroup": {"type": "string"},
-          "severity": {"type": ["string", "null"]},
-          "likelihood": {"type": ["string", "null"]},
-          "natureOfIntervention": {"type": ["string", "null"]},
-          "effectiveness": {"type": ["string", "null"]},
-          "overall": {"type": ["string", "null"]}
+          "docId": {
+            "type": "string"
+          },
+          "topicIri": {
+            "type": "string"
+          },
+          "curationType": {
+            "type": "string"
+          },
+          "latestSearchDate": {
+            "type": "string"
+          },
+          "lastUpdated": {
+            "type": "string"
+          },
+          "lastAuthor": {
+            "type": "string"
+          },
+          "context": {
+            "type": "string"
+          },
+          "contextIri": {
+            "type": "string"
+          },
+          "release": {
+            "type": "string"
+          },
+          "releaseDate": {
+            "type": "string"
+          },
+          "geneOrVariant": {
+            "type": "string"
+          },
+          "geneOmim": {
+            "type": "string"
+          },
+          "disease": {
+            "type": "string"
+          },
+          "omim": {
+            "type": "string"
+          },
+          "status-overall": {
+            "type": "string"
+          },
+          "status-stg1": {
+            "type": "string"
+          },
+          "status-stg2": {
+            "type": "string"
+          },
+          "status-scoring": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "outcomeScoringGroup": {
+            "type": "string"
+          },
+          "intervention": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "interventionScoringGroup": {
+            "type": "string"
+          },
+          "severity": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "likelihood": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "natureOfIntervention": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "effectiveness": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "overall": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     },
     "test_examples": [
       {},
-      {"gene": "BRCA1"}
+      {
+        "gene": "BRCA1"
+      }
     ]
   },
   {
@@ -269,54 +562,133 @@
       "items": {
         "type": "object",
         "properties": {
-          "docId": {"type": "string"},
-          "topicIri": {"type": "string"},
-          "curationType": {"type": "string"},
-          "latestSearchDate": {"type": "string"},
-          "lastUpdated": {"type": "string"},
-          "lastAuthor": {"type": "string"},
-          "context": {"type": "string"},
-          "contextIri": {"type": "string"},
-          "release": {"type": "string"},
-          "releaseDate": {"type": "string"},
-          "geneOrVariant": {"type": "string"},
-          "geneOmim": {"type": "string"},
-          "disease": {"type": "string"},
-          "omim": {"type": "string"},
-          "status-overall": {"type": "string"},
-          "status-stg1": {"type": "string"},
-          "status-stg2": {"type": "string"},
-          "status-scoring": {"type": "string"},
-          "outcome": {"type": ["string", "null"]},
-          "outcomeScoringGroup": {"type": "string"},
-          "intervention": {"type": ["string", "null"]},
-          "interventionScoringGroup": {"type": "string"},
-          "severity": {"type": ["string", "null"]},
-          "likelihood": {"type": ["string", "null"]},
-          "natureOfIntervention": {"type": ["string", "null"]},
-          "effectiveness": {"type": ["string", "null"]},
-          "overall": {"type": ["string", "null"]}
+          "docId": {
+            "type": "string"
+          },
+          "topicIri": {
+            "type": "string"
+          },
+          "curationType": {
+            "type": "string"
+          },
+          "latestSearchDate": {
+            "type": "string"
+          },
+          "lastUpdated": {
+            "type": "string"
+          },
+          "lastAuthor": {
+            "type": "string"
+          },
+          "context": {
+            "type": "string"
+          },
+          "contextIri": {
+            "type": "string"
+          },
+          "release": {
+            "type": "string"
+          },
+          "releaseDate": {
+            "type": "string"
+          },
+          "geneOrVariant": {
+            "type": "string"
+          },
+          "geneOmim": {
+            "type": "string"
+          },
+          "disease": {
+            "type": "string"
+          },
+          "omim": {
+            "type": "string"
+          },
+          "status-overall": {
+            "type": "string"
+          },
+          "status-stg1": {
+            "type": "string"
+          },
+          "status-stg2": {
+            "type": "string"
+          },
+          "status-scoring": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "outcomeScoringGroup": {
+            "type": "string"
+          },
+          "intervention": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "interventionScoringGroup": {
+            "type": "string"
+          },
+          "severity": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "likelihood": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "natureOfIntervention": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "effectiveness": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "overall": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     },
     "test_examples": [
       {},
-      {"gene": "RB1"}
+      {
+        "gene": "RB1"
+      }
     ]
   },
   {
     "name": "ClinGen_search_actionability",
-    "description": "Search ClinGen clinical actionability across both adult and pediatric contexts by gene. Returns actionability data from both contexts for comparison. Useful for comprehensive actionability assessment of a gene across age groups.",
+    "description": "Search ClinGen clinical actionability across both adult and pediatric contexts by gene. Returns actionability data from both contexts for comparison. Useful for comprehensive actionability assessment of a gene across age groups. The `gene` parameter takes an HGNC GENE SYMBOL only: this file carries no coordinate, transcript or ontology index, so a region, an Ensembl id, a RefSeq accession or an HGVS expression is refused with an error rather than answered with an empty result. Resolve a region to symbols first (Ensembl_get_region_features with feature_types='gene').",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
       "properties": {
         "gene": {
           "type": "string",
-          "description": "Gene symbol to search (e.g., BRCA1, MLH1, LDLR)"
+          "description": "Gene symbol to search (e.g., BRCA1, MLH1, LDLR). HGNC symbol only (e.g. BRCA1). A genomic range, Ensembl id, RefSeq accession or HGVS expression is refused with an error naming what to convert it with -- it is not answered with an empty list, which would be indistinguishable from an uncurated gene."
         }
       },
-      "required": ["gene"]
+      "required": [
+        "gene"
+      ]
     },
     "fields": {
       "operation": "search_actionability",
@@ -332,13 +704,23 @@
         "data": {
           "type": "object",
           "properties": {
-            "Adult": {"type": "array"},
-            "Pediatric": {"type": "array"}
+            "Adult": {
+              "type": "array"
+            },
+            "Pediatric": {
+              "type": "array"
+            }
           }
         },
-        "gene_searched": {"type": "string"},
-        "adult_count": {"type": "integer"},
-        "pediatric_count": {"type": "integer"},
+        "gene_searched": {
+          "type": "string"
+        },
+        "adult_count": {
+          "type": "integer"
+        },
+        "pediatric_count": {
+          "type": "integer"
+        },
         "failed_contexts": {
           "type": "object",
           "description": "Maps context name (Adult/Pediatric) to the fetch error. Present only on partial or total failure."
@@ -347,24 +729,30 @@
           "type": "string",
           "description": "Present when some but not all contexts failed: warns that the failed context's count of 0 means 'not retrieved', not 'no curation exists'."
         },
-        "source": {"type": "string"}
+        "source": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
-      {"gene": "BRCA1"},
-      {"gene": "MLH1"}
+      {
+        "gene": "BRCA1"
+      },
+      {
+        "gene": "MLH1"
+      }
     ]
   },
   {
     "name": "ClinGen_get_variant_classifications",
-    "description": "Get variant pathogenicity classifications from ClinGen Evidence Repository. Returns expert-curated variant classifications with supporting evidence. Optional filters by gene or variant. Classifications follow ACMG/AMP guidelines with expert review. Results are paged with limit/offset: 'total' counts every matching classification, and 'has_more' / 'next_offset' give the next page. CAID and ClinVar Variation ID lookups also return the CAID, mode of inheritance, met/unmet ACMG criteria, evidence summary, dates, version and HGVS forms.",
+    "description": "Get variant pathogenicity classifications from ClinGen Evidence Repository. Returns expert-curated variant classifications with supporting evidence. Optional filters by gene or variant. Classifications follow ACMG/AMP guidelines with expert review. Results are paged with limit/offset: 'total' counts every matching classification, and 'has_more' / 'next_offset' give the next page. CAID and ClinVar Variation ID lookups also return the CAID, mode of inheritance, met/unmet ACMG criteria, evidence summary, dates, version and HGVS forms. The `gene` parameter takes an HGNC GENE SYMBOL only: this file carries no coordinate, transcript or ontology index, so a region, an Ensembl id, a RefSeq accession or an HGVS expression is refused with an error rather than answered with an empty result. Resolve a region to symbols first (Ensembl_get_region_features with feature_types='gene').",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
       "properties": {
         "gene": {
           "type": "string",
-          "description": "Optional: Filter by gene symbol"
+          "description": "Optional: Filter by gene symbol. HGNC symbol only (e.g. BRCA1). A genomic range, Ensembl id, RefSeq accession or HGVS expression is refused with an error naming what to convert it with -- it is not answered with an empty list, which would be indistinguishable from an uncurated gene."
         },
         "variant": {
           "type": "string",
@@ -395,14 +783,139 @@
       "items": {
         "type": "object",
         "properties": {
-          "Variation": {"type": ["string", "null"]},
-          "ClinVar Variation Id": {"type": ["string", "null"]},
-          "HGNC Gene Symbol": {"type": ["string", "null"]},
-          "Disease": {"type": ["string", "null"]},
-          "Mondo Id": {"type": ["string", "null"]},
-          "Assertion": {"type": ["string", "null"]},
-          "Expert Panel": {"type": ["string", "null"]},
+          "Guidelines": {
+            "type": "array",
+            "description": "WHICH specification was applied. A pathogenicity call under the ENIGMA BRCA1 panel's version 1.0.0 of the ACMG/AMP guidelines is a different claim from one under the generic rules.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "outcome": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "cspec_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "agents": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "Warnings": {
+            "type": "array",
+            "description": "The curator's warnings on this interpretation, dropped whole before. One of BRCA1's reads \"Gene obtained from curated document aligns with the Allele Registry but not with ClinVar data\" -- a stated disagreement with ClinVar about a pathogenicity classification.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "message": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "Published Date": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "UUID": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "CAID": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "HGVS": {
+            "type": "array"
+          },
+          "Evidence Links": {
+            "type": "array",
+            "items": {
+              "type": [
+                "object",
+                "string"
+              ]
+            }
+          },
+          "Variation": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "ClinVar Variation Id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "HGNC Gene Symbol": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "Disease": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "Mondo Id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "Assertion": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "Expert Panel": {
             "type": [
               "string",
               "null"
@@ -432,35 +945,29 @@
               "null"
             ]
           },
-          "Published Date": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
           "Document Version": {
             "type": [
               "string",
               "null"
             ]
-          },
-          "UUID": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "HGVS": {
-            "type": "array"
           }
         }
       }
     },
     "test_examples": [
-      {"gene": "BRCA1"},
-      {"gene": "PAH"},
-      {"variant": "CA16020993"},
-      {"gene": "PAH", "variant": "p.Arg408Trp"},
+      {
+        "gene": "BRCA1"
+      },
+      {
+        "gene": "PAH"
+      },
+      {
+        "variant": "CA16020993"
+      },
+      {
+        "gene": "PAH",
+        "variant": "p.Arg408Trp"
+      },
       {
         "gene": "PAH",
         "limit": 5,

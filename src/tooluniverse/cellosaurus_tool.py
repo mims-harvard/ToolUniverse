@@ -74,6 +74,87 @@ CELLOSAURUS_FIELDS = {
 }
 
 
+# Publications resolved onto one cell line. HeLa (CVCL_0030) cites 83, and
+# each `reference-list` entry is an internal pointer -- {"resource-internal-ref":
+# "CelloPub=CLPUB00047"} -- into the response's own top-level
+# `publication-list`, which the wrapper did not return. So the references
+# reached the caller as opaque ids with no title, journal or PubMed id.
+PUBLICATIONS_PER_CELL_LINE = 100
+AUTHORS_PER_PUBLICATION = 12
+
+
+def _publication_record(publication: dict) -> dict:
+    """One Cellosaurus publication, with the identifiers it is cited by."""
+    xrefs = []
+    for xref in publication.get("xref-list") or []:
+        if not isinstance(xref, dict):
+            continue
+        xrefs.append(
+            {
+                "database": xref.get("database"),
+                "accession": xref.get("accession"),
+                "category": xref.get("category"),
+                "url": xref.get("url"),
+            }
+        )
+    authors = []
+    for author in publication.get("author-list") or []:
+        if not isinstance(author, dict):
+            continue
+        name = author.get("name") or " ".join(
+            part
+            for part in (author.get("last-name"), author.get("first-name"))
+            if part
+        )
+        if name:
+            authors.append(name.strip())
+        if len(authors) >= AUTHORS_PER_PUBLICATION:
+            break
+    return {
+        "internal_id": publication.get("internal-id"),
+        "type": publication.get("type"),
+        "title": publication.get("title"),
+        "journal_name": publication.get("journal-name"),
+        "date": publication.get("date"),
+        "volume": publication.get("volume"),
+        "first_page": publication.get("first-page"),
+        "last_page": publication.get("last-page"),
+        "authors": authors,
+        "author_count": len(publication.get("author-list") or []),
+        # Where the PubMed id and DOI live.
+        "cross_references": xrefs,
+    }
+
+
+def _cell_line_publications(cellosaurus_data: dict, cell_line: dict) -> list:
+    """The cell line's own references, resolved against the publication list.
+
+    A reference whose publication the response does not inline is reported
+    as its bare internal ref rather than dropped, so a caller can see that a
+    citation exists and could not be resolved.
+    """
+    by_id = {}
+    for publication in cellosaurus_data.get("publication-list") or []:
+        if isinstance(publication, dict) and publication.get("internal-id"):
+            by_id[str(publication["internal-id"])] = publication
+    out = []
+    for reference in cell_line.get("reference-list") or []:
+        if not isinstance(reference, dict):
+            continue
+        ref = reference.get("resource-internal-ref")
+        if not ref:
+            continue
+        key = str(ref).split("=", 1)[-1]
+        publication = by_id.get(key) or by_id.get(str(ref))
+        if publication:
+            out.append(_publication_record(publication))
+        else:
+            out.append({"internal_id": key, "title": None, "cross_references": []})
+        if len(out) >= PUBLICATIONS_PER_CELL_LINE:
+            break
+    return out
+
+
 @register_tool("CellosaurusSearchTool")
 class CellosaurusSearchTool(BaseTool):
     """
@@ -143,6 +224,21 @@ class CellosaurusSearchTool(BaseTool):
                 if "cell-line-list" in cellosaurus_data:
                     cell_lines = cellosaurus_data["cell-line-list"]
                     total_count = len(cell_lines)
+                    # The response has TWO top-level keys and this returned
+                    # one of them. Each cell line keeps its `reference-list`,
+                    # whose entries are bare pointers like
+                    # {"resource-internal-ref": "CelloPub=CLPUB00047"} -- and
+                    # the table they point into is the `publication-list` that
+                    # was being discarded. For HeLa that is 83 references, all
+                    # 83 resolvable, handed back as 83 opaque strings, many of
+                    # them Cellosaurus-internal ids that resolve to nothing
+                    # public. Nothing was missing from the row; the row could
+                    # not be used. The detail tool already had the resolver.
+                    for cell_line in cell_lines:
+                        if isinstance(cell_line, dict):
+                            cell_line["publications"] = _cell_line_publications(
+                                cellosaurus_data, cell_line
+                            )
 
             return {
                 "success": True,
@@ -1329,10 +1425,22 @@ class CellosaurusGetCellLineInfoTool(BaseTool):
                 # against those abbreviations matched no JSON key and emptied
                 # every record, including this tool's own test example.
 
+                publications = _cell_line_publications(
+                    cellosaurus_data, cell_line_data
+                )
                 return {
                     "success": True,
                     "accession": accession,
                     "data": cell_line_data,
+                    # The cell line's `reference-list` holds internal
+                    # pointers; these are the publications they point at,
+                    # with the PubMed ids and DOIs under cross_references.
+                    "publications": publications,
+                    "publication_count": len(cell_line_data.get("reference-list") or []),
+                    "publications_truncated": len(
+                        cell_line_data.get("reference-list") or []
+                    )
+                    > len(publications),
                     "format": format_type,
                 }
             else:

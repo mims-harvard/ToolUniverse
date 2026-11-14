@@ -306,6 +306,70 @@
                   },
                   "interactor_type": {
                     "type": "string"
+                  },
+                  "interactor_ac": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "IntAct accession for the participant"
+                  },
+                  "bio_role": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the subunit does in the complex (enzyme, enzyme target, inhibitor, 'unspecified role'), as opposed to what it is"
+                  },
+                  "bio_role_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI id for bio_role"
+                  },
+                  "linked_features": {
+                    "type": "array",
+                    "description": "The subunit's binding regions and which other participant each contacts -- the assembly, not just the parts list",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "feature_ac": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "e.g. 'smad2 binding region'"
+                        },
+                        "feature_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "e.g. 'binding region'"
+                        },
+                        "feature_type_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "MI id for feature_type"
+                        },
+                        "linked_participant": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The participant identifier this feature binds"
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -326,15 +390,135 @@
                       "null",
                       "string"
                     ]
+                  },
+                  "qualifier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the cross-reference asserts. On a GO entry this is the aspect -- 'cellular component', 'biological process', 'molecular function' -- so go_annotations without it do not say which ontology a term came from."
+                  },
+                  "qualifier_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI id for qualifier"
+                  },
+                  "database_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI id for the source database"
+                  },
+                  "search_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Resolvable URL for the cross-referenced record"
                   }
                 }
               }
             },
             "diseases": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "database": {
+                    "type": "string"
+                  },
+                  "identifier": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "qualifier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the cross-reference asserts. On a GO entry this is the aspect -- 'cellular component', 'biological process', 'molecular function' -- so go_annotations without it do not say which ontology a term came from."
+                  },
+                  "qualifier_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI id for qualifier"
+                  },
+                  "database_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI id for the source database"
+                  },
+                  "search_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Resolvable URL for the cross-referenced record"
+                  }
+                }
+              },
+              "description": "Disease cross-references (EFO, Orphanet, MONDO), split out of the cross-reference list"
             },
             "go_annotations": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "database": {
+                    "type": "string"
+                  },
+                  "identifier": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "qualifier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the cross-reference asserts. On a GO entry this is the aspect -- 'cellular component', 'biological process', 'molecular function' -- so go_annotations without it do not say which ontology a term came from."
+                  },
+                  "qualifier_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI id for qualifier"
+                  },
+                  "database_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI id for the source database"
+                  },
+                  "search_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Resolvable URL for the cross-referenced record"
+                  }
+                }
+              },
+              "description": "GO cross-references, split out of the cross-reference list. `qualifier` names the aspect."
             },
             "synonyms": {
               "type": "array",

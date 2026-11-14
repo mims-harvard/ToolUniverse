@@ -44,21 +44,149 @@
                     "items": {
                         "type": "object",
                         "properties": {
-                            "title": {
-                                "type": "string",
-                                "description": "The title of the project."
-                            },
                             "entryId": {
                                 "type": "string",
                                 "description": "The unique identifier (UUID) for the project. This ID is used to retrieve file manifests."
                             },
                             "organ": {
-                                "type": ["array", "null"],
-                                "description": "A list of organs associated with the project."
+                                "type": [
+                                    "array",
+                                    "null"
+                                ],
+                                "description": "Organs across every specimen of the project, not only the first"
                             },
-                            "disease": {
+                            "projectTitle": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Title of the project"
+                            },
+                            "projectShortname": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "HCA's short name for the project"
+                            },
+                            "laboratory": {
                                 "type": "array",
-                                "description": "A list of diseases associated with the project."
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Laboratories that contributed the project"
+                            },
+                            "estimatedCellCount": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ],
+                                "description": "HCA's estimate of the project's cell count"
+                            },
+                            "accessible": {
+                                "type": [
+                                    "boolean",
+                                    "null"
+                                ],
+                                "description": "Whether the project's data can be downloaded"
+                            },
+                            "dataUseRestriction": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Any restriction on reusing the data"
+                            },
+                            "organPart": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Organ parts the cell suspensions came from"
+                            },
+                            "selectedCellType": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Cell types the suspensions were selected for"
+                            },
+                            "totalCells": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ],
+                                "description": "Cells summed over the project's cell suspensions"
+                            },
+                            "donorDisease": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Diseases across every donor of the project"
+                            },
+                            "genusSpecies": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Species of the donors. HCA holds mouse projects as well as human ones - the first project this endpoint returns is Mus musculus - so a human-only question has to read this"
+                            },
+                            "biologicalSex": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Sexes of the donors"
+                            },
+                            "developmentStage": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Development stages of the donors"
+                            },
+                            "organismAge": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Donor ages as value and unit, e.g. '25.0 year'"
+                            },
+                            "donorCount": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ],
+                                "description": "Donors summed over the project's donor records"
+                            },
+                            "libraryConstructionApproach": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "The single-cell assay, e.g. \"10x 3' v2\" or 'Smart-seq2'"
+                            },
+                            "nucleicAcidSource": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "e.g. 'single cell' or 'single nucleus'"
+                            },
+                            "instrumentManufacturerModel": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Sequencers used"
+                            },
+                            "pairedEnd": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Whether the sequencing was paired-end"
                             }
                         }
                     }
@@ -131,6 +259,69 @@
                             "size": {
                                 "type": "integer",
                                 "description": "The size of the file in bytes."
+                            },
+                            "uuid": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "HCA's identifier for the file"
+                            },
+                            "version": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Version of the file; a name alone does not identify one"
+                            },
+                            "sha256": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "SHA-256 of the file, to verify a download"
+                            },
+                            "accessible": {
+                                "type": [
+                                    "boolean",
+                                    "null"
+                                ],
+                                "description": "Whether this file can be downloaded"
+                            },
+                            "is_intermediate": {
+                                "type": [
+                                    "boolean",
+                                    "null"
+                                ],
+                                "description": "True for an intermediate product rather than a final matrix"
+                            },
+                            "content_description": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "What the file holds, e.g. 'Matrix'"
+                            },
+                            "matrix_cell_count": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ],
+                                "description": "Cells in the matrix, when the file is one"
+                            },
+                            "file_source": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Where the file came from, e.g. a contributor or the DCP pipeline"
+                            },
+                            "drs_uri": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "GA4GH DRS URI for the file"
                             }
                         }
                     }

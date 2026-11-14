@@ -90,6 +90,16 @@
                   "classes": {
                     "type": "array",
                     "description": "Chemical classification"
+                  },
+                  "link": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "External identifiers for the compound, each a database and identifier - InChIKey, ChemOnt, PubChem."
                   }
                 }
               },
@@ -110,8 +120,35 @@
                       "ion_mode": {
                         "type": "string",
                         "description": "POSITIVE or NEGATIVE"
+                      },
+                      "subtags": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "Acquisition parameters as subtag/value pairs, e.g. IONIZATION APCI."
                       }
                     }
+                  },
+                  "chromatography": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Chromatography conditions as subtag/value pairs: column, solvent, flow rate, retention time. What makes a retention time meaningful."
+                  },
+                  "instrument": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The mass spectrometer, e.g. 'QExactive Orbitrap HF-X (Thermo Scientific)'. Spectra are only comparable within an instrument class."
                   }
                 }
               },
@@ -128,8 +165,41 @@
                   },
                   "peak": {
                     "description": "Peak data - either array of m/z values or object with header/values"
+                  },
+                  "annotation": {
+                    "description": "Per-peak annotations, where the submitter provided them. Empty object when none."
                   }
                 }
+              },
+              "authors": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "object"
+                },
+                "description": "Who produced the spectrum, each with a name."
+              },
+              "copyright": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Copyright holder of the spectrum."
+              },
+              "date": {
+                "description": "The record's created, updated and modified dates."
+              },
+              "license": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Licence, e.g. 'CC BY'. Needed before a spectrum can be redistributed."
+              },
+              "mass_spectrometry": {
+                "description": "The focused ion and data-processing blocks: precursor m/z and type, and how the peaks were produced."
               }
             }
           }
@@ -209,13 +279,152 @@
                 "type": "string"
               },
               "compound": {
-                "type": "object"
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The compound the spectrum is of: names, formula, mass and database links",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
               },
               "acquisition": {
-                "type": "object"
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Instrument and acquisition metadata, nested as MassBank sends it",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                }
               },
               "peak": {
-                "type": "object"
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The peak list: m/z, intensity and relative intensity per peak, plus the annotation table where present. MassBank nests these a few levels deep, so the lower levels are declared open",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "license": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Licence the spectrum is released under - a caller redistributing a spectrum is bound by it"
+              },
+              "copyright": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Copyright statement for the record"
+              },
+              "authors": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "description": "Who measured and deposited the spectrum"
+              },
+              "date": {
+                "type": [
+                  "object",
+                  "string",
+                  "null"
+                ],
+                "description": "Dates on the record",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              },
+              "mass_spectrometry": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "How the spectrum was acquired: ionisation mode, collision energy, fragmentation and the rest of the method",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
               }
             }
           }
@@ -379,6 +588,16 @@
                       }
                     }
                   }
+                },
+                "classes": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Chemical ontology classes for the compound, as MassBank records them. What the molecule IS, where the rest of the block says what it weighs and how it was measured."
                 }
               }
             },
@@ -389,6 +608,29 @@
             "peak": {
               "type": "object",
               "description": "Spectral peaks with SPLASH hash"
+            },
+            "authors": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "Who produced the spectrum, each with a name."
+            },
+            "date": {
+              "description": "The record's created, updated and modified dates."
+            },
+            "license": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Licence, e.g. 'CC BY'. Needed before a spectrum can be redistributed."
+            },
+            "mass_spectrometry": {
+              "description": "The focused ion and data-processing blocks: precursor m/z and type, and how the peaks were produced."
             }
           },
           "required": [
@@ -517,6 +759,13 @@
               "accession": {
                 "type": "string",
                 "description": "MassBank record accession. Resolve full record with MassBank_get_record_by_accession."
+              },
+              "atomcount": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of atoms in the compound."
               }
             }
           }

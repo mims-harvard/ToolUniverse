@@ -10,7 +10,10 @@
           "description": "GBIF Backbone usageKey of the parent taxon, e.g. 2435194 (genus Panthera). Obtain from GBIF_match_name or GBIF_search_species."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum number of child taxa to return (1-100, default 20).",
           "default": 20
         },
@@ -21,7 +24,9 @@
           "description": "Zero-based GBIF result offset. Continue with metadata.next_offset."
         }
       },
-      "required": ["taxon_key"]
+      "required": [
+        "taxon_key"
+      ]
     },
     "fields": {
       "operation": "get_children",
@@ -29,8 +34,14 @@
     },
     "type": "GBIFTaxonomyTool",
     "test_examples": [
-      {"taxon_key": 2435194, "limit": 8},
-      {"taxon_key": 2877951, "limit": 5}
+      {
+        "taxon_key": 2435194,
+        "limit": 8
+      },
+      {
+        "taxon_key": 2877951,
+        "limit": 5
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -64,6 +75,247 @@
                 ]
               },
               "taxonomicStatus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "nubKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "nameKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "taxonID": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sourceTaxonKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "vernacularName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A common name GBIF has already attached to the taxon"
+              },
+              "authorship": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "publishedIn": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "nameType": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SCIENTIFIC, INFORMAL, DOUBTFUL, ..."
+              },
+              "origin": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the usage entered the backbone, e.g. SOURCE or IMPLICIT_NAME"
+              },
+              "nomenclaturalStatus": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "synonym": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "remarks": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "kingdom": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "phylum": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "class": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "order": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "family": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "genus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "kingdomKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Taxon key of the kingdom. The seven rank names were returned and none of the seven keys, so the names were there and the handles to walk the tree were not."
+              },
+              "phylumKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "classKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "orderKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "familyKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "genusKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "speciesKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "parent": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Name of the parent taxon"
+              },
+              "parentKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "acceptedKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "accepted": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "basionym": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "basionymKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "datasetKey": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The checklist dataset the usage came from"
+              },
+              "constituentKey": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "numDescendants": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "issues": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "GBIF's own data-quality flags for the record, e.g. NAME_PARENT_MISMATCH"
+              },
+              "lastCrawled": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lastInterpreted": {
                 "type": [
                   "string",
                   "null"
@@ -97,7 +349,9 @@
           "description": "GBIF Backbone usageKey of the taxon, e.g. 5219404 (Panthera leo). Obtain from GBIF_match_name or GBIF_search_species."
         }
       },
-      "required": ["taxon_key"]
+      "required": [
+        "taxon_key"
+      ]
     },
     "fields": {
       "operation": "get_parents",
@@ -105,8 +359,12 @@
     },
     "type": "GBIFTaxonomyTool",
     "test_examples": [
-      {"taxon_key": 5219404},
-      {"taxon_key": 2878688}
+      {
+        "taxon_key": 5219404
+      },
+      {
+        "taxon_key": 2878688
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -132,6 +390,261 @@
                   "string",
                   "null"
                 ]
+              },
+              "nubKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "nameKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "taxonID": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sourceTaxonKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "vernacularName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A common name GBIF has already attached to the taxon"
+              },
+              "authorship": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "publishedIn": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "nameType": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SCIENTIFIC, INFORMAL, DOUBTFUL, ..."
+              },
+              "origin": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the usage entered the backbone, e.g. SOURCE or IMPLICIT_NAME"
+              },
+              "nomenclaturalStatus": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "synonym": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "remarks": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "kingdom": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "phylum": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "class": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "order": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "family": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "genus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "kingdomKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Taxon key of the kingdom. The seven rank names were returned and none of the seven keys, so the names were there and the handles to walk the tree were not."
+              },
+              "phylumKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "classKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "orderKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "familyKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "genusKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "speciesKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "parent": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Name of the parent taxon"
+              },
+              "parentKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "acceptedKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "accepted": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "basionym": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "basionymKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "datasetKey": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The checklist dataset the usage came from"
+              },
+              "constituentKey": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "numDescendants": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "issues": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "GBIF's own data-quality flags for the record, e.g. NAME_PARENT_MISMATCH"
+              },
+              "lastCrawled": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lastInterpreted": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "canonicalName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The name without authorship, e.g. 'Animalia'. `scientificName` includes the author and year; this is the form to match on."
+              },
+              "taxonomicStatus": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "GBIF's status for the name, e.g. 'ACCEPTED'. A parent chain containing a SYNONYM or DOUBTFUL entry is not a clean classification."
               }
             }
           }
@@ -161,7 +674,10 @@
           "description": "GBIF Backbone usageKey of the accepted taxon, e.g. 5219404 (Panthera leo). Obtain from GBIF_match_name or GBIF_search_species."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum number of synonyms to return (1-100, default 20).",
           "default": 20
         },
@@ -172,7 +688,9 @@
           "description": "Zero-based GBIF result offset. Continue with metadata.next_offset."
         }
       },
-      "required": ["taxon_key"]
+      "required": [
+        "taxon_key"
+      ]
     },
     "fields": {
       "operation": "get_synonyms",
@@ -180,8 +698,14 @@
     },
     "type": "GBIFTaxonomyTool",
     "test_examples": [
-      {"taxon_key": 5219404, "limit": 5},
-      {"taxon_key": 2878688, "limit": 5}
+      {
+        "taxon_key": 5219404,
+        "limit": 5
+      },
+      {
+        "taxon_key": 2878688,
+        "limit": 5
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -213,6 +737,254 @@
                   "string",
                   "null"
                 ]
+              },
+              "nubKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "nameKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "taxonID": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sourceTaxonKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "vernacularName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A common name GBIF has already attached to the taxon"
+              },
+              "authorship": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "publishedIn": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "nameType": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SCIENTIFIC, INFORMAL, DOUBTFUL, ..."
+              },
+              "origin": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the usage entered the backbone, e.g. SOURCE or IMPLICIT_NAME"
+              },
+              "nomenclaturalStatus": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "synonym": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "remarks": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "kingdom": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "phylum": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "class": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "order": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "family": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "genus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "kingdomKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Taxon key of the kingdom. The seven rank names were returned and none of the seven keys, so the names were there and the handles to walk the tree were not."
+              },
+              "phylumKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "classKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "orderKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "familyKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "genusKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "speciesKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "parent": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Name of the parent taxon"
+              },
+              "parentKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "acceptedKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "accepted": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "basionym": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "basionymKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "datasetKey": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The checklist dataset the usage came from"
+              },
+              "constituentKey": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "numDescendants": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "issues": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "GBIF's own data-quality flags for the record, e.g. NAME_PARENT_MISMATCH"
+              },
+              "lastCrawled": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lastInterpreted": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rank": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Taxonomic rank of the synonym, e.g. 'SPECIES'. A synonym at a different rank from the queried name is a reclassification, not just a renaming."
               }
             }
           }
@@ -242,7 +1014,10 @@
           "description": "GBIF Backbone usageKey of the taxon, e.g. 5219404 (Panthera leo). Obtain from GBIF_match_name or GBIF_search_species."
         },
         "language": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Optional ISO 639-3 language code to filter by, e.g. 'eng' (English), 'spa' (Spanish), 'fra' (French). If omitted, returns names in all languages."
         },
         "limit": {
@@ -259,7 +1034,9 @@
           "description": "Zero-based raw GBIF result offset. Continue with metadata.next_offset even when a language-filtered page returns no names."
         }
       },
-      "required": ["taxon_key"]
+      "required": [
+        "taxon_key"
+      ]
     },
     "fields": {
       "operation": "get_vernacular_names",
@@ -267,8 +1044,13 @@
     },
     "type": "GBIFTaxonomyTool",
     "test_examples": [
-      {"taxon_key": 5219404, "language": "eng"},
-      {"taxon_key": 2878688}
+      {
+        "taxon_key": 5219404,
+        "language": "eng"
+      },
+      {
+        "taxon_key": 2878688
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -300,6 +1082,38 @@
                   "string",
                   "null"
                 ]
+              },
+              "area": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "preferred": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Which of a taxon's many common names GBIF marks as the one to show; the rows were otherwise interchangeable"
+              },
+              "taxonKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "sourceTaxonKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "The checklist dataset's taxon the name came from, so a name can be traced to its supplier"
+              },
+              "sourceReference": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -325,12 +1139,21 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "A single scientific name string to parse, e.g. 'Panthera leo (Linnaeus, 1758)'. Provide either 'name' or 'names'."
         },
         "names": {
-          "type": ["array", "string", "null"],
-          "items": {"type": "string"},
+          "type": [
+            "array",
+            "string",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
           "description": "A list of scientific name strings to parse in one call, e.g. ['Homo sapiens Linnaeus, 1758', 'Quercus robur L.']. Provide either 'name' or 'names'."
         }
       },
@@ -342,8 +1165,15 @@
     },
     "type": "GBIFTaxonomyTool",
     "test_examples": [
-      {"name": "Panthera leo (Linnaeus, 1758)"},
-      {"names": ["Homo sapiens Linnaeus, 1758", "Quercus robur L."]}
+      {
+        "name": "Panthera leo (Linnaeus, 1758)"
+      },
+      {
+        "names": [
+          "Homo sapiens Linnaeus, 1758",
+          "Quercus robur L."
+        ]
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -417,6 +1247,20 @@
                   "boolean",
                   "null"
                 ]
+              },
+              "canonicalNameComplete": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The parsed name with its authorship, e.g. 'Panthera leo (Linnaeus, 1758)'. The form a taxonomic citation needs; the canonical name alone drops the author."
+              },
+              "parsedPartially": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when GBIF could parse only part of the string. The result then looks like a clean parse and is not one."
               }
             }
           }

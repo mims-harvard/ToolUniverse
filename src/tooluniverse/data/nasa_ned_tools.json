@@ -96,6 +96,20 @@
                         "number",
                         "null"
                       ]
+                    },
+                    "PosAngle": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Position angle of the preferred position's error ellipse, in degrees, e.g. 90.0. Without it the uncertainty is a circle, which it is not."
+                    },
+                    "RefCode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "ADS bibcode of the paper the preferred value came from, e.g. '2013wise.rept....1C'. The citation for the measurement."
                     }
                   }
                 },
@@ -128,6 +142,27 @@
                         "string",
                         "null"
                       ]
+                    },
+                    "QualityFlag": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "NED's quality code for the redshift, e.g. 'UUN '. Four single-character flags, trailing spaces included, saying how reliable the value is."
+                    },
+                    "RefCode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "ADS bibcode of the paper the preferred value came from, e.g. '2013wise.rept....1C'. The citation for the measurement."
+                    },
+                    "Uncertainty": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Uncertainty on the preferred redshift, e.g. 3.335640952e-06. A redshift without its uncertainty cannot be compared with another."
                     }
                   }
                 }
@@ -138,6 +173,20 @@
             },
             "ResultCode": {
               "type": "integer"
+            },
+            "Copyright": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "NED's copyright notice, e.g. '(C) 2026 California Institute of Technology'. The attribution its terms of use require."
+            },
+            "Version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "NED data release the answer came from, e.g. '2.1'. Positions and redshifts are revised between releases."
             }
           },
           "not": {

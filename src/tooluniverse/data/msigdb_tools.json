@@ -248,6 +248,13 @@
             },
             "total_genes_in_set": {
               "type": "integer"
+            },
+            "species": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Species whose symbols the membership was checked against, e.g. 'human'. A human symbol checked against a mouse collection will read as absent."
             }
           },
           "not": {
@@ -335,6 +342,31 @@
             },
             "collection": {
               "type": "string"
+            },
+            "pmid": {
+              "type": "string",
+              "description": "PubMed ID (26771021 for Hallmark paper)"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Free-text description of the set. Measured null on the example set, so absence is common and does not mean the set is undocumented upstream."
+            },
+            "species": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Species the set's gene symbols are in, e.g. 'human'. A set fetched for the wrong species will not map."
+            },
+            "systematic_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "MSigDB's stable systematic accession for the set, e.g. 'M5902'. The standard_name can be renamed between releases; this does not."
             }
           },
           "not": {

@@ -98,6 +98,174 @@
             "png_url": {
               "type": "string",
               "description": "URL to neuron image"
+            },
+            "surface": {
+              "type": "number",
+              "description": "Total surface area (um^2)"
+            },
+            "volume": {
+              "type": "number",
+              "description": "Total volume (um^3)"
+            },
+            "_links": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "HAL links for the reconstruction - self, measurements, persistence diagram and the rest. Where the morphometry and the raw tracing can be fetched."
+            },
+            "age_scale": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The unit the ages are in, e.g. 'Year'. Without it '24.0' could be days, weeks or years."
+            },
+            "attributes": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which geometry the reconstruction records, e.g. 'Diameter, 3D, Angles'. A tracing without diameters cannot give surface or volume, so this bounds what any morphometric is worth."
+            },
+            "deposition_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the reconstruction was deposited, e.g. '2005-12-31'."
+            },
+            "experiment_condition": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "The experimental condition, e.g. ['Control']. A reconstruction from a treated or lesioned animal must not be pooled with controls."
+            },
+            "magnification": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Objective magnification used, e.g. '100'. A string."
+            },
+            "max_age": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Oldest age, e.g. '25.0'. A range, not a single age."
+            },
+            "max_weight": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Heaviest animal weight, e.g. '10000.0'. The unit is not stated in the record."
+            },
+            "min_age": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Youngest age of the animals, e.g. '24.0', in the unit given by age_scale."
+            },
+            "min_weight": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Lightest animal weight, e.g. '4500.0'."
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The curator's note on the record, e.g. 'When originally released, this reconstruction...'. Where a correction or a caveat about this specific neuron is recorded."
+            },
+            "objective_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The objective's type, e.g. 'Not reported'. Resolution bounds the thinnest branch that could be traced at all."
+            },
+            "original_format": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The file format as submitted, e.g. 'Neurozoom.swc'. Converters differ, and some lose branch order."
+            },
+            "physical_Integrity": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How complete the neuron was, e.g. 'Dendrites Moderate'. A moderately damaged dendritic tree understates total length, and nothing else in the record says so. NOTE the capital 'I' in the property name."
+            },
+            "reconstruction_software": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What produced the tracing, e.g. 'Neurozoom'. Systematic differences between packages are a known source of morphometric variance."
+            },
+            "reference_doi": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "DOIs of the papers the reconstruction came from, e.g. ['10.1016/S0306-4522(02)00305-6']. The citation its terms of use require."
+            },
+            "shrinkage_corrected": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether the coordinates were CORRECTED for it, e.g. 'Not Corrected'. Uncorrected tissue is typically 10-30% smaller than life, so every length in the reconstruction is an underestimate - and this is the only field that reveals it."
+            },
+            "shrinkage_reported": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether the original study reported tissue shrinkage, e.g. 'Reported'."
+            },
+            "slicing_direction": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How the tissue was cut, e.g. 'custom'. Branches leaving the slice are truncated, so the direction decides which parts of the tree are missing."
+            },
+            "slicing_thickness": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Slice thickness in micrometres, e.g. '400'. A string. A neuron larger than the slice is necessarily cut off."
+            },
+            "soma_surface": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Soma surface area in square micrometres, e.g. '834.0'. A string."
+            },
+            "upload_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When NeuroMorpho published it, e.g. '2006-08-01'."
             }
           },
           "not": {
@@ -217,6 +385,224 @@
               },
               "archive": {
                 "type": "string"
+              },
+              "_links": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "HAL links for the reconstruction - self, measurements, persistence diagram and the rest. Where the morphometry and the raw tracing can be fetched."
+              },
+              "age_scale": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The unit the ages are in, e.g. 'Year'. Without it '24.0' could be days, weeks or years."
+              },
+              "attributes": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which geometry the reconstruction records, e.g. 'Diameter, 3D, Angles'. A tracing without diameters cannot give surface or volume, so this bounds what any morphometric is worth."
+              },
+              "deposition_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the reconstruction was deposited, e.g. '2005-12-31'."
+              },
+              "domain": {
+                "type": "string",
+                "description": "Neuronal compartments reconstructed (Dendrites, Axon, Soma)"
+              },
+              "experiment_condition": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "The experimental condition, e.g. ['Control']. A reconstruction from a treated or lesioned animal must not be pooled with controls."
+              },
+              "magnification": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Objective magnification used, e.g. '100'. A string."
+              },
+              "max_age": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Oldest age, e.g. '25.0'. A range, not a single age."
+              },
+              "max_weight": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Heaviest animal weight, e.g. '10000.0'. The unit is not stated in the record."
+              },
+              "min_age": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Youngest age of the animals, e.g. '24.0', in the unit given by age_scale."
+              },
+              "min_weight": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Lightest animal weight, e.g. '4500.0'."
+              },
+              "note": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The curator's note on the record, e.g. 'When originally released, this reconstruction...'. Where a correction or a caveat about this specific neuron is recorded."
+              },
+              "objective_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The objective's type, e.g. 'Not reported'. Resolution bounds the thinnest branch that could be traced at all."
+              },
+              "original_format": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The file format as submitted, e.g. 'Neurozoom.swc'. Converters differ, and some lose branch order."
+              },
+              "physical_Integrity": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How complete the neuron was, e.g. 'Dendrites Moderate'. A moderately damaged dendritic tree understates total length, and nothing else in the record says so. NOTE the capital 'I' in the property name."
+              },
+              "png_url": {
+                "type": "string",
+                "description": "URL to neuron image"
+              },
+              "reconstruction_software": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What produced the tracing, e.g. 'Neurozoom'. Systematic differences between packages are a known source of morphometric variance."
+              },
+              "reference_doi": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "DOIs of the papers the reconstruction came from, e.g. ['10.1016/S0306-4522(02)00305-6']. The citation its terms of use require."
+              },
+              "shrinkage_corrected": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the coordinates were CORRECTED for it, e.g. 'Not Corrected'. Uncorrected tissue is typically 10-30% smaller than life, so every length in the reconstruction is an underestimate - and this is the only field that reveals it."
+              },
+              "shrinkage_reported": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the original study reported tissue shrinkage, e.g. 'Reported'."
+              },
+              "slicing_direction": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the tissue was cut, e.g. 'custom'. Branches leaving the slice are truncated, so the direction decides which parts of the tree are missing."
+              },
+              "slicing_thickness": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Slice thickness in micrometres, e.g. '400'. A string. A neuron larger than the slice is necessarily cut off."
+              },
+              "soma_surface": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Soma surface area in square micrometres, e.g. '834.0'. A string."
+              },
+              "surface": {
+                "type": "number",
+                "description": "Total surface area (um^2)"
+              },
+              "upload_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When NeuroMorpho published it, e.g. '2006-08-01'."
+              },
+              "volume": {
+                "type": "number",
+                "description": "Total volume (um^3)"
+              },
+              "age_classification": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Developmental stage of the animal, e.g. 'adult'. Dendritic morphology changes with age, so comparing reconstructions across stages needs this."
+              },
+              "gender": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Sex of the animal the neuron came from, e.g. 'Female'."
+              },
+              "protocol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the tissue was prepared 'in vitro' (slice) or 'in vivo'. Slice preparations truncate dendrites and axons at the cut surface, which changes every length measurement."
+              },
+              "reference_pmid": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "PubMed IDs of the papers the reconstruction was published in, e.g. ['27810003']."
+              },
+              "stain": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Stain or filling method used, e.g. 'biocytin'. Determines what parts of the cell were visible to be reconstructed."
+              },
+              "strain": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Strain of the animal, e.g. 'Not applicable' -- the literal string, not null, when the species has no strain recorded."
               }
             }
           }
@@ -348,6 +734,27 @@
             "length": {
               "type": "number",
               "description": "Total length (um)"
+            },
+            "bif_ampl_local": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Local bifurcation amplitude in degrees, e.g. 33.3799 - the angle between the two daughter branches measured at the bifurcation itself."
+            },
+            "bif_ampl_remote": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Remote bifurcation amplitude in degrees, e.g. 50.461 - the same angle measured to the next bifurcation or terminal point instead. It differs from the local value because branches curve, and the two answer different questions."
+            },
+            "pk_classic": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "The Rall power ratio at bifurcations computed with the classic exponent, e.g. 1.52521. Dimensionless, and describes how parent and daughter diameters relate."
             }
           },
           "not": {

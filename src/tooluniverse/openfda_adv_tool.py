@@ -1568,11 +1568,21 @@ class FDADrugAdverseEventDetailTool(BaseTool):
                 "patientweight": patient.get("patientweight"),
             }
 
-            # Drugs (essential fields only, no openfda metadata)
+            # Drugs: the essential fields, plus the openFDA codes that make
+            # one report comparable with another. `medicinalproduct` is free
+            # text the reporter typed -- "TYLENOL", "acetaminophen",
+            # "PARACETAMOL" are three strings for one drug, which is the
+            # matching problem this module's own comments above spend sixty
+            # lines on -- and `openfda.rxcui` is the RxNorm concept that
+            # resolves them to one thing. The pharmacologic class comes with
+            # it, so a class effect can be seen across reports. The rest of
+            # the openfda block (the NDC arrays, the SPL ids) is still left
+            # out: these are the codes, not the catalogue.
             drugs = patient.get("drug", [])
             if drugs:
                 essential_drugs = []
                 for drug in drugs:
+                    openfda = drug.get("openfda") or {}
                     essential_drug = {
                         "medicinalproduct": drug.get("medicinalproduct"),
                         "drugindication": drug.get("drugindication"),
@@ -1581,6 +1591,14 @@ class FDADrugAdverseEventDetailTool(BaseTool):
                         "drugdosageform": drug.get("drugdosageform"),
                         "drugstartdate": drug.get("drugstartdate"),
                         "actiondrug": drug.get("actiondrug"),
+                        "rxcui": openfda.get("rxcui") or None,
+                        "unii": openfda.get("unii") or None,
+                        "openfda_generic_name": openfda.get("generic_name") or None,
+                        "openfda_brand_name": openfda.get("brand_name") or None,
+                        "openfda_substance_name": openfda.get("substance_name")
+                        or None,
+                        "pharm_class_epc": openfda.get("pharm_class_epc") or None,
+                        "pharm_class_moa": openfda.get("pharm_class_moa") or None,
                     }
                     # Only include non-empty fields
                     essential_drug = {

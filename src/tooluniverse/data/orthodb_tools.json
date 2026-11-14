@@ -78,7 +78,7 @@
                       "string",
                       "null"
                     ],
-                    "description": "Group name, when the per-group /tab enrichment completed"
+                    "description": "Group name, from the /search response's own bigdata record"
                   },
                   "level_taxid": {
                     "type": [
@@ -93,7 +93,7 @@
                       "complete",
                       "unavailable"
                     ],
-                    "description": "Whether name and level metadata were successfully retrieved from OrthoDB /tab"
+                    "description": "Whether the group's attributes were resolved. complete when the /search bigdata record or the per-group /tab lookup supplied them."
                   },
                   "enrichment_error": {
                     "type": [
@@ -101,6 +101,43 @@
                       "null"
                     ],
                     "description": "Explicit reason enrichment was unavailable; absent on complete records"
+                  },
+                  "public_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OrthoDB's public id for the group"
+                  },
+                  "level_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The taxonomic level the group is defined at, e.g. 'Bacteria', 'Vertebrata'. The same gene family yields different groups at different levels, so this is what tells two hits apart."
+                  },
+                  "gene_count": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
+                    "description": "Genes in the group at this level"
+                  },
+                  "species_count": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
+                    "description": "Species the group is present in at this level (OrthoDB's present_in)"
+                  },
+                  "search_relevance": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "OrthoDB's own relevance score for this hit against the query, which is the order the groups come back in"
                   }
                 }
               },
@@ -109,6 +146,48 @@
             "total_groups": {
               "type": "integer",
               "description": "Total groups found"
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when further groups remain, e.g. true."
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied, e.g. 5."
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset to pass for the next page, e.g. 5."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset this page started at, e.g. 0."
+            },
+            "result_set_complete": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "False when the reply is only part of the matching set, e.g. false. Read this before treating the returned groups as the whole answer."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many groups this reply contains, e.g. 5."
             }
           },
           "not": {
@@ -288,6 +367,34 @@
                 }
               },
               "description": "InterPro domain annotations"
+            },
+            "evolutionary_rate": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "OrthoDB's evolutionary rate for the group, e.g. 1.0383 -- relative to the average rate across groups at the same level, so 1 is typical and higher means faster-evolving."
+            },
+            "functional_categories": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "COG functional categories assigned to the group, each {id, type, description}, e.g. {'id': 'T', 'description': 'T: Signal transduction mechanisms'}. A group can carry several."
+            },
+            "gene_architecture": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Structural statistics for the group's genes: {exon_median_counts, exon_stdev_counts, protein_median_length, protein_stdev_length}. A large stdev means the group mixes genes of very different structure."
+            },
+            "phyletic_profile": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How the group is distributed across the clade: {gene_count, species_count, present_in, single_copy, multi_copy}. single_copy against multi_copy is what says whether the group is safe to treat as a one-to-one orthologue set."
             }
           },
           "not": {
@@ -450,6 +557,20 @@
             "organisms_summary": {
               "type": "object",
               "description": "Count of genes per organism"
+            },
+            "result_set_complete": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "False when the reply is only part of the matching set, e.g. false. The positive form of `truncated`; both were returned undeclared."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the ortholog list was cut, e.g. true. An ortholog set used for a phylogeny or a conservation claim must be complete, so this flag changes the conclusion, not just the display."
             }
           },
           "not": {
@@ -598,6 +719,34 @@
             },
             "fasta": {
               "type": "string"
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when further sequences remain, e.g. false. A FASTA used for alignment must be complete, so check this before aligning."
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to the sequence list, e.g. 50."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset this page started at, e.g. 0."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many sequences this reply contains, e.g. 2."
             }
           },
           "required": [

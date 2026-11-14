@@ -20,6 +20,13 @@ from .http_utils import upstream_reason_suffix
 
 EPIGRAPHDB_BASE = "https://api.epigraphdb.org"
 
+# A BMI query answers 43,410 risk-factor rows across a few hundred drugs, so
+# each drug reports its most significant evidence rows and says how many it
+# has. The caps are disclosed per drug (`evidence_truncated`, `gene_count`,
+# `outcome_trait_count`) rather than left for the caller to infer.
+EVIDENCE_ROWS_PER_DRUG = 5
+GENES_PER_DRUG = 10
+
 
 @register_tool("EpiGraphDBTool")
 class EpiGraphDBTool(BaseRESTTool):
@@ -149,6 +156,7 @@ class EpiGraphDBTool(BaseRESTTool):
             lit = r.get("lit", {})
             predicate = triple.get("predicate")
             subject, obj = self._split_triple(triple.get("name", ""), predicate)
+            gs = r.get("gs", {})
             rows.append(
                 {
                     "triple_subject": subject,
@@ -156,6 +164,16 @@ class EpiGraphDBTool(BaseRESTTool):
                     "triple_object": obj,
                     "pubmed_id": lit.get("id"),
                     "gwas_trait": gwas.get("trait"),
+                    # The study the triple was linked through, and the
+                    # association p-value -- which this tool takes
+                    # `pval_threshold` to filter on and then did not report,
+                    # so every row looked equally significant up to the cut.
+                    "gwas_id": gwas.get("id"),
+                    "pval": gs.get("pval"),
+                    "local_count": gs.get("localCount"),
+                    # SemMedDB's own id for the triple, which is how the same
+                    # assertion is recognised across traits.
+                    "triple_id": (r.get("triple") or {}).get("id"),
                 }
             )
 
@@ -380,6 +398,19 @@ class EpiGraphDBTool(BaseRESTTool):
                     "rg_pval": pick("p", "rg_pval"),
                     "h2": pick("h2"),
                     "h2_intercept": pick("h2_intercept"),
+                    # rg arrived with its standard error and h2 without one,
+                    # and the two LDSC intercepts arrived with neither. The
+                    # intercepts are how a genetic correlation is judged:
+                    # rg_intercept away from 0 is sample overlap, h2_intercept
+                    # away from 1 is population stratification or unmodelled
+                    # confounding, and an rg of 0.95 means a different thing
+                    # under each. Z is the test statistic the p-value came
+                    # from, which survives a p of 1e-309 reaching the floor.
+                    "z": pick("Z", "z"),
+                    "rg_intercept": pick("rg_intercept"),
+                    "rg_intercept_se": pick("rg_intercept_SE", "rg_intercept_se"),
+                    "h2_se": pick("h2_SE", "h2_se"),
+                    "h2_intercept_se": pick("h2_intercept_SE", "h2_intercept_se"),
                 }
             )
 
@@ -455,23 +486,73 @@ class EpiGraphDBTool(BaseRESTTool):
 
         results = data.get("results", [])
 
-        # Deduplicate by drug label
+        # Deduplicate by drug label. The grouping is the useful part; what
+        # it used to throw away was everything the group was made of. Each of
+        # the 43,410 rows a BMI query answers carries the Mendelian
+        # randomisation estimate the repurposing claim rests on -- beta, its
+        # standard error, the p-value, the method and the MOE score -- plus
+        # the outcome trait the exposure was tested against. The wrapper kept
+        # the first row's gene and variant, counted the rest, and dropped all
+        # of it, so "ATORVASTATIN, APOE, rs7412, 7" was the whole answer for a
+        # drug whose evidence includes b=-0.84 (se 0.020, FE IVW, moescore
+        # 1.0) against self-reported heart attack.
         seen_drugs: dict[str, Any] = {}
         for r in results:
             drug = r.get("drug", {})
             drug_label = drug.get("label", "")
-            gene = r.get("gene", {})
-            variant = r.get("variant", {})
-
-            if drug_label not in seen_drugs:
-                seen_drugs[drug_label] = {
+            gene = (r.get("gene") or {}).get("name")
+            variant = (r.get("variant") or {}).get("name")
+            assoc = r.get("assoc_trait") or {}
+            mr = r.get("mr") or {}
+            row = {
+                "gene": gene,
+                "variant": variant,
+                "outcome_trait": assoc.get("trait"),
+                "outcome_trait_id": assoc.get("id"),
+                "beta": mr.get("b"),
+                "se": mr.get("se"),
+                "pval": mr.get("pval"),
+                "method": mr.get("method"),
+                "selection": mr.get("selection"),
+                "moescore": mr.get("moescore"),
+            }
+            entry = seen_drugs.get(drug_label)
+            if entry is None:
+                entry = seen_drugs[drug_label] = {
                     "drug": drug_label,
-                    "gene": gene.get("name"),
-                    "variant": variant.get("name"),
-                    "evidence_count": 1,
+                    "gene": gene,
+                    "variant": variant,
+                    "evidence_count": 0,
+                    "genes": [],
+                    "variants": [],
+                    "outcome_traits": [],
+                    "evidence": [],
                 }
-            else:
-                seen_drugs[drug_label]["evidence_count"] += 1
+            entry["evidence_count"] += 1
+            for key, value in (("genes", gene), ("variants", variant)):
+                if value and value not in entry[key]:
+                    entry[key].append(value)
+            label = assoc.get("trait")
+            if label and label not in entry["outcome_traits"]:
+                entry["outcome_traits"].append(label)
+            entry["evidence"].append(row)
+
+        for entry in seen_drugs.values():
+            # Most significant first, so a capped list is the strongest
+            # evidence rather than whichever rows the graph happened to
+            # return first. Rows with no p-value sort last instead of
+            # ranking as if p were 0.
+            entry["evidence"].sort(
+                key=lambda row: (row["pval"] is None, row["pval"] or 0.0)
+            )
+            kept = entry["evidence"][:EVIDENCE_ROWS_PER_DRUG]
+            entry["evidence_truncated"] = len(entry["evidence"]) > len(kept)
+            entry["evidence"] = kept
+            entry["gene_count"] = len(entry["genes"])
+            entry["outcome_trait_count"] = len(entry["outcome_traits"])
+            entry["genes"] = entry["genes"][:GENES_PER_DRUG]
+            entry["outcome_traits"] = entry["outcome_traits"][:GENES_PER_DRUG]
+            entry["variants"] = entry["variants"][:GENES_PER_DRUG]
 
         all_drugs = sorted(seen_drugs.values(), key=lambda x: -x["evidence_count"])
         limit = max(1, min(int(arguments.get("limit", 30)), 500))
@@ -482,9 +563,21 @@ class EpiGraphDBTool(BaseRESTTool):
         return {
             "status": "success",
             "data": {
+                # Which GWAS the exposure was actually taken from. The tool
+                # echoed back the label the caller typed and not the IEU
+                # OpenGWAS id behind it, so "Body mass index" gave no way to
+                # tell which of the several BMI studies the estimates came
+                # from. Read from the rows rather than resolved separately.
+                "exposure_trait": (
+                    (results[0].get("trait") or {}).get("trait") if results else None
+                ),
+                "exposure_trait_id": (
+                    (results[0].get("trait") or {}).get("id") if results else None
+                ),
                 "drugs": drug_list,
                 "total_evidence_count": len(results),
                 "unique_drug_count": len(seen_drugs),
+                "evidence_rows_per_drug": EVIDENCE_ROWS_PER_DRUG,
                 "offset": offset,
                 "limit": limit,
                 "returned": len(drug_list),
@@ -497,7 +590,15 @@ class EpiGraphDBTool(BaseRESTTool):
                 "source": "EpiGraphDB",
                 "description": (
                     "Drugs whose target genes are associated with the trait via GWAS. "
-                    "Useful for drug repurposing and prioritization."
+                    "Useful for drug repurposing and prioritization. Each drug "
+                    f"carries its {EVIDENCE_ROWS_PER_DRUG} most significant "
+                    "Mendelian randomisation rows (lowest p-value first) out of "
+                    "evidence_count, with the outcome trait each estimate was "
+                    "measured against; evidence_truncated says when there are more. "
+                    "Each estimate belongs to the exposure->outcome trait pair "
+                    "rather than to the gene: the gene and variant are the "
+                    "instrument linking the drug to that pair, so several rows "
+                    "of one drug can share a beta while naming different genes."
                 ),
             },
         }
@@ -712,6 +813,16 @@ class EpiGraphDBTool(BaseRESTTool):
                     "cpic_level": rel.get("cpic_level"),
                     "pgx_on_fda_label": rel.get("pgx_on_fda_label"),
                     "guideline": rel.get("guideline"),
+                    # /gene/drugs answers two row shapes, one per source, and
+                    # only the CPIC one was read. All 43 rows of an EGFR query
+                    # come from OPENTARGETS_DRUG_TO_TARGET and carry
+                    # `action_type` and `phase` instead -- so the gene and the
+                    # drug label came back beside four nulls, with neither the
+                    # direction of the drug's effect nor how far it got in the
+                    # clinic. DPYD returns three CPIC rows and one OpenTargets
+                    # row, so a single query can hold both shapes.
+                    "action_type": rel.get("action_type"),
+                    "clinical_phase": rel.get("phase"),
                 }
             )
 

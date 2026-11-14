@@ -27,8 +27,17 @@ class TestTypedFunctions:
         except ImportError:
             pytest.skip("Tools not generated. Run: python scripts/build_tools.py")
     
+    @pytest.mark.network
     def test_typed_function_call(self):
-        """Test that typed functions can be called."""
+        """Test that typed functions can be called.
+
+        Marked `network`: the body calls UniProt live, and its own except
+        clause says so ("Other errors are expected (network, API limits,
+        etc.)") -- but a pytest-timeout is not an exception the test can
+        catch, so a slow UniProt fails it outright. It did on CI on
+        2026-11-07, as did `test_typed_function_with_options` below, on a
+        branch touching no UniProt code.
+        """
         try:
             from tooluniverse.tools import UniProt_get_entry_by_accession
             
@@ -42,8 +51,19 @@ class TestTypedFunctions:
             # Other errors are expected (network, API limits, etc.)
             assert e is not None
     
+    @pytest.mark.network
     def test_typed_function_with_options(self):
-        """Test that typed functions accept use_cache and validate options."""
+        """Test that typed functions accept use_cache and validate options.
+
+        Marked `network` for the same reason as `test_typed_function_call`
+        above: it calls UniProt live and cannot catch a timeout. That a
+        generated wrapper takes `use_cache` at all is asserted without the
+        network in tests/unit/test_generator_invariants.py
+        (`test_wrapper_with_api_use_cache_parameter_is_valid_python`), which
+        checks the generated source; what this test adds is that a real call
+        through one works, which is why it belongs behind the marker rather
+        than deleted.
+        """
         try:
             from tooluniverse.tools import UniProt_get_entry_by_accession
             

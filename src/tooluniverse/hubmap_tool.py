@@ -13,6 +13,8 @@ APIs:
 No authentication required for public datasets.
 """
 
+import json
+
 import requests
 from typing import Any
 
@@ -23,6 +25,58 @@ from .tool_registry import register_tool
 HUBMAP_SEARCH_URL = "https://search.api.hubmapconsortium.org/v3/search"
 HUBMAP_ONTOLOGY_URL = "https://ontology.api.hubmapconsortium.org"
 HUBMAP_ENTITY_URL = "https://entity.api.hubmapconsortium.org"
+
+
+DONOR_ATTRIBUTES_PER_ENTITY = 25
+
+
+def _donor_attributes(entity: dict[str, Any]) -> list[dict[str, Any]]:
+    """What a Donor was, from the UMLS-coded assertions HuBMAP records.
+
+    `metadata.organ_donor_data` holds one row per attribute -- Age 66 years,
+    Sex, Race -- each with the vocabulary and code that defines it.
+    """
+    metadata = entity.get("metadata")
+    if not isinstance(metadata, dict):
+        return []
+    rows = metadata.get("organ_donor_data") or metadata.get("living_donor_data")
+    if isinstance(rows, dict):
+        rows = [rows]
+    if not isinstance(rows, list):
+        return []
+    out = []
+    for row in rows[:DONOR_ATTRIBUTES_PER_ENTITY]:
+        if not isinstance(row, dict):
+            continue
+        out.append(
+            {
+                "attribute": row.get("grouping_concept_preferred_term")
+                or row.get("preferred_term"),
+                "value": row.get("data_value"),
+                "units": row.get("units") or None,
+                "data_type": row.get("data_type"),
+                "code": row.get("code"),
+                "concept_id": row.get("concept_id"),
+                "vocabulary": row.get("sab"),
+            }
+        )
+    return out
+
+
+def _ccf_annotations(entity: dict[str, Any]) -> list[str]:
+    """The anatomical structures a sample's spatial registration overlaps."""
+    location = entity.get("rui_location")
+    if isinstance(location, str):
+        try:
+            location = json.loads(location)
+        except (ValueError, TypeError):
+            return []
+    if not isinstance(location, dict):
+        return []
+    annotations = location.get("ccf_annotations")
+    if not isinstance(annotations, list):
+        return []
+    return [item for item in annotations if isinstance(item, str)]
 
 
 @register_tool("HuBMAPTool")
@@ -189,13 +243,31 @@ class HuBMAPTool(BaseTool):
 
         results = []
         for org in organs:
+            category = org.get("category") or {}
             results.append(
                 {
+                    # `code` has always been the two-letter RUI code, not the
+                    # ontology `code` field; both are reported now, under names
+                    # that say which is which.
                     "code": org.get("rui_code"),
+                    "rui_code": org.get("rui_code"),
+                    "ontology_code": org.get("code"),
                     "term": org.get("term"),
                     "organ_uberon": org.get("organ_uberon"),
                     "organ_cui": org.get("organ_cui"),
                     "rui_supported": org.get("rui_supported"),
+                    # "Eye (Left)" and "Eye (Right)" are separate entries whose
+                    # side was legible only inside the term string, and whose
+                    # shared parent organ (Eye, UBERON:0000970) was dropped.
+                    "laterality": org.get("laterality"),
+                    "category_term": category.get("term")
+                    if isinstance(category, dict)
+                    else None,
+                    "category_organ_uberon": category.get("organ_uberon")
+                    if isinstance(category, dict)
+                    else None,
+                    # Which vocabulary asserts the entry.
+                    "sab": org.get("sab"),
                 }
             )
 
@@ -238,7 +310,10 @@ class HuBMAPTool(BaseTool):
                 "last_name": person.get("last_name"),
                 "email": person.get("email"),
                 "affiliation": person.get("affiliation"),
-                "orcid": person.get("orcid"),
+                # HuBMAP sends `orcid_id`; reading `orcid` meant every
+                # contributor's ORCID came back null (checked on
+                # HBM626.FHJD.938, where all of them have one).
+                "orcid": person.get("orcid") or person.get("orcid_id"),
                 "is_contact": person.get("is_contact"),
                 "is_operator": person.get("is_operator"),
                 "is_principal_investigator": person.get("is_principal_investigator"),
@@ -267,6 +342,21 @@ class HuBMAPTool(BaseTool):
                 format_person(contributor) for contributor in contributors
             ],
             "contributors_count": len(contributors),
+            # The dataset record names the samples it was derived from, and
+            # their spatial registration says where in the organ the tissue
+            # came from. Only the organ name was read.
+            "direct_ancestors": [
+                {
+                    "entity_type": ancestor.get("entity_type"),
+                    "hubmap_id": ancestor.get("hubmap_id"),
+                    "uuid": ancestor.get("uuid"),
+                    "sample_category": ancestor.get("sample_category"),
+                    "protocol_url": ancestor.get("protocol_url"),
+                    "spatial_annotations": _ccf_annotations(ancestor),
+                }
+                for ancestor in (data.get("direct_ancestors") or [])
+                if isinstance(ancestor, dict)
+            ],
         }
 
         return {"status": "success", "data": result}
@@ -322,6 +412,22 @@ class HuBMAPTool(BaseTool):
                     "organ": entity.get("organ"),
                     "dataset_type": entity.get("dataset_type"),
                     "group_name": entity.get("group_name"),
+                    "description": entity.get("description"),
+                    "protocol_url": entity.get("protocol_url"),
+                    "created_timestamp": entity.get("created_timestamp"),
+                    "data_access_level": entity.get("data_access_level"),
+                    # The whole point of walking to the Donor is what the
+                    # donor was: age 66, sex, race. It is in the same
+                    # response, under metadata.organ_donor_data, and the
+                    # lineage row carried seven keys that did not include it.
+                    "donor_attributes": _donor_attributes(entity),
+                    # The ancestor entities credit people too. Their records
+                    # belong to HuBMAP_get_dataset for that hubmap_id, so the
+                    # count says they exist rather than duplicating them here.
+                    "contributor_count": len(entity.get("contributors") or []),
+                    "contact_count": len(entity.get("contacts") or []),
+                    # Where in the organ the sample was taken from.
+                    "spatial_annotations": _ccf_annotations(entity),
                 }
             )
 

@@ -54,6 +54,44 @@
             },
             "accession": {
               "type": "string"
+            },
+            "genes": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Gene symbols for the receptor, e.g. ['ADRB2']."
+            },
+            "receptor_class": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GPCR class, e.g. 'Class A (Rhodopsin)'. Classes have different architectures, so a class is what says whether a structural comparison is meaningful."
+            },
+            "residue_numbering_scheme": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The generic numbering scheme the residue numbers follow, e.g. 'GPCRdb(A)'. Generic numbers are only comparable within one scheme; read under the wrong one they point at the wrong residue."
+            },
+            "sequence": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The receptor's amino-acid sequence. Residue positions are indices into it."
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Where the entry came from, e.g. 'SWISSPROT' or 'TREMBL'. A TrEMBL entry is unreviewed."
             }
           }
         }
@@ -106,6 +144,20 @@
             },
             "count": {
               "type": "integer"
+            },
+            "family": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which family was listed, e.g. 'all families'. What the reply actually covers."
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How to narrow the listing - that a family's numeric slug must be passed as 'family'. The instruction that turns an unusable whole-database listing into a targeted one."
             }
           }
         }
@@ -146,7 +198,7 @@
         },
         "resolution": {
           "type": "number",
-          "description": "Maximum resolution in Angstroms (client-side filter, e.g., 2.5 returns only structures \u22642.5\u00c5)"
+          "description": "Maximum resolution in Angstroms (client-side filter, e.g., 2.5 returns only structures ≤2.5Å)"
         },
         "protein_id": {
           "type": "string",
@@ -177,6 +229,20 @@
             },
             "count": {
               "type": "integer"
+            },
+            "protein": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The receptor the structures belong to, e.g. 'adrb2_human'. Echoes what the query resolved to."
+            },
+            "state_filter": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which activation states were included, e.g. 'all'. Active and inactive GPCR structures differ substantially, so a list without this cannot be interpreted."
             }
           }
         }
@@ -262,6 +328,13 @@
             },
             "total_count": {
               "type": "integer"
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How to narrow the listing - that a family's numeric slug must be passed as 'family'. The instruction that turns an unusable whole-database listing into a targeted one."
             }
           }
         }
@@ -326,6 +399,13 @@
             },
             "count": {
               "type": "integer"
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How to narrow the listing - that a family's numeric slug must be passed as 'family'. The instruction that turns an unusable whole-database listing into a targeted one."
             }
           }
         }

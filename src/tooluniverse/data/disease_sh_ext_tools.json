@@ -90,6 +90,16 @@
                   }
                 }
               }
+            },
+            "province": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Which province or region the series is for, e.g. ['mainland']. A country-level query can return a province series, and summing provinces as if they were countries double-counts."
             }
           }
         },
@@ -125,7 +135,9 @@
           "description": "Number of past days to include. Default: 30. Examples: 7, 30, 90"
         }
       },
-      "required": ["country"]
+      "required": [
+        "country"
+      ]
     },
     "fields": {
       "endpoint": "https://disease.sh/v3/covid-19/vaccine/coverage/countries/{country}",

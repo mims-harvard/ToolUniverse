@@ -128,6 +128,13 @@
               "number",
               "null"
             ]
+          },
+          "length": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "The element's own width in base pairs. It was used to compute `end` and then dropped, and a cCRE's length is one of its reported properties."
           }
         }
       }

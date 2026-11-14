@@ -278,6 +278,17 @@ class UCSCGenomeTool(BaseTool):
                         "position": m.get("position", ""),
                         "name": m.get("posName", None),
                         "transcript_id": m.get("hgFindMatches", None),
+                        # What the match IS -- "cellular tumor antigen p53
+                        # isoform a", "anoctamin 9". The row already carried
+                        # `track_description`, which is the TRACK's
+                        # description ("MANE Select"), so a caller reading
+                        # the row had a field called description that never
+                        # said what the hit was, and no reason to suspect a
+                        # second one existed.
+                        "description": m.get("description", None),
+                        # Whether this is the canonical transcript, which is
+                        # how you pick one of several hits for a gene.
+                        "canonical": m.get("canonical", None),
                     }
                 )
 

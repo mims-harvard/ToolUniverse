@@ -39,19 +39,79 @@ def _strip_html(value: Optional[str]) -> Optional[str]:
     return re.sub(r"<[^>]+>", "", value).strip() or None
 
 
+def _plant_identity(profile, symbol):
+    """Which plant the symbol resolved to, for the tools that only need its id.
+
+    Each of these tools pays for a PlantProfile to turn a symbol into a
+    numeric id and then threw the profile away, so a wetland or invasive
+    answer named neither the species nor the fact that USDA had substituted
+    one: `symbol=AGRE2` resolves to ELRE4, Elymus repens.
+    """
+    if not isinstance(profile, dict):
+        return None
+    returned = profile.get("Symbol")
+    identity = {
+        "symbol": returned,
+        "scientific_name": _strip_html(
+            profile.get("ScientificNameWithoutAuthor") or profile.get("ScientificName")
+        ),
+        "common_name": profile.get("CommonName"),
+        "rank": profile.get("Rank"),
+        "accepted_symbol": profile.get("AcceptedSymbol"),
+        "queried_symbol": symbol,
+        # Native, introduced or both, per region. The counterpart question to
+        # an invasive or noxious listing, and on the same record.
+        "native_statuses": profile.get("NativeStatuses"),
+        # The classification, as the ranked chain the profile already holds.
+        # Kept here as names and ranks rather than the full ancestor records,
+        # which USDA_plants_get_profile returns in full: enough to tell two
+        # plants of the same common name apart, without repeating a
+        # nine-row taxonomy on every wetland or wildlife row.
+        "lineage": [
+            {
+                "rank": a.get("Rank"),
+                "rank_id": a.get("RankId"),
+                "name": _strip_html(a.get("ScientificName")),
+                "common_name": a.get("CommonName"),
+                "symbol": a.get("Symbol"),
+            }
+            for a in (profile.get("Ancestors") or [])
+            if isinstance(a, dict)
+        ],
+        # Where it occurs, as the states USDA has distribution data for. The
+        # bounding boxes behind them are on USDA_plants_get_profile.
+        "distribution_states": [
+            m.get("StateAbbr")
+            for m in (profile.get("MapCoordinates") or [])
+            if isinstance(m, dict) and m.get("StateAbbr")
+        ],
+    }
+    if symbol and returned and returned != symbol:
+        identity["synonym_note"] = (
+            f"'{symbol}' is a synonym; USDA PLANTS answered for the accepted "
+            f"taxon '{returned}'."
+        )
+    return identity
+
+
 def _resolve_plant_id(arguments: Dict[str, Any], timeout: int):
     """Resolve a plant to its numeric PLANTS Id.
 
     Accepts an explicit ``id`` (numeric PLANTS Id), or a ``symbol`` that is
     looked up via the PlantProfile endpoint. Returns ``(plant_id, symbol,
-    error_dict)`` where ``error_dict`` is non-None only on failure. A symbol
-    with no matching profile returns ``(None, symbol, None)`` so callers can
-    emit an empty success.
+    error_dict, profile)`` where ``error_dict`` is non-None only on failure. A
+    symbol with no matching profile returns ``(None, symbol, None, None)`` so
+    callers can emit an empty success.
+
+    The profile is handed back rather than dropped: resolving a symbol costs a
+    full PlantProfile request, and every caller then answered without saying
+    which plant it had resolved to -- which matters because USDA redirects a
+    synonym symbol to the accepted taxon in silence.
     """
     raw_id = arguments.get("id") or arguments.get("plant_id")
     if raw_id not in (None, ""):
         try:
-            return int(raw_id), None, None
+            return int(raw_id), None, None, None
         except (TypeError, ValueError):
             return (
                 None,
@@ -60,6 +120,7 @@ def _resolve_plant_id(arguments: Dict[str, Any], timeout: int):
                     "status": "error",
                     "error": f"'id' must be a numeric USDA PLANTS Id (got {raw_id!r}).",
                 },
+                None,
             )
 
     symbol = (arguments.get("symbol") or "").strip().upper()
@@ -71,6 +132,7 @@ def _resolve_plant_id(arguments: Dict[str, Any], timeout: int):
                 "status": "error",
                 "error": "Provide a USDA PLANTS 'symbol' (e.g. 'TYLA') or a numeric 'id'.",
             },
+            None,
         )
 
     try:
@@ -83,23 +145,26 @@ def _resolve_plant_id(arguments: Dict[str, Any], timeout: int):
                 "status": "error",
                 "error": f"USDA PLANTS request timed out after {timeout}s",
             },
+            None,
         )
     except requests.exceptions.RequestException as e:
         return (
             None,
             symbol,
             {"status": "error", "error": f"USDA PLANTS request failed: {e}"},
+            None,
         )
     except ValueError:
         return (
             None,
             symbol,
             {"status": "error", "error": "USDA PLANTS returned a non-JSON response"},
+            None,
         )
 
     if profile is None:
-        return None, symbol, None
-    return profile.get("Id"), symbol, None
+        return None, symbol, None, None
+    return profile.get("Id"), symbol, None, profile
 
 
 def _fetch_plants_json(path: str, timeout: int):
@@ -156,7 +221,7 @@ class USDAPlantsProfileTool(_USDAPlantsBase):
         return self._profile(arguments)
 
     def _wetland(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        plant_id, symbol, err = _resolve_plant_id(arguments, self.timeout)
+        plant_id, symbol, err, profile = _resolve_plant_id(arguments, self.timeout)
         if err is not None:
             return err
         if plant_id is None:
@@ -203,13 +268,14 @@ class USDAPlantsProfileTool(_USDAPlantsBase):
                 "total_results": len(results),
                 "query_symbol": symbol,
                 "plant_id": plant_id,
+                "plant": _plant_identity(profile, symbol),
                 "source": "USDA PLANTS",
                 "note": "WetlandCode values: OBL=obligate wetland, FACW=facultative wetland, FAC=facultative, FACU=facultative upland, UPL=upland (per USACE region).",
             },
         }
 
     def _invasive(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        plant_id, symbol, err = _resolve_plant_id(arguments, self.timeout)
+        plant_id, symbol, err, profile = _resolve_plant_id(arguments, self.timeout)
         if err is not None:
             return err
         if plant_id is None:
@@ -260,13 +326,14 @@ class USDAPlantsProfileTool(_USDAPlantsBase):
                 "noxious_count": len(noxious),
                 "query_symbol": symbol,
                 "plant_id": plant_id,
+                "plant": _plant_identity(profile, symbol),
                 "source": "USDA PLANTS",
                 "note": "State-by-state invasive listings and federal/state noxious-weed legal statuses.",
             },
         }
 
     def _wildlife(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        plant_id, symbol, err = _resolve_plant_id(arguments, self.timeout)
+        plant_id, symbol, err, profile = _resolve_plant_id(arguments, self.timeout)
         if err is not None:
             return err
         if plant_id is None:
@@ -323,6 +390,7 @@ class USDAPlantsProfileTool(_USDAPlantsBase):
                 "cover_count": len(cover),
                 "query_symbol": symbol,
                 "plant_id": plant_id,
+                "plant": _plant_identity(profile, symbol),
                 "source": "USDA PLANTS",
                 "note": "Wildlife food and cover value ratings (e.g. Minor/Low/Moderate/High) by source for mammal and bird groups.",
             },
@@ -402,7 +470,19 @@ class USDAPlantsProfileTool(_USDAPlantsBase):
                     "common_name": plant.get("CommonName")
                     or _strip_html(item.get("Text")),
                     "rank": plant.get("Rank"),
+                    "rank_id": plant.get("RankId"),
                     "id": plant.get("Id"),
+                    # Whether the hit is itself an accepted name. A search for
+                    # a genus returns synonyms beside accepted taxa and the
+                    # row did not distinguish them, so the caller picked a
+                    # symbol that would be silently redirected on the next
+                    # call.
+                    "accepted_symbol": plant.get("AcceptedSymbol"),
+                    "synonym_symbol": plant.get("SynonymSymbol"),
+                    "group": plant.get("GroupName") or plant.get("Group"),
+                    "duration": plant.get("Durations") or plant.get("Duration"),
+                    "growth_habits": plant.get("GrowthHabits"),
+                    "native_statuses": plant.get("NativeStatuses"),
                 }
             )
 
@@ -460,11 +540,31 @@ class USDAPlantsProfileTool(_USDAPlantsBase):
                     "note": f"No USDA PLANTS profile for '{symbol}'.",
                 },
             }
+        # USDA redirects a synonym symbol to the accepted taxon without
+        # saying so: `symbol=AGRE2` answers the profile of ELRE4 (Elymus
+        # repens). The returned symbol and the queried one were in two
+        # different parts of the response -- data and metadata -- and nothing
+        # stated the substitution.
+        returned_symbol = profile.get("Symbol")
+        note = None
+        if returned_symbol and returned_symbol != symbol:
+            note = (
+                f"'{symbol}' is a synonym; USDA PLANTS answered with the "
+                f"accepted taxon '{returned_symbol}'"
+                + (
+                    f" ({_strip_html(profile.get('ScientificName'))})."
+                    if profile.get("ScientificName")
+                    else "."
+                )
+            )
+        metadata = {"query_symbol": symbol, "source": "USDA PLANTS"}
+        if note:
+            metadata["note"] = note
         return {
             "status": "success",
             "data": {
                 "id": profile.get("Id"),
-                "symbol": profile.get("Symbol"),
+                "symbol": returned_symbol,
                 "scientific_name": _strip_html(
                     profile.get("ScientificNameWithoutAuthor")
                     or profile.get("ScientificName")
@@ -472,6 +572,7 @@ class USDAPlantsProfileTool(_USDAPlantsBase):
                 "common_name": profile.get("CommonName"),
                 "group": profile.get("GroupName") or profile.get("Group"),
                 "rank": profile.get("Rank"),
+                "rank_id": profile.get("RankId"),
                 "duration": profile.get("Durations") or profile.get("Duration"),
                 "growth_habits": profile.get("GrowthHabits"),
                 "native_statuses": profile.get("NativeStatuses"),
@@ -479,8 +580,59 @@ class USDAPlantsProfileTool(_USDAPlantsBase):
                 if profile.get("HasSynonyms")
                 else [],
                 "fips_distribution": profile.get("FipsCode"),
+                "queried_symbol": symbol,
+                "synonym_note": note,
+                # Where the symbol resolves, when USDA names an accepted
+                # taxon separately from the record it answered with.
+                "accepted_symbol": profile.get("AcceptedSymbol"),
+                "accepted_id": profile.get("AcceptedId"),
+                "accepted_scientific_name": _strip_html(
+                    profile.get("AcceptedScientificName")
+                ),
+                "accepted_common_name": profile.get("AcceptedCommonName"),
+                "synonym_symbol": profile.get("SynonymSymbol"),
+                # The classification. Nine ancestors for balsam fir, Kingdom
+                # down to Genus, each with its own symbol and rank -- the part
+                # of a plant profile that says what the plant IS, and the
+                # profile already had it.
+                "ancestors": [
+                    {
+                        "id": a.get("Id"),
+                        "symbol": a.get("Symbol"),
+                        "scientific_name": _strip_html(a.get("ScientificName")),
+                        "common_name": a.get("CommonName"),
+                        "rank": a.get("Rank"),
+                        "rank_id": a.get("RankId"),
+                    }
+                    for a in (profile.get("Ancestors") or [])
+                    if isinstance(a, dict)
+                ],
+                # The distribution. `fips_distribution` is null on most
+                # records; the map coordinates are the per-state bounding
+                # boxes USDA actually publishes.
+                "map_coordinates": profile.get("MapCoordinates") or [],
+                "distribution_results": profile.get("PlantsDistributionResults"),
+                "other_common_names": profile.get("OtherCommonNames") or [],
+                "subordinate_taxa": profile.get("SubordinateTaxa"),
+                # Status sets with no tool of their own: the invasive and
+                # noxious ones have USDA_plants_get_invasive_status, and these
+                # two were reachable nowhere.
+                "legal_statuses": profile.get("LegalStatuses"),
+                "protected_statuses": profile.get("ProtectedStatuses"),
+                "notes": profile.get("PlantNotes"),
+                "fact_sheet_urls": profile.get("FactSheetUrls") or [],
+                "plant_guide_urls": profile.get("PlantGuideUrls") or [],
+                "related_links": profile.get("RelatedLinks") or [],
+                # Which of the sibling tools will have something for this
+                # plant. USDA states it per record and a caller otherwise
+                # finds out by trying.
+                "available_data": {
+                    key[3:].lower(): value
+                    for key, value in profile.items()
+                    if key.startswith("Has") and isinstance(value, bool)
+                },
             },
-            "metadata": {"query_symbol": symbol, "source": "USDA PLANTS"},
+            "metadata": metadata,
         }
 
 
@@ -545,6 +697,7 @@ class USDAPlantsCharacteristicsTool(_USDAPlantsBase):
                 "total_results": len(results),
                 "query_symbol": symbol,
                 "plant_id": profile["Id"],
+                "plant": _plant_identity(profile, symbol),
                 "source": "USDA PLANTS",
             },
         }

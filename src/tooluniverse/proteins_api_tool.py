@@ -19,6 +19,51 @@ _UNIPROT_ACCESSION_RE = re.compile(
 )
 
 
+# UniProt cross-reference databases that hold mass-spectrometry or PTM
+# evidence. P05067's entry carries 780 dbReferences of which these 21 are the
+# proteomics ones -- PeptideAtlas, MassIVE, jPOST, eleven ProteomicsDB
+# entries -- and a tool that promises "mass spectrometry evidence" discarded
+# all 780 rather than keeping the pointers to the evidence.
+PROTEOMICS_DATABASES = (
+    "PRIDE",
+    "PeptideAtlas",
+    "ProteomicsDB",
+    "MassIVE",
+    "jPOST",
+    "EPD",
+    "CPTAC",
+    "Pumba",
+    "TopDownProteomics",
+    "PhosphoSitePlus",
+    "SwissPalm",
+    "iPTMnet",
+    "MetOSite",
+    "DEPOD",
+    "GlyConnect",
+    "GlyGen",
+    "Glycosmos",
+)
+
+
+def _proteomics_cross_references(protein_data: dict) -> list:
+    """The entry's pointers to proteomics and PTM resources."""
+    out = []
+    for reference in protein_data.get("dbReferences") or []:
+        if not isinstance(reference, dict):
+            continue
+        database = reference.get("type")
+        if database not in PROTEOMICS_DATABASES:
+            continue
+        out.append(
+            {
+                "database": database,
+                "id": reference.get("id"),
+                "properties": reference.get("properties") or {},
+            }
+        )
+    return out
+
+
 def _numeric_organism_as_taxid(args: dict[str, Any]) -> str | None:
     """Return the taxonomy id when ``organism`` was supplied as a bare number.
 
@@ -236,12 +281,22 @@ class ProteinsAPIRESTTool(BaseTool):
                         ):
                             proteomics_data.append(feature)
 
+                cross_references = _proteomics_cross_references(protein_data)
                 return {
                     "status": "success",
                     "data": proteomics_data,
                     "url": response.url,
                     "count": len(proteomics_data),
-                    "note": "Proteomics data extracted from main protein endpoint (proteomics endpoint not available). Includes PTM comments, modified residues, and related features.",
+                    # Where the mass-spectrometry evidence actually lives.
+                    # The entry lists 780 cross-references and these are the
+                    # proteomics ones; the tool promises "mass spectrometry
+                    # evidence" and returned none of the pointers to it.
+                    "proteomics_cross_references": cross_references,
+                    "proteomics_cross_reference_count": len(cross_references),
+                    "proteomics_databases": sorted(
+                        {x["database"] for x in cross_references if x.get("database")}
+                    ),
+                    "note": "Proteomics data extracted from main protein endpoint (proteomics endpoint not available). Includes PTM comments, modified residues, and related features, plus the entry's cross-references to proteomics and PTM resources under proteomics_cross_references.",
                     "fallback_used": True,
                     "source": "main_protein_endpoint",
                 }

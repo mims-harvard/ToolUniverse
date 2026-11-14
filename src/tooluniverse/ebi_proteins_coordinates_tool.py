@@ -19,6 +19,101 @@ from .tool_registry import register_tool
 EBI_PROTEINS_BASE_URL = "https://www.ebi.ac.uk/proteins/api"
 
 
+# The coordinates endpoint attaches UniProt's whole feature table to each
+# transcript mapping, already projected onto the genome: TP53's first
+# transcript carries 1,514 of them, 16,654 across its eleven transcripts, and
+# none reached the caller. They are paged like the exons, with the count, the
+# per-type breakdown and the cut reported.
+FEATURES_PER_MAPPING = 50
+
+
+def _position(node: Any) -> Any:
+    """A UniProt location node, which is `position` or `begin`/`end`."""
+    if not isinstance(node, dict):
+        return None
+    for key in ("position", "begin", "end"):
+        value = node.get(key)
+        if isinstance(value, dict) and value.get("position") is not None:
+            return value.get("position")
+    return None
+
+
+def _evidence(feature: Dict[str, Any]) -> list:
+    """The evidence behind one annotation, under either of the two names.
+
+    This endpoint answers `evidence`; `/proteins/api/features` answers
+    `evidences`. Reading only the plural made `evidence_count` 0 for all 264
+    features of 17:7676154, of which 154 carry evidence -- ECO:0000269 with
+    the PubMed ids that assert it. A count of zero reads as "no evidence",
+    not as "not looked at", which is why this is reported as the records
+    rather than a number.
+    """
+    rows = []
+    for item in feature.get("evidence") or feature.get("evidences") or []:
+        if not isinstance(item, dict):
+            continue
+        reference = item.get("dbReference") or item.get("source") or {}
+        rows.append(
+            {
+                "code": item.get("code"),
+                "source_database": reference.get("type"),
+                "source_id": reference.get("id"),
+            }
+        )
+    return rows
+
+
+def _feature_row(feature: Dict[str, Any]) -> Dict[str, Any]:
+    """One annotation with both coordinate systems it was mapped between."""
+    location = feature.get("location") or {}
+    genome = feature.get("genomeLocation") or {}
+    begin = location.get("begin") or {}
+    end = location.get("end") or {}
+    position = location.get("position") or {}
+    variations = feature.get("variation")
+    if isinstance(variations, str):
+        variations = [variations]
+    return {
+        "type": feature.get("type"),
+        "id": feature.get("id"),
+        "description": feature.get("description"),
+        "original": feature.get("original"),
+        "variation": [v for v in (variations or []) if v],
+        "protein_position": position.get("position"),
+        "protein_start": begin.get("position"),
+        "protein_end": end.get("position"),
+        "genome_start": (genome.get("begin") or {}).get("position"),
+        "genome_end": (genome.get("end") or {}).get("position"),
+        # The ECO codes and the publications that assert the annotation.
+        "evidence": _evidence(feature),
+        "evidence_count": len(_evidence(feature)),
+    }
+
+
+def _feature_page(features: Any, offset: int, limit: int) -> Dict[str, Any]:
+    """The requested page of features, the full count, and the breakdown."""
+    if isinstance(features, dict):
+        features = [features]
+    if not isinstance(features, list):
+        features = []
+    features = [f for f in features if isinstance(f, dict)]
+    counts: Dict[str, int] = {}
+    for feature in features:
+        key = feature.get("type") or "unknown"
+        counts[key] = counts.get(key, 0) + 1
+    page = features[offset : offset + limit]
+    truncated = offset + len(page) < len(features)
+    return {
+        "features": [_feature_row(f) for f in page],
+        "feature_count": len(features),
+        "feature_type_counts": dict(sorted(counts.items())),
+        "feature_offset": offset,
+        "features_returned": len(page),
+        "features_truncated": truncated,
+        "next_feature_offset": offset + len(page) if truncated else None,
+    }
+
+
 @register_tool("EBIProteinsCoordinatesTool")
 class EBIProteinsCoordinatesTool(BaseTool):
     """
@@ -108,6 +203,10 @@ class EBIProteinsCoordinatesTool(BaseTool):
         )
         exon_offset = max(int(arguments.get("exon_offset") or 0), 0)
         exon_limit = min(max(int(arguments.get("exon_limit") or 20), 1), 1000)
+        feature_offset = max(int(arguments.get("feature_offset") or 0), 0)
+        feature_limit = min(
+            max(int(arguments.get("feature_limit") or FEATURES_PER_MAPPING), 1), 1000
+        )
         coordinate_page = gn_coordinates[
             coordinate_offset : coordinate_offset + coordinate_limit
         ]
@@ -140,6 +239,11 @@ class EBIProteinsCoordinatesTool(BaseTool):
                     "start": genomic_loc.get("start"),
                     "end": genomic_loc.get("end"),
                     "reverse_strand": genomic_loc.get("reverseStrand"),
+                    # Which assembly the genome positions are against, and the
+                    # nucleotide record they came from. A coordinate without
+                    # its assembly is not a coordinate.
+                    "assembly_name": genomic_loc.get("assemblyName"),
+                    "nucleotide_id": genomic_loc.get("nucleotideId"),
                     "num_exons": len(exons),
                     "exon_offset": exon_offset,
                     "exons_returned": len(exon_page),
@@ -150,6 +254,9 @@ class EBIProteinsCoordinatesTool(BaseTool):
                         else None
                     ),
                     "exons": exon_mappings,
+                    **_feature_page(
+                        gc.get("feature"), feature_offset, feature_limit
+                    ),
                 }
             )
 
@@ -161,6 +268,18 @@ class EBIProteinsCoordinatesTool(BaseTool):
             "data": {
                 "accession": data.get("accession"),
                 "protein_name": data.get("name"),
+                # `name` is the UniProt entry name (P53_HUMAN); the recommended
+                # protein name is a separate field and was dropped.
+                "protein": data.get("protein"),
+                # `sequence` is a bare string on this endpoint and an object
+                # on others; the length is what a coordinate caller needs.
+                "sequence_length": (
+                    len(data["sequence"])
+                    if isinstance(data.get("sequence"), str)
+                    else len((data.get("sequence") or {}).get("sequence", "")) or None
+                    if isinstance(data.get("sequence"), dict)
+                    else None
+                ),
                 "taxid": data.get("taxid"),
                 "gene": gene_info,
                 "coordinate_mappings": mappings,
@@ -202,6 +321,10 @@ class EBIProteinsCoordinatesTool(BaseTool):
                 }
             location = f"{str(chromosome).strip()}:{str(position).strip()}"
         location = str(location).strip()
+        feature_offset = max(int(arguments.get("feature_offset") or 0), 0)
+        feature_limit = min(
+            max(int(arguments.get("feature_limit") or FEATURES_PER_MAPPING), 1), 1000
+        )
 
         url = f"{EBI_PROTEINS_BASE_URL}/coordinates/glocation/{str(taxonomy).strip()}/{location}"
         response = requests.get(
@@ -236,6 +359,13 @@ class EBIProteinsCoordinatesTool(BaseTool):
                         "gene_end": loc.get("geneEnd"),
                         "reverse_strand": loc.get("reverseStrand"),
                         "assembly_name": loc.get("assemblyName"),
+                        "nucleotide_id": loc.get("nucleotideId"),
+                        # The annotations at the position asked about, which is
+                        # what a genome-to-protein lookup is for. 264 of them
+                        # came back for 17:7676154 and none was reported.
+                        **_feature_page(
+                            loc.get("features"), feature_offset, feature_limit
+                        ),
                     }
                 )
 

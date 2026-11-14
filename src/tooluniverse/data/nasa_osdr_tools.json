@@ -39,7 +39,15 @@
               "assay_measurement_type": {"type": ["string", "null"]},
               "assay_technology_type": {"type": ["string", "null"]},
               "factor_name": {"type": ["string", "null"]},
-              "release_date": {"type": ["number", "null"]},
+              "release_date": {"type": ["string", "number", "null"], "description": "Public release date. OSDR sends it as a string of digits, and as the literal '0000000000' for a row with no date -- so the previous declaration of number-or-null never matched its own output."},
+              "assay_technology_platform": {"type": ["string", "null"], "description": "The platform the assay ran on, e.g. the GEO platform id GPL1219. Often the only one of the three assay fields populated: assay_technology_type is empty on the first microgravity hit while the platform reads GPL1219."},
+              "project_type": {"type": ["string", "null"], "description": "Study design, e.g. 'Expression profiling by array'."},
+              "description": {"type": ["string", "null"], "description": "What the study was, capped at DESCRIPTION_CHARACTERS with an ellipsis -- the text a caller reads to choose between hits."},
+              "investigator": {"type": ["string", "null"], "description": "Who ran the study."},
+              "data_source_type": {"type": ["string", "null"], "description": "Which repository the row came from -- the note already warns that OSDR indexes external datasets, and this is the field that says which."},
+              "data_source_accession": {"type": ["string", "null"]},
+              "funding_agency": {"type": ["string", "null"]},
+              "managing_nasa_center": {"type": ["string", "null"]},
               "usable_with_get_study": {"type": "boolean"}
             }
           }
@@ -97,7 +105,30 @@
             "assay_technology_type": {},
             "publication_title": {},
             "publication_authors": {},
-            "release_date": {}
+            "release_date": {},
+            "protocol_names": {"type": ["array", "string", "null"], "items": {"type": "string"}, "description": "The study's protocols by name; OSD-1 lists eight. These three protocol fields are the methods and all three were dropped."},
+            "protocol_types": {"type": ["array", "string", "null"], "items": {"type": "string"}},
+            "protocol_descriptions": {"type": ["array", "string", "null"], "items": {"type": "string"}, "description": "The protocol text itself."},
+            "investigator": {"type": ["string", "null"], "description": "The study person, assembled from the separate name parts OSDR stores."},
+            "funding_agency": {"type": ["string", "null"]},
+            "grant_number": {"type": ["string", "null"]},
+            "managing_nasa_center": {"type": ["string", "null"]},
+            "space_program": {"type": ["string", "null"]},
+            "project_identifier": {"type": ["string", "null"]},
+            "project_link": {"type": ["string", "null"]},
+            "project_type": {"type": ["string", "null"]},
+            "experiment_platform": {"type": ["string", "null"]},
+            "assay_technology_platform": {"type": ["string", "null"]},
+            "characteristics": {},
+            "factor_values": {},
+            "parameter_values": {},
+            "identifiers": {},
+            "data_source_type": {"type": ["string", "null"], "description": "Which repository the record came from; OSDR also indexes cross-referenced external datasets."},
+            "data_source_accession": {"type": ["string", "null"]},
+            "authoritative_source_url": {"type": ["string", "null"]},
+            "acknowledgments": {"type": ["string", "null"]},
+            "assays_url": {"type": ["string", "null"], "description": "Link to the study's assay list. `assays` on this endpoint is an object holding only a REST_URL rather than a list, so counting it gave 1 for every study."},
+            "files_url": {"type": ["string", "null"]}
           }
         },
         {
@@ -145,7 +176,12 @@
               "subcategory": {"type": ["string", "null"]},
               "file_size_bytes": {"type": ["integer", "null"]},
               "restricted": {"type": "boolean"},
-              "download_path": {"type": ["string", "null"]}
+              "download_path": {"type": ["string", "null"]},
+              "date_created": {"type": ["number", "null"], "description": "Unix timestamp."},
+              "date_updated": {"type": ["number", "null"]},
+              "organization": {"type": ["string", "null"], "description": "Which group deposited the file."},
+              "subdirectory": {"type": ["string", "null"]},
+              "visible": {"type": ["boolean", "null"]}
             }
           }
         },

@@ -351,9 +351,66 @@
                   },
                   "to": {
                     "type": "string"
+                  },
+                  "entry_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'UniProtKB reviewed (Swiss-Prot)' or 'UniProtKB unreviewed (TrEMBL)'"
+                  },
+                  "reviewed": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True only for Swiss-Prot. Derived by testing for 'unreviewed', because that string contains 'reviewed'."
+                  },
+                  "protein_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_names": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "organism": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "organism_taxon_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "sequence_length": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "protein_existence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "annotation_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
-              }
+              },
+              "description": " A gene name resolves to many accessions -- TP53 to 114 -- so each row also carries what the mapped-to UniProtKB entry is, which is what tells the Swiss-Prot one from the 113 TrEMBL ones."
             },
             "truncated": {
               "type": "boolean",
@@ -426,6 +483,23 @@
                         },
                         "from_supported": {
                           "type": "boolean"
+                        },
+                        "to_supported": {
+                          "type": "boolean",
+                          "description": "Whether the database can be mapped TO. Mapping has two directions and only from_supported was reported."
+                        },
+                        "uri_template": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "How to resolve an id in that database; %id is the placeholder. 90 of the 95 have one."
+                        },
+                        "rule_id": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
                         }
                       }
                     }
