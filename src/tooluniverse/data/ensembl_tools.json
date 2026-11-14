@@ -801,8 +801,8 @@
           },
           "version": {
             "type": [
-              "integer",
-              "null"
+              "null",
+              "string"
             ],
             "description": "Version of the feature's annotation, e.g. 6."
           },
@@ -893,8 +893,8 @@
           },
           "version": {
             "type": [
-              "integer",
-              "null"
+              "null",
+              "string"
             ],
             "description": "Version of the feature's annotation, e.g. 6."
           },
@@ -2208,7 +2208,7 @@
               "study": {
                 "type": [
                   "object",
-                  "null"
+                  "string"
                 ],
                 "properties": {
                   "name": {
@@ -2295,7 +2295,10 @@
           "description": "Genomic mappings"
         },
         "study": {
-          "type": "string",
+          "type": [
+            "object",
+            "string"
+          ],
           "description": "Study name"
         }
       },

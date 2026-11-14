@@ -282,7 +282,10 @@
                   "description": "MD5 checksum of the data file"
                 },
                 "file_id": {
-                  "type": "integer",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
                   "description": "Internal file ID for downloading"
                 },
                 "description_version": {

@@ -96,15 +96,17 @@
                             },
                             "molecular_weight": {
                                 "type": [
+                                    "null",
                                     "number",
-                                    "null"
+                                    "string"
                                 ],
                                 "description": "Average molecular weight."
                             },
                             "exact_mass": {
                                 "type": [
+                                    "null",
                                     "number",
-                                    "null"
+                                    "string"
                                 ],
                                 "description": "Monoisotopic mass, for mass spectrometry."
                             },

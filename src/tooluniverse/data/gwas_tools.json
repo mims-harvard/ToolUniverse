@@ -1314,14 +1314,14 @@
               },
               "snp_allele": {
                 "type": [
-                  "string",
+                  "array",
                   "null"
                 ],
                 "description": "The allele the association is reported for"
               },
               "snp_effect_allele": {
                 "type": [
-                  "string",
+                  "array",
                   "null"
                 ],
                 "description": "The effect allele, where the Catalog distinguishes it"
@@ -1533,8 +1533,9 @@
               },
               "or_value": {
                 "type": [
+                  "null",
                   "number",
-                  "null"
+                  "string"
                 ],
                 "description": "Odds ratio for the association, when the study reported one. Absent for quantitative traits, which report a beta instead."
               },
@@ -1750,8 +1751,9 @@
               },
               "or_value": {
                 "type": [
+                  "null",
                   "number",
-                  "null"
+                  "string"
                 ],
                 "description": "Odds ratio for the association, when the study reported one. Absent for quantitative traits, which report a beta instead."
               },
@@ -2311,8 +2313,9 @@
               },
               "or_value": {
                 "type": [
+                  "null",
                   "number",
-                  "null"
+                  "string"
                 ],
                 "description": "Odds ratio for the association, when the study reported one. Absent for quantitative traits, which report a beta instead."
               },

@@ -100,11 +100,11 @@
               "description": "URL to neuron image"
             },
             "surface": {
-              "type": "number",
+              "type": "string",
               "description": "Total surface area (um^2)"
             },
             "volume": {
-              "type": "number",
+              "type": "string",
               "description": "Total volume (um^3)"
             },
             "_links": {
@@ -548,7 +548,7 @@
                 "description": "Soma surface area in square micrometres, e.g. '834.0'. A string."
               },
               "surface": {
-                "type": "number",
+                "type": "string",
                 "description": "Total surface area (um^2)"
               },
               "upload_date": {
@@ -559,7 +559,7 @@
                 "description": "When NeuroMorpho published it, e.g. '2006-08-01'."
               },
               "volume": {
-                "type": "number",
+                "type": "string",
                 "description": "Total volume (um^3)"
               },
               "age_classification": {

@@ -327,7 +327,7 @@
           },
           "benefactor_id": {
             "type": [
-              "string",
+              "integer",
               "null"
             ],
             "description": "The entity whose access rules govern this child. A benefactor_id differing from the parent means the child carries its own restriction."

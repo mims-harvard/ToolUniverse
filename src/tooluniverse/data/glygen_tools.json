@@ -1122,7 +1122,10 @@
                 "type": "string"
               },
               "organism": {
-                "type": "string"
+                "type": [
+                  "object",
+                  "string"
+                ]
               },
               "glycosylation_count": {
                 "type": [
@@ -1213,14 +1216,20 @@
                 }
               },
               "protein_names_refseq": {
-                "type": "array",
+                "type": [
+                  "array",
+                  "string"
+                ],
                 "description": "RefSeq's names for the protein, which can differ from UniProt's",
                 "items": {
                   "type": "object"
                 }
               },
               "gene_names_refseq": {
-                "type": "array",
+                "type": [
+                  "array",
+                  "string"
+                ],
                 "items": {
                   "type": "object"
                 }

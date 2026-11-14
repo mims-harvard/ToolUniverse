@@ -162,7 +162,8 @@
                   "assembly": {
                     "type": [
                       "integer",
-                      "null"
+                      "null",
+                      "string"
                     ],
                     "description": "Biological assembly the chain belongs to"
                   },
@@ -627,7 +628,8 @@
                     "assembly": {
                       "type": [
                         "integer",
-                        "null"
+                        "null",
+                        "string"
                       ],
                       "description": "Biological assembly the chain belongs to"
                     },

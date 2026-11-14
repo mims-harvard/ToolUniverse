@@ -1397,7 +1397,8 @@
         "Secretome location": {
           "type": [
             "array",
-            "null"
+            "null",
+            "string"
           ],
           "items": {
             "type": "string"

@@ -121,15 +121,17 @@
             },
             "molecular_weight": {
               "type": [
+                "null",
                 "number",
-                "null"
+                "object"
               ],
               "description": "Molecular weight in daltons."
             },
             "isoelectric_point": {
               "type": [
+                "null",
                 "number",
-                "null"
+                "object"
               ],
               "description": "Isoelectric point. Antimicrobial peptides are typically cationic, so a low pI is unusual here."
             },

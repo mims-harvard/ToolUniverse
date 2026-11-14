@@ -510,8 +510,9 @@
                           },
                           "aa_change": {
                             "type": [
-                              "string",
-                              "null"
+                              "null",
+                              "object",
+                              "string"
                             ],
                             "description": "The resulting amino-acid change, where one is predicted."
                           },
@@ -524,8 +525,9 @@
                           },
                           "altered_protein_window": {
                             "type": [
-                              "string",
-                              "null"
+                              "null",
+                              "object",
+                              "string"
                             ],
                             "description": "The predicted altered sequence over the same window. Comparing it with wt_protein_window shows the consequence directly."
                           },
@@ -547,8 +549,9 @@
                           },
                           "description": {
                             "type": [
-                              "string",
-                              "null"
+                              "null",
+                              "object",
+                              "string"
                             ],
                             "description": "The predicted aberration in words, e.g. 'exon skipping'."
                           },
@@ -634,8 +637,9 @@
                           },
                           "wt_protein_window": {
                             "type": [
-                              "string",
-                              "null"
+                              "null",
+                              "object",
+                              "string"
                             ],
                             "description": "The wild-type protein sequence around the site."
                           }

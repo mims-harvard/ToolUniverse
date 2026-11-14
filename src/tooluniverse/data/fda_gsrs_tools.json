@@ -227,7 +227,7 @@
                   },
                   "display_name": {
                     "type": [
-                      "string",
+                      "boolean",
                       "null"
                     ],
                     "description": "Name as GSRS displays it"

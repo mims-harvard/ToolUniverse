@@ -128,7 +128,10 @@
               "description": "When the latest release was published, ISO 8601. The first thing to check before depending on a package."
             },
             "requires_dist": {
-              "type": "array",
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
                 "type": "string"
               },

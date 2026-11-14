@@ -391,7 +391,10 @@
           "type": "object",
           "properties": {
             "error": {
-              "type": "string"
+              "type": [
+                "null",
+                "string"
+              ]
             }
           },
           "required": [
@@ -560,7 +563,10 @@
           "type": "object",
           "properties": {
             "error": {
-              "type": "string"
+              "type": [
+                "null",
+                "string"
+              ]
             }
           },
           "required": [

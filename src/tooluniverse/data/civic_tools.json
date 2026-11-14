@@ -689,8 +689,9 @@
                     },
                     "revelScore": {
                       "type": [
-                        "number",
-                        "null"
+                        "array",
+                        "null",
+                        "number"
                       ]
                     },
                     "caddPhred": {

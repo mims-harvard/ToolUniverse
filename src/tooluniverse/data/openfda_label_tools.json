@@ -148,28 +148,32 @@
               "adverse_reactions": {
                 "type": [
                   "array",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "description": "SPL section 6, ADVERSE REACTIONS: the full reported adverse-reaction text for the product.  openFDA returns each label section as ONE long string that begins with its own SPL section number and heading, so the text is not pre-stripped and a section may run to tens of thousands of characters."
               },
               "clinical_pharmacology": {
                 "type": [
                   "array",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "description": "SPL section 12, CLINICAL PHARMACOLOGY, including the mechanism, pharmacodynamics and pharmacokinetics subsections.  openFDA returns each label section as ONE long string that begins with its own SPL section number and heading, so the text is not pre-stripped and a section may run to tens of thousands of characters."
               },
               "dosage_forms_and_strengths": {
                 "type": [
                   "array",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "description": "SPL section 3, DOSAGE FORMS AND STRENGTHS: every presentation and strength the product is sold in.  openFDA returns each label section as ONE long string that begins with its own SPL section number and heading, so the text is not pre-stripped and a section may run to tens of thousands of characters."
               },
               "mechanism_of_action": {
                 "type": [
                   "array",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "description": "SPL section 12.1, MECHANISM OF ACTION -- the same text also appears inside clinical_pharmacology, so the two overlap rather than complement each other.  openFDA returns each label section as ONE long string that begins with its own SPL section number and heading, so the text is not pre-stripped and a section may run to tens of thousands of characters."
               },
@@ -183,7 +187,8 @@
               "use_in_specific_populations": {
                 "type": [
                   "array",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "description": "SPL section 8, USE IN SPECIFIC POPULATIONS: pregnancy, lactation, paediatric, geriatric and renal/hepatic guidance.  openFDA returns each label section as ONE long string that begins with its own SPL section number and heading, so the text is not pre-stripped and a section may run to tens of thousands of characters."
               }

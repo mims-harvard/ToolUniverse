@@ -477,8 +477,9 @@
                   },
                   "chrom": {
                     "type": [
-                      "string",
-                      "null"
+                      "integer",
+                      "null",
+                      "string"
                     ],
                     "description": "Chromosome, as dbSNP records it."
                   },
@@ -509,7 +510,8 @@
                   "alleles": {
                     "type": [
                       "array",
-                      "null"
+                      "null",
+                      "string"
                     ],
                     "items": {
                       "type": "object"
@@ -560,8 +562,9 @@
                   },
                   "annotype": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "null",
+                      "string"
                     ],
                     "description": "What the position is, e.g. 'Intergenic', 'CodingTranscript'. The context every other CADD field has to be read in."
                   },
@@ -580,20 +583,23 @@
                   },
                   "consdetail": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "null",
+                      "string"
                     ],
                     "description": "Consequence detail, e.g. 'intergenic'."
                   },
                   "consequence": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "null",
+                      "string"
                     ],
                     "description": "CADD's consequence term for the variant, e.g. 'DOWNSTREAM', 'NON_SYNONYMOUS'."
                   },
                   "consscore": {
                     "type": [
+                      "array",
                       "integer",
                       "null"
                     ],

@@ -1013,15 +1013,17 @@
         "properties": {
           "resolution": {
             "type": [
-              "object",
-              "null"
+              "null",
+              "number",
+              "object"
             ],
             "description": "The reported resolution of the map.",
             "properties": {
               "value": {
                 "type": [
+                  "null",
                   "number",
-                  "null"
+                  "string"
                 ],
                 "description": "Resolution in angstroms, e.g. 14.5. The AUTHOR's claim, not an independent measurement -- rotationally_averaged_power_spectrum is the check on it."
               }
@@ -1066,8 +1068,9 @@
                 "properties": {
                   "value": {
                     "type": [
+                      "null",
                       "number",
-                      "null"
+                      "string"
                     ],
                     "description": "The level, e.g. 2546.5. A large gap from recommended_contour_level.recl is worth looking at."
                   },
@@ -1097,14 +1100,28 @@
                 "description": "The modal density, e.g. -87.35. For a well-formed map this is the solvent peak, so a mode far from zero means the map is not zero-centred."
               },
               "x": {
-                "type": "array",
+                "type": [
+                  "array",
+                  "integer",
+                  "null",
+                  "number",
+                  "object",
+                  "string"
+                ],
                 "description": "Density values, the histogram's bins.",
                 "items": {
                   "type": "number"
                 }
               },
               "y": {
-                "type": "array",
+                "type": [
+                  "array",
+                  "integer",
+                  "null",
+                  "number",
+                  "object",
+                  "string"
+                ],
                 "description": "Counts in each bin, positionally parallel to `x`.",
                 "items": {
                   "type": "number"
@@ -1158,15 +1175,23 @@
                 "properties": {
                   "x": {
                     "type": [
+                      "array",
                       "integer",
-                      "null"
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "Index on x."
                   },
                   "y": {
                     "type": [
+                      "array",
                       "integer",
-                      "null"
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "Index on y."
                   },
@@ -1188,15 +1213,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1218,15 +1251,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1259,15 +1300,23 @@
                 "properties": {
                   "x": {
                     "type": [
+                      "array",
                       "integer",
-                      "null"
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "Index on x."
                   },
                   "y": {
                     "type": [
+                      "array",
                       "integer",
-                      "null"
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "Index on y."
                   },
@@ -1289,15 +1338,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1319,15 +1376,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1350,14 +1415,28 @@
             "description": "The map's power as a function of spatial frequency. It falls away past the real resolution, so plotted against `resolution.value` it is the independent check on the claimed resolution.",
             "properties": {
               "x": {
-                "type": "array",
+                "type": [
+                  "array",
+                  "integer",
+                  "null",
+                  "number",
+                  "object",
+                  "string"
+                ],
                 "description": "Spatial frequency, in inverse angstroms.",
                 "items": {
                   "type": "number"
                 }
               },
               "y": {
-                "type": "array",
+                "type": [
+                  "array",
+                  "integer",
+                  "null",
+                  "number",
+                  "object",
+                  "string"
+                ],
                 "description": "Power at each of those frequencies, positionally parallel to `x`.",
                 "items": {
                   "type": "number"
@@ -1392,15 +1471,23 @@
             "properties": {
               "x": {
                 "type": [
-                  "string",
-                  "null"
+                  "array",
+                  "integer",
+                  "null",
+                  "number",
+                  "object",
+                  "string"
                 ],
                 "description": "The x-axis view."
               },
               "y": {
                 "type": [
-                  "string",
-                  "null"
+                  "array",
+                  "integer",
+                  "null",
+                  "number",
+                  "object",
+                  "string"
                 ],
                 "description": "The y-axis view."
               },
@@ -1429,15 +1516,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1459,15 +1554,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1498,15 +1601,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1528,15 +1639,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1567,15 +1686,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1597,15 +1724,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1636,15 +1771,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1666,15 +1809,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1705,15 +1856,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1735,15 +1894,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1774,15 +1941,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1804,15 +1979,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1843,15 +2026,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1873,15 +2064,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1912,15 +2111,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1942,15 +2149,23 @@
                 "properties": {
                   "x": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The x-axis view."
                   },
                   "y": {
                     "type": [
-                      "string",
-                      "null"
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
+                      "object",
+                      "string"
                     ],
                     "description": "The y-axis view."
                   },
@@ -1972,8 +2187,12 @@
                 "properties": {
                   "x": {
                     "type": [
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
                       "object",
-                      "null"
+                      "string"
                     ],
                     "description": "The x view.",
                     "properties": {
@@ -2002,8 +2221,12 @@
                   },
                   "y": {
                     "type": [
+                      "array",
+                      "integer",
+                      "null",
+                      "number",
                       "object",
-                      "null"
+                      "string"
                     ],
                     "description": "The y view.",
                     "properties": {

@@ -976,7 +976,7 @@
               },
               "taxon_id": {
                 "type": [
-                  "array",
+                  "integer",
                   "null"
                 ],
                 "items": {
@@ -1285,7 +1285,7 @@
               },
               "taxon_id": {
                 "type": [
-                  "array",
+                  "integer",
                   "null"
                 ],
                 "items": {

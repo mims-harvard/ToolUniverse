@@ -358,7 +358,8 @@
               "n_sample": {
                 "type": [
                   "integer",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "description": "Total samples. A large mlogp on a few hundred cases is not the same evidence as the same value on half a million."
               }

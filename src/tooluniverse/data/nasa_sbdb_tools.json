@@ -73,7 +73,10 @@
                   "description": "Number of Doppler (radar) observations used in the fit. Measured null for bodies with none."
                 },
                 "soln_date": {
-                  "type": "string"
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
                 "cov_epoch": {
                   "type": "string"
@@ -85,13 +88,22 @@
                   "type": "string"
                 },
                 "moid": {
-                  "type": "string"
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
                 "moid_jup": {
-                  "type": "string"
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
                 "sb_used": {
-                  "type": "string"
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
                 "source": {
                   "type": "string"
@@ -161,7 +173,10 @@
                   "type": "string"
                 },
                 "rms": {
-                  "type": "string"
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
                 "elements": {
                   "type": "array",
@@ -175,7 +190,10 @@
                         "type": "string"
                       },
                       "sigma": {
-                        "type": "string"
+                        "type": [
+                          "null",
+                          "string"
+                        ]
                       },
                       "units": {
                         "type": [
@@ -193,7 +211,10 @@
                   }
                 },
                 "pe_used": {
-                  "type": "string"
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
                 "first_obs": {
                   "type": "string"

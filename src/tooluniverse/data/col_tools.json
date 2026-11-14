@@ -388,8 +388,9 @@
                 },
                 "namesIndexId": {
                   "type": [
-                    "string",
-                    "null"
+                    "integer",
+                    "null",
+                    "string"
                   ],
                   "description": "Id in CoL's names index, which is how the same name is matched across datasets."
                 },
