@@ -228,6 +228,18 @@
     ]
   },
   {
+    "name": "DEEPDNA_MCP_URL",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Genomics & Variants",
+    "register_url": "https://deepdna.ai/connect/",
+    "purpose": "Endpoint URL for the opt-in DeepDNA pharmacogenomics MCP connection.",
+    "without": "Leave blank to keep this third-party MCP connection disabled. To enable, set this to https://deepdna.ai/mcp \u2014 the public endpoint needs no account or key.",
+    "used_by": [
+      "mcp_auto_loader_deepdna.json"
+    ]
+  },
+  {
     "name": "DISGENET_API_KEY",
     "requirement": "required",
     "type": "secret",

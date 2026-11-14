@@ -724,6 +724,107 @@
         }
       }
     },
+    "mcp_auto_loader_deepdna": {
+      "endpoint": "https://deepdna.ai/mcp",
+      "tools": {
+        "check_medications": {
+          "contract": {
+            "inputSchema": {
+              "additionalProperties": false,
+              "properties": {
+                "medications": {
+                  "description": "Generic names, e.g. [\"clopidogrel\", \"simvastatin\"].",
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 30,
+                  "minItems": 1,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "medications"
+              ],
+              "type": "object"
+            },
+            "name": "check_medications",
+            "outputSchema": null
+          }
+        },
+        "list_genes": {
+          "contract": {
+            "inputSchema": {
+              "additionalProperties": false,
+              "properties": {},
+              "type": "object"
+            },
+            "name": "list_genes",
+            "outputSchema": null
+          }
+        },
+        "lookup_drug_gene": {
+          "contract": {
+            "inputSchema": {
+              "additionalProperties": false,
+              "properties": {
+                "drug": {
+                  "description": "Generic drug name, e.g. clopidogrel. Optional.",
+                  "type": "string"
+                },
+                "gene": {
+                  "description": "Pharmacogene symbol, e.g. CYP2C19.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "gene"
+              ],
+              "type": "object"
+            },
+            "name": "lookup_drug_gene",
+            "outputSchema": null
+          }
+        },
+        "lookup_gene": {
+          "contract": {
+            "inputSchema": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol": {
+                  "description": "HGNC gene symbol, e.g. CYP2C19. Case-insensitive.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "symbol"
+              ],
+              "type": "object"
+            },
+            "name": "lookup_gene",
+            "outputSchema": null
+          }
+        },
+        "lookup_variant": {
+          "contract": {
+            "inputSchema": {
+              "additionalProperties": false,
+              "properties": {
+                "rsid": {
+                  "description": "dbSNP identifier, e.g. rs4244285.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "rsid"
+              ],
+              "type": "object"
+            },
+            "name": "lookup_variant",
+            "outputSchema": null
+          }
+        }
+      }
+    },
     "mcp_auto_loader_exa": {
       "endpoint": "https://mcp.exa.ai/mcp",
       "tools": {

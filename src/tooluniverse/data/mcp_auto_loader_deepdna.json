@@ -1,0 +1,124 @@
+[
+  {
+    "name": "mcp_auto_loader_deepdna",
+    "description": "Opt-in connection to the DeepDNA MCP server (https://deepdna.ai/mcp). Discovers five reviewed, read-only tools over a small, curated set of cited pharmacogenomic records: the genes covered, one gene's key variants and phenotypes, one variant by rsID, drug–gene guidance (CPIC or DPWG where a guideline exists, otherwise an FDA label or the primary literature), and a screen of a list of generic drug names for drugs with a curated record. The public server needs no account or key. The tools take gene symbols, rsIDs and drug names only, never a genotype, and do not work out a metabolizer status or a dose. Educational information, not medical advice.",
+    "type": "MCPAutoLoaderTool",
+    "tool_prefix": "deepdna_",
+    "server_url": "${DEEPDNA_MCP_URL}",
+    "transport": "http",
+    "timeout": 30,
+    "strict_tool_contracts": true,
+    "normalize_mcp_result": true,
+    "selected_tools": [
+      "list_genes",
+      "lookup_gene",
+      "lookup_variant",
+      "lookup_drug_gene",
+      "check_medications"
+    ],
+    "tool_contracts": [
+      {
+        "name": "list_genes",
+        "title": "List genes",
+        "description": "List the genes in the DeepDNA knowledge base, with a one-line summary and category for each.",
+        "contract_sha256": "fc88b7626436a6c6146ff8a94ba79359cac2da2684cd987acb1580807306080b",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      },
+      {
+        "name": "lookup_gene",
+        "title": "Look up a gene",
+        "description": "Everything curated about one gene: function, key variants with rsIDs, metabolizer or function phenotypes, drug interactions, what a consumer genotyping array can and cannot tell you, and sources.",
+        "contract_sha256": "b3cd62c3304fe380a17a2d848064245067143ef807bbbba6530c839b65885ef7",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      },
+      {
+        "name": "lookup_variant",
+        "title": "Look up a variant",
+        "description": "One variant by dbSNP rsID: gene, star-allele or common name, alleles, functional effect, population frequency and sources. Send the rsID only, never the user's genotype. A single variant is not a phenotype or metabolizer status.",
+        "contract_sha256": "fb90e4701110830f0ae5ba1b5fbf463e03e5cf8d28c9d8b2ef5c434743a43823",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      },
+      {
+        "name": "lookup_drug_gene",
+        "title": "Look up drug–gene guidance",
+        "description": "Pharmacogenomic guidance for a gene, optionally for one drug: guideline (CPIC or DPWG, \"drug label\", or null when the record rests on the primary literature), summary of the recommendation, phenotypes and sources. Omit drug to list every drug curated for that gene.",
+        "contract_sha256": "3aa9d82cbd0db2404c6d459516ac7e2ce76791727f70f2e665fa259c650e8e26",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      },
+      {
+        "name": "check_medications",
+        "title": "Screen a medication list",
+        "description": "Given a list of generic drug names, say which ones have a curated drug–gene record, with which genes and what each record rests on (a CPIC or DPWG guideline, a drug label, or the primary literature), and which are not covered. Needs no genotype.",
+        "contract_sha256": "4d633d038d68af170ebed8bfdb7112c899e671b2b247c5ac428e1561954c3b7b",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      }
+    ],
+    "required_api_keys": [
+      "DEEPDNA_MCP_URL"
+    ],
+    "api_key_info": {
+      "DEEPDNA_MCP_URL": {
+        "domain": "Genomics & Variants",
+        "type": "endpoint",
+        "register_url": "https://deepdna.ai/connect/",
+        "purpose": "Endpoint URL for the opt-in DeepDNA pharmacogenomics MCP connection.",
+        "without": "Leave blank to keep this third-party MCP connection disabled. To enable, set this to https://deepdna.ai/mcp — the public endpoint needs no account or key."
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "discover",
+            "generate_configs",
+            "call_tool"
+          ],
+          "description": "Discover reviewed tools, generate proxy configurations, or call one reviewed tool."
+        },
+        "tool_name": {
+          "type": "string",
+          "description": "Reviewed MCP tool name, required when operation is call_tool."
+        },
+        "tool_arguments": {
+          "type": "object",
+          "description": "Gene symbols, rsIDs or generic drug names for the selected tool. Never include a genotype, a DNA file or personal health information."
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Reviewed DeepDNA MCP discovery data or structured tool result.",
+      "additionalProperties": true
+    }
+  }
+]
