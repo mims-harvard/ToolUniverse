@@ -449,7 +449,7 @@ Measure and compare performance:
            end_time = time.time()
 
            times.append(end_time - start_time)
-           total_results += len(result)
+           total_results += len(result.get("data") or [])
 
        avg_time = sum(times) / len(times)
        return avg_time, total_results

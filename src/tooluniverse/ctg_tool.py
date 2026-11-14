@@ -95,6 +95,81 @@ def _describe_rewrite(parameter, api_field, submitted, executed, areas=()):
     }
 
 
+# Issue #870: query.term ANDs its words against the indexed record text, and
+# nothing in the response says so. An agent that writes the obvious descriptive
+# query -- the acronym plus the drug, the indication and the line of therapy --
+# gets back zero studies with status success, which reads as "no such trial
+# exists". Measured: query_term='KEYNOTE-045' returns NCT02256436, the trial;
+# query_term='KEYNOTE-045 pembrolizumab urothelial carcinoma second-line
+# platinum' returns 0, although every word of it is true of that trial. The
+# metadata made it worse by declaring total_results_is_exact on the zero.
+#
+# Same answer as the rewrite hazard above: disclose, do not substitute. The
+# caller asked for all of those words and still gets exactly what they matched.
+_TERM_PROBE_MIN_WORDS = 3
+
+
+def _term_match_check(params, fetch_total_count):
+    """Say whether a many-worded term query came back empty because of the AND.
+
+    Issued only after an empty result, so the common path pays nothing, and
+    only for a plain value: anything already carrying Essie syntax is the
+    caller driving the query language on purpose.
+    """
+    submitted = params.get("query.term")
+    if not isinstance(submitted, str):
+        return None
+    words = submitted.split()
+    if len(words) < _TERM_PROBE_MIN_WORDS or _ESSIE_OPERATOR_RE.search(submitted):
+        return None
+
+    relaxed = " OR ".join(words)
+    probe = dict(params)
+    probe["query.term"] = relaxed
+    probe["pageSize"] = 1
+    probe["countTotal"] = "true"
+    probe["fields"] = "NCTId"
+    probe.pop("pageToken", None)
+
+    try:
+        total = fetch_total_count(probe)
+        failure = None if total is not None else "it returned no usable response"
+    except Exception as exc:  # transport, HTTP or decode failure
+        total, failure = None, f"{type(exc).__name__}: {exc}"
+
+    check = {
+        "submitted": submitted,
+        "terms_are_combined_with": "AND",
+        "relaxed_query": relaxed,
+    }
+    if failure is not None:
+        check["note"] = (
+            "query.term requires EVERY word to appear in the indexed record "
+            "text, so this empty result may mean the query is too specific "
+            "rather than that no such trial exists. The check that would have "
+            "counted the looser wording could not be made: " + failure
+        )
+        return check
+
+    check["studies_matching_any_term"] = total
+    if total:
+        check["note"] = (
+            f"Zero studies contain all {len(words)} of these words, but {total} "
+            "contain at least one, so this is a query that is too specific "
+            "rather than an absence of trials. query.term combines its words "
+            "with AND against the indexed record text. Search on the most "
+            "distinctive term alone -- an NCT id, a trial acronym or a single "
+            "drug name -- or pass Essie syntax such as "
+            f"'{relaxed}' to widen it."
+        )
+    else:
+        check["note"] = (
+            "No study matches even one of these words, so the empty result is "
+            "not an artefact of combining them with AND."
+        )
+    return check
+
+
 def _relaxed_match_check(params, rewrites, fetch_total_count):
     """Ask ClinicalTrials.gov whether the caller's original wording would have
     matched, so an empty result set becomes self-diagnosing.
@@ -458,10 +533,14 @@ class ClinicalTrialsTool(RESTfulTool):
         """
         result_data["executed_query"] = _executed_query(params)
         result_data["query_rewrites"] = query_rewrites
-        if not result_data.get("studies") and query_rewrites:
-            result_data["relaxed_match_check"] = _relaxed_match_check(
-                params, query_rewrites, self._fetch_total_count
-            )
+        if not result_data.get("studies"):
+            if query_rewrites:
+                result_data["relaxed_match_check"] = _relaxed_match_check(
+                    params, query_rewrites, self._fetch_total_count
+                )
+            term_check = _term_match_check(params, self._fetch_total_count)
+            if term_check is not None:
+                result_data["term_match_check"] = term_check
         return result_data
 
     def _run_search(self, arguments):
