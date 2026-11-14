@@ -1,6 +1,6 @@
 {
   "measured_on": "2026-11-14",
-  "how": "Each tool's own test_examples were run live; every value appearing under a declared key, at any depth of the response, was typed and counted. Counts are pooled across tools in the same config file that wrap the same upstream field. Round 1 took the fields the live sweep reported; round 2 measured EVERY field each affected tool declares, because jsonschema reports only the first error per validation, so round 1 saw one bad field per tool and fixing it unmasked the next. Round 3 found one more field that round 2's pass had NOT seen: the same two LINCS examples returned pubchem_id as an integer minutes after returning it as a string, so a single live pass is a LOWER BOUND on the types a field holds, not the complete set.",
+  "how": "Each tool's own test_examples were run live; every value appearing under a declared key, at any depth of the response, was typed and counted. Counts are pooled across tools in the same config file that wrap the same upstream field. Round 1 took the fields the live sweep reported; round 2 measured EVERY field each affected tool declares, because jsonschema reports only the first error per validation, so round 1 saw one bad field per tool and fixing it unmasked the next. Round 3 found one more field that round 2's pass had NOT seen: the same two LINCS examples returned pubchem_id as an integer minutes after returning it as a string, so a single live pass is a LOWER BOUND on the types a field holds, not the complete set. CORRECTION, same day: typing every value under a declared key AT ANY DEPTH conflates two fields when a tool answers in more than one shape and the shapes reuse a name. AMPSphere_search_amps returns AMP records whose isoelectric_point and molecular_weight are numbers, and -- for list_options=true -- a filter-options payload whose keys of the same name are {min,max} range objects. The sweep pooled them and this fixture widened the record fields to accept an object they never hold. Those two rows are corrected and the declarations reverted; 110 of the 112 rows stand. Pool by shape, not by name.",
   "invariant": "every measured type must be accepted by the field's declared type, under JSON Schema containment (integer satisfies number)",
   "rows": [
     {
@@ -8,12 +8,10 @@
       "field": "isoelectric_point",
       "config": "ampsphere_tools.json",
       "measured_types": [
-        "number",
-        "object"
+        "number"
       ],
       "observations": {
-        "number": 5,
-        "object": 1
+        "number": 72
       },
       "declared_before": [
         "null",
@@ -21,23 +19,22 @@
       ],
       "declared_after": [
         "null",
-        "number",
-        "object"
+        "number"
       ],
-      "rule": "C",
-      "round": 1
+      "rule": "misattribution",
+      "round": 1,
+      "note": "CORRECTED 2026-11-14 while fixing the tool's return shape. The single `object` observation was never this field: `list_options=true` returns a filter-options payload that carries `isoelectric_point` and `molecular_weight` as {min,max} range objects, and the sweep that produced this row walked both payloads by field name without distinguishing which shape they came from. The AMP record's own value is a number -- 72 of 72 records measured today, 5 of 5 in the original reading. The range objects are now declared on their own branch, so the name is declared twice for two different things; `name_reused_for_another_shape` says so.",
+      "name_reused_for_another_shape": "the filter-options branch declares the same name as a {min,max} range object; this row is the AMP record's field"
     },
     {
       "tool": "AMPSphere_search_amps",
       "field": "molecular_weight",
       "config": "ampsphere_tools.json",
       "measured_types": [
-        "number",
-        "object"
+        "number"
       ],
       "observations": {
-        "number": 5,
-        "object": 1
+        "number": 72
       },
       "declared_before": [
         "null",
@@ -45,11 +42,12 @@
       ],
       "declared_after": [
         "null",
-        "number",
-        "object"
+        "number"
       ],
-      "rule": "C",
-      "round": 2
+      "rule": "misattribution",
+      "round": 2,
+      "note": "CORRECTED 2026-11-14 while fixing the tool's return shape. The single `object` observation was never this field: `list_options=true` returns a filter-options payload that carries `isoelectric_point` and `molecular_weight` as {min,max} range objects, and the sweep that produced this row walked both payloads by field name without distinguishing which shape they came from. The AMP record's own value is a number -- 72 of 72 records measured today, 5 of 5 in the original reading. The range objects are now declared on their own branch, so the name is declared twice for two different things; `name_reused_for_another_shape` says so.",
+      "name_reused_for_another_shape": "the filter-options branch declares the same name as a {min,max} range object; this row is the AMP record's field"
     },
     {
       "tool": "AllenCellTypes_search_specimens",

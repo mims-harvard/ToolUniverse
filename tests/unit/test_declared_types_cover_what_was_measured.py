@@ -104,11 +104,35 @@ def test_declared_type_covers_every_measured_type(row):
     )
 
     measured = set(row["measured_types"])
-    for one in declared:
-        missing = {t for t in measured if not _satisfies(t, one)}
-        assert not missing, (
-            f"{row['tool']}.{row['field']} declares {sorted(one)} but was "
-            f"measured holding {sorted(missing)} "
-            f"({row['observations']}, measured {_fixture['measured_on']}). "
-            "A type that was observed once has to stay in the declaration."
+    covering = [
+        one for one in declared if not {t for t in measured if not _satisfies(t, one)}
+    ]
+    assert covering, (
+        f"{row['tool']}.{row['field']} declares "
+        f"{[sorted(one) for one in declared]} and none of those covers the "
+        f"measured {sorted(measured)} "
+        f"({row['observations']}, measured {_fixture['measured_on']}). "
+        "A type that was observed once has to stay in the declaration."
+    )
+
+    # Every declaration had to cover the measurement until AMPSphere showed why
+    # that is too strong: `_declared_types` finds a name anywhere in the schema,
+    # and a union's branches can reuse one for different things. The AMP record
+    # declares `isoelectric_point` as a number; the filter-options branch of the
+    # same tool declares it as a {min,max} range object. Requiring both to cover
+    # the record's measurement would force the range to be declared a number.
+    #
+    # So a non-covering sibling declaration is allowed -- but only when the row
+    # says why, in `name_reused_for_another_shape`. Without that, a second
+    # declaration that contradicts the measurement still fails, which is what
+    # keeps this from quietly becoming "some declaration somewhere is right".
+    if len(covering) < len(declared):
+        assert row.get("name_reused_for_another_shape"), (
+            f"{row['tool']}.{row['field']} is declared "
+            f"{len(declared)} times and only {len(covering)} of those cover the "
+            f"measured {sorted(measured)}: "
+            f"{[sorted(one) for one in declared]}. If the name means two "
+            "different things in two branches, say so in the row's "
+            "`name_reused_for_another_shape`; otherwise the extra declaration "
+            "is wrong."
         )

@@ -74,159 +74,246 @@
     "return_schema": {
       "oneOf": [
         {
-          "not": {
-            "required": [
-              "error"
-            ]
-          },
-          "description": "List of AMP records (search), or the filter-options object (list_options).",
-          "type": "object",
-          "properties": {
-            "sequence": {
-              "type": [
-                "string",
-                "null"
-              ],
-              "description": "The peptide sequence in one-letter code."
-            },
-            "secondary_structure": {
-              "type": [
-                "string",
-                "object",
-                "null"
-              ],
-              "description": "Predicted secondary structure. Most antimicrobial peptides act as amphipathic helices, so a predicted helix is part of the case that the sequence is a real AMP."
-            },
-            "accession": {
-              "type": [
-                "string",
-                "null"
-              ],
-              "description": "AMPSphere accession for the peptide."
-            },
-            "family": {
-              "type": [
-                "string",
-                "null"
-              ],
-              "description": "The AMP family it was clustered into."
-            },
-            "length": {
-              "type": [
-                "integer",
-                "string",
-                "null"
-              ],
-              "description": "Length in residues."
-            },
-            "molecular_weight": {
-              "type": [
-                "null",
-                "number",
-                "object"
-              ],
-              "description": "Molecular weight in daltons."
-            },
-            "isoelectric_point": {
-              "type": [
-                "null",
-                "number",
-                "object"
-              ],
-              "description": "Isoelectric point. Antimicrobial peptides are typically cationic, so a low pI is unusual here."
-            },
-            "charge": {
-              "type": [
-                "number",
-                "null"
-              ],
-              "description": "Net charge at neutral pH -- the property most AMP activity rests on."
-            },
-            "aromaticity": {
-              "type": [
-                "number",
-                "null"
-              ],
-              "description": "Fraction of aromatic residues."
-            },
-            "gravy": {
-              "type": [
-                "number",
-                "null"
-              ],
-              "description": "Grand average of hydropathy. Together with `charge` it says whether the peptide can insert into a membrane."
-            },
-            "instability_index": {
-              "type": [
-                "number",
-                "null"
-              ],
-              "description": "Predicted instability. Above 40 the peptide is predicted unstable in vitro."
-            },
-            "coordinates": {
-              "type": [
-                "object",
-                "string",
-                "null"
-              ],
-              "description": "Where the gene sits in its source contig."
-            },
-            "metadata": {
-              "type": [
-                "object",
-                "null"
-              ],
-              "description": "The sample and environment the peptide was found in."
-            },
-            "num_genes": {
-              "type": [
-                "integer",
-                "string",
-                "null"
-              ],
-              "description": "How many genes encode it across the catalogue. A peptide seen once is a singleton and may be a prediction artefact."
-            },
-            "metaproteomes": {
-              "type": [
-                "array",
-                "object",
-                "string",
-                "null"
-              ],
-              "description": "Metaproteomic evidence that the peptide is actually translated -- the difference between a predicted ORF and an observed protein."
-            },
-            "metatranscriptomes": {
-              "type": [
-                "array",
-                "object",
-                "string",
-                "null"
-              ],
-              "description": "Metatranscriptomic evidence that it is transcribed."
-            },
-            "Antifam": {
-              "type": [
-                "string",
-                "boolean",
-                "null"
-              ],
-              "description": "Whether the sequence matches AntiFam, which flags spurious ORFs. A hit here means the 'peptide' is probably not real."
-            },
-            "RNAcode": {
-              "type": [
-                "string",
-                "number",
-                "boolean",
-                "null"
-              ],
-              "description": "RNAcode's verdict on whether the ORF is protein-coding. The second independent check against a spurious call."
+          "type": "array",
+          "description": "Search results (list_options absent or false): one object per AMP on the requested page, in AMPSphere's order. Empty when the filter combination matches nothing -- including when the habitat or family does not exist, which the API answers with an empty page rather than an error. The page itself is never the whole result set; metadata.total_item, metadata.has_more and metadata.next_page carry the pagination.",
+          "items": {
+            "type": "object",
+            "description": "One AMPSphere AMP record.",
+            "properties": {
+              "sequence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The peptide sequence in one-letter code."
+              },
+              "secondary_structure": {
+                "type": [
+                  "string",
+                  "object",
+                  "null"
+                ],
+                "description": "Predicted secondary structure. Most antimicrobial peptides act as amphipathic helices, so a predicted helix is part of the case that the sequence is a real AMP."
+              },
+              "accession": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "AMPSphere accession for the peptide."
+              },
+              "family": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The AMP family it was clustered into."
+              },
+              "length": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Length in residues."
+              },
+              "molecular_weight": {
+                "type": [
+                  "null",
+                  "number"
+                ],
+                "description": "Molecular weight in daltons."
+              },
+              "isoelectric_point": {
+                "type": [
+                  "null",
+                  "number"
+                ],
+                "description": "Isoelectric point. Antimicrobial peptides are typically cationic, so a low pI is unusual here."
+              },
+              "charge": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Net charge at neutral pH -- the property most AMP activity rests on."
+              },
+              "aromaticity": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Fraction of aromatic residues."
+              },
+              "gravy": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Grand average of hydropathy. Together with `charge` it says whether the peptide can insert into a membrane."
+              },
+              "instability_index": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Predicted instability. Above 40 the peptide is predicted unstable in vitro."
+              },
+              "coordinates": {
+                "type": [
+                  "object",
+                  "string",
+                  "null"
+                ],
+                "description": "Where the gene sits in its source contig."
+              },
+              "metadata": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The sample and environment the peptide was found in."
+              },
+              "num_genes": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "How many genes encode it across the catalogue. A peptide seen once is a singleton and may be a prediction artefact."
+              },
+              "metaproteomes": {
+                "type": [
+                  "array",
+                  "object",
+                  "string",
+                  "null"
+                ],
+                "description": "Metaproteomic evidence that the peptide is actually translated -- the difference between a predicted ORF and an observed protein."
+              },
+              "metatranscriptomes": {
+                "type": [
+                  "array",
+                  "object",
+                  "string",
+                  "null"
+                ],
+                "description": "Metatranscriptomic evidence that it is transcribed."
+              },
+              "Antifam": {
+                "type": [
+                  "string",
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether the sequence matches AntiFam, which flags spurious ORFs. A hit here means the 'peptide' is probably not real."
+              },
+              "RNAcode": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "description": "RNAcode's verdict on whether the ORF is protein-coding. The second independent check against a spurious call."
+              }
             }
           }
         },
         {
           "type": "object",
+          "description": "Filter options (list_options=true): the valid filter values from /v1/all_available_options. A different shape from a search result -- these are enumerations and ranges, not AMP records.",
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "properties": {
+            "quality": {
+              "type": "array",
+              "description": "Accepted quality-flag filter values.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "habitat": {
+              "type": "array",
+              "description": "Accepted habitat filter values.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "microbial_source": {
+              "type": "array",
+              "description": "Accepted microbial_source filter values.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "pep_length": {
+              "type": "object",
+              "description": "Filterable peptide-length range in the catalogue.",
+              "properties": {
+                "min": {
+                  "type": "number"
+                },
+                "max": {
+                  "type": "number"
+                }
+              }
+            },
+            "molecular_weight": {
+              "type": "object",
+              "description": "Filterable molecular-weight range in the catalogue.",
+              "properties": {
+                "min": {
+                  "type": "number"
+                },
+                "max": {
+                  "type": "number"
+                }
+              }
+            },
+            "isoelectric_point": {
+              "type": "object",
+              "description": "Filterable isoelectric-point range in the catalogue.",
+              "properties": {
+                "min": {
+                  "type": "number"
+                },
+                "max": {
+                  "type": "number"
+                }
+              }
+            },
+            "charge_at_pH_7": {
+              "type": "object",
+              "description": "Filterable net-charge-at-pH-7 range in the catalogue.",
+              "properties": {
+                "min": {
+                  "type": "number"
+                },
+                "max": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error result: the request was rejected or AMPSphere did not answer.",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
             "error": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "response_snippet": {
               "type": "string"
             }
           },

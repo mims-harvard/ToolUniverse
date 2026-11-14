@@ -794,142 +794,155 @@
     "return_schema": {
       "oneOf": [
         {
-          "description": "A single label annotation object (when label_id is given) or an array of {objCls, id, name} listings.",
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "objCls": {
-                  "type": "string"
-                },
-                "id": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "biomarkerStatus": {
-                  "type": "string"
-                },
-                "alternateDrugAvailable": {
-                  "type": "boolean"
-                },
-                "dosingInformation": {
-                  "type": "boolean"
-                },
-                "cancerGenome": {
-                  "type": "boolean"
-                },
-                "indication": {
-                  "type": "boolean"
-                },
-                "labelDocumentAvailable": {
-                  "type": "boolean"
-                },
-                "literature": {
-                  "type": "array"
-                },
-                "highlightedLabelLink": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Filename of the annotated label PDF, e.g. 'Bosutinib_2025_01_15_FDA.pdf'."
-                },
-                "history": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  },
-                  "description": "PharmGKB's change history for the annotation."
-                },
-                "otherPrescribingGuidance": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ],
-                  "description": "True when the label's guidance is not genotype-based."
-                },
-                "pediatric": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ],
-                  "description": "True when the label carries paediatric-specific pharmacogenomic guidance."
-                },
-                "pediatricMarkdown": {
-                  "description": "The paediatric-specific text, when there is one."
-                },
-                "pgxRelated": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ],
-                  "description": "Whether PharmGKB considers the label pharmacogenomics-related at all."
-                },
-                "relatedChemicals": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  },
-                  "description": "The drugs the label covers, each with its PharmGKB id and name."
-                },
-                "relatedGenes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  },
-                  "description": "The genes the label mentions, each with its PharmGKB id and symbol."
-                },
-                "source": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Which agency issued the label, e.g. 'FDA', 'EMA', 'Swissmedic'. The same drug has different pharmacogenomic language in different jurisdictions."
-                },
-                "summaryMarkdown": {
-                  "description": "PharmGKB's summary of the label's pharmacogenomic content, as an object with an HTML body."
-                },
-                "testing": {
-                  "description": "Whether genetic testing is required, recommended, actionable or informative, as a PharmGKB controlled term. This is the actionable content of a drug-label annotation."
-                },
-                "textMarkdown": {
-                  "description": "The fuller annotation text, as an object with an HTML body."
-                }
+          "type": "array",
+          "description": "Search results (any filter, no `label_id`): one listing entry per matching label annotation. Also what an unknown `label_id` returns -- an empty array, not an error.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "objCls": {
+                "type": "string"
               },
-              "additionalProperties": true
-            },
-            {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "objCls": {
-                    "type": "string"
-                  },
-                  "id": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  }
-                },
-                "additionalProperties": true
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "crossReferences": {
+                "type": "array",
+                "description": "PharmGKB's cross-references for the annotation. Present on every listing entry measured on 2026-11-14 and empty in all of them."
               }
-            }
-          ],
-          "not": {
-            "required": [
-              "error"
-            ]
+            },
+            "additionalProperties": true,
+            "description": "One listing entry: the trimmed form PharmGKB returns for a search, not the full annotation. Pass its `id` back as `label_id` for the complete record."
           }
         },
         {
           "type": "object",
+          "description": "The full label annotation, returned when `label_id` names one that exists.",
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "properties": {
+            "objCls": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "biomarkerStatus": {
+              "type": "string"
+            },
+            "alternateDrugAvailable": {
+              "type": "boolean"
+            },
+            "dosingInformation": {
+              "type": "boolean"
+            },
+            "cancerGenome": {
+              "type": "boolean"
+            },
+            "indication": {
+              "type": "boolean"
+            },
+            "labelDocumentAvailable": {
+              "type": "boolean"
+            },
+            "literature": {
+              "type": "array"
+            },
+            "highlightedLabelLink": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Filename of the annotated label PDF, e.g. 'Bosutinib_2025_01_15_FDA.pdf'."
+            },
+            "history": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "PharmGKB's change history for the annotation."
+            },
+            "otherPrescribingGuidance": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the label's guidance is not genotype-based."
+            },
+            "pediatric": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the label carries paediatric-specific pharmacogenomic guidance."
+            },
+            "pediatricMarkdown": {
+              "description": "The paediatric-specific text, when there is one."
+            },
+            "pgxRelated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether PharmGKB considers the label pharmacogenomics-related at all."
+            },
+            "relatedChemicals": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "The drugs the label covers, each with its PharmGKB id and name."
+            },
+            "relatedGenes": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "The genes the label mentions, each with its PharmGKB id and symbol."
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which agency issued the label, e.g. 'FDA', 'EMA', 'Swissmedic'. The same drug has different pharmacogenomic language in different jurisdictions."
+            },
+            "summaryMarkdown": {
+              "description": "PharmGKB's summary of the label's pharmacogenomic content, as an object with an HTML body."
+            },
+            "testing": {
+              "description": "Whether genetic testing is required, recommended, actionable or informative, as a PharmGKB controlled term. This is the actionable content of a drug-label annotation."
+            },
+            "textMarkdown": {
+              "description": "The fuller annotation text, as an object with an HTML body."
+            }
+          },
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "description": "Error result: the request was rejected or PharmGKB did not answer.",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
             "error": {
               "type": "string"
+            },
+            "error_details": {
+              "type": [
+                "object",
+                "string",
+                "null"
+              ]
             }
           },
           "required": [

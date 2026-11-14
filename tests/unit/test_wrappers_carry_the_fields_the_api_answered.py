@@ -7653,18 +7653,37 @@ def test_a_drug_label_annotation_says_which_agency_and_whether_to_test():
     acted on. `testing` is the actionable part - required, recommended,
     actionable or informative - and it was not in the schema either.
 
-    This one also needed the nested oneOf fixed: the schema's first branch is
-    itself a oneOf, and twelve declarations had landed in the outer branch
-    beside the inner one, where the walker does not read them. The CoL
-    mistake again, a level deeper.
+    This one also needed a nesting fixed: twelve declarations had landed in an
+    outer branch beside an inner `oneOf`, where the walker does not read them.
+    The CoL mistake again, a level deeper. That nesting is gone now - the
+    branches are flat, one per returned shape - because the `not` that the
+    outer branch carried to exclude the error payload rejected every array as
+    well, `required` being vacuously true of anything that is not an object.
+    So this guard no longer asserts that a `oneOf` sits inside a `oneOf`; it
+    asserts the thing the nesting was there to get right, which is that no
+    branch's `properties` can be orphaned beside a sibling union.
     """
     rs = _config("PharmGKB_get_drug_label_annotations")["return_schema"]
-    branch = rs["oneOf"][0]
-    inner = branch.get("oneOf")
-    assert inner, "the shape this guard is about: a oneOf inside a oneOf"
-    assert "properties" not in branch, (
-        "a properties block beside the inner oneOf belongs to no branch"
-    )
+
+    def _no_orphaned_properties(node, path="return_schema"):
+        if not isinstance(node, dict):
+            return
+        unions = [
+            k for k in ("oneOf", "anyOf", "allOf") if isinstance(node.get(k), list)
+        ]
+        assert not (unions and "properties" in node), (
+            f"{path} carries both `properties` and {unions}; a properties block "
+            "beside a union belongs to no branch and the walker never reads it"
+        )
+        for key in ("items", "additionalProperties"):
+            _no_orphaned_properties(node.get(key), f"{path}.{key}")
+        for key in unions:
+            for index, branch in enumerate(node[key]):
+                _no_orphaned_properties(branch, f"{path}.{key}[{index}]")
+        for key, value in (node.get("properties") or {}).items():
+            _no_orphaned_properties(value, f"{path}.properties.{key}")
+
+    _no_orphaned_properties(rs)
     schema = json.dumps(rs)
     for field in (
         '"source"',
