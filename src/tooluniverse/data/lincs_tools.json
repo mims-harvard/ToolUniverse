@@ -111,8 +111,9 @@
           },
           "pubchem_id": {
             "type": [
-              "string",
-              "null"
+              "integer",
+              "null",
+              "string"
             ],
             "description": "PubChem CID of the perturbagen."
           },
@@ -153,7 +154,7 @@
           },
           "version": {
             "type": [
-              "string",
+              "integer",
               "null"
             ],
             "description": "Release version of the signature."

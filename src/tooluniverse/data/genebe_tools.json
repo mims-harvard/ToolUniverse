@@ -448,8 +448,7 @@
                   },
                   "strand": {
                     "type": [
-                      "integer",
-                      "string",
+                      "boolean",
                       "null"
                     ]
                   },
@@ -906,8 +905,7 @@
                         },
                         "strand": {
                           "type": [
-                            "integer",
-                            "string",
+                            "boolean",
                             "null"
                           ]
                         },

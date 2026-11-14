@@ -183,7 +183,8 @@
                       "evidences": {
                         "type": [
                           "array",
-                          "null"
+                          "null",
+                          "string"
                         ],
                         "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                         "items": {
@@ -198,8 +199,9 @@
                             },
                             "source": {
                               "type": [
+                                "null",
                                 "object",
-                                "null"
+                                "string"
                               ],
                               "description": "Where the evidence came from.",
                               "properties": {
@@ -257,7 +259,8 @@
                         "evidences": {
                           "type": [
                             "array",
-                            "null"
+                            "null",
+                            "string"
                           ],
                           "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                           "items": {
@@ -272,8 +275,9 @@
                               },
                               "source": {
                                 "type": [
+                                  "null",
                                   "object",
-                                  "null"
+                                  "string"
                                 ],
                                 "description": "Where the evidence came from.",
                                 "properties": {
@@ -332,7 +336,8 @@
                         "evidences": {
                           "type": [
                             "array",
-                            "null"
+                            "null",
+                            "string"
                           ],
                           "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                           "items": {
@@ -347,8 +352,9 @@
                               },
                               "source": {
                                 "type": [
+                                  "null",
                                   "object",
-                                  "null"
+                                  "string"
                                 ],
                                 "description": "Where the evidence came from.",
                                 "properties": {
@@ -407,7 +413,8 @@
                         "evidences": {
                           "type": [
                             "array",
-                            "null"
+                            "null",
+                            "string"
                           ],
                           "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                           "items": {
@@ -422,8 +429,9 @@
                               },
                               "source": {
                                 "type": [
+                                  "null",
                                   "object",
-                                  "null"
+                                  "string"
                                 ],
                                 "description": "Where the evidence came from.",
                                 "properties": {
@@ -497,7 +505,8 @@
                         "evidences": {
                           "type": [
                             "array",
-                            "null"
+                            "null",
+                            "string"
                           ],
                           "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                           "items": {
@@ -512,8 +521,9 @@
                               },
                               "source": {
                                 "type": [
+                                  "null",
                                   "object",
-                                  "null"
+                                  "string"
                                 ],
                                 "description": "Where the evidence came from.",
                                 "properties": {
@@ -571,7 +581,8 @@
                           "evidences": {
                             "type": [
                               "array",
-                              "null"
+                              "null",
+                              "string"
                             ],
                             "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                             "items": {
@@ -586,8 +597,9 @@
                                 },
                                 "source": {
                                   "type": [
+                                    "null",
                                     "object",
-                                    "null"
+                                    "string"
                                   ],
                                   "description": "Where the evidence came from.",
                                   "properties": {
@@ -646,7 +658,8 @@
                           "evidences": {
                             "type": [
                               "array",
-                              "null"
+                              "null",
+                              "string"
                             ],
                             "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                             "items": {
@@ -661,8 +674,9 @@
                                 },
                                 "source": {
                                   "type": [
+                                    "null",
                                     "object",
-                                    "null"
+                                    "string"
                                   ],
                                   "description": "Where the evidence came from.",
                                   "properties": {
@@ -730,7 +744,8 @@
                           "evidences": {
                             "type": [
                               "array",
-                              "null"
+                              "null",
+                              "string"
                             ],
                             "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                             "items": {
@@ -745,8 +760,9 @@
                                 },
                                 "source": {
                                   "type": [
+                                    "null",
                                     "object",
-                                    "null"
+                                    "string"
                                   ],
                                   "description": "Where the evidence came from.",
                                   "properties": {
@@ -804,7 +820,8 @@
                             "evidences": {
                               "type": [
                                 "array",
-                                "null"
+                                "null",
+                                "string"
                               ],
                               "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                               "items": {
@@ -819,8 +836,9 @@
                                   },
                                   "source": {
                                     "type": [
+                                      "null",
                                       "object",
-                                      "null"
+                                      "string"
                                     ],
                                     "description": "Where the evidence came from.",
                                     "properties": {
@@ -879,7 +897,8 @@
                             "evidences": {
                               "type": [
                                 "array",
-                                "null"
+                                "null",
+                                "string"
                               ],
                               "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                               "items": {
@@ -894,8 +913,9 @@
                                   },
                                   "source": {
                                     "type": [
+                                      "null",
                                       "object",
-                                      "null"
+                                      "string"
                                     ],
                                     "description": "Where the evidence came from.",
                                     "properties": {
@@ -964,7 +984,8 @@
                           "evidences": {
                             "type": [
                               "array",
-                              "null"
+                              "null",
+                              "string"
                             ],
                             "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                             "items": {
@@ -979,8 +1000,9 @@
                                 },
                                 "source": {
                                   "type": [
+                                    "null",
                                     "object",
-                                    "null"
+                                    "string"
                                   ],
                                   "description": "Where the evidence came from.",
                                   "properties": {
@@ -1038,7 +1060,8 @@
                             "evidences": {
                               "type": [
                                 "array",
-                                "null"
+                                "null",
+                                "string"
                               ],
                               "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                               "items": {
@@ -1053,8 +1076,9 @@
                                   },
                                   "source": {
                                     "type": [
+                                      "null",
                                       "object",
-                                      "null"
+                                      "string"
                                     ],
                                     "description": "Where the evidence came from.",
                                     "properties": {
@@ -1100,7 +1124,8 @@
                 "component": {
                   "type": [
                     "array",
-                    "null"
+                    "null",
+                    "string"
                   ],
                   "description": "The named products this protein is cleaved into -- for APP these include N-APP, the beta-CTF and the amyloid-beta peptides. A result about 'the protein' may really be about one component, so this is where the biology usually is.",
                   "items": {
@@ -1130,7 +1155,8 @@
                               "evidences": {
                                 "type": [
                                   "array",
-                                  "null"
+                                  "null",
+                                  "string"
                                 ],
                                 "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                                 "items": {
@@ -1145,8 +1171,9 @@
                                     },
                                     "source": {
                                       "type": [
+                                        "null",
                                         "object",
-                                        "null"
+                                        "string"
                                       ],
                                       "description": "Where the evidence came from.",
                                       "properties": {
@@ -1204,7 +1231,8 @@
                                 "evidences": {
                                   "type": [
                                     "array",
-                                    "null"
+                                    "null",
+                                    "string"
                                   ],
                                   "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                                   "items": {
@@ -1219,8 +1247,9 @@
                                       },
                                       "source": {
                                         "type": [
+                                          "null",
                                           "object",
-                                          "null"
+                                          "string"
                                         ],
                                         "description": "Where the evidence came from.",
                                         "properties": {
@@ -1288,7 +1317,8 @@
                                 "evidences": {
                                   "type": [
                                     "array",
-                                    "null"
+                                    "null",
+                                    "string"
                                   ],
                                   "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                                   "items": {
@@ -1303,8 +1333,9 @@
                                       },
                                       "source": {
                                         "type": [
+                                          "null",
                                           "object",
-                                          "null"
+                                          "string"
                                         ],
                                         "description": "Where the evidence came from.",
                                         "properties": {
@@ -1362,7 +1393,8 @@
                                   "evidences": {
                                     "type": [
                                       "array",
-                                      "null"
+                                      "null",
+                                      "string"
                                     ],
                                     "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                                     "items": {
@@ -1377,8 +1409,9 @@
                                         },
                                         "source": {
                                           "type": [
+                                            "null",
                                             "object",
-                                            "null"
+                                            "string"
                                           ],
                                           "description": "Where the evidence came from.",
                                           "properties": {
@@ -1489,7 +1522,8 @@
                   "evidences": {
                     "type": [
                       "array",
-                      "null"
+                      "null",
+                      "string"
                     ],
                     "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                     "items": {
@@ -1504,8 +1538,9 @@
                         },
                         "source": {
                           "type": [
+                            "null",
                             "object",
-                            "null"
+                            "string"
                           ],
                           "description": "Where the evidence came from.",
                           "properties": {
@@ -1564,7 +1599,8 @@
                   "text": {
                     "type": [
                       "array",
-                      "null"
+                      "null",
+                      "string"
                     ],
                     "description": "The annotation text, each entry {value, evidences}. Present on the prose comment types.",
                     "items": {
@@ -1580,7 +1616,8 @@
                         "evidences": {
                           "type": [
                             "array",
-                            "null"
+                            "null",
+                            "string"
                           ],
                           "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                           "items": {
@@ -1595,8 +1632,9 @@
                               },
                               "source": {
                                 "type": [
+                                  "null",
                                   "object",
-                                  "null"
+                                  "string"
                                 ],
                                 "description": "Where the evidence came from.",
                                 "properties": {
@@ -1660,7 +1698,8 @@
                       "evidences": {
                         "type": [
                           "array",
-                          "null"
+                          "null",
+                          "string"
                         ],
                         "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                         "items": {
@@ -1675,8 +1714,9 @@
                             },
                             "source": {
                               "type": [
+                                "null",
                                 "object",
-                                "null"
+                                "string"
                               ],
                               "description": "Where the evidence came from.",
                               "properties": {
@@ -1778,7 +1818,8 @@
                             "evidences": {
                               "type": [
                                 "array",
-                                "null"
+                                "null",
+                                "string"
                               ],
                               "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                               "items": {
@@ -1793,8 +1834,9 @@
                                   },
                                   "source": {
                                     "type": [
+                                      "null",
                                       "object",
-                                      "null"
+                                      "string"
                                     ],
                                     "description": "Where the evidence came from.",
                                     "properties": {
@@ -1850,7 +1892,8 @@
                             "evidences": {
                               "type": [
                                 "array",
-                                "null"
+                                "null",
+                                "string"
                               ],
                               "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                               "items": {
@@ -1865,8 +1908,9 @@
                                   },
                                   "source": {
                                     "type": [
+                                      "null",
                                       "object",
-                                      "null"
+                                      "string"
                                     ],
                                     "description": "Where the evidence came from.",
                                     "properties": {
@@ -1911,7 +1955,8 @@
                   "interactions": {
                     "type": [
                       "array",
-                      "null"
+                      "null",
+                      "string"
                     ],
                     "description": "Binary interactions from IntAct. accession1/interactor1 is this protein, accession2/interactor2 the partner. `experiments` is how many experiments support the pair -- a count of 1 is a single observation.",
                     "items": {
@@ -2019,7 +2064,8 @@
                             "evidences": {
                               "type": [
                                 "array",
-                                "null"
+                                "null",
+                                "string"
                               ],
                               "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                               "items": {
@@ -2034,8 +2080,9 @@
                                   },
                                   "source": {
                                     "type": [
+                                      "null",
                                       "object",
-                                      "null"
+                                      "string"
                                     ],
                                     "description": "Where the evidence came from.",
                                     "properties": {
@@ -2093,7 +2140,8 @@
                               "evidences": {
                                 "type": [
                                   "array",
-                                  "null"
+                                  "null",
+                                  "string"
                                 ],
                                 "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                                 "items": {
@@ -2108,8 +2156,9 @@
                                     },
                                     "source": {
                                       "type": [
+                                        "null",
                                         "object",
-                                        "null"
+                                        "string"
                                       ],
                                       "description": "Where the evidence came from.",
                                       "properties": {
@@ -2231,7 +2280,8 @@
                   "evidences": {
                     "type": [
                       "array",
-                      "null"
+                      "null",
+                      "string"
                     ],
                     "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                     "items": {
@@ -2246,8 +2296,9 @@
                         },
                         "source": {
                           "type": [
+                            "null",
                             "object",
-                            "null"
+                            "string"
                           ],
                           "description": "Where the evidence came from.",
                           "properties": {
@@ -2403,7 +2454,8 @@
                   "evidences": {
                     "type": [
                       "array",
-                      "null"
+                      "null",
+                      "string"
                     ],
                     "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                     "items": {
@@ -2418,8 +2470,9 @@
                         },
                         "source": {
                           "type": [
+                            "null",
                             "object",
-                            "null"
+                            "string"
                           ],
                           "description": "Where the evidence came from.",
                           "properties": {
@@ -2502,7 +2555,8 @@
                   "evidences": {
                     "type": [
                       "array",
-                      "null"
+                      "null",
+                      "string"
                     ],
                     "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                     "items": {
@@ -2517,8 +2571,9 @@
                         },
                         "source": {
                           "type": [
+                            "null",
                             "object",
-                            "null"
+                            "string"
                           ],
                           "description": "Where the evidence came from.",
                           "properties": {
@@ -2708,8 +2763,9 @@
                   },
                   "source": {
                     "type": [
+                      "null",
                       "object",
-                      "null"
+                      "string"
                     ],
                     "description": "The biological material used.",
                     "properties": {
@@ -2732,7 +2788,8 @@
                             "evidences": {
                               "type": [
                                 "array",
-                                "null"
+                                "null",
+                                "string"
                               ],
                               "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                               "items": {
@@ -2747,8 +2804,9 @@
                                   },
                                   "source": {
                                     "type": [
+                                      "null",
                                       "object",
-                                      "null"
+                                      "string"
                                     ],
                                     "description": "Where the evidence came from.",
                                     "properties": {
@@ -2807,7 +2865,8 @@
                             "evidences": {
                               "type": [
                                 "array",
-                                "null"
+                                "null",
+                                "string"
                               ],
                               "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                               "items": {
@@ -2822,8 +2881,9 @@
                                   },
                                   "source": {
                                     "type": [
+                                      "null",
                                       "object",
-                                      "null"
+                                      "string"
                                     ],
                                     "description": "Where the evidence came from.",
                                     "properties": {
@@ -2882,7 +2942,8 @@
                             "evidences": {
                               "type": [
                                 "array",
-                                "null"
+                                "null",
+                                "string"
                               ],
                               "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                               "items": {
@@ -2897,8 +2958,9 @@
                                   },
                                   "source": {
                                     "type": [
+                                      "null",
                                       "object",
-                                      "null"
+                                      "string"
                                     ],
                                     "description": "Where the evidence came from.",
                                     "properties": {
@@ -2943,7 +3005,8 @@
                   "evidences": {
                     "type": [
                       "array",
-                      "null"
+                      "null",
+                      "string"
                     ],
                     "description": "What this statement rests on. Each entry is {code, source}: `code` is an ECO term -- ECO:0000269 is experimental evidence from a named publication, ECO:0000250 is inferred by similarity from another protein, ECO:0000305 is a curator's inference, ECO:0000303 is a statement taken from a paper without experiment. An annotation carrying only ECO:0000250 has never been shown in THIS protein.",
                     "items": {
@@ -2958,8 +3021,9 @@
                         },
                         "source": {
                           "type": [
+                            "null",
                             "object",
-                            "null"
+                            "string"
                           ],
                           "description": "Where the evidence came from.",
                           "properties": {
@@ -7148,7 +7212,8 @@
           "text": {
             "type": [
               "array",
-              "null"
+              "null",
+              "string"
             ],
             "description": "The annotation text, each entry {value, evidences}. Present on the prose comment types.",
             "items": {
@@ -7179,8 +7244,9 @@
                       },
                       "source": {
                         "type": [
+                          "null",
                           "object",
-                          "null"
+                          "string"
                         ],
                         "description": "Where the evidence came from.",
                         "properties": {
@@ -7259,8 +7325,9 @@
                     },
                     "source": {
                       "type": [
+                        "null",
                         "object",
-                        "null"
+                        "string"
                       ],
                       "description": "Where the evidence came from.",
                       "properties": {
@@ -7377,8 +7444,9 @@
                           },
                           "source": {
                             "type": [
+                              "null",
                               "object",
-                              "null"
+                              "string"
                             ],
                             "description": "Where the evidence came from.",
                             "properties": {
@@ -7449,8 +7517,9 @@
                           },
                           "source": {
                             "type": [
+                              "null",
                               "object",
-                              "null"
+                              "string"
                             ],
                             "description": "Where the evidence came from.",
                             "properties": {
@@ -7618,8 +7687,9 @@
                           },
                           "source": {
                             "type": [
+                              "null",
                               "object",
-                              "null"
+                              "string"
                             ],
                             "description": "Where the evidence came from.",
                             "properties": {
@@ -7692,8 +7762,9 @@
                             },
                             "source": {
                               "type": [
+                                "null",
                                 "object",
-                                "null"
+                                "string"
                               ],
                               "description": "Where the evidence came from.",
                               "properties": {
@@ -7830,8 +7901,9 @@
                 },
                 "source": {
                   "type": [
+                    "null",
                     "object",
-                    "null"
+                    "string"
                   ],
                   "description": "Where the evidence came from.",
                   "properties": {
@@ -8062,8 +8134,9 @@
           },
           "source": {
             "type": [
+              "null",
               "object",
-              "null"
+              "string"
             ],
             "description": "The biological material used.",
             "properties": {
@@ -8101,8 +8174,9 @@
                           },
                           "source": {
                             "type": [
+                              "null",
                               "object",
-                              "null"
+                              "string"
                             ],
                             "description": "Where the evidence came from.",
                             "properties": {
@@ -8176,8 +8250,9 @@
                           },
                           "source": {
                             "type": [
+                              "null",
                               "object",
-                              "null"
+                              "string"
                             ],
                             "description": "Where the evidence came from.",
                             "properties": {
@@ -8251,8 +8326,9 @@
                           },
                           "source": {
                             "type": [
+                              "null",
                               "object",
-                              "null"
+                              "string"
                             ],
                             "description": "Where the evidence came from.",
                             "properties": {
@@ -8312,8 +8388,9 @@
                 },
                 "source": {
                   "type": [
+                    "null",
                     "object",
-                    "null"
+                    "string"
                   ],
                   "description": "Where the evidence came from.",
                   "properties": {

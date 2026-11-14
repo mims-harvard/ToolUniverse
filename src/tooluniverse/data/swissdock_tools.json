@@ -155,8 +155,9 @@
           "properties": {
             "error": {
               "type": [
-                "string",
-                "object"
+                "null",
+                "object",
+                "string"
               ]
             }
           },

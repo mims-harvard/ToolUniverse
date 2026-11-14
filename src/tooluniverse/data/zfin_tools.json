@@ -1219,8 +1219,9 @@
                         },
                         "hgvs_coding": {
                           "type": [
-                            "string",
-                            "null"
+                            "array",
+                            "null",
+                            "string"
                           ],
                           "description": "Coding HGVS"
                         },
@@ -1279,8 +1280,9 @@
                               },
                               "hgvs_coding": {
                                 "type": [
-                                  "string",
-                                  "null"
+                                  "array",
+                                  "null",
+                                  "string"
                                 ],
                                 "description": "HGVS coding nomenclature, e.g. XM_073919248.1:c.396+1G>A"
                               },

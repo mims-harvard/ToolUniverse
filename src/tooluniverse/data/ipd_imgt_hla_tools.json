@@ -391,7 +391,8 @@
                 "coding": {
                   "type": [
                     "array",
-                    "null"
+                    "null",
+                    "string"
                   ],
                   "description": "Coding-sequence features",
                   "items": {
@@ -411,7 +412,8 @@
                 "genomic": {
                   "type": [
                     "array",
-                    "null"
+                    "null",
+                    "string"
                   ],
                   "description": "Genomic-sequence features",
                   "items": {
@@ -431,7 +433,8 @@
                 "protein": {
                   "type": [
                     "array",
-                    "null"
+                    "null",
+                    "string"
                   ],
                   "description": "Protein-sequence features",
                   "items": {
@@ -508,9 +511,10 @@
             },
             "omim": {
               "type": [
-                "string",
                 "array",
-                "null"
+                "integer",
+                "null",
+                "string"
               ],
               "description": "OMIM references for the locus"
             },

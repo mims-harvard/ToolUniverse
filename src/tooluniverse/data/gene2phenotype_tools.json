@@ -195,7 +195,10 @@
               "description": "Inheritance pattern"
             },
             "variant_consequence": {
-              "type": "array",
+              "type": [
+                "array",
+                "string"
+              ],
               "description": "Variant consequences with Sequence Ontology terms"
             },
             "molecular_mechanism": {
@@ -215,7 +218,10 @@
               "description": "Supporting publications with PubMed IDs"
             },
             "phenotypes": {
-              "type": "string",
+              "type": [
+                "array",
+                "string"
+              ],
               "description": "Semicolon-separated HP phenotype terms"
             },
             "last_updated": {

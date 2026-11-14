@@ -472,8 +472,9 @@
                 },
                 "status": {
                   "type": [
-                    "string",
-                    "null"
+                    "integer",
+                    "null",
+                    "string"
                   ],
                   "description": "Whether a human has checked the solution: 'reviewed' means an analyst confirmed it, 'automatic' means no one has. The difference between a provisional and a confirmed earthquake."
                 },
@@ -652,8 +653,9 @@
                       },
                       "status": {
                         "type": [
-                          "string",
-                          "null"
+                          "integer",
+                          "null",
+                          "string"
                         ],
                         "description": "Whether a human has checked the solution: 'reviewed' means an analyst confirmed it, 'automatic' means no one has. The difference between a provisional and a confirmed earthquake."
                       },

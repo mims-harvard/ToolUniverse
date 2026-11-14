@@ -4466,8 +4466,9 @@
             },
             "data": {
               "type": [
-                "object",
-                "null"
+                "array",
+                "null",
+                "object"
               ],
               "description": "The trend series itself",
               "additionalProperties": {

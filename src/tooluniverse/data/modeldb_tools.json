@@ -288,7 +288,10 @@
               "description": "Full paper title",
               "properties": {
                 "value": {
-                  "type": "string"
+                  "type": [
+                    "array",
+                    "string"
+                  ]
                 },
                 "attr_id": {
                   "type": [
@@ -305,8 +308,9 @@
             },
             "url": {
               "type": [
-                "string",
-                "null"
+                "null",
+                "object",
+                "string"
               ],
               "description": "API URL for the paper record, e.g. 'https://modeldb.science/api/v1/papers/4307'."
             },

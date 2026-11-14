@@ -435,8 +435,9 @@
             },
             "CTerminus": {
               "type": [
-                "string",
-                "null"
+                "null",
+                "object",
+                "string"
               ],
               "description": "How the peptide's C-terminus is capped, e.g. 'AMD' for amidated or 'FREE' for a free acid. Amidation changes charge and activity, so two otherwise identical sequences are different peptides."
             },

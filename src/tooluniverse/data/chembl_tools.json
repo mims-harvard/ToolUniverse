@@ -4902,7 +4902,8 @@
                   "max_phase": {
                     "type": [
                       "integer",
-                      "null"
+                      "null",
+                      "string"
                     ],
                     "description": "The furthest clinical phase the drug has reached, e.g. 4 for approved. Says whether a mechanism belongs to a marketed drug or to one abandoned in phase 1."
                   },

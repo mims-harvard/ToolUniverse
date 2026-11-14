@@ -447,7 +447,10 @@
                   "description": "Atlas disclaimer for the experiment, e.g. 'experimental' for a pilot dataset."
                 },
                 "resources": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "description": "Downloadable files the Atlas offers for the experiment, each with its type and URL.",
                   "items": {
                     "type": "object"

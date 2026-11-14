@@ -1,0 +1,2536 @@
+{
+  "measured_on": "2026-11-14",
+  "how": "Each tool's own test_examples were run live; every value appearing under a declared key, at any depth of the response, was typed and counted. Counts are pooled across tools in the same config file that wrap the same upstream field. Round 1 took the fields the live sweep reported; round 2 measured EVERY field each affected tool declares, because jsonschema reports only the first error per validation, so round 1 saw one bad field per tool and fixing it unmasked the next. Round 3 found one more field that round 2's pass had NOT seen: the same two LINCS examples returned pubchem_id as an integer minutes after returning it as a string, so a single live pass is a LOWER BOUND on the types a field holds, not the complete set.",
+  "invariant": "every measured type must be accepted by the field's declared type, under JSON Schema containment (integer satisfies number)",
+  "rows": [
+    {
+      "tool": "AMPSphere_search_amps",
+      "field": "isoelectric_point",
+      "config": "ampsphere_tools.json",
+      "measured_types": [
+        "number",
+        "object"
+      ],
+      "observations": {
+        "number": 5,
+        "object": 1
+      },
+      "declared_before": [
+        "null",
+        "number"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "object"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "AMPSphere_search_amps",
+      "field": "molecular_weight",
+      "config": "ampsphere_tools.json",
+      "measured_types": [
+        "number",
+        "object"
+      ],
+      "observations": {
+        "number": 5,
+        "object": 1
+      },
+      "declared_before": [
+        "null",
+        "number"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "object"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "AllenCellTypes_search_specimens",
+      "field": "years_of_seizure_history",
+      "config": "allen_cell_types_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 11
+      },
+      "declared_before": [
+        "integer",
+        "null",
+        "number"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "BVBRC_search_amr",
+      "field": "taxon_id",
+      "config": "bvbrc_tools.json",
+      "measured_types": [
+        "integer"
+      ],
+      "observations": {
+        "integer": 23
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "integer",
+        "null"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "BVBRC_search_epitopes",
+      "field": "taxon_id",
+      "config": "bvbrc_tools.json",
+      "measured_types": [
+        "integer"
+      ],
+      "observations": {
+        "integer": 23
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "integer",
+        "null"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "ChEMBL_search_similarity",
+      "field": "max_phase",
+      "config": "chembl_tools.json",
+      "measured_types": [
+        "null",
+        "string"
+      ],
+      "observations": {
+        "null": 4,
+        "string": 5
+      },
+      "declared_before": [
+        "integer",
+        "null"
+      ],
+      "declared_after": [
+        "integer",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "CoL_get_taxon",
+      "field": "namesIndexId",
+      "config": "col_tools.json",
+      "measured_types": [
+        "integer"
+      ],
+      "observations": {
+        "integer": 2
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "integer",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "Crossref_get_member",
+      "field": "prefix",
+      "config": "crossref_tools.json",
+      "measured_types": [
+        "array"
+      ],
+      "observations": {
+        "array": 5
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "Crossref_search_members",
+      "field": "prefix",
+      "config": "crossref_tools.json",
+      "measured_types": [
+        "array"
+      ],
+      "observations": {
+        "array": 5
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "DBAASP_get_peptide",
+      "field": "CTerminus",
+      "config": "dbaasp_tools.json",
+      "measured_types": [
+        "object"
+      ],
+      "observations": {
+        "object": 2
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "object",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "EBIProteins_get_features",
+      "field": "ligand",
+      "config": "ebi_proteins_ext_tools.json",
+      "measured_types": [
+        "null",
+        "object"
+      ],
+      "observations": {
+        "null": 127,
+        "object": 4
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "object"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "EBIProteins_get_features",
+      "field": "next_offset",
+      "config": "ebi_proteins_ext_tools.json",
+      "measured_types": [
+        "integer",
+        "null"
+      ],
+      "observations": {
+        "null": 1,
+        "integer": 1
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "integer",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "EBIProteins_get_variation",
+      "field": "genomic_location",
+      "config": "ebi_proteins_ext_tools.json",
+      "measured_types": [
+        "array",
+        "null"
+      ],
+      "observations": {
+        "array": 199,
+        "null": 1
+      },
+      "declared_before": [
+        "array"
+      ],
+      "declared_after": [
+        "array",
+        "null"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "EMDB_get_validation",
+      "field": "resolution",
+      "config": "emdb_tools.json",
+      "measured_types": [
+        "number",
+        "object"
+      ],
+      "observations": {
+        "object": 2,
+        "number": 1
+      },
+      "declared_before": [
+        "null",
+        "object"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "object"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "EMDB_get_validation",
+      "field": "value",
+      "config": "emdb_tools.json",
+      "measured_types": [
+        "number",
+        "string"
+      ],
+      "observations": {
+        "number": 35,
+        "string": 1
+      },
+      "declared_before": [
+        "null",
+        "number"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "EMDB_get_validation",
+      "field": "x",
+      "config": "emdb_tools.json",
+      "measured_types": [
+        "array",
+        "integer",
+        "number",
+        "object",
+        "string"
+      ],
+      "observations": {
+        "integer": 4,
+        "string": 47,
+        "array": 4,
+        "object": 2,
+        "number": 3
+      },
+      "declared_before": [
+        "array",
+        "integer",
+        "null",
+        "object",
+        "string"
+      ],
+      "declared_after": [
+        "array",
+        "integer",
+        "null",
+        "number",
+        "object",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "EMDB_get_validation",
+      "field": "y",
+      "config": "emdb_tools.json",
+      "measured_types": [
+        "array",
+        "integer",
+        "number",
+        "object",
+        "string"
+      ],
+      "observations": {
+        "integer": 4,
+        "string": 47,
+        "array": 4,
+        "object": 2,
+        "number": 3
+      },
+      "declared_before": [
+        "array",
+        "integer",
+        "null",
+        "object",
+        "string"
+      ],
+      "declared_after": [
+        "array",
+        "integer",
+        "null",
+        "number",
+        "object",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "FDAGSRS_get_substance",
+      "field": "display_name",
+      "config": "fda_gsrs_tools.json",
+      "measured_types": [
+        "boolean"
+      ],
+      "observations": {
+        "boolean": 91
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "boolean",
+        "null"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "FDA_search_drug_labels",
+      "field": "adverse_reactions",
+      "config": "openfda_label_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 6
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "FDA_search_drug_labels",
+      "field": "clinical_pharmacology",
+      "config": "openfda_label_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 6
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "FDA_search_drug_labels",
+      "field": "dosage_forms_and_strengths",
+      "config": "openfda_label_tools.json",
+      "measured_types": [
+        "null",
+        "string"
+      ],
+      "observations": {
+        "string": 4,
+        "null": 2
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "FDA_search_drug_labels",
+      "field": "mechanism_of_action",
+      "config": "openfda_label_tools.json",
+      "measured_types": [
+        "null",
+        "string"
+      ],
+      "observations": {
+        "string": 5,
+        "null": 1
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "FDA_search_drug_labels",
+      "field": "use_in_specific_populations",
+      "config": "openfda_label_tools.json",
+      "measured_types": [
+        "null",
+        "string"
+      ],
+      "observations": {
+        "string": 4,
+        "null": 2
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "FinnGen_get_variant_finemapping",
+      "field": "n_sample",
+      "config": "finngen_tools.json",
+      "measured_types": [
+        "integer",
+        "string"
+      ],
+      "observations": {
+        "integer": 516,
+        "string": 37
+      },
+      "declared_before": [
+        "integer",
+        "null"
+      ],
+      "declared_after": [
+        "integer",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "FlyMine_search",
+      "field": "error",
+      "config": "flymine_tools.json",
+      "measured_types": [
+        "null"
+      ],
+      "observations": {
+        "null": 6
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "A",
+      "round": 1
+    },
+    {
+      "tool": "FlyMine_search_genes",
+      "field": "error",
+      "config": "flymine_tools.json",
+      "measured_types": [
+        "null"
+      ],
+      "observations": {
+        "null": 6
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "A",
+      "round": 1
+    },
+    {
+      "tool": "G2P_get_record",
+      "field": "phenotypes",
+      "config": "gene2phenotype_tools.json",
+      "measured_types": [
+        "array"
+      ],
+      "observations": {
+        "array": 3
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "array",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "G2P_get_record",
+      "field": "variant_consequence",
+      "config": "gene2phenotype_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "array": 3,
+        "string": 3
+      },
+      "declared_before": [
+        "array"
+      ],
+      "declared_after": [
+        "array",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "GeneBe_classify_variant",
+      "field": "strand",
+      "config": "genebe_tools.json",
+      "measured_types": [
+        "boolean"
+      ],
+      "observations": {
+        "boolean": 140
+      },
+      "declared_before": [
+        "integer",
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "boolean",
+        "null"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "GeneBe_classify_variants_batch",
+      "field": "strand",
+      "config": "genebe_tools.json",
+      "measured_types": [
+        "boolean"
+      ],
+      "observations": {
+        "boolean": 140
+      },
+      "declared_before": [
+        "integer",
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "boolean",
+        "null"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "GlyGen_search_glycoproteins",
+      "field": "gene_names_refseq",
+      "config": "glygen_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "string": 8,
+        "array": 2
+      },
+      "declared_before": [
+        "array"
+      ],
+      "declared_after": [
+        "array",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "GlyGen_search_glycoproteins",
+      "field": "organism",
+      "config": "glygen_tools.json",
+      "measured_types": [
+        "object",
+        "string"
+      ],
+      "observations": {
+        "string": 10,
+        "object": 1
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "object",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "GlyGen_search_glycoproteins",
+      "field": "protein_names_refseq",
+      "config": "glygen_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "string": 8,
+        "array": 2
+      },
+      "declared_before": [
+        "array"
+      ],
+      "declared_after": [
+        "array",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "GxA_get_experiment_info",
+      "field": "resources",
+      "config": "gxa_tools.json",
+      "measured_types": [
+        "null"
+      ],
+      "observations": {
+        "null": 1
+      },
+      "declared_before": [
+        "array"
+      ],
+      "declared_after": [
+        "array",
+        "null"
+      ],
+      "rule": "A",
+      "round": 1
+    },
+    {
+      "tool": "HPA_get_gene_basic_info_by_ensembl_id",
+      "field": "Secretome location",
+      "config": "hpa_tools.json",
+      "measured_types": [
+        "null",
+        "string"
+      ],
+      "observations": {
+        "null": 1,
+        "string": 1
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "HumanMine_search",
+      "field": "error",
+      "config": "humanmine_tools.json",
+      "measured_types": [
+        "null"
+      ],
+      "observations": {
+        "null": 9
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "A",
+      "round": 1
+    },
+    {
+      "tool": "HumanMine_search_genes",
+      "field": "error",
+      "config": "humanmine_tools.json",
+      "measured_types": [
+        "null"
+      ],
+      "observations": {
+        "null": 9
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "A",
+      "round": 1
+    },
+    {
+      "tool": "HumanMine_search_pathways",
+      "field": "error",
+      "config": "humanmine_tools.json",
+      "measured_types": [
+        "null"
+      ],
+      "observations": {
+        "null": 9
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "A",
+      "round": 1
+    },
+    {
+      "tool": "IPD_get_hla_allele",
+      "field": "coding",
+      "config": "ipd_imgt_hla_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "array": 2,
+        "string": 2
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "IPD_get_hla_allele",
+      "field": "genomic",
+      "config": "ipd_imgt_hla_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "array": 2,
+        "string": 2
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "IPD_get_hla_allele",
+      "field": "omim",
+      "config": "ipd_imgt_hla_tools.json",
+      "measured_types": [
+        "integer"
+      ],
+      "observations": {
+        "integer": 2
+      },
+      "declared_before": [
+        "array",
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "array",
+        "integer",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "IPD_get_hla_allele",
+      "field": "protein",
+      "config": "ipd_imgt_hla_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "array": 2,
+        "string": 2
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "LINCS_search_signatures",
+      "field": "pubchem_id",
+      "config": "lincs_tools.json",
+      "measured_types": [
+        "integer"
+      ],
+      "observations": {
+        "integer": 2
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "integer",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 3
+    },
+    {
+      "tool": "LINCS_search_signatures",
+      "field": "version",
+      "config": "lincs_tools.json",
+      "measured_types": [
+        "integer"
+      ],
+      "observations": {
+        "integer": 10
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "integer",
+        "null"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "MCSA_get_entry",
+      "field": "assembly",
+      "config": "mcsa_tools.json",
+      "measured_types": [
+        "integer",
+        "string"
+      ],
+      "observations": {
+        "integer": 71,
+        "string": 8
+      },
+      "declared_before": [
+        "integer",
+        "null"
+      ],
+      "declared_after": [
+        "integer",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "MCSA_search_enzymes",
+      "field": "assembly",
+      "config": "mcsa_tools.json",
+      "measured_types": [
+        "integer",
+        "string"
+      ],
+      "observations": {
+        "integer": 71,
+        "string": 8
+      },
+      "declared_before": [
+        "integer",
+        "null"
+      ],
+      "declared_after": [
+        "integer",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "ModelDB_get_paper",
+      "field": "url",
+      "config": "modeldb_tools.json",
+      "measured_types": [
+        "object",
+        "string"
+      ],
+      "observations": {
+        "object": 1,
+        "string": 2
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "object",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "ModelDB_get_paper",
+      "field": "value",
+      "config": "modeldb_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "string": 21,
+        "array": 4
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "array",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "MouseMine_search_alleles",
+      "field": "error",
+      "config": "mousemine_tools.json",
+      "measured_types": [
+        "null"
+      ],
+      "observations": {
+        "null": 6
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "A",
+      "round": 1
+    },
+    {
+      "tool": "MouseMine_search_genes",
+      "field": "error",
+      "config": "mousemine_tools.json",
+      "measured_types": [
+        "null"
+      ],
+      "observations": {
+        "null": 6
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "A",
+      "round": 1
+    },
+    {
+      "tool": "MyVariant_query_variants",
+      "field": "alleles",
+      "config": "biothings_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "array": 5,
+        "string": 2
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "MyVariant_query_variants",
+      "field": "annotype",
+      "config": "biothings_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "string": 3,
+        "array": 1
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "MyVariant_query_variants",
+      "field": "chrom",
+      "config": "biothings_tools.json",
+      "measured_types": [
+        "integer",
+        "string"
+      ],
+      "observations": {
+        "integer": 4,
+        "string": 12
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "integer",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "MyVariant_query_variants",
+      "field": "consdetail",
+      "config": "biothings_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "string": 3,
+        "array": 1
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "MyVariant_query_variants",
+      "field": "consequence",
+      "config": "biothings_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "string": 3,
+        "array": 1
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "MyVariant_query_variants",
+      "field": "consscore",
+      "config": "biothings_tools.json",
+      "measured_types": [
+        "array",
+        "integer"
+      ],
+      "observations": {
+        "integer": 3,
+        "array": 1
+      },
+      "declared_before": [
+        "integer",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "integer",
+        "null"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "NASASBDB_get_body",
+      "field": "moid",
+      "config": "nasa_sbdb_tools.json",
+      "measured_types": [
+        "null",
+        "string"
+      ],
+      "observations": {
+        "string": 5,
+        "null": 1
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "NASASBDB_get_body",
+      "field": "moid_jup",
+      "config": "nasa_sbdb_tools.json",
+      "measured_types": [
+        "null",
+        "string"
+      ],
+      "observations": {
+        "string": 5,
+        "null": 1
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "NASASBDB_get_body",
+      "field": "pe_used",
+      "config": "nasa_sbdb_tools.json",
+      "measured_types": [
+        "null",
+        "string"
+      ],
+      "observations": {
+        "string": 5,
+        "null": 1
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "NASASBDB_get_body",
+      "field": "rms",
+      "config": "nasa_sbdb_tools.json",
+      "measured_types": [
+        "null",
+        "string"
+      ],
+      "observations": {
+        "string": 5,
+        "null": 1
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "NASASBDB_get_body",
+      "field": "sb_used",
+      "config": "nasa_sbdb_tools.json",
+      "measured_types": [
+        "null",
+        "string"
+      ],
+      "observations": {
+        "string": 5,
+        "null": 1
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "NASASBDB_get_body",
+      "field": "sigma",
+      "config": "nasa_sbdb_tools.json",
+      "measured_types": [
+        "null",
+        "string"
+      ],
+      "observations": {
+        "string": 91,
+        "null": 30
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "NASASBDB_get_body",
+      "field": "soln_date",
+      "config": "nasa_sbdb_tools.json",
+      "measured_types": [
+        "null",
+        "string"
+      ],
+      "observations": {
+        "string": 5,
+        "null": 1
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "NPAtlas_search_compounds",
+      "field": "exact_mass",
+      "config": "npatlas_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 9
+      },
+      "declared_before": [
+        "null",
+        "number"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "NPAtlas_search_compounds",
+      "field": "molecular_weight",
+      "config": "npatlas_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 9
+      },
+      "declared_before": [
+        "null",
+        "number"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "NeuroMorpho_get_neuron",
+      "field": "surface",
+      "config": "neuromorpho_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 12
+      },
+      "declared_before": [
+        "number"
+      ],
+      "declared_after": [
+        "string"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "NeuroMorpho_get_neuron",
+      "field": "volume",
+      "config": "neuromorpho_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 12
+      },
+      "declared_before": [
+        "number"
+      ],
+      "declared_after": [
+        "string"
+      ],
+      "rule": "B",
+      "round": 2
+    },
+    {
+      "tool": "NeuroMorpho_search_neurons",
+      "field": "surface",
+      "config": "neuromorpho_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 12
+      },
+      "declared_before": [
+        "number"
+      ],
+      "declared_after": [
+        "string"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "NeuroMorpho_search_neurons",
+      "field": "volume",
+      "config": "neuromorpho_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 12
+      },
+      "declared_before": [
+        "number"
+      ],
+      "declared_after": [
+        "string"
+      ],
+      "rule": "B",
+      "round": 2
+    },
+    {
+      "tool": "OSDR_list_files",
+      "field": "date_updated",
+      "config": "nasa_osdr_tools.json",
+      "measured_types": [
+        "number",
+        "string"
+      ],
+      "observations": {
+        "number": 41,
+        "string": 19
+      },
+      "declared_before": [
+        "null",
+        "number"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "OpenML_get_dataset",
+      "field": "file_id",
+      "config": "openml_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 3
+      },
+      "declared_before": [
+        "integer"
+      ],
+      "declared_after": [
+        "integer",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "OpenNIH_funding_trend",
+      "field": "data",
+      "config": "opennih_tools.json",
+      "measured_types": [
+        "array",
+        "object"
+      ],
+      "observations": {
+        "object": 1,
+        "array": 1
+      },
+      "declared_before": [
+        "null",
+        "object"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "object"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "ProtacDB_search_protacs",
+      "field": "dc50",
+      "config": "protacdb_tools.json",
+      "measured_types": [
+        "number"
+      ],
+      "observations": {
+        "number": 50
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "number"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "ProtacDB_search_protacs",
+      "field": "dmax",
+      "config": "protacdb_tools.json",
+      "measured_types": [
+        "number",
+        "string"
+      ],
+      "observations": {
+        "number": 29,
+        "string": 21
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "ProtacDB_search_protacs",
+      "field": "ic50",
+      "config": "protacdb_tools.json",
+      "measured_types": [
+        "number",
+        "string"
+      ],
+      "observations": {
+        "string": 49,
+        "number": 1
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "ProtacDB_search_protacs",
+      "field": "ic50_pe",
+      "config": "protacdb_tools.json",
+      "measured_types": [
+        "number",
+        "string"
+      ],
+      "observations": {
+        "string": 38,
+        "number": 12
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "ProtacDB_search_protacs",
+      "field": "kd_ce",
+      "config": "protacdb_tools.json",
+      "measured_types": [
+        "number",
+        "string"
+      ],
+      "observations": {
+        "string": 48,
+        "number": 2
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "ProtacDB_search_protacs",
+      "field": "kd_pe",
+      "config": "protacdb_tools.json",
+      "measured_types": [
+        "number",
+        "string"
+      ],
+      "observations": {
+        "string": 40,
+        "number": 10
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "ProtacDB_search_protacs",
+      "field": "kd_pt",
+      "config": "protacdb_tools.json",
+      "measured_types": [
+        "number",
+        "string"
+      ],
+      "observations": {
+        "string": 48,
+        "number": 2
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "PyPIPackageInspector",
+      "field": "requires_dist",
+      "config": "pypi_package_inspector_tools.json",
+      "measured_types": [
+        "array",
+        "null"
+      ],
+      "observations": {
+        "array": 2,
+        "null": 1
+      },
+      "declared_before": [
+        "array"
+      ],
+      "declared_after": [
+        "array",
+        "null"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "SGD_get_interactions",
+      "field": "phenotype",
+      "config": "sgd_tools.json",
+      "measured_types": [
+        "null",
+        "object"
+      ],
+      "observations": {
+        "null": 90,
+        "object": 10
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "object"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "SGD_get_sequence",
+      "field": "strains_available",
+      "config": "sgd_tools.json",
+      "measured_types": [
+        "integer"
+      ],
+      "observations": {
+        "integer": 6
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "integer",
+        "null"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "SpliceAI_predict_splice",
+      "field": "aa_change",
+      "config": "spliceai_tools.json",
+      "measured_types": [
+        "object"
+      ],
+      "observations": {
+        "object": 1
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "object",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "SpliceAI_predict_splice",
+      "field": "altered_protein_window",
+      "config": "spliceai_tools.json",
+      "measured_types": [
+        "object"
+      ],
+      "observations": {
+        "object": 1
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "object",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "SpliceAI_predict_splice",
+      "field": "description",
+      "config": "spliceai_tools.json",
+      "measured_types": [
+        "object"
+      ],
+      "observations": {
+        "object": 1
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "object",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "SpliceAI_predict_splice",
+      "field": "wt_protein_window",
+      "config": "spliceai_tools.json",
+      "measured_types": [
+        "object"
+      ],
+      "observations": {
+        "object": 1
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "object",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "SwissDock_check_job_status",
+      "field": "error",
+      "config": "swissdock_tools.json",
+      "measured_types": [
+        "null"
+      ],
+      "observations": {
+        "null": 1
+      },
+      "declared_before": [
+        "object",
+        "string"
+      ],
+      "declared_after": [
+        "null",
+        "object",
+        "string"
+      ],
+      "rule": "A",
+      "round": 1
+    },
+    {
+      "tool": "Synapse_list_children",
+      "field": "benefactor_id",
+      "config": "synapse_tools.json",
+      "measured_types": [
+        "integer"
+      ],
+      "observations": {
+        "integer": 31
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "integer",
+        "null"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "USGS_query_earthquakes",
+      "field": "status",
+      "config": "usgs_earthquake_tools.json",
+      "measured_types": [
+        "integer",
+        "string"
+      ],
+      "observations": {
+        "string": 28,
+        "integer": 3
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "integer",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "ZFIN_get_allele",
+      "field": "hgvs_coding",
+      "config": "zfin_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "array": 2,
+        "string": 100
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "civic_get_variant",
+      "field": "revelScore",
+      "config": "civic_tools.json",
+      "measured_types": [
+        "array"
+      ],
+      "observations": {
+        "array": 1
+      },
+      "declared_before": [
+        "null",
+        "number"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "number"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "dbsnp_get_frequencies",
+      "field": "studies_unparsed",
+      "config": "dbsnp_tools.json",
+      "measured_types": [
+        "array"
+      ],
+      "observations": {
+        "array": 2
+      },
+      "declared_before": [
+        "integer"
+      ],
+      "declared_after": [
+        "array",
+        "integer"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "ensembl_get_sv_detail",
+      "field": "study",
+      "config": "ensembl_tools.json",
+      "measured_types": [
+        "object"
+      ],
+      "observations": {
+        "object": 5
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "object",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "ensembl_get_xrefs",
+      "field": "version",
+      "config": "ensembl_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 81
+      },
+      "declared_before": [
+        "integer",
+        "null"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "ensembl_get_xrefs_by_name",
+      "field": "version",
+      "config": "ensembl_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 81
+      },
+      "declared_before": [
+        "integer",
+        "null"
+      ],
+      "declared_after": [
+        "null",
+        "string"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "gather_disease_profile",
+      "field": "mim_number",
+      "config": "compound_disease_tools.json",
+      "measured_types": [
+        "integer"
+      ],
+      "observations": {
+        "integer": 15
+      },
+      "declared_before": [
+        "string"
+      ],
+      "declared_after": [
+        "integer"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "gather_disease_profile",
+      "field": "omim",
+      "config": "compound_disease_tools.json",
+      "measured_types": [
+        "integer",
+        "object"
+      ],
+      "observations": {
+        "integer": 3,
+        "object": 3
+      },
+      "declared_before": [
+        "object"
+      ],
+      "declared_after": [
+        "integer",
+        "object"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "gather_disease_profile",
+      "field": "orphanet",
+      "config": "compound_disease_tools.json",
+      "measured_types": [
+        "object",
+        "string"
+      ],
+      "observations": {
+        "object": 3,
+        "string": 2
+      },
+      "declared_before": [
+        "object"
+      ],
+      "declared_after": [
+        "object",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "gwas_get_associations_for_snp",
+      "field": "or_value",
+      "config": "gwas_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 7
+      },
+      "declared_before": [
+        "null",
+        "number"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "gwas_get_associations_for_study",
+      "field": "or_value",
+      "config": "gwas_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 7
+      },
+      "declared_before": [
+        "null",
+        "number"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "gwas_get_associations_for_trait",
+      "field": "or_value",
+      "config": "gwas_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 7
+      },
+      "declared_before": [
+        "null",
+        "number"
+      ],
+      "declared_after": [
+        "null",
+        "number",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "gwas_get_variants_for_trait",
+      "field": "snp_allele",
+      "config": "gwas_tools.json",
+      "measured_types": [
+        "array"
+      ],
+      "observations": {
+        "array": 20
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "array",
+        "null"
+      ],
+      "rule": "B",
+      "round": 1
+    },
+    {
+      "tool": "gwas_get_variants_for_trait",
+      "field": "snp_effect_allele",
+      "config": "gwas_tools.json",
+      "measured_types": [
+        "array"
+      ],
+      "observations": {
+        "array": 20
+      },
+      "declared_before": [
+        "null",
+        "string"
+      ],
+      "declared_after": [
+        "array",
+        "null"
+      ],
+      "rule": "B",
+      "round": 2
+    },
+    {
+      "tool": "proteins_api_get_comments",
+      "field": "source",
+      "config": "proteins_api_tools.json",
+      "measured_types": [
+        "object",
+        "string"
+      ],
+      "observations": {
+        "object": 4998,
+        "string": 720
+      },
+      "declared_before": [
+        "null",
+        "object"
+      ],
+      "declared_after": [
+        "null",
+        "object",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "proteins_api_get_comments",
+      "field": "text",
+      "config": "proteins_api_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "array": 383,
+        "string": 23
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "proteins_api_get_protein",
+      "field": "component",
+      "config": "proteins_api_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "array": 3,
+        "string": 6
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "proteins_api_get_protein",
+      "field": "evidences",
+      "config": "proteins_api_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "array": 2244,
+        "string": 3
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "proteins_api_get_protein",
+      "field": "interactions",
+      "config": "proteins_api_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "array": 6,
+        "string": 18
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "proteins_api_get_protein",
+      "field": "source",
+      "config": "proteins_api_tools.json",
+      "measured_types": [
+        "object",
+        "string"
+      ],
+      "observations": {
+        "object": 4998,
+        "string": 720
+      },
+      "declared_before": [
+        "null",
+        "object"
+      ],
+      "declared_after": [
+        "null",
+        "object",
+        "string"
+      ],
+      "rule": "C",
+      "round": 2
+    },
+    {
+      "tool": "proteins_api_get_protein",
+      "field": "text",
+      "config": "proteins_api_tools.json",
+      "measured_types": [
+        "array",
+        "string"
+      ],
+      "observations": {
+        "array": 383,
+        "string": 23
+      },
+      "declared_before": [
+        "array",
+        "null"
+      ],
+      "declared_after": [
+        "array",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "proteins_api_get_publications",
+      "field": "source",
+      "config": "proteins_api_tools.json",
+      "measured_types": [
+        "object",
+        "string"
+      ],
+      "observations": {
+        "object": 50,
+        "string": 3
+      },
+      "declared_before": [
+        "null",
+        "object"
+      ],
+      "declared_after": [
+        "null",
+        "object",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    },
+    {
+      "tool": "umls_search_concepts",
+      "field": "partialSearch",
+      "config": "umls_tools.json",
+      "measured_types": [
+        "string"
+      ],
+      "observations": {
+        "string": 1
+      },
+      "declared_before": [
+        "boolean",
+        "null"
+      ],
+      "declared_after": [
+        "boolean",
+        "null",
+        "string"
+      ],
+      "rule": "C",
+      "round": 1
+    }
+  ]
+}

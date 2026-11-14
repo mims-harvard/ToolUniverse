@@ -566,7 +566,10 @@
                     "type": "array"
                   },
                   "genomic_location": {
-                    "type": "array",
+                    "type": [
+                      "array",
+                      "null"
+                    ],
                     "items": {
                       "type": "string"
                     }
@@ -814,8 +817,8 @@
                   },
                   "ligand": {
                     "type": [
-                      "string",
-                      "null"
+                      "null",
+                      "object"
                     ]
                   },
                   "ligand_part": {
@@ -862,8 +865,9 @@
             },
             "next_offset": {
               "type": [
-                "string",
-                "null"
+                "integer",
+                "null",
+                "string"
               ]
             }
           },

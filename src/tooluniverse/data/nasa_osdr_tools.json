@@ -178,7 +178,7 @@
               "restricted": {"type": "boolean"},
               "download_path": {"type": ["string", "null"]},
               "date_created": {"type": ["number", "null"], "description": "Unix timestamp."},
-              "date_updated": {"type": ["number", "null"]},
+              "date_updated": {"type": ["number", "null", "string"]},
               "organization": {"type": ["string", "null"], "description": "Which group deposited the file."},
               "subdirectory": {"type": ["string", "null"]},
               "visible": {"type": ["boolean", "null"]}

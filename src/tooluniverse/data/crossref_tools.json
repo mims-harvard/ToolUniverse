@@ -1407,8 +1407,9 @@
           },
           "prefix": {
             "type": [
-              "string",
-              "null"
+              "array",
+              "null",
+              "string"
             ],
             "description": "The DOI's registrant prefix, e.g. '10.1067'. Identifies the publisher without parsing the DOI."
           },
@@ -1516,8 +1517,9 @@
             },
             "prefix": {
               "type": [
-                "string",
-                "null"
+                "array",
+                "null",
+                "string"
               ],
               "description": "The DOI's registrant prefix, e.g. '10.1067'. Identifies the publisher without parsing the DOI."
             },

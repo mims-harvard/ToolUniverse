@@ -116,15 +116,16 @@
               },
               "dc50": {
                 "type": [
-                  "string",
-                  "null"
+                  "null",
+                  "number"
                 ],
                 "description": "DC50: the concentration that degrades half the target. The primary potency measure for a degrader -- and not an IC50, because degradation is catalytic. ProtacDB stores each measured value beside the ASSAY it came from, in a matching `assay_*` column. Two values of the same quantity from different assays are not comparable, so the value must never be read without its assay."
               },
               "dmax": {
                 "type": [
-                  "string",
-                  "null"
+                  "null",
+                  "number",
+                  "string"
                 ],
                 "description": "Dmax: the MAXIMUM degradation achieved, as a percentage. A PROTAC with a good DC50 and a Dmax of 40% leaves most of the target standing, so DC50 alone overstates it."
               },
@@ -165,8 +166,9 @@
               },
               "ic50": {
                 "type": [
-                  "string",
-                  "null"
+                  "null",
+                  "number",
+                  "string"
                 ],
                 "description": "IC50 of the compound. ProtacDB stores each measured value beside the ASSAY it came from, in a matching `assay_*` column. Two values of the same quantity from different assays are not comparable, so the value must never be read without its assay."
               },
@@ -221,8 +223,9 @@
               },
               "ic50_pe": {
                 "type": [
-                  "string",
-                  "null"
+                  "null",
+                  "number",
+                  "string"
                 ],
                 "description": "IC50 measured against the E3 ligase end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
               },
@@ -249,8 +252,9 @@
               },
               "kd_ce": {
                 "type": [
-                  "string",
-                  "null"
+                  "null",
+                  "number",
+                  "string"
                 ],
                 "description": "binding affinity measured against the ternary COMPLEX. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
               },
@@ -263,8 +267,9 @@
               },
               "kd_pe": {
                 "type": [
-                  "string",
-                  "null"
+                  "null",
+                  "number",
+                  "string"
                 ],
                 "description": "binding affinity measured against the E3 ligase end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
               },
@@ -277,8 +282,9 @@
               },
               "kd_pt": {
                 "type": [
-                  "string",
-                  "null"
+                  "null",
+                  "number",
+                  "string"
                 ],
                 "description": "binding affinity measured against the target end alone. Cooperativity is the ratio between the complex value and the binary ones, so all three are needed to say whether the PROTAC binds better as a complex than as its parts."
               },

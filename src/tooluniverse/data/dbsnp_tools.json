@@ -416,7 +416,10 @@
               "description": "Of those, how many this tool could parse into a frequency"
             },
             "studies_unparsed": {
-              "type": "integer",
+              "type": [
+                "array",
+                "integer"
+              ],
               "description": "How many it could not; their raw strings are under 'unparsed'"
             },
             "all_studies_parsed": {

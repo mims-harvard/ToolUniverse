@@ -93,7 +93,8 @@
         "partialSearch": {
           "type": [
             "boolean",
-            "null"
+            "null",
+            "string"
           ],
           "description": "Whether UMLS treated the query as a partial match"
         }

@@ -718,8 +718,8 @@
               },
               "phenotype": {
                 "type": [
-                  "string",
-                  "null"
+                  "null",
+                  "object"
                 ]
               },
               "mutant_type": {
@@ -1108,6 +1108,7 @@
                 "strains_available": {
                   "type": [
                     "array",
+                    "integer",
                     "null"
                   ],
                   "description": "Other strains this sequence can be fetched for",
@@ -1203,6 +1204,7 @@
                 "strains_available": {
                   "type": [
                     "array",
+                    "integer",
                     "null"
                   ],
                   "description": "Other strains this sequence can be fetched for",
@@ -1277,6 +1279,7 @@
                 "strains_available": {
                   "type": [
                     "array",
+                    "integer",
                     "null"
                   ],
                   "description": "Other strains this sequence can be fetched for",

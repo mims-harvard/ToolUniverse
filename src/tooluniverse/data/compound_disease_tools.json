@@ -73,7 +73,10 @@
           "description": "Raw-ish per-source parsed results; sources that failed or returned nothing appear as {}.",
           "properties": {
             "orphanet": {
-              "type": "object",
+              "type": [
+                "object",
+                "string"
+              ],
               "properties": {
                 "orpha_code": {
                   "type": "string"
@@ -97,7 +100,10 @@
               }
             },
             "omim": {
-              "type": "object",
+              "type": [
+                "integer",
+                "object"
+              ],
               "properties": {
                 "entries": {
                   "type": "array",
@@ -105,7 +111,7 @@
                     "type": "object",
                     "properties": {
                       "mim_number": {
-                        "type": "string"
+                        "type": "integer"
                       },
                       "title": {
                         "type": "string"

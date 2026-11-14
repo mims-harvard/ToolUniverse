@@ -159,9 +159,8 @@
               },
               "years_of_seizure_history": {
                 "type": [
-                  "number",
-                  "integer",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "description": "Years of seizure history, for human epilepsy resections"
               },
