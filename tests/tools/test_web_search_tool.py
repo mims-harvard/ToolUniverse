@@ -2151,6 +2151,23 @@ def test_specstream_search_maps_region_and_safesearch(
 
 
 @pytest.mark.unit
+@pytest.mark.parametrize(("max_results", "num"), [(0, 1), (100, 100), (500, 100)])
+def test_specstream_search_bounds_num(monkeypatch, max_results, num):
+    monkeypatch.setenv("SPECSTREAM_API_KEY", "ss-test-key")
+    captured = {}
+
+    def fake_get(url, *, params=None, headers=None, timeout=None):
+        captured["params"] = params
+        return _FakeSpecStreamResponse(_SPECSTREAM_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "get", fake_get)
+
+    _new_tool()._search_with_specstream(query="x", max_results=max_results)
+
+    assert captured["params"]["num"] == num
+
+
+@pytest.mark.unit
 def test_specstream_search_prefers_the_request_scoped_key(monkeypatch):
     monkeypatch.setenv("SPECSTREAM_API_KEY", "ss-operator-key")
     captured = {}

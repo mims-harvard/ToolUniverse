@@ -55,7 +55,7 @@ KEENABLE_PROVIDER_NOTICE = (
 _KEENABLE_SNIPPET_MAX_CHARS = 500
 # Region prefixes in the web_search enum that are not ISO 3166-1 alpha-2
 # country codes ("uk-en" is the United Kingdom; "ja-jp" is Japan).
-_FIRECRAWL_COUNTRY_OVERRIDES = {"uk": "GB", "ja": "JP"}
+_COUNTRY_CODE_OVERRIDES = {"uk": "GB", "ja": "JP"}
 
 OUTCRAWL_SEARCH_URL = "https://api.outcrawl.ai/v1/search"
 OUTCRAWL_PROVIDER_NOTICE = (
@@ -76,19 +76,22 @@ SPECSTREAM_PROVIDER_NOTICE = (
 )
 # ToolUniverse safesearch levels mapped to SpecStream's ``safe`` values.
 _SPECSTREAM_SAFE_LEVELS = {"on": "strict", "moderate": "moderate", "off": "off"}
+# SpecStream accepts ``num`` from 1 to 100.
+_SPECSTREAM_MAX_NUM = 100
 
 
-def _firecrawl_country_from_region(region: str) -> str:
-    """Map a DDGS-style region such as ``uk-en`` to Firecrawl's ``country``.
+def _country_code_from_region(region: str) -> str:
+    """Map a DDGS-style region such as ``uk-en`` to an ISO country code.
 
-    Firecrawl only takes an ISO 3166-1 alpha-2 country code; the language half
-    of the ToolUniverse region has no equivalent and is not sent.
+    Firecrawl and SpecStream both take only an ISO 3166-1 alpha-2 country code
+    as ``country``; the language half of the ToolUniverse region has no
+    equivalent and is not sent.
     """
     country, _, _ = (region or "").partition("-")
     country = country.strip().lower()
     if not country:
         return "US"
-    return _FIRECRAWL_COUNTRY_OVERRIDES.get(country, country.upper())
+    return _COUNTRY_CODE_OVERRIDES.get(country, country.upper())
 
 
 @register_tool("WebSearchTool")
@@ -350,7 +353,7 @@ print(json.dumps(results))
             "query": query,
             "limit": max_results,
             "sources": ["web"],
-            "country": _firecrawl_country_from_region(region),
+            "country": _country_code_from_region(region),
             # Firecrawl defaults to query-relevant "highlights", which can be
             # several KB of markdown per result. Ask for plain provider
             # snippets so `snippet` stays comparable to the other backends.
@@ -614,9 +617,9 @@ print(json.dumps(results))
 
         params: Dict[str, Any] = {
             "q": query,
-            "num": max_results,
+            "num": max(1, min(max_results, _SPECSTREAM_MAX_NUM)),
             "speed": "fast",
-            "country": _firecrawl_country_from_region(region),
+            "country": _country_code_from_region(region),
         }
         safe = _SPECSTREAM_SAFE_LEVELS.get(safesearch)
         if safe:
