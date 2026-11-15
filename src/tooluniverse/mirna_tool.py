@@ -220,6 +220,27 @@ class miRNASearchTool(BaseTool):
             return {"status": "error", "error": f"miRNA search failed: {str(e)}"}
 
 
+DISEASES_PER_XREF = 150
+
+
+def _malacards(acc):
+    """The diseases a MalaCards cross-reference actually names.
+
+    RNAcentral returns MalaCards as one row among the cross-references, and
+    the row's payload is the list of diseases the microRNA is associated
+    with -- 364 of them for URS000039ED8D, each with a resolvable card URL.
+    The wrapper reported that a MalaCards link existed and dropped what it
+    said, which is the one thing a caller asking for cross-references of a
+    disease-associated microRNA wants.
+    """
+    rows = []
+    for item in (acc.get("malacards_diseases") or [])[:DISEASES_PER_XREF]:
+        if not isinstance(item, dict) or not item.get("name"):
+            continue
+        rows.append({"name": item.get("name"), "url": item.get("url")})
+    return rows
+
+
 class miRNAGetTool(BaseTool):
     """
     Get detailed miRNA/lncRNA information from RNAcentral by ID.
@@ -414,6 +435,10 @@ class miRNAGetTool(BaseTool):
                     "publication": pub.get("publication", ""),
                     "pubmed_id": pub.get("pubmed_id", ""),
                     "doi": pub.get("doi", ""),
+                    # RNAcentral's own record id. It is the only field that
+                    # tells two source records for one PMID apart, which the
+                    # metadata warning below asks the caller to expect.
+                    "pub_id": pub.get("pub_id"),
                     "expert_db": pub.get("expert_db", False),
                 }
             )
@@ -444,7 +469,8 @@ class miRNAGetTool(BaseTool):
                 "warning": (
                     "RNAcentral can expose multiple source records for the same "
                     "PMID with different citation metadata; total_publications is "
-                    "an upstream record count, not a guaranteed unique PMID count."
+                    "an upstream record count, not a guaranteed unique PMID count. "
+                    "pub_id is the source record id that tells such records apart."
                 ),
             },
         }
@@ -483,6 +509,34 @@ class miRNAGetTool(BaseTool):
                     "expert_db_url": acc.get("expert_db_url", ""),
                     "mirbase_mature_products": xref.get("mirbase_mature_products"),
                     "mirbase_precursor": xref.get("mirbase_precursor"),
+                    # refseq_mirna_mature_products, refseq_mirna_precursor
+                    # and hgnc_id are deliberately not read: 0 of 80 rows
+                    # sampled across four microRNAs populate any of them.
+                    # The mirbase_* keys above measured 0/80 on that same
+                    # sample, which is worth a wider look than four
+                    # microRNAs can give -- precursor entries may fill them.
+                    "diseases": _malacards(acc),
+                    "disease_count": len(acc.get("malacards_diseases") or []),
+                    "diseases_truncated": (
+                        len(acc.get("malacards_diseases") or [])
+                        > DISEASES_PER_XREF
+                    ),
+                    # RNAcentral's own resolvable link for the accession;
+                    # expert_db_url points out to the source database and
+                    # this one points back at the record being described.
+                    "url": acc.get("url"),
+                    # Sparse but real: 10 of 80 rows sampled carry it.
+                    "ncbi_gene_id": xref.get("ncbi_gene_id"),
+                    # RNAcentral's `citations` key holds a URL, not a count:
+                    # .../accession/<id>/citations?format=json. Named for
+                    # what it is, after the live response contradicted the
+                    # name I first gave it.
+                    "citations_url": acc.get("citations"),
+                    # When RNAcentral first saw this mapping and last
+                    # confirmed it; a cross-reference that stopped being
+                    # confirmed is not the same as a current one.
+                    "first_seen": xref.get("first_seen"),
+                    "last_seen": xref.get("last_seen"),
                 }
             )
 

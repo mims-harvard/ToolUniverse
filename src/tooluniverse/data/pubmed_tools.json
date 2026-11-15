@@ -42,7 +42,7 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Alias for limit \u2014 maximum number of results to return"
+          "description": "Alias for limit — maximum number of results to return"
         }
       },
       "required": [
@@ -245,7 +245,133 @@
         "object",
         "string"
       ],
-      "description": "Full PubMed article metadata in XML format (as string) or parsed structure"
+      "description": "Full PubMed article metadata in XML format (as string) or parsed structure",
+      "properties": {
+        "pmid": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "PubMed ID."
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Article title."
+        },
+        "abstract": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Abstract text, where PubMed holds one. Null for articles with no abstract, which includes most editorials and letters."
+        },
+        "journal": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Journal name."
+        },
+        "pub_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Publication date as PubMed records it; the precision varies by record."
+        },
+        "pub_year": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "Publication year."
+        },
+        "authors": {
+          "type": "array",
+          "description": "Author names, in order.",
+          "items": {
+            "type": "object",
+            "description": "One author. The detail endpoint returns an object; the related and cited-by endpoints return a bare name string, so the element type differs by endpoint.",
+            "properties": {
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The author's name as PubMed records it."
+              },
+              "affiliation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Their first affiliation."
+              },
+              "affiliations": {
+                "type": "array",
+                "description": "All affiliations listed for them.",
+                "items": {
+                  "type": "string",
+                  "description": "One affiliation line."
+                }
+              }
+            }
+          }
+        },
+        "author_count": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "How many authors the article has. Compare with the length of `authors` -- the list can be capped while the count is not."
+        },
+        "doi": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The article's DOI."
+        },
+        "doi_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "That DOI as a resolvable URL."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "PubMed page for the article."
+        },
+        "publication_types": {
+          "type": "array",
+          "description": "All publication types PubMed assigned, e.g. ['Randomized Controlled Trial'].",
+          "items": {
+            "type": "string",
+            "description": "One publication type."
+          }
+        },
+        "mesh_terms": {
+          "type": "array",
+          "description": "MeSH headings indexed for the article. Absent on very recent records, which are not yet indexed -- so a MeSH search misses the newest papers by construction.",
+          "items": {
+            "type": [
+              "string",
+              "object"
+            ],
+            "description": "One MeSH heading."
+          }
+        }
+      }
     },
     "test_examples": [
       {
@@ -295,7 +421,239 @@
         "object",
         "string"
       ],
-      "description": "List of related PMIDs, linkset data structure, or error message"
+      "description": "List of related PMIDs, linkset data structure, or error message",
+      "properties": {
+        "pmid": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "PubMed ID."
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Article title."
+        },
+        "journal": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Journal name."
+        },
+        "pub_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Publication date as PubMed records it; the precision varies by record."
+        },
+        "pub_year": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "Publication year."
+        },
+        "authors": {
+          "type": "array",
+          "description": "Author names, in order.",
+          "items": {
+            "type": [
+              "string",
+              "object"
+            ],
+            "description": "One author."
+          }
+        },
+        "author_count": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "How many authors the article has. Compare with the length of `authors` -- the list can be capped while the count is not."
+        },
+        "authors_truncated": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when the author list was cut. The first and last author positions carry meaning in most fields, so a truncated list can lose the senior author."
+        },
+        "doi": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The article's DOI."
+        },
+        "doi_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "That DOI as a resolvable URL."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "PubMed page for the article."
+        },
+        "pmcid": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "PubMed Central id, where the full text is open."
+        },
+        "pmc_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The PMC page. Its presence is what says the full text can be read without a subscription."
+        },
+        "article_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "What kind of article it is, e.g. 'Journal Article', 'Review'. A review and a primary report are different evidence."
+        },
+        "relevance_score": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "How closely this article relates to the queried one. Comparable only within one result set."
+        }
+      },
+      "items": {
+        "type": "object",
+        "description": "One entry.",
+        "properties": {
+          "pmid": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "PubMed ID."
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Article title."
+          },
+          "journal": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Journal name."
+          },
+          "pub_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Publication date as PubMed records it; the precision varies by record."
+          },
+          "pub_year": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "Publication year."
+          },
+          "authors": {
+            "type": "array",
+            "description": "Author names, in order.",
+            "items": {
+              "type": [
+                "string",
+                "object"
+              ],
+              "description": "One author."
+            }
+          },
+          "author_count": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "How many authors the article has. Compare with the length of `authors` -- the list can be capped while the count is not."
+          },
+          "authors_truncated": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "True when the author list was cut. The first and last author positions carry meaning in most fields, so a truncated list can lose the senior author."
+          },
+          "doi": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The article's DOI."
+          },
+          "doi_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "That DOI as a resolvable URL."
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "PubMed page for the article."
+          },
+          "pmcid": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "PubMed Central id, where the full text is open."
+          },
+          "pmc_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The PMC page. Its presence is what says the full text can be read without a subscription."
+          },
+          "article_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "What kind of article it is, e.g. 'Journal Article', 'Review'. A review and a primary report are different evidence."
+          },
+          "relevance_score": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "How closely this article relates to the queried one. Comparable only within one result set."
+          }
+        }
+      }
     },
     "test_examples": [
       {
@@ -346,7 +704,225 @@
         "object",
         "string"
       ],
-      "description": "List of PMIDs that cite the input article, linkset data structure, or error message"
+      "description": "List of PMIDs that cite the input article, linkset data structure, or error message",
+      "properties": {
+        "pmid": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "PubMed ID."
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Article title."
+        },
+        "journal": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Journal name."
+        },
+        "pub_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Publication date as PubMed records it; the precision varies by record."
+        },
+        "pub_year": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "Publication year."
+        },
+        "authors": {
+          "type": "array",
+          "description": "Author names, in order.",
+          "items": {
+            "type": [
+              "string",
+              "object"
+            ],
+            "description": "One author."
+          }
+        },
+        "author_count": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "How many authors the article has. Compare with the length of `authors` -- the list can be capped while the count is not."
+        },
+        "authors_truncated": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when the author list was cut. The first and last author positions carry meaning in most fields, so a truncated list can lose the senior author."
+        },
+        "doi": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The article's DOI."
+        },
+        "doi_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "That DOI as a resolvable URL."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "PubMed page for the article."
+        },
+        "pmcid": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "PubMed Central id, where the full text is open."
+        },
+        "pmc_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The PMC page. Its presence is what says the full text can be read without a subscription."
+        },
+        "article_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "What kind of article it is, e.g. 'Journal Article', 'Review'. A review and a primary report are different evidence."
+        }
+      },
+      "items": {
+        "type": "object",
+        "description": "One entry.",
+        "properties": {
+          "pmid": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "PubMed ID."
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Article title."
+          },
+          "journal": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Journal name."
+          },
+          "pub_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Publication date as PubMed records it; the precision varies by record."
+          },
+          "pub_year": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "Publication year."
+          },
+          "authors": {
+            "type": "array",
+            "description": "Author names, in order.",
+            "items": {
+              "type": [
+                "string",
+                "object"
+              ],
+              "description": "One author."
+            }
+          },
+          "author_count": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "How many authors the article has. Compare with the length of `authors` -- the list can be capped while the count is not."
+          },
+          "authors_truncated": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "True when the author list was cut. The first and last author positions carry meaning in most fields, so a truncated list can lose the senior author."
+          },
+          "doi": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The article's DOI."
+          },
+          "doi_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "That DOI as a resolvable URL."
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "PubMed page for the article."
+          },
+          "pmcid": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "PubMed Central id, where the full text is open."
+          },
+          "pmc_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The PMC page. Its presence is what says the full text can be read without a subscription."
+          },
+          "article_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "What kind of article it is, e.g. 'Journal Article', 'Review'. A review and a primary report are different evidence."
+          }
+        }
+      }
     },
     "test_examples": [
       {
@@ -388,7 +964,225 @@
         "object",
         "string"
       ],
-      "description": "LinkOut URLs and provider information (array of link objects or structured data)"
+      "description": "LinkOut URLs and provider information (array of link objects or structured data)",
+      "properties": {
+        "id": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "The PubMed ID the links belong to."
+        },
+        "objurls": {
+          "type": "array",
+          "description": "The outbound links NCBI holds for the article -- full text, related resources, patient information.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": [
+                  "object",
+                  "string",
+                  "null"
+                ],
+                "description": "The link target, as {value}.",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The URL itself."
+                  }
+                }
+              },
+              "linkname": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What the link is called."
+              },
+              "categories": {
+                "type": "array",
+                "description": "What kind of resource it is, e.g. ['Medical'].",
+                "items": {
+                  "type": "string",
+                  "description": "One category."
+                }
+              },
+              "attributes": {
+                "type": "array",
+                "description": "Access attributes, e.g. ['free resource']. This is what says whether the link leads to something readable without payment.",
+                "items": {
+                  "type": "string",
+                  "description": "One attribute."
+                }
+              },
+              "provider": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Who provides it.",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
+                    "description": "NCBI's provider id."
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Provider name, e.g. 'MedlinePlus Health Information'."
+                  },
+                  "nameabbr": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its abbreviation."
+                  }
+                }
+              },
+              "iconurl": {
+                "type": [
+                  "object",
+                  "string",
+                  "null"
+                ],
+                "description": "The provider's icon, as {value}.",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The icon URL."
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {
+        "type": "object",
+        "description": "One entry.",
+        "properties": {
+          "id": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "description": "The PubMed ID the links belong to."
+          },
+          "objurls": {
+            "type": "array",
+            "description": "The outbound links NCBI holds for the article -- full text, related resources, patient information.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": [
+                    "object",
+                    "string",
+                    "null"
+                  ],
+                  "description": "The link target, as {value}.",
+                  "properties": {
+                    "value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The URL itself."
+                    }
+                  }
+                },
+                "linkname": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What the link is called."
+                },
+                "categories": {
+                  "type": "array",
+                  "description": "What kind of resource it is, e.g. ['Medical'].",
+                  "items": {
+                    "type": "string",
+                    "description": "One category."
+                  }
+                },
+                "attributes": {
+                  "type": "array",
+                  "description": "Access attributes, e.g. ['free resource']. This is what says whether the link leads to something readable without payment.",
+                  "items": {
+                    "type": "string",
+                    "description": "One attribute."
+                  }
+                },
+                "provider": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Who provides it.",
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "integer",
+                        "string",
+                        "null"
+                      ],
+                      "description": "NCBI's provider id."
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Provider name, e.g. 'MedlinePlus Health Information'."
+                    },
+                    "nameabbr": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its abbreviation."
+                    }
+                  }
+                },
+                "iconurl": {
+                  "type": [
+                    "object",
+                    "string",
+                    "null"
+                  ],
+                  "description": "The provider's icon, as {value}.",
+                  "properties": {
+                    "value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The icon URL."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "test_examples": [
       {

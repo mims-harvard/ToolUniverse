@@ -101,6 +101,10 @@
           "pubchem_cid": {
             "type": ["string", "integer", "array", "null"],
             "description": "PubChem Compound ID, or a list when several are cross-referenced ('insulin' answers ['118984462', '118984375']); an empty list when the xref record carries none."
+          },
+          "cross_references": {
+            "type": "object",
+            "description": "The whole DrugCentral xref record for the hit, which carries more namespaces than the four promoted above: chebi, inn_id, iuphar_ligand_id, kegg_drug, mesh_descriptor_ui, mmsl (Multum), nddf, nui, pdb_chem_id, rxnorm, secondary_cas_rn, snomedct_us, umlscui, unii, vandf, vuid."
           }
         }
       }
@@ -213,6 +217,70 @@
                 "cross_references": {
                   "type": "object",
                   "description": "Cross-references to DrugBank, ChEMBL, PubChem, KEGG, RxNorm, etc."
+                },
+                "drugcentral_id": {
+                  "type": ["integer", "string", "null"],
+                  "description": "DrugCentral's own structure id, for linking back to drugcentral.org"
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Every name DrugCentral records for the drug, including brand names and research codes"
+                },
+                "pharmacologic_classes": {
+                  "type": "array",
+                  "description": "The drug's classes, flattened across the systems that assign them",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "system": {"type": "string", "description": "fda_epc (FDA Established Pharmacologic Class), mesh_pa (MeSH pharmacologic action) or chebi (ChEBI role)"},
+                      "code": {"type": ["string", "null"]},
+                      "name": {"type": ["string", "null"]}
+                    }
+                  }
+                },
+                "dosages": {
+                  "type": "array",
+                  "description": "Approved dose, unit and route as DrugCentral lists them",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "dosage": {"type": ["string", "number", "null"]},
+                      "unit": {"type": ["string", "null"]},
+                      "route": {"type": ["string", "null"], "description": "DrugCentral route code, e.g. 'O' for oral"}
+                    }
+                  }
+                },
+                "adverse_event_signals": {
+                  "type": "array",
+                  "description": "FAERS disproportionality rows, strongest log-likelihood ratio first, capped at 50. A signal is a reporting association, not evidence of causation.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "meddra_term": {"type": ["string", "null"]},
+                      "meddra_code": {"type": ["string", "null"]},
+                      "meddra_level": {"type": ["string", "null"], "description": "MedDRA level of the term, e.g. 'PT' for Preferred Term"},
+                      "llr": {"type": ["string", "null"], "description": "Log-likelihood ratio, as the string upstream sends"},
+                      "llr_threshold": {"type": ["string", "null"], "description": "The value above which DrugCentral calls the pair a signal"},
+                      "is_signal": {"type": ["boolean", "null"], "description": "llr > llr_threshold; null when either does not parse"},
+                      "reports_with_drug_and_event": {"type": ["string", "null"]},
+                      "reports_with_drug_without_event": {"type": ["string", "null"]},
+                      "reports_without_drug_with_event": {"type": ["string", "null"]},
+                      "reports_without_drug_without_event": {"type": ["string", "null"]}
+                    }
+                  }
+                },
+                "adverse_event_signal_count": {
+                  "type": "integer",
+                  "description": "How many rows DrugCentral holds; metformin has 1534"
+                },
+                "adverse_event_signals_truncated": {
+                  "type": "boolean",
+                  "description": "True when adverse_event_signal_count exceeds the cap"
+                },
+                "license": {
+                  "type": ["string", "null"],
+                  "description": "DrugCentral's licence terms for the record, as MyChem reports them"
                 }
               }
             },
@@ -220,7 +288,9 @@
               "type": "object",
               "properties": {
                 "query_id": {"type": "string"},
-                "source": {"type": "string"}
+                "source": {"type": "string"},
+                "signals_per_drug": {"type": "integer"},
+                "adverse_event_signal_scale": {"type": "string"}
               }
             }
           }
@@ -337,6 +407,11 @@
                         "type": "array",
                         "items": {"type": "string"},
                         "description": "Gene symbols for target subunits"
+                      },
+                      "swissprot_entries": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Swiss-Prot entry names for the same subunits, e.g. 'PGH2_HUMAN'"
                       }
                     }
                   }

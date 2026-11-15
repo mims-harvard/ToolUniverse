@@ -126,6 +126,11 @@ class MediaDiveTool(BaseTool):
                 "max_pH": row.get("max_pH"),
                 "description": row.get("description"),
                 "reference": row.get("reference"),
+                # The medium's own page at DSMZ. `description` and `reference`
+                # are null for most of the catalogue, so without the link a
+                # match that has neither is a name and a number with nothing
+                # behind it until a second call is made.
+                "link": row.get("link"),
             }
             for row in self._media.rows(self.timeout)
             if wanted in (row.get("name") or "").lower()

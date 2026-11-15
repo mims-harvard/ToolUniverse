@@ -12,6 +12,7 @@ def CryoET_list_datasets(
     operation: Optional[str] = "list_datasets",
     organism_name: Optional[str] = None,
     tissue_name: Optional[str] = None,
+    deposition_id: Optional[int] = None,
     limit: Optional[int] = 10,
     offset: Optional[int] = 0,
     *,
@@ -30,6 +31,8 @@ def CryoET_list_datasets(
         Filter by organism name (case-insensitive substring match). Examples: 'Homo s...
     tissue_name : str
         Filter by tissue or cell type name (case-insensitive substring match). Exampl...
+    deposition_id : int
+        Return only the datasets belonging to this deposition (e.g. 10000). A deposit...
     limit : int
         Maximum number of datasets to return (default: 10, max recommended: 50).
     offset : int
@@ -54,6 +57,7 @@ def CryoET_list_datasets(
             "operation": operation,
             "organism_name": organism_name,
             "tissue_name": tissue_name,
+            "deposition_id": deposition_id,
             "limit": limit,
             "offset": offset,
         }.items()

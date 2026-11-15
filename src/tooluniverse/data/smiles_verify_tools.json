@@ -27,7 +27,9 @@
           "description": "Optional expected molecular formula string to verify against (e.g., 'C6H6')"
         }
       },
-      "required": ["smiles"]
+      "required": [
+        "smiles"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -42,16 +44,50 @@
             "data": {
               "type": "object",
               "properties": {
-                "smiles": {"type": "string"},
-                "molecular_formula": {"type": "string"},
-                "molecular_weight": {"type": "number"},
-                "heavy_atom_count": {"type": "integer"},
-                "valence_electrons": {"type": "integer"},
-                "formal_charge": {"type": "integer"},
-                "ring_count": {"type": "integer"},
-                "degrees_of_unsaturation": {"type": "number"},
-                "constraint_checks": {"type": "array"},
-                "all_constraints_met": {"type": "boolean"}
+                "smiles": {
+                  "type": "string"
+                },
+                "molecular_formula": {
+                  "type": "string"
+                },
+                "molecular_weight": {
+                  "type": "number"
+                },
+                "heavy_atom_count": {
+                  "type": "integer"
+                },
+                "valence_electrons": {
+                  "type": "integer"
+                },
+                "formal_charge": {
+                  "type": "integer"
+                },
+                "ring_count": {
+                  "type": "integer"
+                },
+                "degrees_of_unsaturation": {
+                  "type": "number"
+                },
+                "constraint_checks": {
+                  "type": "array"
+                },
+                "all_constraints_met": {
+                  "type": "boolean"
+                },
+                "h_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Hydrogen atoms in the parsed structure, e.g. 6 - including the implicit ones SMILES does not write out."
+                },
+                "total_atom_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "All atoms including hydrogens, e.g. 12. The heavy-atom count alone understates the molecule."
+                }
               }
             }
           }
@@ -59,9 +95,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

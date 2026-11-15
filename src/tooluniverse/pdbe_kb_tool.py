@@ -19,6 +19,53 @@ from .tool_registry import register_tool
 PDBE_KB_BASE_URL = "https://www.ebi.ac.uk/pdbe/graph-api"
 
 
+def _residue_row(
+    residue: dict, pdb_entry_offset: int, pdb_entry_limit: int
+) -> dict:
+    """One residue of a PDBe-KB site, with the residue in it.
+
+    The row used to be `{start, end, pdb_entries, ...}`: a position and no
+    amino acid, in tools whose descriptions promise "binding site residues"
+    and "interface residues". `startCode`/`endCode` are the residue --
+    P04637's first cofactor-binding residue is LYS 382 -- and `indexType`
+    says which numbering frame the index is in, without which 382 could be a
+    PDB position rather than a UniProt one.
+
+    `allPDBEntries` is every PDB entry covering the residue; the paged
+    `pdb_entries` field has always been that list. `interactingPDBEntries` is
+    the subset where this residue actually contacts the partner, with the
+    chains, and is the narrower and more useful claim, so it is returned
+    whole beside it.
+
+    Both handlers in this module build this row; they are the ligand and the
+    protein-protein faces of one endpoint family and had no reason to differ.
+    """
+    all_pdb_entries = residue.get("allPDBEntries", []) or []
+    pdb_entry_page = all_pdb_entries[
+        pdb_entry_offset : pdb_entry_offset + pdb_entry_limit
+    ]
+    pdb_entries_truncated = pdb_entry_offset + len(pdb_entry_page) < len(
+        all_pdb_entries
+    )
+    return {
+        "start": residue.get("startIndex"),
+        "end": residue.get("endIndex"),
+        "start_code": residue.get("startCode"),
+        "end_code": residue.get("endCode"),
+        "index_type": residue.get("indexType"),
+        "interacting_pdb_entries": [
+            e for e in (residue.get("interactingPDBEntries") or []) if e
+        ],
+        "pdb_entries": pdb_entry_page,
+        "pdb_entries_total": len(all_pdb_entries),
+        "pdb_entries_returned": len(pdb_entry_page),
+        "pdb_entries_truncated": pdb_entries_truncated,
+        "next_pdb_entry_offset": (
+            pdb_entry_offset + len(pdb_entry_page) if pdb_entries_truncated else None
+        ),
+    }
+
+
 @register_tool("PDBe_KB_Tool")
 class PDBe_KB_Tool(BaseTool):
     """
@@ -149,27 +196,8 @@ class PDBe_KB_Tool(BaseTool):
             residue_page = all_residues[residue_offset : residue_offset + residue_limit]
             binding_residues = []
             for res in residue_page:
-                all_pdb_entries = res.get("allPDBEntries", [])
-                pdb_entry_page = all_pdb_entries[
-                    pdb_entry_offset : pdb_entry_offset + pdb_entry_limit
-                ]
-                pdb_entries_truncated = pdb_entry_offset + len(pdb_entry_page) < len(
-                    all_pdb_entries
-                )
                 binding_residues.append(
-                    {
-                        "start": res.get("startIndex"),
-                        "end": res.get("endIndex"),
-                        "pdb_entries": pdb_entry_page,
-                        "pdb_entries_total": len(all_pdb_entries),
-                        "pdb_entries_returned": len(pdb_entry_page),
-                        "pdb_entries_truncated": pdb_entries_truncated,
-                        "next_pdb_entry_offset": (
-                            pdb_entry_offset + len(pdb_entry_page)
-                            if pdb_entries_truncated
-                            else None
-                        ),
-                    }
+                    _residue_row(res, pdb_entry_offset, pdb_entry_limit)
                 )
 
             additional = entry.get("additionalData", {})
@@ -188,9 +216,24 @@ class PDBe_KB_Tool(BaseTool):
                         else None
                     ),
                     "is_cofactor": bool(additional.get("coFactorId")),
+                    "cofactor_id": additional.get("coFactorId") or None,
                     "is_solvent": additional.get("isSolvent", False),
                     "chembl_id": additional.get("chemblId") or None,
                     "drugbank_id": additional.get("drugBankId") or None,
+                    # What the ligand is, and how strongly PDBe-KB rates the
+                    # site: the SMILES of the scaffold, its atom count, and
+                    # the significance the ligand list is ordered by.
+                    "scaffold_smiles": additional.get("scaffoldId") or None,
+                    "atom_count": additional.get("numAtoms"),
+                    "significance": additional.get("significance"),
+                    "ligand_type": additional.get("type") or None,
+                    "reaction_id": additional.get("reactionId") or None,
+                    "target_uniprot_accessions": [
+                        t for t in (additional.get("targetUniProts") or []) if t
+                    ],
+                    "ligand_pdb_entries": [
+                        e for e in (additional.get("pdbEntries") or []) if e
+                    ],
                 }
             )
 
@@ -263,27 +306,8 @@ class PDBe_KB_Tool(BaseTool):
             residue_page = all_residues[residue_offset : residue_offset + residue_limit]
             interface_residues = []
             for res in residue_page:
-                all_pdb_entries = res.get("allPDBEntries", [])
-                pdb_entry_page = all_pdb_entries[
-                    pdb_entry_offset : pdb_entry_offset + pdb_entry_limit
-                ]
-                pdb_entries_truncated = pdb_entry_offset + len(pdb_entry_page) < len(
-                    all_pdb_entries
-                )
                 interface_residues.append(
-                    {
-                        "start": res.get("startIndex"),
-                        "end": res.get("endIndex"),
-                        "pdb_entries": pdb_entry_page,
-                        "pdb_entries_total": len(all_pdb_entries),
-                        "pdb_entries_returned": len(pdb_entry_page),
-                        "pdb_entries_truncated": pdb_entries_truncated,
-                        "next_pdb_entry_offset": (
-                            pdb_entry_offset + len(pdb_entry_page)
-                            if pdb_entries_truncated
-                            else None
-                        ),
-                    }
+                    _residue_row(res, pdb_entry_offset, pdb_entry_limit)
                 )
 
             residues_truncated = residue_offset + len(residue_page) < len(all_residues)

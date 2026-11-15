@@ -95,6 +95,81 @@ def _describe_rewrite(parameter, api_field, submitted, executed, areas=()):
     }
 
 
+# Issue #870: query.term ANDs its words against the indexed record text, and
+# nothing in the response says so. An agent that writes the obvious descriptive
+# query -- the acronym plus the drug, the indication and the line of therapy --
+# gets back zero studies with status success, which reads as "no such trial
+# exists". Measured: query_term='KEYNOTE-045' returns NCT02256436, the trial;
+# query_term='KEYNOTE-045 pembrolizumab urothelial carcinoma second-line
+# platinum' returns 0, although every word of it is true of that trial. The
+# metadata made it worse by declaring total_results_is_exact on the zero.
+#
+# Same answer as the rewrite hazard above: disclose, do not substitute. The
+# caller asked for all of those words and still gets exactly what they matched.
+_TERM_PROBE_MIN_WORDS = 3
+
+
+def _term_match_check(params, fetch_total_count):
+    """Say whether a many-worded term query came back empty because of the AND.
+
+    Issued only after an empty result, so the common path pays nothing, and
+    only for a plain value: anything already carrying Essie syntax is the
+    caller driving the query language on purpose.
+    """
+    submitted = params.get("query.term")
+    if not isinstance(submitted, str):
+        return None
+    words = submitted.split()
+    if len(words) < _TERM_PROBE_MIN_WORDS or _ESSIE_OPERATOR_RE.search(submitted):
+        return None
+
+    relaxed = " OR ".join(words)
+    probe = dict(params)
+    probe["query.term"] = relaxed
+    probe["pageSize"] = 1
+    probe["countTotal"] = "true"
+    probe["fields"] = "NCTId"
+    probe.pop("pageToken", None)
+
+    try:
+        total = fetch_total_count(probe)
+        failure = None if total is not None else "it returned no usable response"
+    except Exception as exc:  # transport, HTTP or decode failure
+        total, failure = None, f"{type(exc).__name__}: {exc}"
+
+    check = {
+        "submitted": submitted,
+        "terms_are_combined_with": "AND",
+        "relaxed_query": relaxed,
+    }
+    if failure is not None:
+        check["note"] = (
+            "query.term requires EVERY word to appear in the indexed record "
+            "text, so this empty result may mean the query is too specific "
+            "rather than that no such trial exists. The check that would have "
+            "counted the looser wording could not be made: " + failure
+        )
+        return check
+
+    check["studies_matching_any_term"] = total
+    if total:
+        check["note"] = (
+            f"Zero studies contain all {len(words)} of these words, but {total} "
+            "contain at least one, so this is a query that is too specific "
+            "rather than an absence of trials. query.term combines its words "
+            "with AND against the indexed record text. Search on the most "
+            "distinctive term alone -- an NCT id, a trial acronym or a single "
+            "drug name -- or pass Essie syntax such as "
+            f"'{relaxed}' to widen it."
+        )
+    else:
+        check["note"] = (
+            "No study matches even one of these words, so the empty result is "
+            "not an artefact of combining them with AND."
+        )
+    return check
+
+
 def _relaxed_match_check(params, rewrites, fetch_total_count):
     """Ask ClinicalTrials.gov whether the caller's original wording would have
     matched, so an empty result set becomes self-diagnosing.
@@ -230,6 +305,61 @@ def _canonicalize_enum(value: str, allowed: tuple):
         return "".join(ch for ch in str(v).upper() if ch.isalnum())
 
     return {_key(a): a for a in allowed}.get(_key(value))
+
+
+# How many individual sites a search row carries. A multi-country trial has
+# hundreds, and one page of ten such studies answered 2,203; `countries` and
+# `location_count` carry the shape of the rest.
+LOCATIONS_PER_SEARCH_ROW = 5
+
+# A search row names this many primary outcome measures and this many
+# arms, with both full counts reported beside them.
+OUTCOMES_PER_SEARCH_ROW = 5
+ARMS_PER_SEARCH_ROW = 5
+
+
+def _results_summary(study: dict) -> dict:
+    """What the posted results hold, and which tool returns each part.
+
+    The protocol section says what a trial set out to do; the results section
+    says what happened. This handler reads the protocol only, so the summary
+    states that the results exist and how much is in them rather than
+    implying there are none -- and names the tool for each part instead of
+    copying hundreds of rows.
+    """
+    results = study.get("resultsSection") or {}
+    adverse = results.get("adverseEventsModule") or {}
+    outcomes = results.get("outcomeMeasuresModule") or {}
+    flow = results.get("participantFlowModule") or {}
+    baseline = results.get("baselineCharacteristicsModule") or {}
+
+    def count(node, key):
+        value = node.get(key)
+        return len(value) if isinstance(value, list) else 0
+
+    has_results = study.get("hasResults")
+    if has_results is None:
+        has_results = bool(results)
+    return {
+        "has_results": bool(has_results),
+        "results_summary": {
+            "outcome_measure_results": count(outcomes, "outcomeMeasures"),
+            "serious_adverse_events": count(adverse, "seriousEvents"),
+            "other_adverse_events": count(adverse, "otherEvents"),
+            "adverse_event_groups": count(adverse, "eventGroups"),
+            "adverse_event_frequency_threshold": adverse.get("frequencyThreshold"),
+            "participant_flow_groups": count(flow, "groups"),
+            "baseline_measures": count(baseline, "measures"),
+        }
+        if has_results
+        else {},
+        "results_section_tools": {
+            "outcome_results": "extract_clinical_trial_outcomes",
+            "adverse_events": "extract_clinical_trial_adverse_events",
+        }
+        if has_results
+        else {},
+    }
 
 
 @register_tool("ClinicalTrialsTool")
@@ -403,10 +533,14 @@ class ClinicalTrialsTool(RESTfulTool):
         """
         result_data["executed_query"] = _executed_query(params)
         result_data["query_rewrites"] = query_rewrites
-        if not result_data.get("studies") and query_rewrites:
-            result_data["relaxed_match_check"] = _relaxed_match_check(
-                params, query_rewrites, self._fetch_total_count
-            )
+        if not result_data.get("studies"):
+            if query_rewrites:
+                result_data["relaxed_match_check"] = _relaxed_match_check(
+                    params, query_rewrites, self._fetch_total_count
+                )
+            term_check = _term_match_check(params, self._fetch_total_count)
+            if term_check is not None:
+                result_data["term_match_check"] = term_check
         return result_data
 
     def _run_search(self, arguments):
@@ -563,12 +697,72 @@ class ClinicalTrialsTool(RESTfulTool):
                 )
                 if iv.get("name")
             ]
+            # A drug is registered under one name and searched under another.
+            # The response lists the synonyms per intervention and the rows
+            # carried only the primary name, so a search for a trade name
+            # missed trials that list it as an other name.
+            intervention_other_names = sorted(
+                {
+                    other
+                    for iv in proto.get("armsInterventionsModule", {}).get(
+                        "interventions", []
+                    )
+                    for other in (iv.get("otherNames") or [])
+                    if isinstance(other, str) and other
+                }
+            )
+            # Where the trial actually runs. A search answered 2,203 location
+            # records across one page and the rows carried none of them, so
+            # "trials for X in Germany" or "a site near this city" needed a
+            # per-study follow-up call. The countries are summarised because
+            # they are short and are what most searches filter on; the
+            # individual sites are capped and the cut is disclosed.
+            all_locations = (
+                proto.get("contactsLocationsModule", {}).get("locations") or []
+            )
+            countries = sorted(
+                {
+                    loc.get("country")
+                    for loc in all_locations
+                    if isinstance(loc, dict) and loc.get("country")
+                }
+            )
+            location_page = [
+                {
+                    "facility": loc.get("facility"),
+                    "city": loc.get("city"),
+                    "state": loc.get("state"),
+                    "zip": loc.get("zip"),
+                    "country": loc.get("country"),
+                    "status": loc.get("status"),
+                    # Coordinates, so "near me" can be answered without
+                    # geocoding a facility name.
+                    "latitude": (loc.get("geoPoint") or {}).get("lat"),
+                    "longitude": (loc.get("geoPoint") or {}).get("lon"),
+                }
+                for loc in all_locations[:LOCATIONS_PER_SEARCH_ROW]
+                if isinstance(loc, dict)
+            ]
             studies.append(
                 {
                     "nct_id": proto.get("identificationModule", {}).get("nctId"),
+                    # Whether this trial has posted results, and how much.
+                    # The search response carries `hasResults` and the whole
+                    # `resultsSection` for the trials that have one --
+                    # NCT02179788 comes back with 13 adverse events on the
+                    # first page of a metformin search -- and the row was
+                    # built from `protocolSection` alone, so "which of these
+                    # trials reported anything" could not be answered from a
+                    # reply that contained the answer. The detail belongs in
+                    # the per-section tools this names, not in a search row.
+                    **_results_summary(s),
                     "brief_title": proto.get("identificationModule", {}).get(
                         "briefTitle"
                     ),
+                    "countries": countries,
+                    "locations": location_page,
+                    "location_count": len(all_locations),
+                    "locations_truncated": len(location_page) < len(all_locations),
                     "status": proto.get("statusModule", {}).get("overallStatus"),
                     "study_type": proto.get("designModule", {}).get("studyType"),
                     "phases": proto.get("designModule", {}).get("phases", []),
@@ -581,6 +775,54 @@ class ClinicalTrialsTool(RESTfulTool):
                     "interventions": all_interventions[:5],
                     "intervention_count": len(all_interventions),
                     "interventions_truncated": len(all_interventions) > 5,
+                    "intervention_other_names": intervention_other_names,
+                    # What the trial measures. The row carried none of it, so
+                    # "trials with progression-free survival as an endpoint"
+                    # needed a per-study call; the measures are named, capped,
+                    # and both counts are reported.
+                    "primary_outcome_measures": [
+                        outcome.get("measure")
+                        for outcome in (
+                            proto.get("outcomesModule", {}).get("primaryOutcomes") or []
+                        )[:OUTCOMES_PER_SEARCH_ROW]
+                        if isinstance(outcome, dict) and outcome.get("measure")
+                    ],
+                    "primary_outcome_count": len(
+                        proto.get("outcomesModule", {}).get("primaryOutcomes") or []
+                    ),
+                    "secondary_outcome_count": len(
+                        proto.get("outcomesModule", {}).get("secondaryOutcomes") or []
+                    ),
+                    # Which arms exist and what each was given, so a two-arm
+                    # comparison can be read off the search result.
+                    "arms": [
+                        {
+                            "label": arm.get("label"),
+                            "type": arm.get("type"),
+                            "intervention_names": arm.get("interventionNames") or [],
+                        }
+                        for arm in (
+                            proto.get("armsInterventionsModule", {}).get("armGroups")
+                            or []
+                        )[:ARMS_PER_SEARCH_ROW]
+                        if isinstance(arm, dict)
+                    ],
+                    "arm_count": len(
+                        proto.get("armsInterventionsModule", {}).get("armGroups") or []
+                    ),
+                    # The trial's own publications. A search result with no
+                    # PMID cannot be followed to what was published.
+                    "references": [
+                        {
+                            "pmid": ref.get("pmid"),
+                            "type": ref.get("type"),
+                            "citation": ref.get("citation"),
+                        }
+                        for ref in (
+                            proto.get("referencesModule", {}).get("references") or []
+                        )
+                        if isinstance(ref, dict)
+                    ],
                     "sponsor": (
                         proto.get("sponsorCollaboratorsModule", {}).get("leadSponsor")
                         or {}
@@ -666,6 +908,15 @@ class ClinicalTrialsTool(RESTfulTool):
         data = resp.json()
         proto = data.get("protocolSection", {})
 
+        # NCT04280705 has posted results -- 43 outcome measures with their
+        # numbers, 100 serious adverse events with organ system and
+        # assessment type, 10 other events, a participant flow and 7 baseline
+        # measures -- and this handler reads `protocolSection` only, from a
+        # tool whose first sentence is "get full details". The sections have
+        # tools of their own, so what belongs here is the fact that they
+        # exist, how much is in each, and which tool returns it.
+        results_summary = _results_summary(data)
+
         arms_module = proto.get("armsInterventionsModule", {})
         arms = [
             {
@@ -681,17 +932,35 @@ class ClinicalTrialsTool(RESTfulTool):
                 "type": item.get("type"),
                 "name": item.get("name"),
                 "description": item.get("description"),
+                # Which arms the intervention was given in, and the names it
+                # is also registered under. `arms[].intervention_names` joins
+                # one way and this is the other; the other names are how a
+                # trade name matches a trial that lists the INN.
+                "arm_group_labels": item.get("armGroupLabels") or [],
+                "other_names": item.get("otherNames") or [],
             }
             for item in arms_module.get("interventions", [])
         ]
-        primary_outcomes = [
-            {
-                "measure": outcome.get("measure"),
-                "description": outcome.get("description"),
-                "time_frame": outcome.get("timeFrame"),
-            }
-            for outcome in proto.get("outcomesModule", {}).get("primaryOutcomes", [])
-        ]
+
+        def _outcomes(key):
+            return [
+                {
+                    "measure": outcome.get("measure"),
+                    "description": outcome.get("description"),
+                    "time_frame": outcome.get("timeFrame"),
+                }
+                for outcome in proto.get("outcomesModule", {}).get(key, [])
+                if isinstance(outcome, dict)
+            ]
+
+        primary_outcomes = _outcomes("primaryOutcomes")
+        # A trial's secondary outcomes are the rest of what it set out to
+        # measure -- 29 of them on one page of a search -- and only the
+        # primary ones were read, from a tool whose first sentence is "get
+        # full details". The ClinicalTrialsDetailsTool handler in this same
+        # module has always read both.
+        secondary_outcomes = _outcomes("secondaryOutcomes")
+        other_outcomes = _outcomes("otherOutcomes")
         locations = [
             {
                 "facility": location.get("facility"),
@@ -725,6 +994,11 @@ class ClinicalTrialsTool(RESTfulTool):
             "intervention_count": len(interventions),
             "primary_outcomes": primary_outcomes,
             "primary_outcome_count": len(primary_outcomes),
+            "secondary_outcomes": secondary_outcomes,
+            "secondary_outcome_count": len(secondary_outcomes),
+            **results_summary,
+            "other_outcomes": other_outcomes,
+            "other_outcome_count": len(other_outcomes),
             "eligibility_criteria": proto.get("eligibilityModule", {}).get(
                 "eligibilityCriteria"
             ),
@@ -1967,9 +2241,14 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
             query_type = "outcome"
             outcome_measure = query_params["outcome_measure"]
             del query_params["outcome_measure"]
+            # HasResults, not just the module: a trial with no posted
+            # results returns no outcomeMeasuresModule, and without this field
+            # the handler cannot tell that from a trial whose results simply
+            # did not come back.
             query_params["fields"] = [
                 "NCTId",
                 "OutcomeMeasure",
+                "HasResults",
             ]
 
         elif "adverse_event_type" in expected_param_names:
@@ -1982,6 +2261,7 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
             query_params["fields"] = [
                 "NCTId",
                 "AdverseEventsModule",
+                "HasResults",
             ]
 
         api_params = self._prepare_api_params(query_params)
@@ -2151,8 +2431,14 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
                 new_study["secondary_outcomes"] = study["protocolSection"][
                     "outcomesModule"
                 ].get("secondaryOutcomes")
-            # if "otherOutcomes" in study["protocolSection"]["outcomesModule"]:
-            #     new_study["other_outcomes"] = study["protocolSection"]["outcomesModule"].get("otherOutcomes")
+            # Commented out with no reason given, while primary and secondary
+            # were read. ClinicalTrials.gov uses otherOutcomes for the
+            # pre-registered measures that are neither, so leaving it out made
+            # the outcome set look complete when it was not.
+            if "otherOutcomes" in study["protocolSection"]["outcomesModule"]:
+                new_study["other_outcomes"] = study["protocolSection"][
+                    "outcomesModule"
+                ].get("otherOutcomes")
         if "eligibilityModule" in study["protocolSection"]:
             if "eligibilityCriteria" in study["protocolSection"]["eligibilityModule"]:
                 new_study["eligibility_criteria"] = study["protocolSection"][
@@ -2207,6 +2493,102 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
 
         return new_study
 
+    # ClinicalTrials.gov reports an outcome measure as nested lists: a measure
+    # taken at seven timepoints carries seven `classes`, a measure with several
+    # comparisons several `analyses`, a measure in two units two `denoms`. This
+    # handler used to assume exactly one of each and, for anything else,
+    # `return` a "Warning: Multiple classes found ..." string -- from inside
+    # the per-outcome loop, so one unexpected measure discarded every other
+    # measure of the same study. NCT04280705 has 43 posted outcome measures and
+    # the tool returned that one sentence and nothing else. Nothing is
+    # collapsed here now, and no branch returns prose in place of the data.
+    _MEASUREMENT_KEY_ORDER = (
+        "groupId",
+        "value",
+        "spread",
+        "lowerLimit",
+        "upperLimit",
+        "comment",
+    )
+
+    @staticmethod
+    def _snake_case(name):
+        return re.sub(r"(?<!^)(?=[A-Z])", "_", str(name)).lower()
+
+    @classmethod
+    def _passthrough(cls, node, drop=()):
+        """Every key of an upstream object, renamed and nothing dropped.
+
+        Listing the keys to keep is what lost the confidence interval:
+        `ciPctValue`, `ciLowerLimit` and `ciUpperLimit` sit beside the p-value
+        on every analysis and none of the three was ever read.
+        """
+        if not isinstance(node, dict):
+            return node
+        return {cls._snake_case(k): v for k, v in node.items() if k not in drop and v}
+
+    @classmethod
+    def _denominators(cls, denoms):
+        """`[{units, counts: [{groupId, value}]}]`, all of them."""
+        out = []
+        for denom in denoms or []:
+            if not isinstance(denom, dict):
+                continue
+            out.append(
+                {
+                    "units": denom.get("units"),
+                    "counts": [
+                        cls._passthrough(c) for c in (denom.get("counts") or [])
+                    ],
+                }
+            )
+        return out
+
+    @classmethod
+    def _measurement_rows(cls, outcome, group_titles):
+        """One flat row per reported number, carrying its stratum.
+
+        A measure reported per timepoint and per category nests them two deep
+        (`classes[].categories[].measurements[]`), and both levels carry a
+        `title` that says what the number is of -- "Day 5", "Grade 3". The row
+        is useless without them, so each row repeats both, plus the arm's title
+        so the `groupId` need not be resolved by hand.
+        """
+        rows = []
+        for klass in outcome.get("classes") or []:
+            if not isinstance(klass, dict):
+                continue
+            class_denoms = cls._denominators(klass.get("denoms"))
+            for category in klass.get("categories") or []:
+                if not isinstance(category, dict):
+                    continue
+                for measurement in category.get("measurements") or []:
+                    if not isinstance(measurement, dict):
+                        continue
+                    row = {}
+                    if klass.get("title"):
+                        row["class"] = klass["title"]
+                    if category.get("title"):
+                        row["category"] = category["title"]
+                    group_id = measurement.get("groupId")
+                    if group_id:
+                        row["group_id"] = group_id
+                        if group_titles.get(group_id):
+                            row["group_title"] = group_titles[group_id]
+                    for key in cls._MEASUREMENT_KEY_ORDER:
+                        if key == "groupId":
+                            continue
+                        if measurement.get(key) is not None:
+                            row[cls._snake_case(key)] = measurement[key]
+                    for key, value in measurement.items():
+                        snake = cls._snake_case(key)
+                        if key != "groupId" and snake not in row and value:
+                            row[snake] = value
+                    if class_denoms:
+                        row["class_denominators"] = class_denoms
+                    rows.append(row)
+        return rows
+
     def _extract_outcomes_from_output(self, study, outcome_measure):
         new_study = {}
         outcome_measure = outcome_measure.lower()
@@ -2214,192 +2596,164 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
             "nctId"
         )
 
-        if (
-            "resultsSection" in study
-            and "outcomeMeasuresModule" in study["resultsSection"]
-            and "outcomeMeasures" in study["resultsSection"]["outcomeMeasuresModule"]
-        ):
-            raw_outcomes = study["resultsSection"]["outcomeMeasuresModule"][
-                "outcomeMeasures"
-            ]
-            outcomes = []
-            for outcome in raw_outcomes:
-                new_outcome = {}
+        raw_outcomes = (
+            (study.get("resultsSection") or {}).get("outcomeMeasuresModule") or {}
+        ).get("outcomeMeasures")
 
-                if (outcome_measure == "primary") and outcome.get("type") != "PRIMARY":
+        # A trial that has posted no results and a trial whose posted results
+        # hold no measure matching the filter are different answers, and this
+        # tool used to give both of them as a bare `{"NCT ID": ...}` -- an
+        # object an agent reads as "asked and answered, nothing found". The
+        # registry states which it is in `hasResults`; say so.
+        has_results = study.get("hasResults")
+        if has_results is None:
+            has_results = bool(raw_outcomes)
+        new_study["has_results"] = bool(has_results)
+
+        if not raw_outcomes:
+            new_study["outcomes"] = []
+            new_study["note"] = (
+                f"{new_study['NCT ID']} has no posted results on "
+                "ClinicalTrials.gov, so there are no outcome results to "
+                "extract. This is not a null or negative finding about the "
+                "trial: the protocol's planned outcome measures are available "
+                "from get_clinical_trial_outcome_measures, and completed "
+                "trials are not required to post results."
+                if not has_results
+                else (
+                    f"{new_study['NCT ID']} has posted results, but the "
+                    "response carried no outcomeMeasuresModule."
+                )
+            )
+            return new_study
+
+        outcomes = []
+        for outcome in raw_outcomes:
+            new_outcome = {}
+
+            if (outcome_measure == "primary") and outcome.get("type") != "PRIMARY":
+                continue
+            if (outcome_measure == "secondary") and outcome.get("type") != "SECONDARY":
+                continue
+            if (outcome_measure == "all") and outcome.get("type") not in [
+                "PRIMARY",
+                "SECONDARY",
+            ]:
+                continue
+            if outcome_measure not in ["primary", "secondary", "all"]:
+                outcome_measure_variants = [outcome_measure]
+                # TODO: Add more rules here
+                outcome_measure_variants.append(outcome_measure.replace("-", " "))
+                outcome_measure_variants.append(outcome_measure.replace(" ", "-"))
+                outcome_measure_variants.append(
+                    outcome_measure.replace("progression", "progress")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("progress ", "progression ")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("progress-", "progression-")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("patient", "participant")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("participant", "patient")
+                )
+                outcome_measure_variants.append(outcome_measure.replace("_", " "))
+                outcome_measure_variants.append(
+                    outcome_measure.replace("percentage", "percent")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("percent ", "percentage ")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("percent-", "percentage-")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("proportion", "percentage")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("percentage", "proportion")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("proportion", "percent")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("percent", "proportion")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("time to event", "time-to-event")
+                )
+                outcome_measure_variants.append(
+                    outcome_measure.replace("time-to-event", "time to event")
+                )
+                outcome_measure_variants = list(set(outcome_measure_variants))
+                found_match = False
+                for o in outcome_measure_variants:
+                    if (
+                        o in outcome.get("title", "").lower()
+                        or o in outcome.get("description", "").lower()
+                    ):
+                        found_match = True
+                        break
+                if not found_match:
                     continue
-                if (outcome_measure == "secondary") and outcome.get(
-                    "type"
-                ) != "SECONDARY":
-                    continue
-                if (outcome_measure == "all") and outcome.get("type") not in [
-                    "PRIMARY",
-                    "SECONDARY",
-                ]:
-                    continue
-                if outcome_measure not in ["primary", "secondary", "all"]:
-                    outcome_measure_variants = [outcome_measure]
-                    # TODO: Add more rules here
-                    outcome_measure_variants.append(outcome_measure.replace("-", " "))
-                    outcome_measure_variants.append(outcome_measure.replace(" ", "-"))
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("progression", "progress")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("progress ", "progression ")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("progress-", "progression-")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("patient", "participant")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("participant", "patient")
-                    )
-                    outcome_measure_variants.append(outcome_measure.replace("_", " "))
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("percentage", "percent")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("percent ", "percentage ")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("percent-", "percentage-")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("proportion", "percentage")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("percentage", "proportion")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("proportion", "percent")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("percent", "proportion")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("time to event", "time-to-event")
-                    )
-                    outcome_measure_variants.append(
-                        outcome_measure.replace("time-to-event", "time to event")
-                    )
-                    outcome_measure_variants = list(set(outcome_measure_variants))
-                    found_match = False
-                    for o in outcome_measure_variants:
-                        if (
-                            o in outcome.get("title", "").lower()
-                            or o in outcome.get("description", "").lower()
-                        ):
-                            found_match = True
-                            break
-                    if not found_match:
-                        continue
 
-                new_outcome["title"] = outcome.get("title")
-                new_outcome["description"] = outcome.get("description")
-                new_outcome["population"] = outcome.get("populationDescription")
-                new_outcome["time_frame"] = outcome.get("timeFrame")
-                new_outcome["unit_analyzed"] = outcome.get("typeUnitsAnalyzed")
+            new_outcome["title"] = outcome.get("title")
+            # PRIMARY or SECONDARY. The filter above reads it and the row
+            # did not carry it, so an `outcome_measure="all"` call returned
+            # primary and secondary outcomes mixed with no way to tell
+            # which was which.
+            new_outcome["type"] = outcome.get("type")
+            # POSTED or NOT_POSTED: a measure the trial listed and then did
+            # not report carries an empty `classes`, which is indistinguishable
+            # from a measure with no numbers unless this is returned.
+            new_outcome["reporting_status"] = outcome.get("reportingStatus")
+            new_outcome["param_type"] = outcome.get("paramType")
+            new_outcome["unit_of_measure"] = outcome.get("unitOfMeasure")
+            new_outcome["dispersion_type"] = outcome.get("dispersionType")
+            new_outcome["description"] = outcome.get("description")
+            new_outcome["population"] = outcome.get("populationDescription")
+            new_outcome["time_frame"] = outcome.get("timeFrame")
+            new_outcome["unit_analyzed"] = outcome.get("typeUnitsAnalyzed")
+            new_outcome["anticipated_posting_date"] = outcome.get(
+                "anticipatedPostingDate"
+            )
 
-                measurement_type = outcome.get("paramType")
-                if measurement_type:
-                    measurement_type = measurement_type.lower()
-                # GEOMETRIC_MEAN - Geometric Mean
-                # GEOMETRIC_LEAST_SQUARES_MEAN - Geometric Least Squares Mean
-                # LEAST_SQUARES_MEAN - Least Squares Mean
-                # LOG_MEAN - Log Mean
-                # MEAN - Mean
-                # MEDIAN - Median
-                # NUMBER - Number
-                # COUNT_OF_PARTICIPANTS - Count of Participants
-                # COUNT_OF_UNITS - Count of Units
+            groups = outcome.get("groups") or []
+            new_outcome["groups"] = groups
+            group_titles = {
+                g.get("id"): g.get("title") for g in groups if isinstance(g, dict)
+            }
 
-                unit = outcome.get("unitOfMeasure")
+            denominators = self._denominators(outcome.get("denoms"))
+            if denominators:
+                new_outcome["denominators"] = denominators
 
-                new_outcome["groups"] = outcome.get("groups")
+            measurements = self._measurement_rows(outcome, group_titles)
+            if measurements:
+                new_outcome["measurements"] = measurements
+            else:
+                new_outcome["measurements_note"] = (
+                    "No measurement rows were posted for this measure "
+                    f"(reportingStatus={outcome.get('reportingStatus')!r})."
+                )
 
-                denoms = outcome.get("denoms")
-                if denoms is not None:
-                    if len(denoms) > 1:
-                        # TODO: Investigate such trials
-                        return f"Warning: Multiple denoms found for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                    denoms = denoms[0]["counts"]
-                    new_outcome["denominators"] = denoms
+            analyses = [self._passthrough(a) for a in (outcome.get("analyses") or [])]
+            if analyses:
+                new_outcome["analyses"] = analyses
 
-                classes = outcome.get("classes")
-                if classes is not None:
-                    if len(classes) > 1:
-                        # TODO: Investigate such trials
-                        return f"Warning: Multiple classes found for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                    if "title" in classes[0] or "denoms" in classes[0]:
-                        # TODO: Investigate such trials
-                        return f"Warning: Unexpected structure in classes for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                        classes = classes[0]
-                    elif "categories" in classes[0]:
-                        classes = classes[0]["categories"]
-                        if len(classes) > 1:
-                            # TODO: Investigate such trials
-                            return f"Warning: Multiple classes-categories found for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                        if "title" in classes[0]:
-                            # TODO: Investigate such trials
-                            return f"Warning: Unexpected structure in classes-categories for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                            classes = classes[0]
-                        elif "measurements" in classes[0]:
-                            classes = classes[0]["measurements"]
-                        else:
-                            # TODO: Investigate such trials
-                            return f"Warning: Unexpected structure in classes-categories for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                    else:
-                        # TODO: Investigate such trials
-                        return f"Warning: Unexpected structure in classes for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
+            outcomes.append(new_outcome)
 
-                    if measurement_type and unit:
-                        new_outcome[measurement_type + " (" + unit + ")"] = classes
-                    else:
-                        # TODO: Investigate such trials
-                        return f"Warning: Missing paramType or unitOfMeasure for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-
-                analyses = outcome.get("analyses")
-                if analyses is not None:
-                    if len(analyses) > 1:
-                        # TODO: Investigate such trials
-                        return f"Warning: Multiple analyses found for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                    analyses = analyses[0]
-                    pvalue = analyses.get("pValue")
-                    pvalue_comment = analyses.get("pValueComment")
-                    statistic_test = analyses.get("statisticalMethod")
-                    statistic_comment = analyses.get("statisticalComment")
-
-                    statistic_name = analyses.get("paramType")
-                    statistic = analyses.get("paramValue")
-                    if statistic_name and statistic_test and statistic and pvalue:
-                        new_outcome["p-value (" + statistic_test + ")"] = pvalue
-                        new_outcome[statistic_name] = statistic
-                    else:
-                        # TODO: Investigate such trials
-                        return f"Warning: Missing paramType, paramValue, statisticalMethod or pvalue for outcome {new_outcome['title']} in study {new_study['NCT ID']}."
-                    if statistic_comment:
-                        new_outcome["statistic_comment"] = statistic_comment
-                    if pvalue_comment:
-                        new_outcome["pvalue_comment"] = pvalue_comment
-
-                    statistic_test_type = analyses.get("nonInferiorityType")
-                    statistic_test_type_comment = analyses.get(
-                        "nonInferiorityTypeComment"
-                    )
-                    if statistic_test_type and statistic_test_type_comment:
-                        new_outcome["statistic_test_type"] = statistic_test_type
-                        new_outcome["statistic_test_type_comment"] = (
-                            statistic_test_type_comment
-                        )
-
-                outcomes.append(new_outcome)
-
-            new_study["outcomes"] = outcomes
-            new_study = self._remove_empty_values(new_study)
-
+        new_study["outcomes"] = [self._remove_empty_values(o) for o in outcomes]
+        if not outcomes:
+            new_study["note"] = (
+                f"{new_study['NCT ID']} has posted results with "
+                f"{len(raw_outcomes)} outcome measure(s), none of which matched "
+                f"outcome_measure={outcome_measure!r}. Call again with "
+                "outcome_measure='all' to see what is there."
+            )
         return new_study
 
     def _extract_safety_from_output(self, study, organs, adverse_event_type):
@@ -2409,6 +2763,24 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
         new_study["NCT ID"] = study["protocolSection"]["identificationModule"].get(
             "nctId"
         )
+
+        # Same silence as the outcomes handler had: a trial that has posted
+        # no results and a trial whose adverse-event module came back empty
+        # both left `{"NCT ID": ...}` as the whole answer, which reads as "no
+        # adverse events were reported". `hasResults` says which it is.
+        has_results = study.get("hasResults")
+        if has_results is None:
+            has_results = bool(
+                (study.get("resultsSection") or {}).get("adverseEventsModule")
+            )
+        new_study["has_results"] = bool(has_results)
+        if not has_results:
+            new_study["note"] = (
+                f"{new_study['NCT ID']} has no posted results on "
+                "ClinicalTrials.gov, so no adverse events can be extracted. "
+                "This is not a statement that none occurred: posting results "
+                "is not required of every completed trial."
+            )
 
         if (
             "resultsSection" in study
@@ -2421,11 +2793,11 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
                 else None
             )
             groups = ae_data["eventGroups"]
-            for group in groups:
-                if "deathsNumAffected" in group:
-                    del group["deathsNumAffected"]
-                if "deathsNumAtRisk" in group:
-                    del group["deathsNumAtRisk"]
+            # `deathsNumAffected` and `deathsNumAtRisk` used to be deleted
+            # from every arm here. They are the all-cause deaths of the arm,
+            # the single most serious number in the module, and they are not
+            # recoverable from the serious-event rows: a death is counted in
+            # this pair whether or not it is attributed to an event term.
             #     if "seriousNumAffected" in group:
             #         del group["seriousNumAffected"]
             #     if "seriousNumAtRisk" in group:
@@ -2450,10 +2822,14 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
                         if organ_system not in organs:
                             continue
 
-                    if "sourceVocabulary" in ae:
-                        del ae["sourceVocabulary"]
-                    if "assessmentType" in ae:
-                        del ae["assessmentType"]
+                    # `sourceVocabulary` and `assessmentType` used to be
+                    # deleted here. Both change how the numbers read:
+                    # sourceVocabulary names the MedDRA version the term comes
+                    # from, and assessmentType separates a SYSTEMATIC_
+                    # ASSESSMENT -- every participant checked for this event --
+                    # from a NON_SYSTEMATIC one, where a lower count may mean
+                    # only that nobody looked. Comparing arms across that
+                    # difference is not valid, and the caller could not see it.
 
                     if "stats" in ae and len(ae["stats"]) > 0:
                         for group_stats in ae["stats"]:
@@ -2492,8 +2868,12 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
                             else:
                                 group_stats["percentage"] = None
 
-                            if "numEvents" in group_stats:
-                                del group_stats["numEvents"]
+                            # `numEvents` used to be deleted once
+                            # `percentage` had been computed from it, leaving a
+                            # derived number with its input removed -- and
+                            # events are not participants: 5 events in 3
+                            # patients and 5 affected patients are different
+                            # facts that both arrived as "5".
 
                     serious_aes.append(ae)
 
@@ -2512,10 +2892,14 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
                         if organ_system not in organs:
                             continue
 
-                    if "sourceVocabulary" in ae:
-                        del ae["sourceVocabulary"]
-                    if "assessmentType" in ae:
-                        del ae["assessmentType"]
+                    # `sourceVocabulary` and `assessmentType` used to be
+                    # deleted here. Both change how the numbers read:
+                    # sourceVocabulary names the MedDRA version the term comes
+                    # from, and assessmentType separates a SYSTEMATIC_
+                    # ASSESSMENT -- every participant checked for this event --
+                    # from a NON_SYSTEMATIC one, where a lower count may mean
+                    # only that nobody looked. Comparing arms across that
+                    # difference is not valid, and the caller could not see it.
 
                     if "stats" in ae and len(ae["stats"]) > 0:
                         for group_stats in ae["stats"]:
@@ -2554,8 +2938,12 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
                             else:
                                 group_stats["percentage"] = None
 
-                            if "numEvents" in group_stats:
-                                del group_stats["numEvents"]
+                            # `numEvents` used to be deleted once
+                            # `percentage` had been computed from it, leaving a
+                            # derived number with its input removed -- and
+                            # events are not participants: 5 events in 3
+                            # patients and 5 affected patients are different
+                            # facts that both arrived as "5".
 
                     other_aes.append(ae)
 

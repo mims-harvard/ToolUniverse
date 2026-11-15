@@ -96,6 +96,115 @@
                   },
                   "tax_id": {
                     "type": "string"
+                  },
+                  "gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene name of the protein, where UniProt records one"
+                  },
+                  "in_alphafold": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether AlphaFold DB holds a model for it"
+                  },
+                  "match_locations": {
+                    "type": "array",
+                    "description": "Where on this protein the domain matches - what 'contains this domain' means. Same shape as InterPro_get_entries_for_protein returns",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "fragments": {
+                          "type": "array",
+                          "description": "Discontinuous pieces of the match",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "start": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "First residue"
+                              },
+                              "end": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "Last residue"
+                              },
+                              "status": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "InterPro's continuity code, e.g. CONTINUOUS"
+                              }
+                            }
+                          }
+                        },
+                        "model": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Signature model the match came from"
+                        },
+                        "score": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "Match score or e-value as InterPro reports it"
+                        },
+                        "representative": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "Whether InterPro treats this as the representative match"
+                        }
+                      }
+                    }
+                  },
+                  "match_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of match locations on this protein"
+                  },
+                  "entry_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What kind of entry the domain is on this protein: domain, family, homologous_superfamily, site"
+                  },
+                  "entry_source_database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Database the entry comes from"
+                  },
+                  "entry_integrated_interpro": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InterPro accession the entry is integrated into, if any"
+                  },
+                  "entries_matched": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Every entry accession reported for this protein in the response"
                   }
                 }
               }

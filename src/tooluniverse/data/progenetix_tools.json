@@ -64,6 +64,10 @@
               "histological_diagnosis_id": {"type": ["string", "null"]},
               "pathological_stage": {"type": ["string", "null"]},
               "pathological_tnm": {"type": ["string", "null"]},
+              "pathological_tnm_findings": {"type": "array", "description": "TNM is three findings, not one: T, N and M are separate codes and the row kept the first label it found, so a sample staged T2 N1 M0 came back as \"T2\".", "items": {"type": "object", "properties": {"id": {"type": ["string", "null"]}, "label": {"type": ["string", "null"]}}}},
+              "pathological_stage_id": {"type": ["string", "null"]},
+              "biosample_status_id": {"type": ["string", "null"]},
+              "sample_origin_type_id": {"type": ["string", "null"]},
               "sample_origin_type": {"type": ["string", "null"]},
               "external_references": {
                 "type": "array",
@@ -296,6 +300,11 @@
               "name": {"type": ["string", "null"]},
               "cohort_size": {"type": ["integer", "null"]},
               "cohort_type": {"type": ["string", "null"]},
+              "entity": {"type": ["string", "null"], "description": "What the collection IS; a list of ids, names and sizes cannot be chosen between"},
+              "reference": {"type": ["string", "null"], "description": "The paper or portal the cohort comes from"},
+              "updated": {"type": ["string", "null"]},
+              "description": {"type": ["string", "null"]},
+              "cohort_design": {"type": ["object", "string", "null"]},
               "data_types": {
                 "type": "array",
                 "items": {"type": "string"}
@@ -378,6 +387,9 @@
           "items": {
             "type": "object",
             "properties": {
+              "cohorts": {"type": "array", "description": "Which cohorts the sample belongs to. A CNV search answers samples from several collations at once, and which study a sample came from is how its CNV is read.", "items": {"type": "object", "properties": {"id": {"type": ["string", "null"]}, "label": {"type": ["string", "null"]}}}},
+              "pathological_stage": {"type": ["string", "null"]},
+              "sample_origin_type": {"type": ["string", "null"]},
               "id": {"type": ["string", "null"]},
               "biosample_status": {"type": ["string", "null"]},
               "histological_diagnosis": {"type": ["string", "null"]},
@@ -472,6 +484,7 @@
                       "null"
                     ]
                   },
+                  "id": {"type": ["string", "null"], "description": "The interval's own id, which is how a bin is referred to between calls; `no` is its position in this response"},
                   "reference_name": {
                     "type": [
                       "string",

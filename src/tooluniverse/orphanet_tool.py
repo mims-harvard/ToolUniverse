@@ -400,6 +400,26 @@ class OrphanetTool(BaseTool):
                     "AssociationType": assoc.get("DisorderGeneAssociationType", ""),
                     "AssociationStatus": assoc.get("DisorderGeneAssociationStatus", ""),
                     "SourceOfValidation": assoc.get("SourceOfValidation", ""),
+                    # The gene's other names. A disease-to-gene answer is
+                    # looked up against other datasets by symbol, and a symbol
+                    # that has been renamed matches nothing -- Orphadata lists
+                    # the synonyms in the same record and the row dropped them.
+                    "Synonyms": [
+                        synonym
+                        for synonym in (gene_info.get("Synonym") or [])
+                        if isinstance(synonym, str) and synonym
+                    ],
+                    # Which external databases Orphadata cross-references the
+                    # gene to, so the symbol can be resolved rather than
+                    # matched.
+                    "ExternalReferences": [
+                        {
+                            "Source": ref.get("Source"),
+                            "Reference": ref.get("Reference"),
+                        }
+                        for ref in (gene_info.get("ExternalReference") or [])
+                        if isinstance(ref, dict)
+                    ],
                 }
             )
         return genes

@@ -100,9 +100,9 @@ class DANDITool(BaseTool):
 
         rows = []
         for item in results:
-            version = item.get("most_recent_published_version") or item.get(
-                "draft_version"
-            ) or {}
+            published = item.get("most_recent_published_version") or {}
+            draft = item.get("draft_version") or {}
+            version = published or draft
             rows.append(
                 {
                     "dandiset_id": item.get("identifier"),
@@ -110,6 +110,24 @@ class DANDITool(BaseTool):
                     "asset_count": version.get("asset_count"),
                     "size_bytes": version.get("size"),
                     "status": version.get("status"),
+                    # Whether the data can actually be read. `status` above is
+                    # the metadata's VALIDATION state -- "Valid" means the
+                    # record is well-formed, not that the recordings are
+                    # downloadable. An embargoed dandiset is listed like any
+                    # other and its files refuse to download, so without this
+                    # the search cannot distinguish them.
+                    "embargo_status": item.get("embargo_status"),
+                    # Which version the four fields above describe. DANDI
+                    # publishes snapshots, so a published version's counts can
+                    # be years behind the draft that get_dataset and
+                    # list_assets read.
+                    "version": version.get("version"),
+                    "version_is_published": bool(published),
+                    "draft_asset_count": draft.get("asset_count"),
+                    "draft_size_bytes": draft.get("size"),
+                    "draft_modified": draft.get("modified"),
+                    "created": item.get("created"),
+                    "modified": item.get("modified"),
                     "contact_person": item.get("contact_person"),
                     "star_count": item.get("star_count"),
                 }
@@ -129,7 +147,12 @@ class DANDITool(BaseTool):
                 "total_matching": payload.get("count"),
                 "returned": len(rows),
                 "note": "dandiset_id is what get_dataset and list_assets "
-                "expect, e.g. '000020'.",
+                "expect, e.g. '000020'. name, asset_count, size_bytes and "
+                "status come from the version named in 'version' - the most "
+                "recent published one when there is one - while get_dataset "
+                "and list_assets read the draft; compare draft_asset_count. "
+                "'status' is the metadata's validation state, NOT whether "
+                "the data can be downloaded: read 'embargo_status' for that.",
                 "source": "DANDI Archive",
             },
         }
@@ -165,9 +188,7 @@ class DANDITool(BaseTool):
                 "description": payload.get("description"),
                 "license": payload.get("license") or [],
                 "keywords": payload.get("keywords") or [],
-                "species": [
-                    s.get("name") for s in assets_summary.get("species") or []
-                ],
+                "species": [s.get("name") for s in assets_summary.get("species") or []],
                 "data_standard": [
                     s.get("name") for s in assets_summary.get("dataStandard") or []
                 ],

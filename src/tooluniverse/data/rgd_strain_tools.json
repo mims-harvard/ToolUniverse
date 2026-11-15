@@ -120,6 +120,25 @@
                   "string",
                   "null"
                 ]
+              },
+              "last_status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the strain still exists -- live, cryopreserved, or no longer available. RGD records it on all 4,749 and a strain search that cannot say which is answering about animals a caller may not be able to obtain."
+              },
+              "availability": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "nomenclature_source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -247,6 +266,13 @@
                 "string",
                 "null"
               ]
+            },
+            "last_status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "RGD's status for the strain, e.g. 'Unknown', 'Live', 'Cryopreserved', 'Extinct'. Whether the strain can still be obtained."
             }
           },
           "not": {
@@ -360,6 +386,54 @@
                   "integer",
                   "null"
                 ]
+              },
+              "object_symbol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which strain the annotation is on, by name"
+              },
+              "object_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "annotated_object_rgd_id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ]
+              },
+              "notes": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "with_from": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "created_date": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ],
+                "description": "RGD answers these as epoch milliseconds, not a date string"
+              },
+              "last_modified_date": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ],
+                "description": "RGD answers these as epoch milliseconds, not a date string"
               }
             }
           }

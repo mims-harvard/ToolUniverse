@@ -128,6 +128,308 @@
                   },
                   "add_date": {
                     "type": "string"
+                  },
+                  "download_url": {
+                    "type": "string",
+                    "description": "URL to download all images"
+                  },
+                  "software_package": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Analysis software used"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "URL to view collection on NeuroVault"
+                  },
+                  "acquisition_orientation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Slice orientation and tilt as free text, e.g. 'T > C-20.0 ' -- transverse, angled 20 degrees toward coronal."
+                  },
+                  "autocorrelation_model": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Serial-correlation model used, e.g. 'AR(1)'. Without it the first-level t values are not calibrated. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "b0_unwarping_software": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Software used for B0 unwarping, e.g. 'FSL topup'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "contributors": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Contributors beyond the owner, as free text. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "functional_coregistration_method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How that coregistration was done, e.g. 'BBR cost function, BBRegister FreeSurfer'."
+                  },
+                  "group_description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Free-text description of the subject group the maps summarise. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "group_estimation_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How the group model was estimated, e.g. 'mixed effects'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "group_model_multilevel": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Description of the multilevel structure if the group model had one. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "group_model_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Group model, e.g. 'random effects'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "group_modeling_software": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Software for the group level, e.g. 'FSL FLAME'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "group_repeated_measures_method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How repeated measures were handled in the group model. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "hemodynamic_response_function": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HRF the design was convolved with, e.g. 'canonical double-gamma'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "high_pass_filter_method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "High-pass filter applied to the timeseries, e.g. 'gaussian, 100s cutoff'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "inclusion_exclusion_criteria": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Free-text subject inclusion and exclusion criteria -- who was analysed and who was dropped. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "interpolation_method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Interpolation used when resampling into the template, e.g. 'trilinear'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "intersubject_registration_software": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Software that took subjects into the common space, e.g. 'FreeSurfer/FSL'."
+                  },
+                  "intrasubject_estimation_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How first-level parameters were estimated, e.g. 'OLS'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "intrasubject_model_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "First-level model type, e.g. 'GLM'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "intrasubject_modeling_software": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Software for the first (within-subject) level, e.g. 'FSL FEAT'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "modify_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the image record was last changed, e.g. '2018-06-30T07:03:20.571134+02:00'."
+                  },
+                  "motion_correction_interpolation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Interpolation used when resampling for motion correction, e.g. 'spline'."
+                  },
+                  "motion_correction_metric": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Cost function optimised during motion correction, e.g. 'normalised correlation'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "motion_correction_reference": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The volume motion was realigned to, e.g. 'middle volume'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "motion_correction_software": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Software used for motion correction, e.g. '\"topup\" FSL'."
+                  },
+                  "nonlinear_transform_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The nonlinear transform used, e.g. 'FLIRT + \"topup\" toolbox, FSL (produces nonlinear transform)'."
+                  },
+                  "object_image_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the uploaded maps are, e.g. 'T map'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "optimization_method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Optimiser used by the registration, e.g. 'gradient descent'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "order_of_preprocessing_operations": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The order the preprocessing steps were applied in. Free text, and may be a URL to the pipeline figure rather than a list -- the measured value is 'http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3720813/figure/F19/'."
+                  },
+                  "orthogonalization_description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which regressors were orthogonalised against which -- this changes what a contrast means. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "owner": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Numeric NeuroVault user id of the owner, e.g. 186. An id, not a name."
+                  },
+                  "parallel_imaging": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Parallel-imaging scheme and acceleration factor, e.g. 'GRAPPA, R=2'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "private": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether the collection is private, e.g. false."
+                  },
+                  "pulse_sequence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Pulse sequence used, e.g. 'EPI'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "quality_control": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Free-text description of the QC applied to the data. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "scanner_make": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Scanner manufacturer, e.g. 'Siemens'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "scanner_model": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Scanner model, e.g. 'Skyra'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "slice_timing_correction_software": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Software used for slice-timing correction, e.g. 'FSL slicetimer'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "smoothing_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How smoothing was done, as free text. On the measured collection it is the HCP note that the fMRIVolume pipeline deliberately minimises interpolation smoothing."
+                  },
+                  "software_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Version of the analysis package used. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "target_template_image": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Template the map is registered to, e.g. 'GenericMNI'."
+                  },
+                  "transform_similarity_metric": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Similarity metric the registration optimised, e.g. 'mutual information'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
                   }
                 }
               }
@@ -313,6 +615,363 @@
             "download_url": {
               "type": "string",
               "description": "URL to download all images"
+            },
+            "acquisition_orientation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Slice orientation and tilt as free text, e.g. 'T > C-20.0 ' -- transverse, angled 20 degrees toward coronal."
+            },
+            "autocorrelation_model": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Serial-correlation model used, e.g. 'AR(1)'. Without it the first-level t values are not calibrated. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "b0_unwarping_software": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Software used for B0 unwarping, e.g. 'FSL topup'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "contributors": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Contributors beyond the owner, as free text. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "coordinate_space": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The stereotaxic space the maps are in, e.g. 'mni'. Overlaying maps from two collections is only meaningful when this agrees."
+            },
+            "doi_add_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When a DOI was attached to the collection, ISO-8601 with offset, e.g. '2015-03-19T20:23:06.047045+01:00'. Null while the collection has no DOI."
+            },
+            "echo_time": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Echo time TE in milliseconds, e.g. 58.0."
+            },
+            "field_of_view": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Field of view in millimetres, e.g. 208.0."
+            },
+            "flip_angle": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Excitation flip angle in degrees, e.g. 90.0."
+            },
+            "functional_coregistered_to_structural": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the functional runs were coregistered to the subject's own structural, e.g. true."
+            },
+            "functional_coregistration_method": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How that coregistration was done, e.g. 'BBR cost function, BBRegister FreeSurfer'."
+            },
+            "group_description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Free-text description of the subject group the maps summarise. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "group_estimation_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How the group model was estimated, e.g. 'mixed effects'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "group_model_multilevel": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Description of the multilevel structure if the group model had one. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "group_model_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Group model, e.g. 'random effects'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "group_modeling_software": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Software for the group level, e.g. 'FSL FLAME'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "group_repeated_measures_method": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How repeated measures were handled in the group model. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "hemodynamic_response_function": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "HRF the design was convolved with, e.g. 'canonical double-gamma'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "high_pass_filter_method": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "High-pass filter applied to the timeseries, e.g. 'gaussian, 100s cutoff'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "inclusion_exclusion_criteria": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Free-text subject inclusion and exclusion criteria -- who was analysed and who was dropped. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "interpolation_method": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Interpolation used when resampling into the template, e.g. 'trilinear'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "intersubject_registration_software": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Software that took subjects into the common space, e.g. 'FreeSurfer/FSL'."
+            },
+            "intersubject_transformation_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether the normalisation was 'linear' or 'nonlinear'; measured 'nonlinear'. A linear normalisation limits how finely two collections can be compared."
+            },
+            "intrasubject_estimation_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How first-level parameters were estimated, e.g. 'OLS'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "intrasubject_model_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "First-level model type, e.g. 'GLM'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "intrasubject_modeling_software": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Software for the first (within-subject) level, e.g. 'FSL FEAT'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "length_of_trials": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Trial duration in the task design. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "motion_correction_interpolation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Interpolation used when resampling for motion correction, e.g. 'spline'."
+            },
+            "motion_correction_metric": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cost function optimised during motion correction, e.g. 'normalised correlation'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "motion_correction_reference": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The volume motion was realigned to, e.g. 'middle volume'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "motion_correction_software": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Software used for motion correction, e.g. '\"topup\" FSL'."
+            },
+            "nonlinear_transform_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The nonlinear transform used, e.g. 'FLIRT + \"topup\" toolbox, FSL (produces nonlinear transform)'."
+            },
+            "object_image_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the uploaded maps are, e.g. 'T map'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "optimization_method": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Optimiser used by the registration, e.g. 'gradient descent'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "order_of_acquisition": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Slice acquisition order, e.g. 'interleaved'. Slice-timing correction is only interpretable against this."
+            },
+            "order_of_preprocessing_operations": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The order the preprocessing steps were applied in. Free text, and may be a URL to the pipeline figure rather than a list -- the measured value is 'http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3720813/figure/F19/'."
+            },
+            "orthogonalization_description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which regressors were orthogonalised against which -- this changes what a contrast means. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "owner": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Numeric NeuroVault user id of the owner, e.g. 186. An id, not a name."
+            },
+            "parallel_imaging": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Parallel-imaging scheme and acceleration factor, e.g. 'GRAPPA, R=2'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "private": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the collection is private, e.g. false."
+            },
+            "quality_control": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Free-text description of the QC applied to the data. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "repetition_time": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Repetition time TR in milliseconds, e.g. 7060.0. A multiband or sparse design shows up here as an unusually long TR."
+            },
+            "slice_thickness": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Slice thickness in millimetres, e.g. 2.0."
+            },
+            "slice_timing_correction_software": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Software used for slice-timing correction, e.g. 'FSL slicetimer'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "smoothing_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How smoothing was done, as free text. On the measured collection it is the HCP note that the fMRIVolume pipeline deliberately minimises interpolation smoothing."
+            },
+            "target_resolution": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Voxel size of the normalised data in millimetres, e.g. 2.0."
+            },
+            "target_template_image": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Template the map is registered to, e.g. 'GenericMNI'."
+            },
+            "transform_similarity_metric": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Similarity metric the registration optimised, e.g. 'mutual information'. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "used_b0_unwarping": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether B0 fieldmap unwarping of EPI distortion was applied, e.g. true."
+            },
+            "used_motion_correction": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether motion correction was applied, e.g. true."
+            },
+            "used_smoothing": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether spatial smoothing was applied, e.g. false. False on HCP-style surface pipelines, which smooth on the surface instead."
             }
           },
           "not": {
@@ -462,6 +1121,186 @@
                       "null"
                     ],
                     "description": "Analysis level: group or individual"
+                  },
+                  "add_date": {
+                    "type": "string",
+                    "description": "Date collection was added"
+                  },
+                  "collection": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL of the parent collection"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Study description"
+                  },
+                  "image_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Image type (statistic_map, atlas, etc.)"
+                  },
+                  "modality": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Imaging modality (fMRI-BOLD, PET, etc.)"
+                  },
+                  "not_mni": {
+                    "type": "boolean",
+                    "description": "Whether image is NOT in MNI space"
+                  },
+                  "smoothness_fwhm": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Smoothing kernel FWHM in mm"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "URL to view collection on NeuroVault"
+                  },
+                  "brain_coverage": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Percent of the template brain the map covers, e.g. 99.98."
+                  },
+                  "cognitive_contrast_cogatlas_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Cognitive Atlas contrast id for the contrast, e.g. 'cnt_5531474e117df'. Measured on 2 of 5 images; it is what lets maps be pooled across studies by what they measure rather than by their titles."
+                  },
+                  "contrast_definition": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the map contrasts, in the submitter's words, e.g. 'Faces minus Shapes'. This is the only statement of what the voxel values mean."
+                  },
+                  "data_origin": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the map came from the 'volume' or from a surface, e.g. 'volume'."
+                  },
+                  "figure": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Figure in the source publication this map corresponds to. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+                  },
+                  "file_size": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Size of the stored map in bytes, e.g. 1180649."
+                  },
+                  "is_thresholded": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether the uploaded map is already thresholded, e.g. false. A thresholded map must not be fed into a meta-analysis as if it were a full statistic image."
+                  },
+                  "is_valid": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether NeuroVault's own validation of the file passed, e.g. true."
+                  },
+                  "modify_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the image record was last changed, e.g. '2018-06-30T07:03:20.571134+02:00'."
+                  },
+                  "number_of_subjects": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Subjects behind the map, e.g. 486. The weight this map should carry in any meta-analysis."
+                  },
+                  "perc_bad_voxels": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Percent of in-brain voxels NeuroVault judged bad (zero, NaN or implausible), e.g. 65.7. A high value here is the usual sign that a map was uploaded already masked or thresholded."
+                  },
+                  "perc_voxels_outside": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Percent of non-zero voxels falling OUTSIDE the template brain, e.g. 26.19 -- the standard signal that the map is misregistered or in the wrong space."
+                  },
+                  "reduced_representation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL of a downsampled 4 mm .npy copy of the map, e.g. 'http://neurovault.org/media/images/457/transform_4mm_3128.npy'. Meant for similarity search; do not use it for inference."
+                  },
+                  "statistic_parameters": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The degrees of freedom of the statistic, e.g. 481.0 for a t map over 486 subjects. Needed to convert the map to a p or z image."
+                  },
+                  "subject_species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Species of the subjects, e.g. 'homo sapiens'."
+                  },
+                  "surface_left_file": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL of the left-hemisphere surface (GIFTI .func.gii) projection of this map, when one exists."
+                  },
+                  "surface_right_file": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL of the right-hemisphere surface (GIFTI .func.gii) projection of this map, when one exists."
+                  },
+                  "target_template_image": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Template the map is registered to, e.g. 'GenericMNI'."
+                  },
+                  "thumbnail": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL of the glass-brain preview image, e.g. 'http://neurovault.org/media/images/457/glass_brain_3128.jpg'."
                   }
                 }
               }
@@ -616,6 +1455,140 @@
             "not_mni": {
               "type": "boolean",
               "description": "Whether image is NOT in MNI space"
+            },
+            "add_date": {
+              "type": "string",
+              "description": "Date collection was added"
+            },
+            "collection": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL of the parent collection"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Study description"
+            },
+            "url": {
+              "type": "string",
+              "description": "URL to view collection on NeuroVault"
+            },
+            "contrast_definition": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the map contrasts, in the submitter's words, e.g. 'Faces minus Shapes'. This is the only statement of what the voxel values mean."
+            },
+            "data_origin": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether the map came from the 'volume' or from a surface, e.g. 'volume'."
+            },
+            "figure": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Figure in the source publication this map corresponds to. Measured null on every row of the examples used here: NeuroVault leaves the whole provenance form optional and most submitters fill in only part of it, so absence means 'not reported', never 'not done'."
+            },
+            "file_size": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Size of the stored map in bytes, e.g. 1180649."
+            },
+            "is_thresholded": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the uploaded map is already thresholded, e.g. false. A thresholded map must not be fed into a meta-analysis as if it were a full statistic image."
+            },
+            "is_valid": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether NeuroVault's own validation of the file passed, e.g. true."
+            },
+            "modify_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the image record was last changed, e.g. '2018-06-30T07:03:20.571134+02:00'."
+            },
+            "number_of_subjects": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Subjects behind the map, e.g. 486. The weight this map should carry in any meta-analysis."
+            },
+            "perc_bad_voxels": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Percent of in-brain voxels NeuroVault judged bad (zero, NaN or implausible), e.g. 65.7. A high value here is the usual sign that a map was uploaded already masked or thresholded."
+            },
+            "perc_voxels_outside": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Percent of non-zero voxels falling OUTSIDE the template brain, e.g. 26.19 -- the standard signal that the map is misregistered or in the wrong space."
+            },
+            "reduced_representation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL of a downsampled 4 mm .npy copy of the map, e.g. 'http://neurovault.org/media/images/457/transform_4mm_3128.npy'. Meant for similarity search; do not use it for inference."
+            },
+            "subject_species": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Species of the subjects, e.g. 'homo sapiens'."
+            },
+            "surface_left_file": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL of the left-hemisphere surface (GIFTI .func.gii) projection of this map, when one exists."
+            },
+            "surface_right_file": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL of the right-hemisphere surface (GIFTI .func.gii) projection of this map, when one exists."
+            },
+            "target_template_image": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Template the map is registered to, e.g. 'GenericMNI'."
+            },
+            "thumbnail": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL of the glass-brain preview image, e.g. 'http://neurovault.org/media/images/457/glass_brain_3128.jpg'."
             }
           },
           "not": {
@@ -757,6 +1730,84 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "add_date": {
+                    "type": "string",
+                    "description": "Date collection was added"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "URL to view collection on NeuroVault"
+                  },
+                  "data_origin": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the map came from the 'volume' or from a surface, e.g. 'volume'."
+                  },
+                  "file_size": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Size of the stored map in bytes, e.g. 1180649."
+                  },
+                  "is_valid": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether NeuroVault's own validation of the file passed, e.g. true."
+                  },
+                  "modify_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the image record was last changed, e.g. '2018-06-30T07:03:20.571134+02:00'."
+                  },
+                  "reduced_representation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL of a downsampled 4 mm .npy copy of the map, e.g. 'http://neurovault.org/media/images/457/transform_4mm_3128.npy'. Meant for similarity search; do not use it for inference."
+                  },
+                  "subject_species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Species of the subjects, e.g. 'homo sapiens'."
+                  },
+                  "surface_left_file": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL of the left-hemisphere surface (GIFTI .func.gii) projection of this map, when one exists."
+                  },
+                  "surface_right_file": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL of the right-hemisphere surface (GIFTI .func.gii) projection of this map, when one exists."
+                  },
+                  "target_template_image": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Template the map is registered to, e.g. 'GenericMNI'."
+                  },
+                  "thumbnail": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL of the glass-brain preview image, e.g. 'http://neurovault.org/media/images/457/glass_brain_3128.jpg'."
                   }
                 }
               }
@@ -867,6 +1918,73 @@
                 "string",
                 "null"
               ]
+            },
+            "image_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Image type (statistic_map, atlas, etc.)"
+            },
+            "url": {
+              "type": "string",
+              "description": "URL to view collection on NeuroVault"
+            },
+            "data_origin": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether the map came from the 'volume' or from a surface, e.g. 'volume'."
+            },
+            "file_size": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Size of the stored map in bytes, e.g. 1180649."
+            },
+            "is_valid": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether NeuroVault's own validation of the file passed, e.g. true."
+            },
+            "modify_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the image record was last changed, e.g. '2018-06-30T07:03:20.571134+02:00'."
+            },
+            "subject_species": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Species of the subjects, e.g. 'homo sapiens'."
+            },
+            "surface_left_file": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL of the left-hemisphere surface (GIFTI .func.gii) projection of this map, when one exists."
+            },
+            "surface_right_file": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL of the right-hemisphere surface (GIFTI .func.gii) projection of this map, when one exists."
+            },
+            "thumbnail": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL of the glass-brain preview image, e.g. 'http://neurovault.org/media/images/457/glass_brain_3128.jpg'."
             }
           },
           "not": {

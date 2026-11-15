@@ -553,6 +553,26 @@
                               }
                             }
                           }
+                        },
+                        "fieldInfos": {
+                          "type": [
+                            "array",
+                            "null"
+                          ],
+                          "items": {
+                            "type": "object"
+                          },
+                          "description": "The fields that can be searched or retrieved in the subdomain, each with id, name, description and flags. Measured on 2 of 26 subdomains. Without it a caller cannot know which fields a query may name."
+                        },
+                        "indexInfos": {
+                          "type": [
+                            "array",
+                            "null"
+                          ],
+                          "items": {
+                            "type": "object"
+                          },
+                          "description": "Index statistics for the subdomain, each {name, value}, e.g. {'name': 'Number of entries', 'value': '207042'}. How much is actually in there."
                         }
                       }
                     }
@@ -805,7 +825,62 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The field's identifier, which is what a query must use."
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Its display name."
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What it holds."
+              },
+              "options": {
+                "type": [
+                  "array",
+                  "object",
+                  "string",
+                  "null"
+                ],
+                "description": "Which operations the field supports -- searchable, retrievable, sortable. A field that is not searchable cannot be queried however it is named.",
+                "items": {
+                  "type": "object",
+                  "description": "One supported operation on the field.",
+                  "properties": {
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The operation, e.g. 'searchable', 'retrievable', 'sortable'."
+                    },
+                    "value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Whether it is supported, as 'true' or 'false' TEXT rather than a boolean."
+                    }
+                  }
+                }
+              }
+            }
+          }
         },
         {
           "type": "object",
@@ -871,7 +946,26 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The cross-referenced identifier."
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The database it belongs to."
+              }
+            }
+          }
         },
         {
           "type": "object",

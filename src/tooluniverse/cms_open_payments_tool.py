@@ -59,6 +59,14 @@ def _summarize(row: Dict[str, Any]) -> Dict[str, Any]:
         )
         or row.get("teaching_hospital_name"),
         "recipient_npi": row.get("covered_recipient_npi") or None,
+        # CMS's own stable key for the recipient. A name is ambiguous and an
+        # NPI is absent for a teaching hospital, so the profile id is what
+        # joins a physician's payments across program years -- and it is the
+        # id the Open Payments site itself uses in its URLs.
+        "recipient_profile_id": row.get("covered_recipient_profile_id") or None,
+        # Whether CMS added, changed or republished this record unchanged in
+        # the publication being read.
+        "change_type": row.get("change_type"),
         "recipient_type": row.get("covered_recipient_type"),
         "recipient_specialty": row.get("covered_recipient_specialty_1") or None,
         "recipient_state": row.get("recipient_state"),

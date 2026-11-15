@@ -25,6 +25,11 @@ PGS_API = "https://www.pgscatalog.org/rest"
 PGS_SOURCE = "PGS Catalog (pgscatalog.org, EMBL-EBI)"
 
 
+# Score ids per trait. MONDO_0005010 carries 88 and 8; the cap guards an
+# outlier rather than cutting a normal trait.
+PGS_IDS_PER_TRAIT = 500
+
+
 def _metric(m: Dict[str, Any]) -> Dict[str, Any]:
     """Normalize one performance metric record (effect size / accuracy / other)."""
     return {
@@ -193,6 +198,31 @@ class PGSCatalogTool(BaseTool):
                 "label": t.get("label"),
                 "description": t.get("description"),
                 "n_scores": len(t.get("associated_pgs_ids", [])),
+                # The scores themselves, already in hand. A trait search
+                # exists to find them, and the row reported only how many.
+                "associated_pgs_ids": [
+                    i for i in (t.get("associated_pgs_ids") or []) if i
+                ][:PGS_IDS_PER_TRAIT],
+                # Scores attached to CHILD terms of the trait. Measured on
+                # MONDO_0005010: 8 of them, and none is returned by
+                # score/search?trait_id= -- so without this field they are
+                # reachable through no call this tool makes.
+                "child_associated_pgs_ids": [
+                    i for i in (t.get("child_associated_pgs_ids") or []) if i
+                ][:PGS_IDS_PER_TRAIT],
+                "n_child_scores": len(t.get("child_associated_pgs_ids") or []),
+                # Why the row matched: the query "coronary artery disease" is
+                # a SYNONYM of the label "coronary artery disorder".
+                "trait_synonyms": [
+                    syn for syn in (t.get("trait_synonyms") or []) if syn
+                ],
+                "trait_categories": [
+                    cat for cat in (t.get("trait_categories") or []) if cat
+                ],
+                "trait_mapped_terms": [
+                    term_id for term_id in (t.get("trait_mapped_terms") or []) if term_id
+                ],
+                "url": t.get("url"),
             }
             for t in results
         ]
@@ -203,6 +233,10 @@ class PGSCatalogTool(BaseTool):
                 "source": PGS_SOURCE,
                 "query": str(term),
                 "returned": len(traits),
+                "pgs_ids_per_trait": PGS_IDS_PER_TRAIT,
+                "note": "associated_pgs_ids are the trait's own scores; "
+                "child_associated_pgs_ids belong to child terms and are not "
+                "returned by get_scores_by_trait for this trait_id.",
             },
         }
 
@@ -254,6 +288,42 @@ class PGSCatalogTool(BaseTool):
         ]
         summary["ancestry_distribution"] = body.get("ancestry_distribution")
         summary["samples_training"] = body.get("samples_training")
+        # samples_training is where the weights were fitted; samples_variants
+        # is the GWAS the variants were discovered in, with its ancestry, its
+        # size and its GWAS Catalog accession. A score's transferability
+        # depends on both, and this one reached no handler. PGS000018 has
+        # seven, from East Asian 11,323 to Hispanic/Latin American 4,095.
+        summary["samples_variants"] = [
+            {
+                "sample_number": v.get("sample_number"),
+                "ancestry_broad": v.get("ancestry_broad"),
+                "ancestry_free": v.get("ancestry_free"),
+                "source_PMID": v.get("source_PMID"),
+                "source_GWAS_catalog": v.get("source_GWAS_catalog"),
+                "cohorts": [
+                    c.get("name_short")
+                    for c in (v.get("cohorts") or [])
+                    if c.get("name_short")
+                ],
+            }
+            for v in (body.get("samples_variants") or [])
+        ]
+        # The terms under which the scoring file above may be reused. The
+        # tool returned a download URL and not the licence governing it.
+        summary["license"] = body.get("license")
+        # ftp_scoring_file is in the author's original build; these are
+        # harmonized to GRCh37 and GRCh38, which is what a caller applying
+        # the score to their own genotypes actually needs.
+        summary["harmonized_scoring_files"] = body.get(
+            "ftp_harmonized_scoring_files"
+        )
+        # Whether the Catalog's own curation matches the paper it cites.
+        summary["matches_publication"] = body.get("matches_publication")
+        # method_name without method_params is "we used C+T" with no
+        # thresholds: PGS000746 is p=1.23^-3, r^2=0.21.
+        summary["method_params"] = body.get("method_params")
+        summary["date_release"] = body.get("date_release")
+        summary["trait_additional"] = body.get("trait_additional")
         return {
             "status": "success",
             "data": summary,

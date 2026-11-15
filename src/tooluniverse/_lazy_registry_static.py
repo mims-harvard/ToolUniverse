@@ -9,6 +9,8 @@ STATIC_LAZY_REGISTRY = {
     "ADAStandardsTool": "clinical_society_tools",
     "ADMETAITool": "admetai_tool",
     "AHAACCGuidelineTool": "clinical_society_tools",
+    "AMPSphereAmpMetadataTool": "ampsphere_tool",
+    "AMPSphereCopredictionTool": "ampsphere_tool",
     "AMPSphereGetAmpDistributionsTool": "ampsphere_tool",
     "AMPSphereGetAmpFeaturesTool": "ampsphere_tool",
     "AMPSphereGetAmpTool": "ampsphere_record_tool",

@@ -36,6 +36,41 @@ def _json_or_none(response):
     return response.json()
 
 
+def _match_locations(protein_rows: list) -> list:
+    """Where on a protein an InterPro entry matches.
+
+    `entry_protein_locations` is what "this protein contains this domain"
+    actually means: the residue ranges, each possibly in several fragments,
+    with the signature model and score behind the call. The twin endpoint in
+    the sibling module builds the same shape and the two must agree -- a
+    caller joining a domain's proteins to a protein's domains reads both.
+    """
+    locations = []
+    for row in protein_rows or []:
+        if not isinstance(row, dict):
+            continue
+        for location in row.get("entry_protein_locations") or []:
+            if not isinstance(location, dict):
+                continue
+            locations.append(
+                {
+                    "fragments": [
+                        {
+                            "start": fragment.get("start"),
+                            "end": fragment.get("end"),
+                            "status": fragment.get("dc-status"),
+                        }
+                        for fragment in (location.get("fragments") or [])
+                        if isinstance(fragment, dict)
+                    ],
+                    "model": location.get("model"),
+                    "score": location.get("score"),
+                    "representative": location.get("representative"),
+                }
+            )
+    return locations
+
+
 class InterProExtTool(BaseTool):
     """
     Extended InterPro API tool for protein-by-domain queries.
@@ -121,16 +156,40 @@ class InterProExtTool(BaseTool):
         proteins = []
         for r in results:
             meta = r.get("metadata", {})
+            # The `entries` block of each hit says where on this protein the
+            # requested domain sits and what kind of entry it is. For a tool
+            # whose question is which proteins CONTAIN a domain, that is the
+            # answer's substance, and the row carried none of it: IPR011615
+            # on A0A016WYN1 runs 106-281 of 439 residues.
+            entry_rows = [e for e in (r.get("entries") or []) if isinstance(e, dict)]
+            matched = next(
+                (
+                    e
+                    for e in entry_rows
+                    if str(e.get("accession") or "").upper() == domain_id.upper()
+                ),
+                entry_rows[0] if entry_rows else {},
+            )
+            locations = _match_locations(entry_rows)
+            organism = meta.get("source_organism") or {}
             proteins.append(
                 {
                     "accession": meta.get("accession"),
                     "name": meta.get("name"),
                     "source_database": meta.get("source_database"),
                     "length": meta.get("length"),
-                    "source_organism": meta.get("source_organism", {}).get(
-                        "scientificName"
+                    "source_organism": organism.get("scientificName"),
+                    "tax_id": organism.get("taxId"),
+                    "gene": meta.get("gene"),
+                    "in_alphafold": meta.get("in_alphafold"),
+                    "match_locations": locations,
+                    "match_count": len(locations),
+                    "entry_type": matched.get("entry_type"),
+                    "entry_source_database": matched.get("source_database"),
+                    "entry_integrated_interpro": matched.get("entry_integrated"),
+                    "entries_matched": sorted(
+                        {e.get("accession") for e in entry_rows if e.get("accession")}
                     ),
-                    "tax_id": meta.get("source_organism", {}).get("taxId"),
                 }
             )
 

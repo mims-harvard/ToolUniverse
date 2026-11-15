@@ -23,38 +23,158 @@
                     "description": "Target TogoID dataset name, e.g. 'uniprot', 'hgnc', 'chebi', 'pdb', 'ensembl_transcript'."
                 }
             },
-            "required": ["ids", "source", "target"],
+            "required": [
+                "ids",
+                "source",
+                "target"
+            ],
             "additionalProperties": false
         },
-        "fields": {"timeout": 30},
+        "fields": {
+            "timeout": 30
+        },
         "type": "TogoIDConvertTool",
         "test_examples": [
-            {"ids": "ENSG00000139618", "source": "ensembl_gene", "target": "uniprot"},
-            {"ids": "675", "source": "ncbigene", "target": "hgnc"},
-            {"ids": "2244", "source": "pubchem_compound", "target": "chebi"}
-        ],
-        "return_schema": {
-          "oneOf": [
             {
-              "not": {
-                "required": [
-                  "error"
-                ]
-              },
-              "type": "object"
+                "ids": "ENSG00000139618",
+                "source": "ensembl_gene",
+                "target": "uniprot"
             },
             {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
+                "ids": "675",
+                "source": "ncbigene",
+                "target": "hgnc"
+            },
+            {
+                "ids": "2244",
+                "source": "pubchem_compound",
+                "target": "chebi"
             }
-          ]
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
+                    "type": "object",
+                    "properties": {
+                        "source": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "The namespace converted from, e.g. 'ensembl_gene'."
+                        },
+                        "target": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "The namespace converted to, e.g. 'uniprot'."
+                        },
+                        "input_ids": {
+                            "type": "array",
+                            "description": "The identifiers submitted.",
+                            "items": {
+                                "type": "string",
+                                "description": "One input id."
+                            }
+                        },
+                        "input_count": {
+                            "type": [
+                                "integer",
+                                "string",
+                                "null"
+                            ],
+                            "description": "How many were submitted."
+                        },
+                        "mapped_input_count": {
+                            "type": [
+                                "integer",
+                                "string",
+                                "null"
+                            ],
+                            "description": "How many mapped to at least one target. The gap to input_count is the inputs that found nothing."
+                        },
+                        "all_inputs_mapped": {
+                            "type": [
+                                "boolean",
+                                "null"
+                            ],
+                            "description": "True only when every input mapped. False means part of the request silently found nothing."
+                        },
+                        "converted_ids": {
+                            "type": "array",
+                            "description": "All target identifiers, flattened across inputs. A one-to-many mapping therefore makes this list longer than the input list, and which came from which is in `mappings`.",
+                            "items": {
+                                "type": "string",
+                                "description": "One target id."
+                            }
+                        },
+                        "total_associations": {
+                            "type": [
+                                "integer",
+                                "string",
+                                "null"
+                            ],
+                            "description": "How many input-to-target pairs were found, e.g. 14 for one input. Not a count of inputs."
+                        },
+                        "mappings": {
+                            "type": "array",
+                            "description": "The mapping per input, which is the only place a one-to-many expansion can be traced back.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "input_id": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "The input identifier."
+                                    },
+                                    "mapped": {
+                                        "type": [
+                                            "boolean",
+                                            "null"
+                                        ],
+                                        "description": "True when it mapped to anything."
+                                    },
+                                    "converted_count": {
+                                        "type": [
+                                            "integer",
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "How many targets it mapped to. Greater than 1 means the identifier is ambiguous in the target namespace."
+                                    },
+                                    "converted_ids": {
+                                        "type": "array",
+                                        "description": "Those targets.",
+                                        "items": {
+                                            "type": "string",
+                                            "description": "One target id."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
         }
     },
     {
@@ -72,29 +192,339 @@
             "required": [],
             "additionalProperties": false
         },
-        "fields": {"timeout": 30},
+        "fields": {
+            "timeout": 30
+        },
         "type": "TogoIDDatasetsTool",
-        "test_examples": [{"category": "Compound"}, {"category": "Gene"}, {}],
-        "return_schema": {
-          "oneOf": [
+        "test_examples": [
             {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
+                "category": "Compound"
             },
             {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
+                "category": "Gene"
+            },
+            {}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "dataset": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The dataset's key, which is what a conversion call must pass as source or target."
+                            },
+                            "label": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Its human-readable name, e.g. 'ChEBI compound'."
+                            },
+                            "category": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "What kind of entity it holds, e.g. 'Compound'. Conversions only run between datasets whose categories are linked."
+                            },
+                            "catalog": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Its entry in the NBDC catalogue."
+                            },
+                            "regex": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The pattern an identifier must match, e.g. '^(?:CHEBI[:_])?(?<id>\\\\d+)$'. An id that fails this is rejected before any lookup, which is why a conversion can return nothing for a well-formed-looking id."
+                            },
+                            "examples": {
+                                "type": "array",
+                                "description": "Example identifiers, as a LIST OF LISTS -- one list per example set.",
+                                "items": {
+                                    "type": "array",
+                                    "description": "One example set.",
+                                    "items": {
+                                        "type": [
+                                            "string",
+                                            "number"
+                                        ],
+                                        "description": "One example identifier."
+                                    }
+                                }
+                            },
+                            "prefixes": {
+                                "type": "array",
+                                "description": "The URI prefixes the dataset's identifiers expand to.",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "label": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "The prefix's short label, e.g. 'rdf'."
+                                        },
+                                        "uri": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "What it expands to."
+                                        },
+                                        "rdf": {
+                                            "type": [
+                                                "boolean",
+                                                "null"
+                                            ],
+                                            "description": "True when the prefix is used in the RDF representation."
+                                        }
+                                    }
+                                }
+                            },
+                            "annotations": {
+                                "type": "array",
+                                "description": "Extra attributes TogoID holds for entries in this dataset, which a conversion can be filtered on.",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "label": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "The attribute's name, e.g. 'Molecular mass'."
+                                        },
+                                        "variable": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "Its variable name in queries, e.g. 'mass'."
+                                        },
+                                        "numerical": {
+                                            "type": [
+                                                "boolean",
+                                                "null"
+                                            ],
+                                            "description": "True when it is numeric and can be compared with ranges."
+                                        }
+                                    }
+                                }
+                            },
+                            "record": {
+                                "type": [
+                                    "object",
+                                    "null"
+                                ],
+                                "description": "The dataset's full configuration -- the same fields again, plus how TogoID builds and resolves its identifiers. `method` carries the actual shell pipeline used, so this is implementation detail rather than data about the dataset.",
+                                "properties": {
+                                    "dataset": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "The dataset key."
+                                    },
+                                    "label": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Its name."
+                                    },
+                                    "category": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Its category."
+                                    },
+                                    "catalog": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Its catalogue entry."
+                                    },
+                                    "regex": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "The identifier pattern."
+                                    },
+                                    "format": {
+                                        "type": "array",
+                                        "description": "Format strings for rendering an identifier.",
+                                        "items": {
+                                            "type": "string",
+                                            "description": "One format string, e.g. '%s'."
+                                        }
+                                    },
+                                    "examples": {
+                                        "type": "array",
+                                        "description": "Example identifier sets.",
+                                        "items": {
+                                            "type": "array",
+                                            "description": "One example set.",
+                                            "items": {
+                                                "type": [
+                                                    "string",
+                                                    "number"
+                                                ],
+                                                "description": "One example identifier."
+                                            }
+                                        }
+                                    },
+                                    "method": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "The command TogoID runs to build the label dictionary. Implementation detail, and it changes between releases."
+                                    },
+                                    "annotations": {
+                                        "type": "array",
+                                        "description": "The dataset's filterable attributes.",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "label": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "The attribute's name."
+                                                },
+                                                "variable": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "Its query variable."
+                                                },
+                                                "numerical": {
+                                                    "type": [
+                                                        "boolean",
+                                                        "null"
+                                                    ],
+                                                    "description": "True when numeric."
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "prefix": {
+                                        "type": "array",
+                                        "description": "The URI prefixes, under TogoID's other spelling of the same list.",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "label": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "The prefix label."
+                                                },
+                                                "uri": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "What it expands to."
+                                                },
+                                                "rdf": {
+                                                    "type": [
+                                                        "boolean",
+                                                        "null"
+                                                    ],
+                                                    "description": "True when used in RDF."
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "label_resolver": {
+                                        "type": [
+                                            "object",
+                                            "null"
+                                        ],
+                                        "description": "How TogoID turns an identifier into a human-readable label.",
+                                        "properties": {
+                                            "threshold": {
+                                                "type": [
+                                                    "boolean",
+                                                    "number",
+                                                    "null"
+                                                ],
+                                                "description": "The confidence threshold applied."
+                                            },
+                                            "dictionaries": {
+                                                "type": "array",
+                                                "description": "The label dictionaries consulted, in order.",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "dictionary": {
+                                                            "type": [
+                                                                "string",
+                                                                "null"
+                                                            ],
+                                                            "description": "The dictionary's name."
+                                                        },
+                                                        "label": {
+                                                            "type": [
+                                                                "string",
+                                                                "null"
+                                                            ],
+                                                            "description": "What it provides, e.g. 'Name'."
+                                                        },
+                                                        "label_type": {
+                                                            "type": [
+                                                                "string",
+                                                                "null"
+                                                            ],
+                                                            "description": "What kind of label, e.g. 'label', 'synonym'. A synonym is not the preferred name."
+                                                        },
+                                                        "preferred": {
+                                                            "type": [
+                                                                "boolean",
+                                                                "null"
+                                                            ],
+                                                            "description": "True for the dictionary whose label is used when several match."
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            ]
         }
     }
 ]

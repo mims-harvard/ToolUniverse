@@ -33,6 +33,123 @@ def _evidence_counts(researches: Any) -> Dict[str, int]:
     return {k: (len(v) if isinstance(v, list) else v) for k, v in researches.items()}
 
 
+# What each kind of Open Genes evidence record actually says, by the fields
+# that carry the answer rather than the measurement detail. GHR has 57
+# longevity-association records and 14 lifespan studies, and the tool reported
+# "57" and "14" -- counts for a tool whose description says to use it to
+# assess "whether and HOW a gene is implicated in aging". Nothing else returns
+# these records, so the how was unreachable.
+_EVIDENCE_DIGEST_FIELDS = {
+    "increaseLifespan": ("interventionResultForLifespan", "modelOrganism", "sex"),
+    "geneAssociatedWithLongevityEffects": (
+        "longevityEffect",
+        "dataType",
+        # What KIND of study found it, and in what kind of variant. Measured
+        # over 183 association records across ten genes: studyType is filled
+        # on 98% of them and polymorphismType on 97%, and a longevity
+        # association from a GWAS is not the same claim as one from a
+        # candidate-gene study.
+        "studyType",
+        "polymorphismType",
+        "ethnicity",
+        "sex",
+    ),
+    "ageRelatedChangesOfGene": ("changeType", "sample", "modelOrganism"),
+    "interventionToGeneImprovesVitalProcesses": (
+        "geneIntervention",
+        "result",
+        "vitalProcess",
+        "modelOrganism",
+    ),
+    "proteinRegulatesOtherGenes": ("regulationType", "regulatedGene"),
+    "additionalEvidences": (),
+}
+DOIS_PER_EVIDENCE_TYPE = 25
+# How many individual longevity-association records come back per gene. The
+# statistical fields only mean anything attached to their own record, so they
+# cannot go in the distinct-value digest; they need the records.
+ASSOCIATIONS_PER_GENE = 25
+_ASSOCIATION_RECORD_FIELDS = (
+    "longevityEffect",
+    "polymorphismId",
+    "polymorphismType",
+    "studyType",
+    "significance",
+    "pValue",
+    "associatedAllele",
+    "nonAssociatedAllele",
+    "nOfExperiment",
+    "nOfControls",
+    "ethnicity",
+    "sex",
+    "doi",
+    "pmid",
+)
+VALUES_PER_EVIDENCE_FIELD = 25
+
+
+def _distinct(records: List[Dict[str, Any]], field: str) -> List[str]:
+    """The distinct non-empty values of one field, in first-seen order."""
+    seen: List[str] = []
+    for record in records:
+        value = record.get(field) if isinstance(record, dict) else None
+        if value in (None, "", []):
+            continue
+        text = str(value)
+        if text not in seen:
+            seen.append(text)
+    return seen
+
+
+def _evidence_digest(researches: Any) -> Dict[str, Any]:
+    """Per evidence type: what the records say, not just how many there are."""
+    if not isinstance(researches, dict):
+        return {}
+    digest: Dict[str, Any] = {}
+    for key, records in researches.items():
+        if not isinstance(records, list) or not records:
+            continue
+        rows = [r for r in records if isinstance(r, dict)]
+        entry: Dict[str, Any] = {"count": len(records)}
+        for field in _EVIDENCE_DIGEST_FIELDS.get(key, ()):
+            values = _distinct(rows, field)
+            if values:
+                entry[field] = values[:VALUES_PER_EVIDENCE_FIELD]
+                if len(values) > VALUES_PER_EVIDENCE_FIELD:
+                    entry[f"{field}_truncated"] = True
+                    entry[f"{field}_distinct_count"] = len(values)
+        # The association records themselves, for the one evidence type whose
+        # claim is statistical. A digest collects DISTINCT values per field,
+        # which is right for categories and useless for a p-value: a list of
+        # distinct p-values is detached from the associations they belong to.
+        # Measured over 183 records: significance 98%, polymorphismId 98%,
+        # nOfExperiment 98%, nOfControls 96%, pValue 95% -- so a caller got
+        # the effect and could not tell whether to believe it, which cohort
+        # it came from, or which variant to look up. Capped, with the cap
+        # disclosed.
+        if key == "geneAssociatedWithLongevityEffects":
+            associations = []
+            for row in rows[:ASSOCIATIONS_PER_GENE]:
+                association = {
+                    field: row.get(field)
+                    for field in _ASSOCIATION_RECORD_FIELDS
+                    if row.get(field) not in (None, "")
+                }
+                if association:
+                    associations.append(association)
+            if associations:
+                entry["associations"] = associations
+                entry["associations_returned"] = len(associations)
+                entry["associations_truncated"] = len(rows) > ASSOCIATIONS_PER_GENE
+        dois = _distinct(rows, "doi")
+        if dois:
+            entry["dois"] = dois[:DOIS_PER_EVIDENCE_TYPE]
+            entry["doi_count"] = len(dois)
+            entry["dois_truncated"] = len(dois) > DOIS_PER_EVIDENCE_TYPE
+        digest[key] = entry
+    return digest
+
+
 def _fetch_json(
     path: str, timeout: int, params: Dict[str, Any] = None, not_found_ok: bool = False
 ) -> Any:
@@ -131,6 +248,7 @@ class OpenGenesGeneTool(BaseTool):
             }
         data = _summarize(g)
         data["evidence_counts"] = _evidence_counts(g.get("researches"))
+        data["evidence_summary"] = _evidence_digest(g.get("researches"))
         data["protein_description"] = g.get("proteinDescriptionOpenGenes") or g.get(
             "proteinDescriptionUniProt"
         )

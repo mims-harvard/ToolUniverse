@@ -133,6 +133,30 @@
                         "type": "string"
                       }
                     }
+                  },
+                  "aliases": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The alias that matched the query, e.g. ['CRISPR-associated protein 9']. Measured on 2 of 5 hits - and it is the only field that explains why an entity whose label does not resemble the query was returned."
+                  },
+                  "display": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The hit's label and description ready for display, each with its language and direction. The right strings to show a user, with the language they are actually in."
+                  },
+                  "repository": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which Wikibase served the hit, e.g. 'wikidata'. The same API serves other Wikibase instances."
                   }
                 }
               }
@@ -140,6 +164,13 @@
             "search-continue": {
               "type": "integer",
               "description": "Offset for next page"
+            },
+            "success": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "1 when the search succeeded. Wikidata's own flag, an integer rather than a boolean."
             }
           },
           "not": {

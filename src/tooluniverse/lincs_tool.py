@@ -18,6 +18,29 @@ from .tool_registry import register_tool
 LINCS_BASE = "https://maayanlab.cloud/sigcom-lincs/metadata-api"
 
 
+def _signature_file(meta: dict) -> dict:
+    """Where the signature's data actually is, and how to verify it.
+
+    The search returned a signature's annotations -- drug, cell line, dose,
+    time -- and nothing that leads to the signature itself. SigCom LINCS
+    answers a resolvable `persistent_id` for every signature
+    ("https://lincs-dcic.s3.amazonaws.com/LINCS-sigs-2021/cd/cp/L1000_LINCS_
+    DCIC_CPC006_TYKNU_6H_F09_dexamethasone_10uM.tsv"), the file's name, its
+    size, and both checksums, so a caller can fetch the differential
+    expression and check that it arrived intact. A search that cannot reach
+    the data it describes is a search for metadata about a file the caller
+    cannot find.
+    """
+    return {
+        "url": meta.get("persistent_id"),
+        "filename": meta.get("filename"),
+        "size_in_bytes": meta.get("size_in_bytes"),
+        "uncompressed_size_in_bytes": meta.get("uncompressed_size_in_bytes"),
+        "sha256": meta.get("sha256"),
+        "md5": meta.get("md5"),
+    }
+
+
 @register_tool("LINCSSignatureTool")
 class LINCSSignatureTool(BaseTool):
     """
@@ -130,6 +153,16 @@ class LINCSSignatureTool(BaseTool):
                     "anatomy": meta.get("anatomy"),
                     "pubchem_id": meta.get("pubchem_id"),
                     "library_id": sig.get("library"),
+                    # The CMap identifier, which joins this signature to the
+                    # rest of the LINCS ecosystem, and SigCom's own local id.
+                    "cmap_id": meta.get("cmap_id"),
+                    "local_id": meta.get("local_id"),
+                    "disease_ontology_id": meta.get("doid"),
+                    "data_level": meta.get("data_level"),
+                    "version": meta.get("version"),
+                    "created": meta.get("creation_time"),
+                    # How to fetch the signature and verify what arrives.
+                    "data_file": _signature_file(meta),
                 }
             )
 

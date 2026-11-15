@@ -18,6 +18,80 @@ from .tool_registry import register_tool
 NDEX_BASE_URL = "https://public.ndexbio.org/v2"
 
 
+# CX declares an attribute's type in `d`; without it every value is a string
+# and a SAINT score cannot be compared.
+_CX_NUMERIC = {"integer", "long", "short", "double", "float"}
+
+
+DESCRIPTION_CHARACTERS = 300
+
+
+def _network_properties(network: dict) -> dict:
+    """NDEx's network-level properties, keyed by name.
+
+    The search row returned the uuid, name, owner and counts and dropped
+    this block, where the fields a caller picks a network BY actually live:
+    `organism: Homo sapiens`, `disease: cancer`, `tissue: breast carcinoma`,
+    `methods: coexpression analysis`, `networkType: unsigned`. The values are
+    coerced by the `dataType` NDEx declares, the same treatment round
+    twenty-nine gave the node and edge attributes of a single network.
+    """
+    out = {}
+    for row in network.get("properties") or []:
+        if not isinstance(row, dict):
+            continue
+        name = row.get("predicateString")
+        if not name:
+            continue
+        out[name] = _cx_scalar(row.get("value"), (row.get("dataType") or "string"))
+    return out
+
+
+def _cx_value(attribute: dict):
+    """One CX attribute value, coerced to the type CX declares for it."""
+    value = attribute.get("v")
+    kind = (attribute.get("d") or "string").lower()
+    if kind.startswith("list_of"):
+        inner = kind.replace("list_of_", "")
+        values = value if isinstance(value, list) else [value]
+        return [_cx_scalar(v, inner) for v in values]
+    return _cx_scalar(value, kind)
+
+
+def _cx_scalar(value, kind: str):
+    if value is None:
+        return None
+    if kind in _CX_NUMERIC:
+        try:
+            return int(value) if kind in ("integer", "long", "short") else float(value)
+        except (TypeError, ValueError):
+            return value
+    if kind == "boolean":
+        if isinstance(value, bool):
+            return value
+        return str(value).strip().lower() in ("true", "1", "yes")
+    return value
+
+
+def _cx_attributes(aspect_rows: list) -> dict:
+    """{element id: {name: value}} from a CX nodeAttributes/edgeAttributes aspect.
+
+    Each row points at its element with `po`. The aspects can arrive before
+    or after the elements they describe, so they are collected first and
+    attached afterwards.
+    """
+    out: dict = {}
+    for row in aspect_rows or []:
+        if not isinstance(row, dict):
+            continue
+        owner = row.get("po")
+        name = row.get("n")
+        if owner is None or not name:
+            continue
+        out.setdefault(owner, {})[name] = _cx_value(row)
+    return out
+
+
 @register_tool("NDExTool")
 class NDExTool(BaseTool):
     """
@@ -106,11 +180,26 @@ class NDExTool(BaseTool):
 
         networks = []
         for n in data.get("networks", []):
+            description = n.get("description") or ""
             networks.append(
                 {
                     "uuid": n.get("externalId"),
                     "name": n.get("name"),
-                    "description": (n.get("description") or "")[:300],
+                    "description": description[:DESCRIPTION_CHARACTERS],
+                    "description_truncated": len(description)
+                    > DESCRIPTION_CHARACTERS,
+                    # What the network is OF: organism, disease, tissue,
+                    # method. The search row had none of it.
+                    "properties": _network_properties(n),
+                    "created": n.get("creationTime"),
+                    "modified": n.get("modificationTime"),
+                    "is_certified": n.get("isCertified"),
+                    "is_valid": n.get("isValid"),
+                    "has_layout": n.get("hasLayout"),
+                    # How big the download is, in the two CX versions.
+                    "cx_file_size": n.get("cxFileSize"),
+                    "cx2_file_size": n.get("cx2FileSize"),
+                    "warnings": [w for w in (n.get("warnings") or []) if w],
                     "owner": n.get("owner"),
                     "node_count": n.get("nodeCount"),
                     "edge_count": n.get("edgeCount"),
@@ -165,10 +254,11 @@ class NDExTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        # Extract properties
-        properties = {}
-        for p in data.get("properties", []):
-            properties[p.get("predicateString", "")] = str(p.get("value", ""))[:300]
+        # The same reader the search row uses. This built
+        # `str(value)[:300]`, so a numeric property arrived as a truncated
+        # string and the two handlers of one module disagreed about what a
+        # property value is.
+        properties = _network_properties(data)
 
         return {
             "status": "success",
@@ -244,8 +334,17 @@ class NDExTool(BaseTool):
         nodes = []
         edges = []
         network_attrs = {}
+        # The measurements that make a network a finding rather than a
+        # drawing: this network's 82 nodes carry 378 nodeAttributes and its
+        # 118 edges 2,222 edgeAttributes -- Saintscore, logOddsScore,
+        # Entropy, WD, "# of patients altered", PreyUniprot -- and the rows
+        # returned id, name, represents and id, source, target, interaction.
+        node_attributes: dict = {}
+        edge_attributes: dict = {}
 
         for aspect in data:
+            if not isinstance(aspect, dict):
+                continue
             if "nodes" in aspect:
                 for node in aspect["nodes"]:
                     nodes.append(
@@ -265,9 +364,25 @@ class NDExTool(BaseTool):
                             "interaction": edge.get("i"),
                         }
                     )
+            elif "nodeAttributes" in aspect:
+                node_attributes.update(_cx_attributes(aspect["nodeAttributes"]))
+            elif "edgeAttributes" in aspect:
+                edge_attributes.update(_cx_attributes(aspect["edgeAttributes"]))
             elif "networkAttributes" in aspect:
                 for attr in aspect["networkAttributes"]:
                     network_attrs[attr.get("n", "")] = str(attr.get("v", ""))[:200]
+
+        for node in nodes:
+            node["attributes"] = node_attributes.get(node["id"], {})
+        for edge in edges:
+            edge["attributes"] = edge_attributes.get(edge["id"], {})
+
+        node_attribute_names = sorted(
+            {name for attrs in node_attributes.values() for name in attrs}
+        )
+        edge_attribute_names = sorted(
+            {name for attrs in edge_attributes.values() for name in attrs}
+        )
 
         node_page = nodes[node_offset : node_offset + node_limit]
         edge_page = edges[edge_offset : edge_offset + edge_limit]
@@ -298,10 +413,19 @@ class NDExTool(BaseTool):
                 else None,
                 "truncated_nodes": node_offset > 0 or nodes_have_more,
                 "truncated_edges": edge_offset > 0 or edges_have_more,
+                "network_attributes": network_attrs,
+                "node_attribute_names": node_attribute_names,
+                "edge_attribute_names": edge_attribute_names,
             },
             "metadata": {
                 "source": "NDEx (Network Data Exchange)",
                 "uuid": uuid,
                 "format": "CX",
+                "attributes_note": "Per-node and per-edge attributes are under "
+                "each row's 'attributes', typed as CX declares them; "
+                "node_attribute_names and edge_attribute_names list every "
+                "name in the whole network, not only this page. Layout "
+                "coordinates (cartesianLayout) and Cytoscape visual "
+                "properties are not returned.",
             },
         }

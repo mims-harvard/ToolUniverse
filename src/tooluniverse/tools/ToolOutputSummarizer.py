@@ -18,7 +18,7 @@ def ToolOutputSummarizer(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Optional[str | dict[str, Any]]:
     """
     AI-powered tool for summarizing long tool outputs, focusing on key information relevant to the or...
 
@@ -43,7 +43,7 @@ def ToolOutputSummarizer(
 
     Returns
     -------
-    dict[str, Any]
+    Optional[str | dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -128,6 +128,104 @@
                 "array"
               ],
               "description": "All released versions with dates"
+            },
+            "BugReports": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Where to report problems, e.g. 'https://github.com/tidyverse/ggplot2/issues'. The maintainer email is for the maintainer; this is the issue tracker."
+            },
+            "Collate": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The order the package's R files are sourced in, as a newline-and-quote-delimited string. Matters only when reconstructing the package, and it is long."
+            },
+            "Config/Needs/website": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Packages needed only to build the package's website, e.g. 'ggtext, tidyr, forcats'. NOTE the '/' characters in the property name."
+            },
+            "Config/testthat/edition": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which testthat edition the tests are written for, e.g. '3'. A string."
+            },
+            "Config/usethis/last-upkeep": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the maintainer last ran usethis upkeep, e.g. '2025-04-23'. A rough signal of maintenance, distinct from the release date."
+            },
+            "Encoding": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Character encoding of the package's files, e.g. 'UTF-8'."
+            },
+            "Enhances": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Packages this one extends without depending on, e.g. {'sp': ...}. Optional integrations that are silently inactive if the other package is absent."
+            },
+            "LazyData": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "'true' when datasets load on demand. A string, not a boolean."
+            },
+            "MD5sum": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "MD5 of the source tarball, e.g. 'c50d6864f6226ed9759e5deaa0a25e7f'. What verifies a download; the version string does not."
+            },
+            "NeedsCompilation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "'yes' when the package has compiled code, 'no' when it is pure R. Decides whether installing needs a toolchain."
+            },
+            "Packaged": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When and by whom the tarball was built, e.g. '2026-04-21 12:47:29 UTC; thomas'. One string carrying both, so it must be split to use either."
+            },
+            "Repository": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which repository serves it, e.g. 'CRAN'."
+            },
+            "RoxygenNote": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which roxygen2 version generated the documentation, e.g. '7.3.3'."
+            },
+            "VignetteBuilder": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What is needed to build the vignettes, e.g. 'quarto'. An unusual builder is itself an install requirement."
             }
           },
           "not": {
@@ -197,6 +295,48 @@
             "timeline": {
               "type": "object",
               "description": "Map of version string to release date (ISO 8601)"
+            },
+            "_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The package name, which CRAN's CouchDB uses as the document id, e.g. 'ggplot2'."
+            },
+            "_rev": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "CouchDB revision token for the record, e.g. '34-94ca0daa28f51a3e74e5aab77836513c'. The leading number counts how many times CRAN's metadata for the package has changed."
+            },
+            "archived": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the package has been removed from CRAN. An archived package still has versions and a title, so nothing else in the reply reveals that it can no longer be installed."
+            },
+            "latest": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The current version on CRAN, e.g. '4.0.3'. Which of the listed versions is the one `install.packages` would fetch."
+            },
+            "revdeps": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many CRAN packages depend on this one, e.g. 410. The measure of how much would break if it changed."
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The package's one-line title, e.g. 'Create Elegant Data Visualisations Using the Grammar of Graphics'."
             }
           },
           "not": {

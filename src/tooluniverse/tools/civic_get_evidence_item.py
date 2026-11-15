@@ -1,7 +1,7 @@
 """
 civic_get_evidence_item
 
-Get a specific CIViC evidence item by evidence ID. Evidence items link molecular profiles or vari...
+Get one CIViC evidence item by id, with THE ASSERTIONS THAT CITE IT. Returns the evidence level, ...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def civic_get_evidence_item(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get a specific CIViC evidence item by evidence ID. Evidence items link molecular profiles or vari...
+    Get one CIViC evidence item by id, with THE ASSERTIONS THAT CITE IT. Returns the evidence level, ...
 
     Parameters
     ----------

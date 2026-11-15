@@ -117,7 +117,15 @@
                       "number",
                       "null"
                     ]
-                  }
+                  },
+                  "num_samples": {
+                    "type": ["number", "null"],
+                    "description": "The n for a quantitative trait, where there are no cases and controls to count. BioBank Japan and UKB-TOPMed answer it, and an association used to come back with a p-value and no sample size at all."
+                  },
+                  "ac": {"type": ["number", "null"], "description": "Allele count, where the instance reports it instead of a frequency"},
+                  "an": {"type": ["number", "null"], "description": "Allele number"},
+                  "citation": {"type": ["string", "null"], "description": "What to cite for this association"},
+                  "alternative_link": {"type": ["string", "null"], "description": "The instance's own page for it"}
                 }
               }
             }
@@ -258,7 +266,15 @@
                       "number",
                       "null"
                     ]
-                  }
+                  },
+                  "num_samples": {
+                    "type": ["number", "null"],
+                    "description": "The n for a quantitative trait, where there are no cases and controls to count. BioBank Japan and UKB-TOPMed answer it, and an association used to come back with a p-value and no sample size at all."
+                  },
+                  "ac": {"type": ["number", "null"], "description": "Allele count, where the instance reports it instead of a frequency"},
+                  "an": {"type": ["number", "null"], "description": "Allele number"},
+                  "citation": {"type": ["string", "null"], "description": "What to cite for this association"},
+                  "alternative_link": {"type": ["string", "null"], "description": "The instance's own page for it"}
                 }
               }
             }
@@ -399,7 +415,15 @@
                       "number",
                       "null"
                     ]
-                  }
+                  },
+                  "num_samples": {
+                    "type": ["number", "null"],
+                    "description": "The n for a quantitative trait, where there are no cases and controls to count. BioBank Japan and UKB-TOPMed answer it, and an association used to come back with a p-value and no sample size at all."
+                  },
+                  "ac": {"type": ["number", "null"], "description": "Allele count, where the instance reports it instead of a frequency"},
+                  "an": {"type": ["number", "null"], "description": "Allele number"},
+                  "citation": {"type": ["string", "null"], "description": "What to cite for this association"},
+                  "alternative_link": {"type": ["string", "null"], "description": "The instance's own page for it"}
                 }
               }
             }
@@ -529,7 +553,23 @@
                       "number",
                       "null"
                     ]
-                  }
+                  },
+                  "pval_skato": {"type": ["number", "null"], "description": "Genebass reports a third p-value beside Burden and SKAT -- the SKAT-O combination -- and only two were returned"},
+                  "n_cases": {"type": ["number", "null"], "description": "Cases the burden test ran on, joined from the phenotype catalogue the tool already fetches for the description. A burden p-value with no n cannot be read, and 4,529 of them came back without one on a single gene."},
+                  "n_controls": {"type": ["number", "null"]},
+                  "n_cases_defined": {"type": ["number", "null"]},
+                  "n_cases_both_sexes": {"type": ["number", "null"]},
+                  "heritability": {"type": ["number", "null"]},
+                  "saige_version": {"type": ["string", "null"], "description": "A burden p-value is a property of the pipeline that produced it"},
+                  "inv_normalized": {"type": ["string", "boolean", "null"], "description": "Whether the phenotype was inverse-normalised before testing"},
+                  "analysis_id": {"type": ["string", "null"]},
+                  "category": {"type": ["string", "null"], "description": "Where the phenotype sits in the UK Biobank hierarchy"},
+                  "annotation": {"type": ["string", "null"], "description": "The burden set the row belongs to: pLoF, missense|LC, synonymous"},
+                  "pheno_sex": {"type": ["string", "null"]},
+                  "chrom": {"type": ["string", "null"]},
+                  "start": {"type": ["number", "null"]},
+                  "coding": {"type": ["string", "null"]},
+                  "modifier": {"type": ["string", "null"]}
                 }
               }
             }

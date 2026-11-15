@@ -296,8 +296,16 @@ class TestToolUniverseCore:
         result_str = str(result).lower()
         assert "error" in result_str or "missing" in result_str or "invalid" in result_str or "not found" in result_str
 
+    @pytest.mark.network
     def test_run_method_single_tool(self):
-        """Test run method with single tool call."""
+        """Test run method with single tool call.
+
+        Marked network for the same reason as
+        `test_run_method_multiple_tools` directly below it, which is already
+        marked and calls the same endpoint: this makes a live UniProt request
+        inside the unit tier. It is the test that failed CI on main at
+        e3a819ff1, where nothing in the commit touched UniProt.
+        """
         self.tu = ToolUniverse()
         self.tu.load_tools()
         

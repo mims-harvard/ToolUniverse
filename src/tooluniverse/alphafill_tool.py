@@ -74,10 +74,16 @@ class AlphaFillTransplantsTool(BaseTool):
         # Aggregate transplanted molecules by compound, keeping the best (lowest
         # local RMSD) instance and the set of source PDB entries.
         agg: Dict[str, Dict[str, Any]] = defaultdict(
-            lambda: {"count": 0, "best_local_rmsd": None, "source_pdb_ids": set()}
+            lambda: {
+                "count": 0,
+                "best_local_rmsd": None,
+                "best": None,
+                "source_pdb_ids": set(),
+            }
         )
         for hit in hits:
             pdb_id = hit.get("pdb_id")
+            alignment = hit.get("alignment") or {}
             for transplant in hit.get("transplants", []) or []:
                 cid = transplant.get("compound_id") or transplant.get("analogue_id")
                 if not cid:
@@ -91,6 +97,24 @@ class AlphaFillTransplantsTool(BaseTool):
                     rec["best_local_rmsd"] is None or rmsd < rec["best_local_rmsd"]
                 ):
                     rec["best_local_rmsd"] = rmsd
+                    # The other three numbers AlphaFill judges a transplant by
+                    # belong to THIS instance. Summarising them separately --
+                    # a best identity here, a best clash score there -- would
+                    # describe a transplant that does not exist.
+                    clash = transplant.get("clash") or {}
+                    pae = transplant.get("pae") or {}
+                    rec["best"] = {
+                        "source_pdb_id": pdb_id,
+                        "sequence_identity": alignment.get("identity"),
+                        "alignment_length": alignment.get("length"),
+                        "global_rmsd": hit.get("global_rmsd"),
+                        "clash_score": clash.get("score"),
+                        "clash_count": clash.get("clash_count"),
+                        "transplant_atom_count": clash.get("transplant_atom_count"),
+                        "pae_mean": pae.get("mean"),
+                        "pdb_auth_seq_id": transplant.get("pdb_auth_seq_id"),
+                        "asym_id": transplant.get("asym_id"),
+                    }
 
         source_pdb_offset = max(int(arguments.get("source_pdb_offset") or 0), 0)
         source_pdb_limit = min(
@@ -103,6 +127,7 @@ class AlphaFillTransplantsTool(BaseTool):
                     "compound_id": cid,
                     "occurrences": rec["count"],
                     "best_local_rmsd": rec["best_local_rmsd"],
+                    "best_transplant": rec["best"],
                     "source_pdb_ids": sorted(rec["source_pdb_ids"])[
                         source_pdb_offset : source_pdb_offset + source_pdb_limit
                     ],
@@ -138,7 +163,7 @@ class AlphaFillTransplantsTool(BaseTool):
             "metadata": {
                 "uniprot": uniprot,
                 "distinct_ligands": len(transplants),
-                "note": "compound_id is the PDB chemical component (ligand/cofactor/ion) code; lower best_local_rmsd = better fit",
+                "note": "compound_id is the PDB chemical component (ligand/cofactor/ion) code; lower best_local_rmsd = better fit. best_local_rmsd alone does not say whether the transplant is usable -- read best_transplant.clash_score (AlphaFill's transplant clash score, lower is better) and best_transplant.sequence_identity beside it.",
                 "source": "AlphaFill",
             },
         }

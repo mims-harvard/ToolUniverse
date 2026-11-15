@@ -52,7 +52,45 @@
     "return_schema": {
       "type": "object",
       "description": "Output of the tool execution.",
-      "properties": {}
+      "properties": {
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The URL fetched."
+        },
+        "file_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Where the file was written locally."
+        },
+        "file_size": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "Size on disk in bytes."
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The Content-Type the server declared. It is the SERVER's claim, not a check of the bytes."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "HTTP status. A 200 with an HTML body is how an error page gets saved as a data file."
+        }
+      }
     },
     "test_examples": [
       {
@@ -109,7 +147,53 @@
     "return_schema": {
       "type": "object",
       "description": "Output of the tool execution.",
-      "properties": {}
+      "properties": {
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The URL fetched."
+        },
+        "file_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Where the file was written."
+        },
+        "size": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "Bytes written."
+        },
+        "content_length": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "What the server said the length would be. A mismatch with `size` means a truncated download."
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The declared Content-Type."
+        },
+        "status_code": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "HTTP status."
+        }
+      }
     },
     "test_examples": [
       {
@@ -156,7 +240,44 @@
     "return_schema": {
       "type": "object",
       "description": "Output of the tool execution.",
-      "properties": {}
+      "properties": {
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The URL fetched."
+        },
+        "content": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The text itself."
+        },
+        "size": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "Its length."
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The declared Content-Type."
+        },
+        "encoding": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The character encoding used to decode it. A wrong guess here corrupts non-ASCII text silently."
+        }
+      }
     },
     "test_examples": [
       {

@@ -225,6 +225,13 @@
                                 }
                               }
                             }
+                          },
+                          "score": {
+                            "type": [
+                              "number",
+                              "null"
+                            ],
+                            "description": "Open Targets association score for the target-disease pair, e.g. 0.8763240905984302. Rows are ordered by it, and it is the whole basis on which one association outranks another."
                           }
                         }
                       }
@@ -333,6 +340,13 @@
             "truncation_note": {
               "type": "string",
               "description": "Present only when a collection came back truncated: states how many of how many rows were returned and why the withheld rows cannot be fetched through this tool."
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Why the evidence list is empty when it is, e.g. 'IntOGen returns 0 evidence rows for this query. IntOGen only covers somatic tumor driver genes...'. The difference between a datasource having no evidence and the query being outside its scope."
             }
           }
         }
@@ -1885,6 +1899,13 @@
                                 "type": "string"
                               }
                             }
+                          },
+                          "phenotypeEFO": {
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "description": "The phenotype's EFO term, with its id and name. Measured on 6 of 12 rows - the ontology id, without which the phenotype label cannot be joined to anything."
                           }
                         }
                       }
@@ -2013,6 +2034,13 @@
               }
             }
           }
+        },
+        "drug": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The drug record, with 'name', 'id' and 'drugWarnings' - the warnings themselves, each with its type, description and the authority that issued it. The blackbox status this tool exists to report lives in here."
         }
       }
     }
@@ -2362,6 +2390,21 @@
                           }
                         }
                       }
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Total number of significant adverse-event signals for this drug across all pages — NOT the number of rows in this response."
+                    },
+                    "returned": {
+                      "type": "integer",
+                      "description": "Number of drugs and clinical candidates actually present in `rows` for this page."
+                    },
+                    "truncated": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when more indications exist than were returned. The flag that stops a partial indication list being read as the drug's full label."
                     }
                   }
                 }
@@ -2444,6 +2487,13 @@
                           },
                           "name": {
                             "type": "string"
+                          },
+                          "label": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The GO term's human-readable name, e.g. 'protein binding'. Present on all 826 annotations measured; the id alone is not readable, and this is the field a report actually prints."
                           }
                         }
                       }
@@ -2622,6 +2672,26 @@
                       },
                       "datasource": {
                         "type": "string"
+                      },
+                      "biosamples": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "Where the safety signal was observed, each with cellFormat and cellLabel, e.g. {'cellFormat': 'cell line', 'cellLabel': 'HepaRG'}. Measured on 1 of 4 liabilities. A liability seen only in one hepatocyte line is not an organism-level finding."
+                      },
+                      "effects": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "The direction of the effect, each with 'direction', e.g. 'Activation/Increase/Upregulation'. Measured on 1 of 4. Whether the liability follows from activating or inhibiting the target - which decides whether it applies to the drug being considered."
                       }
                     }
                   }
@@ -2695,6 +2765,23 @@
                             },
                             "geneticBackground": {
                               "type": "string"
+                            },
+                            "id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "MGI identifier of the mouse model, e.g. 'MGI:3714349'. The key for looking the allele up at MGI; the phenotype text alone is not actionable."
+                            },
+                            "literature": {
+                              "type": [
+                                "array",
+                                "null"
+                              ],
+                              "items": {
+                                "type": "string"
+                              },
+                              "description": "PubMed ids reporting the model, e.g. ['25671302', ...] - 11 on the measured row, present on 677 of 678. The citation for the phenotype."
                             }
                           }
                         }
@@ -3719,6 +3806,13 @@
                 },
                 "isTherapeuticArea": {
                   "type": "boolean"
+                },
+                "obsoleteTerms": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "EFO ids that have been merged into this disease, e.g. ['EFO_0000384']. An older dataset annotated with one of these ids refers to this same disease, so they must be resolved before counting."
                 }
               }
             }
@@ -4179,6 +4273,34 @@
                       }
                     }
                   }
+                },
+                "drugType": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What kind of molecule the drug is, e.g. 'Small molecule', 'Antibody', 'Protein'. Determines how the mechanism and indications should be read."
+                },
+                "indications": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The drug's indications, under 'rows', with 'count' for how many exist and 'returned'/'truncated' for how many came back. The truncated flag is what stops a partial indication list being read as the drug's full label."
+                },
+                "maximumClinicalStage": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The furthest clinical stage the drug has reached, e.g. 'APPROVAL'. Whether it is approved or still in trials, which the indication list alone does not say."
+                },
+                "mechanismsOfAction": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The drug's mechanisms, under 'rows' - the target and action type for each."
                 }
               }
             }
@@ -4310,6 +4432,13 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "indications": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The drug's indications, under 'rows', with 'count' for how many exist and 'returned'/'truncated' for how many came back. The truncated flag is what stops a partial indication list being read as the drug's full label."
                 }
               }
             }
@@ -4675,6 +4804,20 @@
                 },
                 "isApproved": {
                   "type": "boolean"
+                },
+                "drugType": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What kind of molecule the drug is, e.g. 'Small molecule'."
+                },
+                "maximumClinicalStage": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The furthest stage reached, e.g. 'APPROVAL'. The approval status this tool exists to report, and it was declared nowhere."
                 }
               }
             }
@@ -4783,6 +4926,13 @@
               }
             }
           }
+        },
+        "target": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The gene the variant sits in, with its Ensembl 'id' and 'approvedSymbol'. The readable gene name, which targetFromSourceId only gives as an accession."
         }
       }
     }
@@ -4860,6 +5010,89 @@
                       },
                       "isDirectTarget": {
                         "type": "boolean"
+                      },
+                      "datatypeId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "What kind of pharmacogenomic evidence the row is, e.g. 'clinical_annotation'. Separates a curated clinical annotation from a variant-drug annotation, which carry very different weight."
+                      },
+                      "drugs": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "The drugs the row concerns, each with drugId and the drug's name, e.g. {'drugId': 'CHEMBL25', 'drug': {'name': 'ASPIRIN'}}. A pharmacogenomic row can name a combination, so this is a list."
+                      },
+                      "genotypeId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The genotype the effect is attributed to, as position and alleles, e.g. '19_3595925_G_A,A'. Which genotype - not merely which variant - the response applies to."
+                      },
+                      "literature": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "PubMed ids backing the row, e.g. ['27995340']. The citation, which nothing else in the row gives."
+                      },
+                      "studyId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "PharmGKB's id for the study behind the row, e.g. '1448617231'."
+                      },
+                      "target": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The gene the variant sits in, with its Ensembl 'id' and 'approvedSymbol'. The readable gene name, which targetFromSourceId only gives as an accession."
+                      },
+                      "targetFromSourceId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Ensembl gene id as the source recorded it, e.g. 'ENSG00000006638'."
+                      },
+                      "variantFunctionalConsequence": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The variant's consequence, with its Sequence Ontology 'id' and a readable 'label'."
+                      },
+                      "variantFunctionalConsequenceId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Sequence Ontology id of that consequence, e.g. 'SO_0001583' for a missense variant."
+                      },
+                      "haplotypeFromSourceId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "PharmGKB's own accession for that haplotype, e.g. 'PA165951131'. The join back to PharmGKB's haplotype record; measured on 17 of 319 rows."
+                      },
+                      "haplotypeId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The star allele or haplotype the effect is attributed to, e.g. 'HLA-DPB1*03:01' or 'G6PD Mediterranean, Dallas, Panama' Sassari, Cagliari, Birmingham'. For HLA and G6PD the response is a property of the haplotype, not of any single variant, so a row read by genotypeId alone loses what it is about. Measured on 21 of 319 rows."
                       }
                     }
                   }
@@ -4960,6 +5193,13 @@
                               },
                               "hasBeenWithdrawn": {
                                 "type": "boolean"
+                              },
+                              "maximumClinicalStage": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "The furthest stage the drug has reached, e.g. 'PHASE_1'. Separates an approved drug from one that stopped in phase 1, which the name alone does not."
                               }
                             }
                           },
@@ -4979,6 +5219,16 @@
                                 "type": "string"
                               }
                             }
+                          },
+                          "diseases": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "The diseases the drug is indicated or trialled for, each with the disease id and name - 9 on the measured row, present on 28 of 32 rows. A drug against this target without its indications cannot be judged for repurposing."
                           }
                         }
                       }
@@ -5073,6 +5323,13 @@
                       }
                     }
                   }
+                },
+                "indications": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The drug's indications, under 'rows', with 'count' for how many exist and 'returned'/'truncated' for how many came back. The truncated flag is what stops a partial list being read as the drug's full label."
                 }
               }
             }
@@ -5153,6 +5410,13 @@
                       }
                     }
                   }
+                },
+                "mechanismsOfAction": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The drug's mechanisms, under 'rows' - the target and action type for each."
                 }
               }
             }
@@ -5348,6 +5612,13 @@
               }
             }
           }
+        },
+        "search": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The search result, with 'total' matches and the 'hits' themselves. The payload, and `total` is what says whether the hits are all of them."
         }
       }
     }
@@ -5468,6 +5739,16 @@
               }
             }
           }
+        },
+        "geneOntologyTerms": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "The GO terms matched, each with its 'id' and 'label', e.g. {'id': 'GO:0006915', 'label': 'apoptotic process'}. The result itself, which the schema named nowhere."
         }
       }
     }
@@ -5545,6 +5826,27 @@
                       },
                       "score": {
                         "type": "number"
+                      },
+                      "upperBin": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Which decile bin the constraint upper bound falls in, e.g. 1. Measured on 1 of 3 constraint records."
+                      },
+                      "upperBin6": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "The same bound binned into 6 groups, e.g. 0. Two different binnings of one number; using them interchangeably gives different answers."
+                      },
+                      "upperRank": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "The gene's rank by that bound across all genes, e.g. 2437. The rank is what makes a constraint value interpretable - a LOEUF of 0.5 means little without knowing where it sits."
                       }
                     }
                   }

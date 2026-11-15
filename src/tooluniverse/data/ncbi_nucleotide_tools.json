@@ -168,6 +168,16 @@
         "search_term": {
           "type": "string",
           "description": "Generated NCBI search term used"
+        },
+        "accessions": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Accessions of the matching sequences, e.g. ['NC_000913.3', ...]. The versioned accession, which is what pins the exact sequence; the bare id does not."
         }
       }
     },

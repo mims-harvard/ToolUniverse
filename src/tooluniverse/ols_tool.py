@@ -88,6 +88,23 @@ def _expand_short_term_id(term_id: str) -> str:
     return term_id
 
 
+# EFO:0000270 carries 49 curatedFrom entries -- the text each data source
+# annotated with the term -- and this many are reported.
+CURATED_FROM_PER_TERM = 25
+
+
+def _as_string_list(value) -> Optional[List[str]]:
+    """OLS sends a string, a list of strings, or nothing, per field and version."""
+    if value is None:
+        return None
+    if isinstance(value, str):
+        return [value] if value.strip() else None
+    if isinstance(value, list):
+        items = [item for item in value if isinstance(item, str) and item.strip()]
+        return items or None
+    return None
+
+
 def _infer_ontology_from_term_id(term_id: str) -> str:
     """Infer OLS ontology identifier from a CURIE prefix (e.g. 'HP:0001234' → 'hp').
 
@@ -155,6 +172,90 @@ class OntologyInfo(BaseModel):
     repository: Optional[HttpUrl] = Field(
         None, description="Repository URL for the ontology"
     )
+    # EFO imports terms from 40 ontologies and 36 import from it. Which
+    # ontologies an ontology depends on, and which depend on it, is the
+    # question "ontology info" is asked for when choosing one to annotate
+    # against; none of these five reached the caller.
+    imports_from: Optional[List[str]] = Field(
+        None,
+        description="Ontologies this one imports terms from",
+        alias="importsFrom",
+    )
+    exports_to: Optional[List[str]] = Field(
+        None,
+        description="Ontologies that import terms from this one",
+        alias="exportsTo",
+    )
+    links_to: Optional[List[str]] = Field(
+        None,
+        description="Property and term IRIs from other ontologies that this one uses",
+        alias="linksTo",
+    )
+    creators: Optional[List[str]] = Field(
+        None,
+        description="Who authored the ontology, from dc:creator",
+        validation_alias=AliasChoices(
+            "creators",
+            "http://purl.org/dc/elements/1.1/creator",
+            "http://purl.org/dc/terms/creator",
+        ),
+    )
+    languages: Optional[List[str]] = Field(
+        None,
+        description=(
+            "Language codes the ontology carries labels in. EFO has eight, so "
+            "a label search can miss a term that is only labelled in one."
+        ),
+        validation_alias=AliasChoices("languages", "language"),
+    )
+    license: Optional[str] = Field(
+        None,
+        description="Licence the ontology is published under",
+        validation_alias=AliasChoices(
+            "license",
+            "http://purl.org/dc/terms/license",
+            "http://purl.org/dc/elements/1.1/license",
+        ),
+    )
+    loaded: Optional[str] = Field(
+        None, description="When OLS last loaded this ontology, so how current it is"
+    )
+    mailing_list: Optional[str] = Field(
+        None, description="Where to ask about the ontology", alias="mailingList"
+    )
+    number_of_properties: Optional[int] = Field(
+        None, description="Number of properties", alias="numberOfProperties"
+    )
+    number_of_individuals: Optional[int] = Field(
+        None, description="Number of individuals", alias="numberOfIndividuals"
+    )
+
+    @field_validator(
+        "imports_from",
+        "exports_to",
+        "links_to",
+        "creators",
+        "languages",
+        mode="before",
+    )
+    @classmethod
+    def _as_list_of_strings(cls, value):
+        """Each of these is a list on v2 and a bare string on some entries."""
+        if value is None:
+            return None
+        if isinstance(value, str):
+            return [value] if value.strip() else None
+        if isinstance(value, list):
+            items = [str(item) for item in value if item is not None]
+            return items or None
+        return None
+
+    @field_validator("license", "loaded", mode="before")
+    @classmethod
+    def _first_string(cls, value):
+        if isinstance(value, list):
+            value = value[0] if value else None
+        return str(value) if value is not None else None
 
     @field_validator("title", "version", mode="before")
     @classmethod
@@ -218,6 +319,32 @@ class TermInfo(BaseModel):
     is_obsolete: Optional[bool] = Field(
         False, description="Indicates if the term is obsolete", alias="isObsolete"
     )
+    # The search endpoint answers all five of these on every hit and the row
+    # carried a label and an id. A term search whose rows have no definition
+    # costs one get_term_info call per hit to decide which hit was meant --
+    # and `description` is where OLS records a merge, e.g. ZFA:0009046 says
+    # "CL:0000804 and CL:0000812 were merged ... into CL:0000084".
+    description: Optional[List[str]] = Field(
+        None, description="Definition of the term, as the search hit carries it"
+    )
+    synonyms: Optional[List[str]] = Field(
+        None, description="Exact synonyms of the term"
+    )
+    related_synonyms: Optional[List[str]] = Field(
+        None,
+        description=(
+            "Related synonyms, which OBO distinguishes from exact ones: a "
+            "related synonym cannot be substituted for the label."
+        ),
+    )
+    ontology_prefix: Optional[str] = Field(
+        None,
+        description="Ontology prefix as used in the CURIE, e.g. ZFA",
+        alias="ontologyPrefix",
+    )
+    type: Optional[str] = Field(
+        None, description="What kind of entity the hit is: class, property or individual"
+    )
 
 
 class TermSearchResponse(PagedResponse):
@@ -234,10 +361,29 @@ class TermSearchResponse(PagedResponse):
 class DetailedTermInfo(TermInfo):
     """Extended term details in OLS."""
 
-    description: Optional[List[str]] = Field(None, description="Definition of the term")
-    synonyms: Optional[List[str]] = Field(
-        None, description="List of synonyms for the term"
+    # `description` and `synonyms` are inherited from TermInfo, which now
+    # carries them because the search hits do too.
+    # An ontology merges terms, and the retired id becomes an alternative id
+    # on the surviving one. Without it, a caller holding an old EFO id cannot
+    # tell that the term they were given is the replacement -- and OLS answers
+    # it in the same record, under `annotation.has_alternative_id`.
+    alternative_ids: Optional[List[str]] = Field(
+        None,
+        description=(
+            "Other ids this term is known by, including ids merged into it. "
+            "From annotation.has_alternative_id."
+        ),
     )
+    synonym_scopes: Optional[List[Dict[str, Any]]] = Field(
+        None,
+        description=(
+            "Each synonym with the scope OBO assigns it -- hasExactSynonym "
+            "against hasRelatedSynonym -- which `synonyms` flattens away. An "
+            "exact synonym can be substituted for the label; a related one "
+            "cannot."
+        ),
+    )
+    lang: Optional[str] = Field(None, description="Language of the label")
 
 
 @register_tool("OLSTool")
@@ -496,6 +642,21 @@ class OLSTool(BaseTool):
         term_data = terms[0]
         if "ontologyId" in term_data and "ontologyName" not in term_data:
             term_data["ontologyName"] = term_data["ontologyId"]
+        annotation = term_data.get("annotation")
+        if isinstance(annotation, dict) and annotation.get("has_alternative_id"):
+            term_data["alternative_ids"] = annotation["has_alternative_id"]
+        obo_synonyms = term_data.get("obo_synonym")
+        if isinstance(obo_synonyms, list) and obo_synonyms:
+            term_data["synonym_scopes"] = [
+                {
+                    "name": item.get("name"),
+                    "scope": item.get("scope"),
+                    "type": item.get("type"),
+                    "xrefs": item.get("xrefs") or [],
+                }
+                for item in obo_synonyms
+                if isinstance(item, dict)
+            ]
 
         term = DetailedTermInfo.model_validate(term_data)
         # Convert HttpUrl objects to strings for JSON compatibility
@@ -705,9 +866,49 @@ class OLSTool(BaseTool):
         # Exclude the query term itself
         similar = [d for d in docs if d.get("iri") != term_iri][:size]
 
+        # The first call fetched the whole source record and only `label` was
+        # read from it. Among what was thrown away: whether the source term is
+        # obsolete -- EFO:0000270 is, since 3.38.0 -- which decides whether
+        # the similar terms are worth having at all.
+        source_term = {
+            "iri": term_iri,
+            "label": label,
+            "curie": term_data.get("curie") if isinstance(term_data, dict) else None,
+            "definition": _as_string_list(
+                (term_data or {}).get("definition")
+                if isinstance(term_data, dict)
+                else None
+            ),
+            "synonyms": _as_string_list(
+                (term_data or {}).get("synonym") if isinstance(term_data, dict) else None
+            ),
+            "is_obsolete": (term_data or {}).get("isObsolete")
+            if isinstance(term_data, dict)
+            else None,
+            "curated_from_sources": _as_string_list(
+                (term_data or {}).get("curatedFromSources")
+                if isinstance(term_data, dict)
+                else None
+            ),
+            "curated_from": [
+                {
+                    "text": entry.get("text"),
+                    "source": entry.get("source"),
+                    "subject_categories": entry.get("subjectCategories") or [],
+                }
+                for entry in (
+                    ((term_data or {}).get("curatedFrom") or [])
+                    if isinstance(term_data, dict)
+                    else []
+                )[:CURATED_FROM_PER_TERM]
+                if isinstance(entry, dict)
+            ],
+        }
+
         payload = {
             "term_iri": term_iri,
             "source_label": label,
+            "source_term": source_term,
             "ontology": ontology,
             "similar_terms": similar,
             "total": len(similar),
@@ -891,6 +1092,18 @@ class OLSTool(BaseTool):
             or short_form
             or None,
             "isObsolete": item.get("isObsolete") or item.get("is_obsolete", False),
+            "description": _as_string_list(
+                item.get("description") or item.get("definition")
+            ),
+            "synonyms": _as_string_list(
+                item.get("exact_synonyms")
+                or item.get("synonyms")
+                or item.get("synonym")
+            ),
+            "related_synonyms": _as_string_list(item.get("related_synonyms")),
+            "ontologyPrefix": item.get("ontology_prefix")
+            or item.get("ontologyPrefix"),
+            "type": item.get("type") if isinstance(item.get("type"), str) else None,
         }
 
         if not payload["iri"]:

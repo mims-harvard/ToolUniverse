@@ -96,7 +96,7 @@ ToolUniverse is an ecosystem for creating AI scientist systems from any large la
 - [**Tool Composition**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tool_composition.html): Chain tools for sequential or parallel execution in self-directed workflows
 - [**Compact Mode**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/compact_mode.html): Reduces 2,700+ tools to 4-5 core discovery tools, saving ~99% context window
 - [**CLI (`tu`)**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tu_cli.html): Discover, inspect, run, and test tools directly from the terminal — 14 subcommands for interactive and scripted workflows
-- [**Agent Skills**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/skills_showcase.html): 68 pre-built research workflows for drug discovery, precision oncology, rare disease diagnosis, pharmacovigilance, and more
+- [**Agent Skills**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/skills_showcase.html): 153 pre-built research skills for drug discovery, precision oncology, rare disease diagnosis, pharmacovigilance, and more, plus 63 that install a GPU-backed model locally
 - [**Literature Search**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/literature_search_tools_tutorial.html): Unified search across PubMed, Semantic Scholar, ArXiv, BioRxiv, Europe PMC, and more
 - [**Two-Tier Result Caching**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/cache_system.html): In-memory LRU + SQLite persistence with per-tool fingerprinting for 10x speedup, offline support, and reproducibility
 - [**Continuous Expansion**](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/index.html): Register new tools locally or remotely without additional configuration

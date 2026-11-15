@@ -35,7 +35,15 @@ SUMSTATS_FTP_URL = "https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/
 
 
 def _study_record(entry: dict) -> dict:
-    """Shape one v2 study into the fields a caller acts on."""
+    """Shape one v2 study into the fields a caller acts on.
+
+    Everything below `association_count` was in the same response and was not
+    returned. The sample descriptions and ancestries are what a GWAS result
+    means -- GCST004031 is "2,095 European ancestry exposed individuals"
+    against "42,907 ... unexposed", across four ancestry groups -- and
+    `summaryStatistics` says whether the full statistics exist at all, which
+    for a tool named after them is the first thing a caller needs.
+    """
     return {
         "study_accession": entry.get("accessionId"),
         "reported_trait": entry.get("reportedTrait"),
@@ -48,6 +56,26 @@ def _study_record(entry: dict) -> dict:
         "publication_date": entry.get("publicationDate"),
         "first_author": entry.get("firstAuthor"),
         "association_count": entry.get("associationCount"),
+        "title": entry.get("title"),
+        "journal": entry.get("journal"),
+        "initial_sample_description": entry.get("initialSampleDescription") or [],
+        "replication_sample_description": entry.get("replicateSampleDescription")
+        or [],
+        "discovery_sample_ancestry": entry.get("discoverySampleAncestry") or [],
+        "replication_sample_ancestry": entry.get("replicationSampleAncestry") or [],
+        "genotyping_technologies": entry.get("genotypingTechnologies") or [],
+        # "NA" when the study has no summary statistics deposited, a path or a
+        # flag when it does. Passed through as upstream states it rather than
+        # guessed at.
+        "summary_statistics": entry.get("summaryStatistics"),
+        "has_summary_statistics": (
+            None
+            if entry.get("summaryStatistics") is None
+            else str(entry.get("summaryStatistics")).strip().upper() != "NA"
+        ),
+        # Whether the study tested a gene-environment interaction, which makes
+        # its effect sizes answer a different question.
+        "gene_environment_interaction": entry.get("gxe"),
     }
 
 

@@ -29,6 +29,20 @@ from .tool_registry import register_tool
 
 SGD_BASE_URL = "https://www.yeastgenome.org/backend"
 
+# Every `link` in SGD's JSON is site-relative ("/reference/S100001825",
+# "/locus/S000001855"), so the value the wrapper used to hand back could not be
+# opened by anything. The links are made absolute against the site root.
+SGD_SITE_URL = "https://www.yeastgenome.org"
+
+
+def _absolute(link):
+    """SGD's site-relative path -> a URL a caller can open. None when absent."""
+    if not isinstance(link, str) or not link.strip():
+        return None
+    if link.startswith(("http://", "https://")):
+        return link
+    return SGD_SITE_URL + ("" if link.startswith("/") else "/") + link
+
 # SGD's backend rejects the default python-requests User-Agent on some paths;
 # a browser-style UA is accepted consistently.
 _HEADERS = {
@@ -125,7 +139,7 @@ class SGDProteinTool(BaseTool):
                 return {
                     "gene_name": loc.get("display_name"),
                     "systematic_name": loc.get("format_name"),
-                    "sgd_link": loc.get("link"),
+                    "sgd_link": _absolute(loc.get("link")),
                 }
         return {"gene_name": None, "systematic_name": None, "sgd_link": None}
 
@@ -152,6 +166,11 @@ class SGDProteinTool(BaseTool):
                     "start": row.get("start"),
                     "end": row.get("end"),
                     "domain_link": dom.get("link"),
+                    # How many yeast loci carry this domain. A domain found
+                    # in one protein and one found in 300 are different
+                    # evidence about the protein, and the count sat in the
+                    # same row.
+                    "loci_with_domain": dom.get("count"),
                 }
             )
 
@@ -185,6 +204,9 @@ class SGDProteinTool(BaseTool):
                     "position": row.get("site_index"),
                     "reference": ref.get("display_name"),
                     "pubmed_id": ref.get("pubmed_id"),
+                    # Which database asserted the modification, and by what.
+                    "source": (row.get("source") or {}).get("display_name"),
+                    "modifier": (row.get("modifier") or {}).get("display_name"),
                 }
             )
 
@@ -216,12 +238,39 @@ class SGDProteinTool(BaseTool):
             counts[category] = len(refs)
             trimmed = []
             for ref in refs[:_MAX_REFS_PER_CATEGORY]:
+                # SGD's own `citation` elides the author list behind "et al.":
+                # measured over ACT1, 1285 of 1666 references cite one author
+                # where the payload carries the whole list, so a caller asked
+                # who wrote a paper could not answer from the citation on 77%
+                # of them. `urls` holds the DOI / PMC / PubMed full-text links;
+                # `link` is SGD's own reference page and was the only link
+                # returned, relative and therefore unopenable.
+                authors = [
+                    a.get("display_name")
+                    for a in (ref.get("authors") or [])
+                    if isinstance(a, dict) and a.get("display_name")
+                ]
+                journal = ref.get("journal")
                 trimmed.append(
                     {
                         "citation": ref.get("citation") or ref.get("display_name"),
+                        "authors": authors,
+                        "author_count": len(authors),
+                        "journal": (
+                            journal.get("med_abbr")
+                            if isinstance(journal, dict)
+                            else journal
+                        ),
                         "pubmed_id": ref.get("pubmed_id"),
                         "year": ref.get("year"),
-                        "reference_link": ref.get("link"),
+                        "reference_link": _absolute(ref.get("link")),
+                        "full_text_links": {
+                            u.get("display_name"): u.get("link")
+                            for u in (ref.get("urls") or [])
+                            if isinstance(u, dict)
+                            and u.get("display_name")
+                            and u.get("link")
+                        },
                     }
                 )
             references[category] = trimmed

@@ -171,6 +171,13 @@
                       },
                       "geneCategories": {
                         "type": "array"
+                      },
+                      "longName": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The gene's full name, e.g. 'epidermal growth factor receptor'. The symbol alone is not enough to confirm the right gene was matched."
                       }
                     }
                   }

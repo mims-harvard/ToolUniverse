@@ -8,14 +8,19 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["cpg_id"],
+      "required": [
+        "cpg_id"
+      ],
       "properties": {
         "cpg_id": {
           "type": "string",
           "description": "Illumina CpG probe identifier, e.g. 'cg05575921'."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Max associations to return, 1-200. Default 50."
         }
       }
@@ -27,31 +32,246 @@
           "items": {
             "type": "object",
             "properties": {
-              "trait": {"type": ["string", "null"]},
-              "gene": {"type": ["string", "null"]},
-              "cpg": {"type": ["string", "null"]},
-              "chrpos": {"type": ["string", "null"]},
-              "beta": {"type": ["number", "string", "null"]},
-              "se": {"type": ["number", "string", "null"]},
-              "p": {"type": ["number", "string", "null"]},
-              "n": {"type": ["integer", "string", "null"]},
-              "tissue": {"type": ["string", "null"]},
-              "author": {"type": ["string", "null"]},
-              "pmid": {"type": ["string", "null"]},
-              "study_id": {"type": ["string", "null"]}
+              "trait": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gene": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "cpg": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "chrpos": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "beta": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "se": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "p": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "n": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ]
+              },
+              "tissue": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "author": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pmid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "study_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "age": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Age group of the sample, e.g. 'Adults', 'Children'."
+              },
+              "analysis": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The specific model this row comes from, e.g. 'Current vs never smoking' or 'Model 1 with age as a fixed effect'. One study contributes several rows per CpG, one per model, so this is what distinguishes them."
+              },
+              "chr": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Chromosome of the CpG as a STRING, e.g. '5' or '17' -- not an integer, and X/Y appear as letters."
+              },
+              "consortium": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Cohort or consortium the result comes from, e.g. 'Melbourne Collaborative Cohort Study'; several are comma-separated in one string, e.g. 'ALSPAC,Generation R'."
+              },
+              "covariates": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What the model adjusted for, comma-separated in one string, e.g. 'sex, gestational age, cohort, cell composition (reference based), batch effects'. Whether cell composition is in here decides whether the association is about methylation or about blood cell proportions."
+              },
+              "date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Publication date of the source study. The FORMAT is not uniform across the catalogue -- 'YYYY-MM-DD' ('2019-09-25') on the CpG query and 'DD/MM/YYYY' ('25/01/2021') on the gene query, both measured on the same day -- so parse defensively rather than with one format string."
+              },
+              "details": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Extra notes on the result; the literal '-' when there are none, measured on 40 of 50 rows."
+              },
+              "efo": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "EFO terms for the trait, comma-separated in ONE string, e.g. 'EFO_0006527, EFO_0004318'. Present on 25 of 50 rows; split on ', '."
+              },
+              "ethnicity": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ancestry of the sample, e.g. 'European'. Present on 49 of 50 rows; EWAS findings do not transfer across ancestries without checking."
+              },
+              "exposure": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The exposure or trait tested, e.g. 'Smoking' or 'age'. Together with outcome this says which direction the association was modelled in."
+              },
+              "exposure_units": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Units the exposure was measured in, e.g. 'years'. Returned as the literal string '-' when not applicable -- present on 18 of 50 rows, and '-' on those, so an effect size per unit exposure is often uninterpretable."
+              },
+              "further_details": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Further notes, likewise '-' when empty. Present on 18 of 50 rows."
+              },
+              "methylation_array": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Array the methylation was measured on, e.g. 'Illumina HumanMethylation450'. A CpG absent from a result may simply not be on that array."
+              },
+              "n_cohorts": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many cohorts were meta-analysed for this row, e.g. 1 or 2. A single-cohort row is unreplicated."
+              },
+              "outcome": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What was modelled as the outcome, e.g. 'DNA methylation'."
+              },
+              "outcome_units": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Units of the methylation outcome: 'M Values' or 'Beta Values' -- both appear across the catalogue. Effect sizes in M values and in beta values are on different scales and MUST NOT be compared or meta-analysed together."
+              },
+              "pos": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Position of the CpG on that chromosome, e.g. 373378. The EWAS Catalog reports positions on GRCh37/hg19; check before intersecting with GRCh38 coordinates."
+              },
+              "sex": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Sex of the sample, e.g. 'Both'."
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Where in the paper the result was taken from, e.g. 'Supplementary table 1', sometimes a URL. Present on 49 of 50 CpG rows but only 2 of 10 gene rows."
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The CpG's position relative to a CpG island, e.g. 'North shore', 'Open sea', 'Island'. Island and shore sites behave differently, so this changes how an association should be read."
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"cpg_id": "cg05575921"},
-      {"cpg_id": "cg00000029", "limit": 5}
+      {
+        "cpg_id": "cg05575921"
+      },
+      {
+        "cpg_id": "cg00000029",
+        "limit": 5
+      }
     ]
   },
   {
@@ -63,14 +283,19 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["gene_symbol"],
+      "required": [
+        "gene_symbol"
+      ],
       "properties": {
         "gene_symbol": {
           "type": "string",
           "description": "HGNC gene symbol, e.g. 'AHRR', 'TP53'."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Max associations to return, 1-200. Default 50."
         }
       }
@@ -82,31 +307,233 @@
           "items": {
             "type": "object",
             "properties": {
-              "trait": {"type": ["string", "null"]},
-              "gene": {"type": ["string", "null"]},
-              "cpg": {"type": ["string", "null"]},
-              "chrpos": {"type": ["string", "null"]},
-              "beta": {"type": ["number", "string", "null"]},
-              "se": {"type": ["number", "string", "null"]},
-              "p": {"type": ["number", "string", "null"]},
-              "n": {"type": ["integer", "string", "null"]},
-              "tissue": {"type": ["string", "null"]},
-              "author": {"type": ["string", "null"]},
-              "pmid": {"type": ["string", "null"]},
-              "study_id": {"type": ["string", "null"]}
+              "trait": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gene": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "cpg": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "chrpos": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "beta": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "se": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "p": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "n": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ]
+              },
+              "tissue": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "author": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pmid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "study_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "age": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Age group of the sample, e.g. 'Adults', 'Children'."
+              },
+              "analysis": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The specific model this row comes from, e.g. 'Current vs never smoking' or 'Model 1 with age as a fixed effect'. One study contributes several rows per CpG, one per model, so this is what distinguishes them."
+              },
+              "chr": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Chromosome of the CpG as a STRING, e.g. '5' or '17' -- not an integer, and X/Y appear as letters."
+              },
+              "consortium": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Cohort or consortium the result comes from, e.g. 'Melbourne Collaborative Cohort Study'; several are comma-separated in one string, e.g. 'ALSPAC,Generation R'."
+              },
+              "covariates": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What the model adjusted for, comma-separated in one string, e.g. 'sex, gestational age, cohort, cell composition (reference based), batch effects'. Whether cell composition is in here decides whether the association is about methylation or about blood cell proportions."
+              },
+              "date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Publication date of the source study. The FORMAT is not uniform across the catalogue -- 'YYYY-MM-DD' ('2019-09-25') on the CpG query and 'DD/MM/YYYY' ('25/01/2021') on the gene query, both measured on the same day -- so parse defensively rather than with one format string."
+              },
+              "efo": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "EFO terms for the trait, comma-separated in ONE string, e.g. 'EFO_0006527, EFO_0004318'. Present on 25 of 50 rows; split on ', '."
+              },
+              "ethnicity": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ancestry of the sample, e.g. 'European'. Present on 49 of 50 rows; EWAS findings do not transfer across ancestries without checking."
+              },
+              "exposure": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The exposure or trait tested, e.g. 'Smoking' or 'age'. Together with outcome this says which direction the association was modelled in."
+              },
+              "exposure_units": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Units the exposure was measured in, e.g. 'years'. Returned as the literal string '-' when not applicable -- present on 18 of 50 rows, and '-' on those, so an effect size per unit exposure is often uninterpretable."
+              },
+              "methylation_array": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Array the methylation was measured on, e.g. 'Illumina HumanMethylation450'. A CpG absent from a result may simply not be on that array."
+              },
+              "n_cohorts": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many cohorts were meta-analysed for this row, e.g. 1 or 2. A single-cohort row is unreplicated."
+              },
+              "outcome": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What was modelled as the outcome, e.g. 'DNA methylation'."
+              },
+              "outcome_units": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Units of the methylation outcome: 'M Values' or 'Beta Values' -- both appear across the catalogue. Effect sizes in M values and in beta values are on different scales and MUST NOT be compared or meta-analysed together."
+              },
+              "pos": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Position of the CpG on that chromosome, e.g. 373378. The EWAS Catalog reports positions on GRCh37/hg19; check before intersecting with GRCh38 coordinates."
+              },
+              "sex": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Sex of the sample, e.g. 'Both'."
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Where in the paper the result was taken from, e.g. 'Supplementary table 1', sometimes a URL. Present on 49 of 50 CpG rows but only 2 of 10 gene rows."
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The CpG's position relative to a CpG island, e.g. 'North shore', 'Open sea', 'Island'. Island and shore sites behave differently, so this changes how an association should be read."
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"gene_symbol": "TP53", "limit": 10},
-      {"gene_symbol": "CPT1A", "limit": 5}
+      {
+        "gene_symbol": "TP53",
+        "limit": 10
+      },
+      {
+        "gene_symbol": "CPT1A",
+        "limit": 5
+      }
     ]
   }
 ]

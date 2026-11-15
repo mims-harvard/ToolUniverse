@@ -31,7 +31,7 @@
             },
             "properties": {
               "type": "object",
-              "description": "200+ quality metrics including R-factors, geometry scores, B-factors, cell dimensions",
+              "description": "PDB-REDO's refinement statistics. Which metrics are present depends on the entry: 1cbs returns 208 and 2por 184, the latter a strict subset. The well-understood ones are declared by name; the rest are PDB-REDO's own metric names, for which no public data dictionary was reachable, so they are left as an open level rather than given descriptions that would be guesses",
               "properties": {
                 "RFIN": {
                   "type": [
@@ -94,7 +94,7 @@
                     "number",
                     "null"
                   ],
-                  "description": "Average B-factor"
+                  "description": "Mean atomic B-factor, in angstrom squared"
                 },
                 "CCFFIN": {
                   "type": [
@@ -137,6 +137,253 @@
                     "null"
                   ],
                   "description": "Number of sidechain flips"
+                },
+                "RFREE": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Free R-factor of the original structure"
+                },
+                "RESOLUTION": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Resolution of the diffraction data, in angstrom"
+                },
+                "DATARESL": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Low-resolution limit of the data, in angstrom"
+                },
+                "COMPLETED": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Percentage completeness of the diffraction data"
+                },
+                "BWILS": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Wilson B-factor, in angstrom squared"
+                },
+                "AAXIS": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Unit cell a axis, in angstrom"
+                },
+                "BAXIS": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Unit cell b axis, in angstrom"
+                },
+                "CAXIS": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Unit cell c axis, in angstrom"
+                },
+                "ALPHA": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Unit cell alpha angle, in degrees"
+                },
+                "BETA": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Unit cell beta angle, in degrees"
+                },
+                "GAMMA": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Unit cell gamma angle, in degrees"
+                }
+              },
+              "additionalProperties": {
+                "type": [
+                  "number",
+                  "string",
+                  "boolean",
+                  "null"
+                ],
+                "description": "One PDB-REDO metric, keyed by its PDB-REDO name"
+              }
+            },
+            "rama-angles": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Per-residue Ramachandran angles before and after re-refinement. This is the one place the tool shows what PDB-REDO actually changed, residue by residue, and it was entirely undeclared",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "entity_id": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
+                    "description": "Entity the chains belong to"
+                  },
+                  "chains": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Chains in the entity",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "asym_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Chain id in the mmCIF asym numbering"
+                        },
+                        "auth_asym_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Chain id as the depositor labelled it"
+                        },
+                        "models": {
+                          "type": [
+                            "array",
+                            "null"
+                          ],
+                          "description": "Models in the entry",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "model_id": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "Model number"
+                              },
+                              "residues": {
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "description": "Residues, each with its angles before and after",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "seq_id": {
+                                      "type": [
+                                        "integer",
+                                        "null"
+                                      ],
+                                      "description": "Residue number in the mmCIF sequence"
+                                    },
+                                    "auth_seq_id": {
+                                      "type": [
+                                        "string",
+                                        "integer",
+                                        "null"
+                                      ],
+                                      "description": "Residue number as the depositor numbered it"
+                                    },
+                                    "compound_id": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ],
+                                      "description": "Residue type, e.g. PRO"
+                                    },
+                                    "orig": {
+                                      "type": [
+                                        "object",
+                                        "null"
+                                      ],
+                                      "description": "The angles in the original deposited structure",
+                                      "properties": {
+                                        "phi": {
+                                          "type": [
+                                            "number",
+                                            "null"
+                                          ],
+                                          "description": "Phi torsion in degrees"
+                                        },
+                                        "psi": {
+                                          "type": [
+                                            "number",
+                                            "null"
+                                          ],
+                                          "description": "Psi torsion in degrees"
+                                        },
+                                        "rama": {
+                                          "type": [
+                                            "string",
+                                            "number",
+                                            "null"
+                                          ],
+                                          "description": "Ramachandran classification PDB-REDO assigned"
+                                        }
+                                      }
+                                    },
+                                    "redo": {
+                                      "type": [
+                                        "object",
+                                        "null"
+                                      ],
+                                      "description": "The angles after PDB-REDO re-refined it",
+                                      "properties": {
+                                        "phi": {
+                                          "type": [
+                                            "number",
+                                            "null"
+                                          ],
+                                          "description": "Phi torsion in degrees"
+                                        },
+                                        "psi": {
+                                          "type": [
+                                            "number",
+                                            "null"
+                                          ],
+                                          "description": "Psi torsion in degrees"
+                                        },
+                                        "rama": {
+                                          "type": [
+                                            "string",
+                                            "number",
+                                            "null"
+                                          ],
+                                          "description": "Ramachandran classification PDB-REDO assigned"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -254,6 +501,12 @@
                     "string",
                     "null"
                   ]
+                },
+                "data": {
+                  "description": "PDB-REDO's version block: the PDB id and the revision dates of the coordinates and reflections it re-refined from."
+                },
+                "software": {
+                  "description": "Version of every program in the PDB-REDO pipeline, keyed by program. A re-refinement is only reproducible against these."
                 }
               }
             },

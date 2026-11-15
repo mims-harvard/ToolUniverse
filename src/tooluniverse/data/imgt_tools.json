@@ -108,6 +108,13 @@
               "items": {
                 "type": "string"
               }
+            },
+            "total_first_records": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many sequence records IMGT returned before the tool kept one per gene, e.g. 687. The gap between this and the number of returned sequences is how many allele records were collapsed away."
             }
           },
           "required": [

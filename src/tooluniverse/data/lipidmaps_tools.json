@@ -67,55 +67,127 @@
       "type": "object",
       "properties": {
         "lm_id": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "name": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "sys_name": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "formula": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "exactmass": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "smiles": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "inchi_key": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "core": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "main_class": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "sub_class": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "kegg_id": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "hmdb_id": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "chebi_id": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "pubchem_cid": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "input": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "regno": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "abbrev": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "inchi": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Full InChI for the structure."
+        },
+        "lipidbank_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "LipidBank id, e.g. 'DFA0224'."
+        },
+        "synonyms": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Other names as a single '; '-delimited STRING, e.g. 'Cervonic acid; Docosahexaenoic acid; C22:6n-3,6,9,12,15,18'. Not a list; the shorthand notation is in here too."
         }
       }
     }
@@ -195,13 +267,139 @@
         {
           "type": "object",
           "properties": {
-            "lm_id": {"type": ["string", "null"]},
-            "name": {"type": ["string", "null"]},
-            "formula": {"type": ["string", "null"]},
-            "exactmass": {"type": ["string", "null"]},
-            "smiles": {"type": ["string", "null"]},
-            "core": {"type": ["string", "null"]},
-            "abbrev": {"type": ["string", "null"]}
+            "lm_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "formula": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "exactmass": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "smiles": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "core": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "abbrev": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "chebi_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ChEBI id without the prefix, e.g. '28125' - so 'CHEBI:' must be prepended to use it."
+            },
+            "hmdb_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "HMDB accession, e.g. 'HMDB0002183'."
+            },
+            "inchi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Full InChI for the structure."
+            },
+            "inchi_key": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChIKey, e.g. 'MBMBGCFOFBJSGT-KUBAVDMBSA-N'."
+            },
+            "input": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The query echoed back, e.g. 'DHA'. An abbreviation can resolve to more than one lipid, so this says what was matched."
+            },
+            "kegg_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "KEGG COMPOUND id, e.g. 'C06429'."
+            },
+            "lipidbank_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "LipidBank id, e.g. 'DFA0224'."
+            },
+            "main_class": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "LIPID MAPS main class with its code, e.g. 'Fatty Acids and Conjugates [FA01]'."
+            },
+            "pubchem_cid": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "PubChem CID as a string, e.g. '445580'."
+            },
+            "regno": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "LIPID MAPS internal registry number, e.g. '1164'."
+            },
+            "sub_class": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "LIPID MAPS sub class with its code, e.g. 'Unsaturated fatty acids [FA0103]'. The level at which lipids are usually compared."
+            },
+            "synonyms": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Other names as a single '; '-delimited STRING, e.g. 'Cervonic acid; Docosahexaenoic acid; C22:6n-3,6,9,12,15,18'. Not a list; the shorthand notation is in here too."
+            },
+            "sys_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Systematic name with full stereochemistry, e.g. '4Z,7Z,10Z,13Z,16Z,19Z-docosahexaenoic acid'. The double-bond geometry that the common name omits."
+            }
           }
         },
         {
@@ -209,10 +407,30 @@
           "items": {
             "type": "object",
             "properties": {
-              "lm_id": {"type": ["string", "null"]},
-              "name": {"type": ["string", "null"]},
-              "formula": {"type": ["string", "null"]},
-              "abbrev": {"type": ["string", "null"]}
+              "lm_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "formula": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "abbrev": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         }
@@ -380,6 +598,41 @@
               "string",
               "null"
             ]
+          },
+          "hmdb_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "HMDB accession, e.g. 'HMDB0002183'."
+          },
+          "kegg_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "KEGG COMPOUND id, e.g. 'C06429'."
+          },
+          "lipidbank_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "LipidBank id, e.g. 'DFA0224'."
+          },
+          "synonyms": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Other names as a single '; '-delimited STRING, e.g. 'Cervonic acid; Docosahexaenoic acid; C22:6n-3,6,9,12,15,18'. Not a list; the shorthand notation is in here too."
+          },
+          "abbrev_chains": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The lipid's shorthand with its individual acyl chains spelled out, e.g. 'WE 8:0/8:0'. Measured on only 1 of 34 hits. The plain `abbrev` gives the total chain composition; this gives the per-chain breakdown, which is what distinguishes two isomers with the same total."
           }
         }
       }
@@ -399,7 +652,14 @@
         "xref_type": {
           "type": "string",
           "description": "Namespace of input_value. One of: 'kegg_id', 'hmdb_id', 'chebi_id', 'pubchem_cid', 'inchi_key', 'abbrev_chains'.",
-          "enum": ["kegg_id", "hmdb_id", "chebi_id", "pubchem_cid", "inchi_key", "abbrev_chains"],
+          "enum": [
+            "kegg_id",
+            "hmdb_id",
+            "chebi_id",
+            "pubchem_cid",
+            "inchi_key",
+            "abbrev_chains"
+          ],
           "default": "kegg_id"
         },
         "output_item": {
@@ -437,7 +697,9 @@
           "default": "all"
         }
       },
-      "required": ["input_value"]
+      "required": [
+        "input_value"
+      ]
     },
     "fields": {
       "context": "compound",
@@ -470,7 +732,94 @@
             "object",
             "array"
           ],
-          "description": "LMSD record (single object) or list of records with lm_id, name, formula, exactmass, and cross-references (kegg_id, hmdb_id, chebi_id, pubchem_cid)."
+          "description": "LMSD record (single object) or list of records with lm_id, name, formula, exactmass, and cross-references (kegg_id, hmdb_id, chebi_id, pubchem_cid).",
+          "properties": {
+            "lm_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "LIPID MAPS identifier."
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Common name."
+            },
+            "sys_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Systematic name."
+            },
+            "core": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Core lipid category."
+            },
+            "main_class": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Main class."
+            },
+            "sub_class": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Subclass."
+            },
+            "input": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The identifier that was looked up, echoed back."
+            },
+            "regno": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "LIPID MAPS registry number."
+            },
+            "synonyms": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Other names as a single '; '-delimited STRING, not a list."
+            },
+            "chebi_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ChEBI cross-reference."
+            },
+            "hmdb_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "HMDB cross-reference."
+            },
+            "kegg_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "KEGG COMPOUND cross-reference."
+            }
+          }
         },
         {
           "type": "object",

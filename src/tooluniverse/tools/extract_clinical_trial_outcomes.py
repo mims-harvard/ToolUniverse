@@ -1,7 +1,7 @@
 """
 extract_clinical_trial_outcomes
 
-Extracts detailed trial outcome results (e.g., overall survival months, p-values, etc.) from clin...
+Extracts the posted outcome RESULTS of a trial from ClinicalTrials.gov (the measured numbers per ...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def extract_clinical_trial_outcomes(
     validate: bool = True,
 ) -> list[Any] | dict[str, Any]:
     """
-    Extracts detailed trial outcome results (e.g., overall survival months, p-values, etc.) from clin...
+    Extracts the posted outcome RESULTS of a trial from ClinicalTrials.gov (the measured numbers per ...
 
     Parameters
     ----------

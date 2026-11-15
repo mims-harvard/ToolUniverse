@@ -353,8 +353,18 @@ class TestEndToEndIntegration(unittest.TestCase):
             if self.temp_dir in sys.path:
                 sys.path.remove(self.temp_dir)
     
+    @pytest.mark.network
     def test_caching_workflow(self):
-        """Test caching workflow across modes."""
+        """Test caching workflow across modes.
+
+        Marked `network`: two live UniProt calls, and its own `except
+        Exception: pass` says network errors are expected -- but a
+        pytest-timeout is not catchable, so a slow UniProt fails the test. It
+        did on CI on 2026-11-07, on a branch touching no UniProt code. The
+        cache behaviour it asserts is covered without the network in
+        tests/unit/test_cache_bug_fixes.py and
+        tests/unit/test_cache_skips_error_results.py.
+        """
         # Clear cache
         self.tu.clear_cache()
         

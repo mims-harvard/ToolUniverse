@@ -136,15 +136,57 @@ class OPMTool(BaseTool):
         rows = [
             {
                 "pdb_id": o.get("pdbid"),
+                # OPM's own primary key, and the only safe way back to the
+                # full record: /primary_structures/<id> answers HTTP 200 for
+                # a PDB id too, by coercing it to an integer, so asking for
+                # `1uaz` silently returns record 1 (an unrelated porin).
+                "opm_id": o.get("id"),
+                "url": (
+                    f"https://opm.phar.umich.edu/proteins/{o['id']}"
+                    if o.get("id") is not None
+                    else None
+                ),
                 "name": o.get("name"),
                 "family": o.get("family_name_cache"),
                 "membrane": o.get("membrane_name_cache"),
+                "species": o.get("species_name_cache"),
                 "hydrophobic_thickness_angstrom": o.get("thickness"),
                 "thickness_error": o.get("thicknesserror"),
                 "tilt_angle_degrees": o.get("tilt"),
+                # The thickness came with its error and the tilt did not.
+                "tilt_error_degrees": o.get("tilterror"),
                 "transfer_energy_kcal_per_mol": o.get("gibbs"),
                 "resolution_angstrom": o.get("resolution"),
+                # How many times the subunit crosses the bilayer, on every
+                # record OPM serves, in a tool about membrane topology.
+                "transmembrane_segments": o.get("subunit_segments"),
+                "topology_subunit": o.get("topology_subunit"),
+                "uniprot_entry_names": o.get("uniprotcodes") or [],
                 "description": o.get("description"),
+                # OPM leaves `description` null and puts the prose here: of 74
+                # rhodopsin structures, 0 have a description and 8 a comment.
+                "comments": o.get("comments") or None,
+                # Whether the computed placement was checked against
+                # experiment, in OPM's own words. Sparse -- 16 of 395
+                # records sampled across five queries -- but it is the only
+                # statement the database makes about whether the thickness
+                # and tilt above are confirmed rather than modelled.
+                "verification": o.get("verification") or None,
+                # How many subunits were positioned in the bilayer: 339/395.
+                "subunits_positioned": o.get("structure_subunits_count"),
+                # Alternative placements OPM holds for this entry, and
+                # papers citing the placement.
+                "secondary_representations": o.get(
+                    "secondary_representations_count"
+                ),
+                "citation_count": o.get("citations_count"),
+                # The classification ids. OPM nests type > class > super-
+                # family > family, and the search endpoint sends only the
+                # family's name, so these are what reach the rest of it via
+                # /families/<id> and /species/<id>.
+                "family_id": o.get("family_id"),
+                "superfamily_id": o.get("superfamily_id"),
+                "species_id": o.get("species_id"),
             }
             for o in objects
             if isinstance(o, dict)

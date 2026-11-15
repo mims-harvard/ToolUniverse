@@ -143,6 +143,323 @@
                 "integer",
                 "null"
               ]
+            },
+            "inchi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The standard InChI. `inchikey` is a hash of this; only the hash was returned."
+            },
+            "wurcs": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "WURCS carbohydrate structure, for glycan entries"
+            },
+            "ascii_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "synonym_details": {
+              "type": "array",
+              "description": "The same page of names as `synonyms`, with the kind of name and its source. A BRAND NAME from ChEMBL and an IUPAC NAME are both in `synonyms` with nothing to tell them apart.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SYNONYM, IUPAC NAME, BRAND NAME or INN"
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ChEBI name status, e.g. 'C' checked, 'S' submitted"
+                  },
+                  "language_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "roles": {
+              "type": "array",
+              "description": "ChEBI's role classification for the compound, capped at 50. Aspirin is classified under 36, among them 'non-steroidal anti-inflammatory drug'.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chebi_accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "definition": {
+                    "type": "string"
+                  },
+                  "is_application": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "The role is what the compound is used for"
+                  },
+                  "is_chemical_role": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "is_biological_role": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "role_count": {
+              "type": "integer"
+            },
+            "roles_truncated": {
+              "type": "boolean"
+            },
+            "cas_numbers": {
+              "type": "array",
+              "description": "CAS Registry Numbers. Aspirin's 50-78-2 was in the same response and never returned. Capped at 50.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who assigned or supplied the accession, e.g. KEGG COMPOUND, ChemIDplus"
+                  },
+                  "prefix": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Bioregistry prefix for the namespace, e.g. kegg.compound"
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Resolvable link, where upstream gives one"
+                  }
+                }
+              }
+            },
+            "cas_numbers_total": {
+              "type": "integer",
+              "description": "How many cas numbers the entry holds"
+            },
+            "cas_numbers_truncated": {
+              "type": "boolean"
+            },
+            "registry_numbers": {
+              "type": "array",
+              "description": "Other registry numbers, e.g. Gmelin and Reaxys. Capped at 50.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who assigned or supplied the accession, e.g. KEGG COMPOUND, ChemIDplus"
+                  },
+                  "prefix": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Bioregistry prefix for the namespace, e.g. kegg.compound"
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Resolvable link, where upstream gives one"
+                  }
+                }
+              }
+            },
+            "registry_numbers_total": {
+              "type": "integer",
+              "description": "How many registry numbers the entry holds"
+            },
+            "registry_numbers_truncated": {
+              "type": "boolean"
+            },
+            "citations": {
+              "type": "array",
+              "description": "Literature ChEBI cites for the entry; aspirin has 68. Capped at 50.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who assigned or supplied the accession, e.g. KEGG COMPOUND, ChemIDplus"
+                  },
+                  "prefix": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Bioregistry prefix for the namespace, e.g. kegg.compound"
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Resolvable link, where upstream gives one"
+                  }
+                }
+              }
+            },
+            "citations_total": {
+              "type": "integer",
+              "description": "How many citations the entry holds"
+            },
+            "citations_truncated": {
+              "type": "boolean"
+            },
+            "cross_references": {
+              "type": "array",
+              "description": "Manually curated links to other resources. Capped at 50.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who assigned or supplied the accession, e.g. KEGG COMPOUND, ChemIDplus"
+                  },
+                  "prefix": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Bioregistry prefix for the namespace, e.g. kegg.compound"
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Resolvable link, where upstream gives one"
+                  }
+                }
+              }
+            },
+            "cross_references_total": {
+              "type": "integer",
+              "description": "How many cross references the entry holds"
+            },
+            "cross_references_truncated": {
+              "type": "boolean"
+            },
+            "other_accession_counts": {
+              "type": "object",
+              "description": "Row counts for any database_accessions section ChEBI adds that is not one of the four above"
+            },
+            "compound_origins": {
+              "type": "array",
+              "description": "Species and tissue the compound was isolated from, as upstream sends them",
+              "items": {
+                "type": "object"
+              }
+            },
+            "relation_counts": {
+              "type": "object",
+              "description": "How many ontology relations the entry has; follow them with ChEBI_get_ontology_children and ChEBI_get_ontology_parents",
+              "properties": {
+                "incoming": {
+                  "type": "integer"
+                },
+                "outgoing": {
+                  "type": "integer"
+                }
+              }
+            },
+            "modified_on": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "is_released": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "created_by": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           "not": {
@@ -272,6 +589,53 @@
                       "integer",
                       "null"
                     ]
+                  },
+                  "ascii_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "definition": {
+                    "type": "string",
+                    "description": "The entry's definition, which the hit already carries"
+                  },
+                  "smiles": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "inchi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "inchikey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "monoisotopic_mass": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "charge": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "relevance_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The search engine's score for the hit, which is the order the list is in"
                   }
                 }
               }
@@ -375,6 +739,10 @@
             "redirect_note": {
               "type": "string",
               "description": "Only present on a redirect. Human-readable explanation naming both accessions and the relationship between them (secondary/merged id of the returned primary entry, or an unexplained substitution when the requested accession is not among the primary entry's secondary_ids). Absent on a direct hit."
+            },
+            "name": {
+              "type": "string",
+              "description": "Name of the compound these relations belong to"
             }
           },
           "not": {
@@ -469,6 +837,10 @@
             "redirect_note": {
               "type": "string",
               "description": "Only present on a redirect. Human-readable explanation naming both accessions and the relationship between them (secondary/merged id of the returned primary entry, or an unexplained substitution when the requested accession is not among the primary entry's secondary_ids). Absent on a direct hit."
+            },
+            "name": {
+              "type": "string",
+              "description": "Name of the compound these relations belong to"
             }
           },
           "not": {

@@ -90,7 +90,42 @@ class SwissModelTool(BaseTool):
             "created_date": s.get("created_date", ""),
             "provider": s.get("provider", ""),
             "coordinates_url": s.get("coordinates", ""),
+            # Whether the model is a monomer or an oligomer, which the
+            # complex_partners list implies only when there are partners.
+            "oligo_state": s.get("oligo-state"),
+            "md5": s.get("md5"),
+            # SWISS-MODEL's own quality numbers, which the class docstring
+            # promises as "quality metrics": qmean was read and these were not.
+            "gmqe": s.get("gmqe"),
+            "template_qsqe": s.get("template_qsqe"),
+            "sequence_identity": s.get("identity"),
+            "sequence_similarity": s.get("similarity"),
+            "found_by": s.get("found_by"),
+            "chain_ids": [
+                chain.get("id")
+                for chain in (s.get("chains") or [])
+                if isinstance(chain, dict) and chain.get("id")
+            ],
         }
+        # What is bound in the model. 266 of P04637's 325 structures carry a
+        # ligand -- zinc, magnesium -- and a structure tool that reports the
+        # protein partners and not the ligands answers half the complex.
+        ligands = []
+        for chain in s.get("ligand_chains") or []:
+            if not isinstance(chain, dict):
+                continue
+            for ligand in chain.get("ligands") or []:
+                if isinstance(ligand, dict):
+                    ligands.append(
+                        {
+                            "hetid": ligand.get("hetid"),
+                            "description": ligand.get("description"),
+                            "count": chain.get("count"),
+                        }
+                    )
+        if ligands:
+            model["ligands"] = ligands
+        model["ligand_count"] = len(ligands)
         # Quality metrics
         qmean = s.get("qmean")
         if isinstance(qmean, dict):
@@ -358,15 +393,10 @@ class SwissModelTool(BaseTool):
         }
 
         if best:
-            summary["best_model"] = {
-                "template": best.get("template", ""),
-                "method": best.get("method", ""),
-                "coverage": best.get("coverage"),
-                "from_residue": best.get("from"),
-                "to_residue": best.get("to"),
-                "created_date": best.get("created_date", ""),
-                "coordinates_url": best.get("coordinates", ""),
-            }
+            # The summary built its own narrower dict than _flatten_structure,
+            # so the provider, the ligands and the oligomeric state were
+            # missing here even after the model list carried them.
+            summary["best_model"] = self._flatten_structure(best)
             if "qmean" in best and isinstance(best["qmean"], dict):
                 summary["best_model"]["qmean_global"] = best["qmean"].get(
                     "qmean4_global_score"
@@ -380,6 +410,23 @@ class SwissModelTool(BaseTool):
             m = s.get("method", "Unknown")
             methods[m] = methods.get(m, 0) + 1
         summary["methods_distribution"] = methods
+
+        # Two more distributions over the same list, which the summary had the
+        # data for and did not report.
+        providers: Dict[str, int] = {}
+        oligo_states: Dict[str, int] = {}
+        with_ligands = 0
+        for s in structures:
+            providers[s.get("provider") or "Unknown"] = (
+                providers.get(s.get("provider") or "Unknown", 0) + 1
+            )
+            state = s.get("oligo-state") or "Unknown"
+            oligo_states[state] = oligo_states.get(state, 0) + 1
+            if s.get("ligand_chains"):
+                with_ligands += 1
+        summary["providers_distribution"] = providers
+        summary["oligo_state_distribution"] = oligo_states
+        summary["models_with_ligands"] = with_ligands
 
         return {
             "status": "success",

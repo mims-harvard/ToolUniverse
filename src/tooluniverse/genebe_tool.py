@@ -65,6 +65,108 @@ _USEFUL_FIELDS = (
 # top level -- pulled in separately in run().
 _GENE_LEVEL_FIELDS = ("hgvs_c", "hgvs_p", "effects")
 
+# A ClinVar classification without its review status and submission counts
+# cannot be weighed. BRAF V600E comes back "Conflicting classifications of
+# pathogenicity" with review status "criteria provided, conflicting
+# classifications" and a summary of "P:3 LP:1 US:5 O:1" -- five of the ten
+# submissions call it uncertain -- and the row reported the conflict alone.
+# The other predictors, the combined calls and the gnomAD counts were dropped
+# with them. The batch handler in this same module returns the raw variant
+# record whole, so none of this costs a request: the projection was a choice.
+_CLINICAL_FIELDS = (
+    "clinvar_disease",
+    "clinvar_review_status",
+    "clinvar_submissions_summary",
+    "pathogenicity_classification_combined",
+    "phenotype_combined",
+    "effect",
+    "gene_hgnc_id",
+    "warning",
+)
+_PREDICTION_FIELDS = (
+    "revel_score",
+    "revel_prediction",
+    "spliceai_max_score",
+    "spliceai_max_prediction",
+    "phylop100way_score",
+    "phylop100way_prediction",
+    "bayesdelnoaf_score",
+    "bayesdelnoaf_prediction",
+    "computational_prediction_selected",
+    "computational_score_selected",
+    "computational_source_selected",
+    "splice_prediction_selected",
+    "splice_score_selected",
+    "splice_source_selected",
+)
+_FREQUENCY_FIELDS = (
+    "gnomad_exomes_ac",
+    "gnomad_exomes_filter",
+    "gnomad_exomes_homalt",
+    "gnomad_genomes_af",
+    "gnomad_genomes_ac",
+    "gnomad_genomes_filter",
+    "gnomad_genomes_homalt",
+    "allele_count_reference_population",
+    "hom_count_reference_population",
+)
+
+# Per-transcript consequence rows. BRAF V600E has 43 of them; the MANE and
+# canonical ones are what a report cites, so they are ordered first and the
+# rest are cut with the count disclosed.
+CONSEQUENCES_PER_VARIANT = 12
+_CONSEQUENCE_FIELDS = (
+    "transcript",
+    "feature",
+    "gene_symbol",
+    "gene_hgnc_id",
+    "biotype",
+    "protein_coding",
+    "consequences",
+    "hgvs_c",
+    "hgvs_p",
+    "exon_rank",
+    "exon_count",
+    "intron_rank",
+    "aa_start",
+    "aa_ref",
+    "aa_alt",
+    "aa_length",
+    "cds_length",
+    "cdna_length",
+    "strand",
+    "canonical",
+    "mane_select",
+    "mane_plus",
+    "transcript_support_level",
+    "protein_id",
+)
+
+
+def _consequences(variant: dict) -> list:
+    """The per-transcript consequences, MANE and canonical rows first.
+
+    A variant's effect depends on the transcript, and the row reported one
+    `transcript` with no way to see that 43 were annotated or which of them
+    is MANE Select. For BRAF V600E that is NM_004333.6 / ENST00000646891.2.
+    """
+    rows = [
+        {
+            key: row.get(key)
+            for key in _CONSEQUENCE_FIELDS
+            if row.get(key) not in (None, "", [])
+        }
+        for row in (variant.get("consequences") or [])
+        if isinstance(row, dict)
+    ]
+    rows.sort(
+        key=lambda r: (
+            0 if r.get("mane_select") else 1,
+            0 if r.get("canonical") else 1,
+        )
+    )
+    return rows[:CONSEQUENCES_PER_VARIANT]
+
 
 @register_tool("GeneBeTool")
 class GeneBeTool(BaseTool):
@@ -148,8 +250,21 @@ class GeneBeTool(BaseTool):
             }
 
         v = variants[0]
-        data = {k: v[k] for k in _USEFUL_FIELDS if v.get(k) not in (None, "")}
-        by_gene = (v.get("acmg_by_gene") or [{}])[0]
+        selected = (
+            _USEFUL_FIELDS + _CLINICAL_FIELDS + _PREDICTION_FIELDS + _FREQUENCY_FIELDS
+        )
+        data = {k: v[k] for k in selected if v.get(k) not in (None, "")}
+        consequences = _consequences(v)
+        data["consequences"] = consequences
+        data["consequence_count"] = len(v.get("consequences") or [])
+        data["consequences_truncated"] = data["consequence_count"] > len(consequences)
+        # A variant in an overlapping-gene region gets one ACMG block per
+        # gene. Both variants measured return exactly one, so taking the
+        # first is right today and the count says when it stops being.
+        by_gene_rows = [g for g in (v.get("acmg_by_gene") or []) if isinstance(g, dict)]
+        by_gene = by_gene_rows[0] if by_gene_rows else {}
+        data["acmg_gene_count"] = len(by_gene_rows)
+        data["acmg_gene_symbol"] = by_gene.get("gene_symbol")
         for key in _GENE_LEVEL_FIELDS:
             val = by_gene.get(key)
             if val not in (None, "", []):
@@ -158,7 +273,15 @@ class GeneBeTool(BaseTool):
         return {
             "status": "success",
             "data": data,
-            "metadata": {"source": "GeneBe (genebe.net)", "genome": genome},
+            "metadata": {
+                "source": "GeneBe (genebe.net)",
+                "genome": genome,
+                "consequences_per_variant": CONSEQUENCES_PER_VARIANT,
+                "note": "consequences are ordered MANE Select first, then "
+                "canonical; consequence_count is how many GeneBe annotated. "
+                "clinvar_submissions_summary counts the submissions behind "
+                "clinvar_classification (P/LP/US/LB/B/O).",
+            },
         }
 
     def _run_batch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

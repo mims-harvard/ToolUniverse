@@ -363,6 +363,39 @@ class MedlinePlusRESTTool(BaseTool):
                 if isinstance(s, str)
             ]
 
+        def get_entries(data, list_key, item_key, name_key="name"):
+            """The same list get_list_items formats, unsquashed.
+
+            `get_list_items` returns "APOE (https://...)" -- one string per
+            entry -- so the symbol and the page can only be recovered by
+            parsing. These rows carry them as fields.
+            """
+            rows = []
+            for item in unwrap_entries(data, list_key, item_key):
+                if isinstance(item, dict):
+                    rows.append(
+                        {
+                            "name": item.get(name_key) or "",
+                            "url": item.get("ghr-page") or "",
+                        }
+                    )
+            return rows
+
+        def get_db_keys(data):
+            """The codes MedlinePlus lists for the page, which were dropped.
+
+            Alzheimer disease carries 19: GTR concept ids, four ICD-10-CM
+            codes, MeSH, OMIM and SNOMED CT. APOE carries NCBI Gene 348 and
+            OMIM 107741. Without them the page cannot be joined to anything.
+            """
+            rows = []
+            for item in unwrap_entries(data, "db-key-list", "db-key"):
+                if isinstance(item, dict):
+                    rows.append(
+                        {"database": item.get("db") or "", "key": item.get("key") or ""}
+                    )
+            return rows
+
         # Format response based on tool type
         if tool_name == "MedlinePlus_search_topics_by_keyword":
             arguments = arguments or {}
@@ -450,8 +483,21 @@ class MedlinePlusRESTTool(BaseTool):
                 "genes": get_list_items(
                     response, "related-gene-list", "related-gene", "gene-symbol"
                 ),
+                "gene_records": get_entries(
+                    response, "related-gene-list", "related-gene", "gene-symbol"
+                ),
                 "inheritance": inheritance,
+                "inheritance_patterns": [
+                    {"code": p.get("code", ""), "pattern": p.get("memo", "")}
+                    for p in unwrap_entries(
+                        response, "inheritance-pattern-list", "inheritance-pattern"
+                    )
+                    if isinstance(p, dict)
+                ],
                 "synonyms": get_synonyms(response),
+                "cross_references": get_db_keys(response),
+                "reviewed": response.get("reviewed", ""),
+                "published": response.get("published", ""),
                 "ghr_page": response.get("ghr_page", ""),
             }
 
@@ -463,13 +509,24 @@ class MedlinePlusRESTTool(BaseTool):
             gene_summary = response.get("gene-summary", response)
             return {
                 "name": gene_summary.get("name", ""),
+                # `name` is the protein name -- "apolipoprotein E" for a
+                # request for APOE -- and the symbol is a field of its own.
+                "gene_symbol": gene_summary.get("gene-symbol", ""),
                 "function": get_text_content(gene_summary, "function"),
                 "health_conditions": get_list_items(
                     gene_summary,
                     "related-health-condition-list",
                     "related-health-condition",
                 ),
+                "health_condition_records": get_entries(
+                    gene_summary,
+                    "related-health-condition-list",
+                    "related-health-condition",
+                ),
                 "synonyms": get_synonyms(gene_summary),
+                "cross_references": get_db_keys(gene_summary),
+                "reviewed": gene_summary.get("reviewed", ""),
+                "published": gene_summary.get("published", ""),
                 "ghr_page": gene_summary.get("ghr-page", ""),
             }
 
@@ -519,16 +576,68 @@ class MedlinePlusRESTTool(BaseTool):
                 elif isinstance(summary_data, str):
                     summary = summary_data
 
+                links = link if isinstance(link, list) else ([link] if link else [])
+                updated = entry.get("updated")
+                if isinstance(updated, dict):
+                    updated = updated.get("_value", updated.get("#text"))
+                entry_id = entry.get("id")
+                if isinstance(entry_id, dict):
+                    entry_id = entry_id.get("_value", entry_id.get("#text"))
+
                 formatted_responses.append(
                     {
                         "title": title,
                         "summary": summary,
                         "summary_length": len(summary),
                         "url": url,
+                        # A Connect entry can carry several links (patient and
+                        # provider pages, other languages); only the first was
+                        # reported and the rest were not mentioned.
+                        "links": [
+                            {
+                                "url": item.get("href", item.get("@href", "")),
+                                "rel": item.get("rel", item.get("@rel", "")),
+                                "title": item.get("title", item.get("@title", "")),
+                            }
+                            for item in links
+                            if isinstance(item, dict)
+                        ],
+                        "updated": updated,
+                        "entry_id": entry_id,
                     }
                 )
 
-            return {"responses": formatted_responses}
+            # The feed echoes how MedlinePlus read the request: the code system
+            # OID resolved to a name ("ICD10CM"), the code it searched, and
+            # whether the patient or the provider page set was returned. The
+            # tool takes an OID, so this is the only confirmation that the OID
+            # meant what the caller intended.
+            feed_categories = feed.get("category", [])
+            if isinstance(feed_categories, dict):
+                feed_categories = [feed_categories]
+            query_echo = {}
+            for category in feed_categories:
+                if not isinstance(category, dict):
+                    continue
+                scheme = category.get("scheme") or category.get("@scheme")
+                term = category.get("term", category.get("@term"))
+                if scheme:
+                    query_echo[str(scheme)] = term
+            subtitle = feed.get("subtitle")
+            if isinstance(subtitle, dict):
+                subtitle = subtitle.get("_value", subtitle.get("#text"))
+
+            return {
+                "responses": formatted_responses,
+                "returned": len(formatted_responses),
+                "resolved_query": {
+                    "code": query_echo.get("mainSearchCriteria.v.c"),
+                    "code_system": query_echo.get("mainSearchCriteria.v.cs"),
+                    "display_name": query_echo.get("mainSearchCriteria.v.dn"),
+                    "information_recipient": query_echo.get("informationRecipient"),
+                },
+                "resolved_query_description": subtitle,
+            }
 
         elif tool_name == "MedlinePlus_get_genetics_index":
             topics = response.get("genetics_home_reference_topic_list", {}).get(

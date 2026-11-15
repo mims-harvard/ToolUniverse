@@ -196,6 +196,16 @@
                     "properties": {
                       "term": {
                         "type": "string"
+                      },
+                      "hits": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "The diseases the identifier mapped to, each with its id and name, e.g. {'id': 'MONDO_0004975', 'name': 'Alzheimer disease'}. The mapping this tool exists to produce."
                       }
                     }
                   }

@@ -195,6 +195,13 @@ class EGATool(BaseTool):
             {
                 "accession_id": d.get("accession_id"),
                 "title": d.get("title"),
+                # The module docstring says this tool returns "title,
+                # description, technology, sample" metadata, and the list
+                # returned every one of those but the description. The two
+                # sibling operations in this same file read it; only the
+                # listing did not, which is why a file-wide grep for the name
+                # made this look already handled.
+                "description": d.get("description"),
                 "technologies": d.get("technologies") or [],
                 "num_samples": d.get("num_samples"),
                 "access_type": d.get("access_type"),

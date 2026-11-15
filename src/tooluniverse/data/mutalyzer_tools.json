@@ -27,7 +27,97 @@
       }
     ],
     "return_schema": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "input_description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The description submitted."
+        },
+        "corrected_description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The description after syntactic correction. Differs from the input when the input was malformed but recoverable."
+        },
+        "normalized_description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The canonical HGVS description. DIFFERENT from the input whenever the input was not canonical -- most commonly because an indel was not 3'-shifted -- and two descriptions that normalise to the same string are the same variant."
+        },
+        "gene_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The gene the reference belongs to."
+        },
+        "rna_description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The variant at RNA level, e.g. 'NM_003002.4:r.(274g>u)'. Parentheses mean predicted rather than observed."
+        },
+        "protein": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The variant's protein consequence.",
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The protein-level HGVS, e.g. 'NM_003002.4(NP_002993.1):p.(Asp92Tyr)'. Parentheses again mean PREDICTED."
+            },
+            "reference_sequence": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The reference protein sequence."
+            },
+            "predicted_sequence": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The protein sequence the variant predicts. Comparing the two shows the consequence directly."
+            }
+          }
+        },
+        "infos": {
+          "type": "array",
+          "description": "Notices Mutalyzer raised about the normalisation. NOT errors -- but 'IMRNAGENOMICTIP' says an mRNA reference was used where a genomic one was meant, which changes what the coordinates refer to.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The notice code."
+              },
+              "details": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What it means, in words."
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -58,7 +148,32 @@
       }
     ],
     "return_schema": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "input_protein_variant": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The protein variant submitted."
+        },
+        "count": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "How many DNA descriptions could produce it. More than one is the normal case -- the genetic code is degenerate, so a protein change does not determine the DNA change."
+        },
+        "dna_descriptions": {
+          "type": "array",
+          "description": "Every DNA description consistent with the protein variant.",
+          "items": {
+            "type": "string",
+            "description": "One possible DNA description."
+          }
+        }
+      }
     }
   },
   {
@@ -89,7 +204,148 @@
       }
     ],
     "return_schema": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "input_description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The HGVS description that was parsed, echoed back."
+        },
+        "model": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The parsed description as a structured model. This is a PARSE, not a validation -- a description can parse and still be wrong about the reference sequence.",
+          "properties": {
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What kind of description it is, e.g. 'description_dna'."
+            },
+            "coordinate_system": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which coordinate system, e.g. 'c' for coding, 'g' for genomic, 'r' for RNA, 'p' for protein. The same number means different positions in each."
+            },
+            "reference": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The reference sequence the description is against.",
+              "properties": {
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Its accession, e.g. 'NM_003002.4'. The VERSION matters: coordinates can shift between versions."
+                }
+              }
+            },
+            "variants": {
+              "type": "array",
+              "description": "The individual changes the description encodes.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The change type, e.g. 'substitution', 'deletion', 'duplication'."
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where the change was read from, e.g. 'reference'."
+                  },
+                  "location": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Where it occurs.",
+                    "properties": {
+                      "type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "'point' for a single position, 'range' for a span."
+                      },
+                      "position": {
+                        "type": [
+                          "integer",
+                          "string",
+                          "null"
+                        ],
+                        "description": "The position itself."
+                      }
+                    }
+                  },
+                  "deleted": {
+                    "type": "array",
+                    "description": "What is removed.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "sequence": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The deleted bases."
+                        },
+                        "source": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Whether that came from the description or from the reference."
+                        }
+                      }
+                    }
+                  },
+                  "inserted": {
+                    "type": "array",
+                    "description": "What is inserted.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "sequence": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The inserted bases."
+                        },
+                        "source": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Whether that came from the description or from the reference."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 ]

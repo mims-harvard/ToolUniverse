@@ -238,6 +238,11 @@
                 "null"
               ]
             },
+            "donor_demographics": {"type": "object", "description": "The donor's own attributes, from metadata.organ_donor_data or metadata.living_donor_data on the sample's donor record. Reading only organ_donor_data returned an empty dict for every living donor."},
+            "donor_demographics_coded": {"type": "array", "description": "The same attributes with the codes that define them -- 'Race: White' is SNOMEDCT_US 413773004 -- which the flat map loses and the provenance tool already reported.", "items": {"type": "object", "properties": {"attribute": {"type": ["string", "null"]}, "value": {"type": ["string", "number", "null"]}, "units": {"type": ["string", "null"]}, "data_type": {"type": ["string", "null"]}, "code": {"type": ["string", "null"]}, "concept_id": {"type": ["string", "null"]}, "vocabulary": {"type": ["string", "null"]}}}},
+            "descendants": {"type": "array", "items": {"type": "object"}, "description": "What was made from this sample. Each row carries whichever of uuid/hubmap_id/entity_type/dataset_type/status/sample_category this index stores -- uuid for all of them, dataset_type for most."},
+            "descendant_count": {"type": "integer", "description": "Length of descendant_ids, which is longer than `descendants`: HBM658.BXNB.873 lists 67 ids and 45 entities, so the two upstream lists disagree."},
+            "immediate_descendant_ids": {"type": "array", "items": {"type": "string"}, "description": "Only the entities derived directly from this sample."},
             "rui_location": {
               "type": [
                 "object",
@@ -389,7 +394,8 @@
                   },
                   "demographics": {
                     "type": "object"
-                  }
+                  },
+                  "demographics_coded": {"type": "array", "description": "The same attributes with the codes that define them, which the flat map loses.", "items": {"type": "object", "properties": {"attribute": {"type": ["string", "null"]}, "value": {"type": ["string", "number", "null"]}, "units": {"type": ["string", "null"]}, "data_type": {"type": ["string", "null"]}, "code": {"type": ["string", "null"]}, "concept_id": {"type": ["string", "null"]}, "vocabulary": {"type": ["string", "null"]}}}}
                 }
               }
             }

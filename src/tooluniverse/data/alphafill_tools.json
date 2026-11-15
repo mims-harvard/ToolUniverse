@@ -5,7 +5,10 @@
         "parameter": {
             "type": "object",
             "properties": {
-                "uniprot": {"type": "string", "description": "UniProt accession, e.g. 'P00520' (ABL1), 'P00533' (EGFR), 'P24941' (CDK2)."},
+                "uniprot": {
+                    "type": "string",
+                    "description": "UniProt accession, e.g. 'P00520' (ABL1), 'P00533' (EGFR), 'P24941' (CDK2)."
+                },
                 "source_pdb_offset": {
                     "type": "integer",
                     "description": "Zero-based source-PDB offset applied within every compound.",
@@ -20,33 +23,215 @@
                     "maximum": 500
                 }
             },
-            "required": ["uniprot"]
+            "required": [
+                "uniprot"
+            ]
         },
-        "fields": {"timeout": 30},
+        "fields": {
+            "timeout": 30
+        },
         "type": "AlphaFillTransplantsTool",
-        "test_examples": [{"uniprot": "P00520"}, {"uniprot": "P24941"}, {"uniprot": "P00533"}],
-        "return_schema": {
-          "oneOf": [
+        "test_examples": [
             {
-              "not": {
-                "required": [
-                  "error"
-                ]
-              },
-              "type": "object"
+                "uniprot": "P00520"
             },
             {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
+                "uniprot": "P24941"
+            },
+            {
+                "uniprot": "P00533"
             }
-          ]
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
+                    "type": "object",
+                    "properties": {
+                        "uniprot": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "The UniProt accession the AlphaFold model belongs to, echoed back, e.g. 'P00520'."
+                        },
+                        "alphafill_version": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Which AlphaFill databank build the transplants come from. Transplants change between builds, so a result is only reproducible against this."
+                        },
+                        "n_homolog_hits": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "description": "How many homologous PDB structures AlphaFill found to transplant from. The compounds below are aggregated ACROSS these hits, so one compound's occurrences can span several homologs."
+                        },
+                        "transplants": {
+                            "type": "array",
+                            "description": "One entry per distinct transplanted compound, ordered by how many times it was transplanted. Compounds are aggregated across homolog hits, not listed per hit.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "compound_id": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "PDB chemical component id of the transplanted ligand, cofactor or ion, e.g. 'ATP'."
+                                    },
+                                    "occurrences": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ],
+                                        "description": "How many transplanted instances of this compound AlphaFill produced across all homolog hits. A high count means several independent structures place the same ligand here."
+                                    },
+                                    "best_local_rmsd": {
+                                        "type": [
+                                            "number",
+                                            "null"
+                                        ],
+                                        "description": "The LOWEST local RMSD among those instances, in angstroms -- how well the binding site around the ligand superposes. Lower is better. On its own it cannot say whether the transplant is usable: see best_transplant.clash_score."
+                                    },
+                                    "source_pdb_ids": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "description": "PDB entries this compound was transplanted from, one page of them."
+                                    },
+                                    "source_pdb_ids_total": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ],
+                                        "description": "How many source PDB entries there are in total, before paging."
+                                    },
+                                    "source_pdb_ids_returned": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ],
+                                        "description": "How many this page carries."
+                                    },
+                                    "source_pdb_ids_truncated": {
+                                        "type": [
+                                            "boolean",
+                                            "null"
+                                        ],
+                                        "description": "True when further source entries remain."
+                                    },
+                                    "next_source_pdb_offset": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ],
+                                        "description": "Offset for the next page of source entries, or null when there is none."
+                                    },
+                                    "best_transplant": {
+                                        "type": [
+                                            "object",
+                                            "null"
+                                        ],
+                                        "description": "The full AlphaFill validation set for the single best-fitting instance of this compound -- the one best_local_rmsd refers to. AlphaFill judges a transplant on four numbers together and this is where the other three live; best_local_rmsd on its own cannot say whether a ligand is usable.",
+                                        "properties": {
+                                            "source_pdb_id": {
+                                                "type": [
+                                                    "string",
+                                                    "null"
+                                                ],
+                                                "description": "The PDB entry this instance was transplanted from."
+                                            },
+                                            "sequence_identity": {
+                                                "type": [
+                                                    "number",
+                                                    "null"
+                                                ],
+                                                "description": "Sequence identity between the AlphaFold model and that homolog, as a FRACTION, e.g. 0.962. The primary reason to trust a transplant at all: a ligand carried over from a 20% match is a guess."
+                                            },
+                                            "alignment_length": {
+                                                "type": [
+                                                    "integer",
+                                                    "null"
+                                                ],
+                                                "description": "How many residues the identity was computed over, e.g. 396. A high identity over a short alignment means little."
+                                            },
+                                            "global_rmsd": {
+                                                "type": [
+                                                    "number",
+                                                    "null"
+                                                ],
+                                                "description": "RMSD in angstroms between the whole model and the homolog, e.g. 1.90. Read against best_local_rmsd: a good local fit inside a poor global one means the pocket was placed by luck."
+                                            },
+                                            "clash_score": {
+                                                "type": [
+                                                    "number",
+                                                    "null"
+                                                ],
+                                                "description": "AlphaFill's transplant clash score (TCS), e.g. 0.105 -- how badly the transplanted ligand overlaps the model's own atoms. Lower is better, and this is the number that decides whether the transplant can be used; it is independent of RMSD, so the best-fitting instance can still clash."
+                                            },
+                                            "clash_count": {
+                                                "type": [
+                                                    "integer",
+                                                    "null"
+                                                ],
+                                                "description": "How many of the ligand's atoms clash, e.g. 13."
+                                            },
+                                            "transplant_atom_count": {
+                                                "type": [
+                                                    "integer",
+                                                    "null"
+                                                ],
+                                                "description": "How many atoms the ligand has, e.g. 33. clash_count against this is the fraction of the ligand in conflict -- 13 of 33 is not a detail."
+                                            },
+                                            "pae_mean": {
+                                                "type": [
+                                                    "number",
+                                                    "null"
+                                                ],
+                                                "description": "Mean AlphaFold predicted aligned error over the transplanted site, e.g. 2.51 angstroms. High PAE means the model's own confidence in that region is low, however well the ligand fits it."
+                                            },
+                                            "pdb_auth_seq_id": {
+                                                "type": [
+                                                    "integer",
+                                                    "string",
+                                                    "null"
+                                                ],
+                                                "description": "Author residue number of the ligand in the source PDB entry, for looking the original up."
+                                            },
+                                            "asym_id": {
+                                                "type": [
+                                                    "string",
+                                                    "null"
+                                                ],
+                                                "description": "Chain the ligand was placed into in the model."
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
         }
     }
 ]

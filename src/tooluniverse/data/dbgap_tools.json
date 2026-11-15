@@ -30,7 +30,19 @@
               "phs_id": {"type": ["string", "null"]},
               "title": {"type": ["string", "null"]},
               "status": {"type": ["string", "null"]},
-              "conditions": {"type": "array", "items": {"type": "string"}}
+              "conditions": {"type": "array", "items": {"type": "string"}},
+              "condition_codes": {
+                "type": "array",
+                "description": "The real codings behind the condition strings, MeSH entry terms excluded. phs000681's 34 condition entries are one MeSH coding (D003924) plus 32 synonym rows whose own 'code' is a sentence; this keeps the identifiers.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "system": {"type": ["string", "null"], "description": "Coding system, e.g. urn:oid:2.16.840.1.113883.6.177 for MeSH or the UMLS metathesaurus URL."},
+                    "code": {"type": ["string", "null"], "description": "The code, e.g. D003924 or C0011860."},
+                    "display": {"type": ["string", "null"], "description": "The system's own label for it."}
+                  }
+                }
+              }
             }
           }
         },
@@ -78,6 +90,31 @@
             "status": {"type": ["string", "null"]},
             "description": {"type": ["string", "null"]},
             "conditions": {"type": "array", "items": {"type": "string"}},
+            "condition_codes": {
+              "type": "array",
+              "description": "The real codings behind the condition strings, MeSH entry terms excluded. phs000681's 34 condition entries are one MeSH coding (D003924) plus 32 synonym rows whose own 'code' is a sentence; this keeps the identifiers.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "system": {"type": ["string", "null"], "description": "Coding system, e.g. urn:oid:2.16.840.1.113883.6.177 for MeSH or the UMLS metathesaurus URL."},
+                  "code": {"type": ["string", "null"], "description": "The code, e.g. D003924 or C0011860."},
+                  "display": {"type": ["string", "null"], "description": "The system's own label for it."}
+                }
+              }
+            },
+            "keywords": {"type": "array", "items": {"type": "string"}, "description": "The study's keyword texts, deduped the way the conditions are."},
+            "keyword_codes": {
+              "type": "array",
+              "description": "The real codings behind the keyword strings, MeSH entry terms excluded. phs000681's 34 condition entries are one MeSH coding (D003924) plus 32 synonym rows whose own 'code' is a sentence; this keeps the identifiers.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "system": {"type": ["string", "null"], "description": "Coding system, e.g. urn:oid:2.16.840.1.113883.6.177 for MeSH or the UMLS metathesaurus URL."},
+                  "code": {"type": ["string", "null"], "description": "The code, e.g. D003924 or C0011860."},
+                  "display": {"type": ["string", "null"], "description": "The system's own label for it."}
+                }
+              }
+            },
             "study_overview_url": {"type": ["string", "null"]},
             "release_date": {"type": ["string", "null"]},
             "phenotype_dataset_count": {"type": ["integer", "null"]},

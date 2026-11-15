@@ -309,7 +309,8 @@
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "description": "OncoTree tissue names, e.g. 'Adrenal Gland'. These are the top level of the tree; every tumour type sits under one."
         },
         {
           "type": "object",

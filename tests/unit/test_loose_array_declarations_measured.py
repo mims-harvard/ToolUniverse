@@ -237,9 +237,14 @@ DECLARED_OBJECT_ITEMS = [
         "clinicaltrials_gov_tools",
         "ClinicalTrials_get_study",
         "interventions",
-        ["description", "name", "type"],
+        # Re-measured 2026-11-10 over 23 intervention items from 9 studies: type
+        # 23/23, name 23/23, arm_group_labels 22/23, description 21/23,
+        # other_names 4/23. The original 19-item observation missed the last two.
+        # arm_group_labels is what ties an intervention to the arm it was given
+        # in, so a placebo otherwise reads like a treatment.
+        ["arm_group_labels", "description", "name", "other_names", "type"],
         [],
-        19,
+        23,
     ),
     (
         "clinicaltrials_gov_tools",

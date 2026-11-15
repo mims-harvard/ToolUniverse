@@ -190,6 +190,10 @@ def test_existing_fields_are_untouched(monkeypatch):
         {
             "taxon_id": 2,
             "scientific_name": "Bacteria",
+            # UniProt records a common name on some ancestors and not others;
+            # the key is always present so a caller does not have to tell a
+            # missing key from a missing name.
+            "common_name": None,
             "rank": "domain",
             "hidden": False,
         }

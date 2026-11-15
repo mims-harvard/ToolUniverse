@@ -11,11 +11,56 @@ No authentication required. Free public access.
 """
 
 import requests
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 PUBCHEM_BASE_URL = "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
+
+# Free text PubChem sends as a list of paragraphs, capped per row in a search
+# page so one verbose assay cannot crowd out the other nineteen.
+DESCRIPTION_CHARACTERS = 1200
+_COUNT_SUFFIXES = (
+    "All",
+    "Active",
+    "Inactive",
+    "Inconclusive",
+    "Unspecified",
+    "Probe",
+)
+
+
+def _paragraphs(value: Any, cap: Optional[int] = None) -> tuple:
+    """(text, truncated) from PubChem's list-of-paragraphs free text."""
+    if isinstance(value, str):
+        value = [value]
+    text = "\n".join(str(v).strip() for v in (value or []) if str(v).strip())
+    if not text:
+        return None, False
+    if cap is not None and len(text) > cap:
+        return text[:cap].rstrip() + "...", True
+    return text, False
+
+
+def _counts(summary: Dict[str, Any], prefix: str) -> Optional[Dict[str, Any]]:
+    """SIDCount*/CIDCount*: how much data the assay holds and how much of it
+    was active - what tells a screen worth opening from an empty one."""
+    out = {
+        suffix.lower(): summary.get(f"{prefix}Count{suffix}")
+        for suffix in _COUNT_SUFFIXES
+    }
+    return out if any(v is not None for v in out.values()) else None
+
+
+def _last_data_change(summary: Dict[str, Any]) -> Optional[str]:
+    change = summary.get("LastDataChange")
+    if not isinstance(change, dict) or not change.get("Year"):
+        return None
+    return "%04d-%02d-%02d" % (
+        int(change.get("Year")),
+        int(change.get("Month") or 1),
+        int(change.get("Day") or 1),
+    )
 
 
 @register_tool("PubChemBioAssayTool")
@@ -167,14 +212,26 @@ class PubChemBioAssayTool(BaseTool):
                     target_names = (
                         [t.get("Name", "") for t in targets] if targets else []
                     )
+                    description, description_truncated = _paragraphs(
+                        summary.get("Description"), DESCRIPTION_CHARACTERS
+                    )
                     results.append(
                         {
                             "aid": summary.get("AID"),
                             "name": summary.get("Name"),
                             "source": summary.get("SourceName"),
+                            "source_id": summary.get("SourceID"),
                             "method": summary.get("Method"),
                             "targets": target_names,
+                            "number_of_tids": summary.get("NumberOfTIDs"),
                             "has_score": summary.get("HasScore"),
+                            "description": description,
+                            "description_truncated": description_truncated,
+                            "substance_counts": _counts(summary, "SID"),
+                            "compound_counts": _counts(summary, "CID"),
+                            "last_data_change": _last_data_change(summary),
+                            "version": summary.get("Version"),
+                            "revision": summary.get("Revision"),
                         }
                     )
             except Exception:
@@ -197,6 +254,10 @@ class PubChemBioAssayTool(BaseTool):
             "metadata": {
                 "source": "PubChem BioAssay",
                 "gene_symbol": gene_symbol,
+                "description_characters": DESCRIPTION_CHARACTERS,
+                "note": "compound_counts.active over compound_counts.all is "
+                "the assay's hit rate. get_assay_summary returns the same "
+                "assay's full description with its protocol and comment.",
                 "total_assays": len(aids_list),
                 "returned": len(results),
                 "offset": offset,
@@ -337,6 +398,9 @@ class PubChemBioAssayTool(BaseTool):
         except Exception:
             pass
 
+        description, _ = _paragraphs(summary.get("Description"))
+        protocol, _ = _paragraphs(summary.get("Protocol"))
+        comment, _ = _paragraphs(summary.get("Comment"))
         result = {
             "aid": summary.get("AID"),
             "name": summary.get("Name"),
@@ -347,12 +411,17 @@ class PubChemBioAssayTool(BaseTool):
             "number_of_tids": summary.get("NumberOfTIDs"),
             "targets": target_info,
             "gene_targets": gene_info,
+            # Whole text, not the first three paragraphs: the protocol's
+            # readout and the comment's caveats are usually at the end.
+            "description": description,
+            "protocol": protocol,
+            "comment": comment,
+            "substance_counts": _counts(summary, "SID"),
+            "compound_counts": _counts(summary, "CID"),
+            "last_data_change": _last_data_change(summary),
+            "version": summary.get("Version"),
+            "revision": summary.get("Revision"),
         }
-
-        # Include truncated description
-        desc = summary.get("Description", [])
-        if desc:
-            result["description"] = desc[:3]
 
         return {
             "status": "success",

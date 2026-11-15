@@ -116,6 +116,41 @@
                   "null"
                 ],
                 "description": "MRGID of accepted (canonical) record"
+              },
+              "maxLatitude": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Northern edge of the bounding box, e.g. 61."
+              },
+              "maxLongitude": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Eastern edge of the bounding box, e.g. 3.4. The four bounds together are a BOX, not the region's actual outline -- a long curved coast's box covers far more sea than the region does."
+              },
+              "minLatitude": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Southern edge of the region's bounding box in decimal degrees, e.g. 51.037694. Present on 14 of 26 hits."
+              },
+              "minLongitude": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Western edge of the bounding box, e.g. -4.431527. Negative is west."
+              },
+              "precision": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Positional precision of the record in METRES, e.g. 711089.1. Present on 3 of 26 hits, and a value of several hundred kilometres means the point is a rough centroid, not a location."
               }
             }
           }
@@ -233,6 +268,13 @@
                 "integer",
                 "null"
               ]
+            },
+            "precision": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Positional precision of the record in METRES, e.g. 711089.1. A value of several hundred kilometres means the coordinates are a rough centroid of a large region, not a location."
             }
           },
           "not": {

@@ -158,6 +158,8 @@
               "type": "integer",
               "description": "Number of linked DDBJ records"
             },
+            "cross_reference_types": {"type": "object", "description": "How many linked records of each type, e.g. {\"bioproject\": 1, \"sra-run\": 1}. The count alone did not say what was counted."},
+            "cross_references_tool": {"type": "string", "description": "Names the sibling tool that returns the linked records themselves."},
             "taxonomy_id": {
               "type": [
                 "string",

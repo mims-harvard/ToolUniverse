@@ -279,21 +279,111 @@
                 "object",
                 "null"
               ],
-              "description": "Model configuration including architectures and model_type"
+              "description": "The model's config, including its architecture and task",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              }
             },
             "cardData": {
               "type": [
                 "object",
                 "null"
               ],
-              "description": "Model card metadata (license, datasets, language, metrics, widget examples)"
+              "description": "The model card's front matter: licence, language, datasets, metrics and tags",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              }
             },
             "transformersInfo": {
               "type": [
                 "object",
                 "null"
               ],
-              "description": "Transformers library info (auto_model class, pipeline_tag, processor)"
+              "description": "How to load the model with transformers: the auto class, the pipeline tag and the processor",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              }
             },
             "widgetData": {
               "type": [
@@ -318,6 +408,73 @@
             "createdAt": {
               "type": "string",
               "description": "Model creation timestamp"
+            },
+            "inference": {
+              "type": [
+                "string",
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the hosted inference API serves this model, and in what state"
+            },
+            "safetensors": {
+              "type": [
+                "object",
+                "boolean",
+                "null"
+              ],
+              "description": "Safetensors availability and parameter counts by dtype - the way to know a model's size without downloading it",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "usedStorage": {
+              "type": [
+                "integer",
+                "number",
+                "null"
+              ],
+              "description": "Bytes the repository occupies"
+            },
+            "spaces": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Hugging Face Spaces that use this model",
+              "items": {
+                "type": [
+                  "string",
+                  "object"
+                ]
+              }
             }
           },
           "not": {
@@ -469,6 +626,20 @@
                   "null"
                 ],
                 "description": "Last modification timestamp"
+              },
+              "key": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The upstream's own key for the row; empty string when it sets none."
+              },
+              "sha": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Commit hash of the dataset revision this record describes. A dataset is mutable, so the sha is what pins which version was seen."
               }
             }
           }

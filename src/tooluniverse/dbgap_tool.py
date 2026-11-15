@@ -32,6 +32,49 @@ _CONTENT_EXTENSION_SUFFIXES = {
 }
 
 
+# dbGaP's FHIR CodeableConcepts expand every MeSH term into its entry
+# terms, so phs000681's 34 `condition` entries are ONE real coding --
+# D003924, "Diabetes Mellitus, Type 2" -- and 32 synonym rows whose own
+# "code" is a sentence ("D003924 entry term: Adult-Onset Diabetes Mellitus").
+# `_unique_texts` already drops the duplicate text; this keeps the coding
+# that is an identifier and leaves the pseudo-codings out.
+_ENTRY_TERM_SYSTEM_MARKER = "MeshEntryTerm"
+
+
+def _concept_codes(
+    codeable_concepts: List[Dict[str, Any]], limit: int = 10
+) -> List[Dict[str, Any]]:
+    """The real codings of a CodeableConcept list, entry terms excluded.
+
+    A study's condition as free text cannot be joined to anything; MeSH
+    D003924 can, and it was the one thing in those 34 entries that was an
+    identifier.
+    """
+    out: List[Dict[str, Any]] = []
+    seen: set = set()
+    for concept in codeable_concepts or []:
+        for coding in concept.get("coding") or []:
+            if not isinstance(coding, dict):
+                continue
+            system = coding.get("system") or ""
+            if _ENTRY_TERM_SYSTEM_MARKER in system:
+                continue
+            code = coding.get("code")
+            if not code or (system, code) in seen:
+                continue
+            seen.add((system, code))
+            out.append(
+                {
+                    "system": system or None,
+                    "code": code,
+                    "display": coding.get("display"),
+                }
+            )
+            if len(out) >= limit:
+                return out
+    return out
+
+
 def _unique_texts(
     codeable_concepts: List[Dict[str, Any]], limit: int = 10
 ) -> List[str]:
@@ -153,6 +196,11 @@ class DbGaPTool(BaseTool):
                     "title": study.get("title"),
                     "status": study.get("status"),
                     "conditions": _unique_texts(study.get("condition"), limit=5),
+                    # The MeSH coding behind those strings, so a hit can be
+                    # joined to an ontology rather than only read.
+                    "condition_codes": _concept_codes(
+                        study.get("condition"), limit=5
+                    ),
                 }
             )
 
@@ -199,6 +247,9 @@ class DbGaPTool(BaseTool):
                 "status": study.get("status"),
                 "description": study.get("description"),
                 "conditions": _unique_texts(study.get("condition")),
+                "condition_codes": _concept_codes(study.get("condition")),
+                "keywords": _unique_texts(study.get("keyword")),
+                "keyword_codes": _concept_codes(study.get("keyword")),
                 "study_overview_url": _extension_value(
                     extensions, "StudyOverviewUrl"
                 ),

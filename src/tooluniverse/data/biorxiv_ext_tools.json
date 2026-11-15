@@ -87,6 +87,13 @@
                   "total": {
                     "type": "string",
                     "description": "Total records including revisions"
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which collection the message describes"
                   }
                 }
               }
@@ -143,6 +150,27 @@
                   "license": {
                     "type": "string",
                     "description": "License type"
+                  },
+                  "server": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which server the preprint is on, bioRxiv or medRxiv - one API serves both and the answer differs by server"
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Posting type, e.g. 'new results' or 'confirmatory results'"
+                  },
+                  "jatsxml": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL of the preprint's JATS XML, which is the full text in machine-readable form"
                   }
                 }
               }

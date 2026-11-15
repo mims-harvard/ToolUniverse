@@ -44,9 +44,127 @@
         "properties": {
           "study_accession": {
             "type": "string"
+          },
+          "reported_trait": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "efo_traits": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "pubmed_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "publication_date": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "first_author": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "association_count": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The paper's title"
+          },
+          "journal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "initial_sample_description": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The discovery sample, as the catalogue phrases it, e.g. '2,095 European ancestry exposed individuals'. This is what a GWAS result means, and it was dropped."
+          },
+          "replication_sample_description": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The replication sample; ['NA'] when the study has none"
+          },
+          "discovery_sample_ancestry": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Per-ancestry sample counts for the discovery stage"
+          },
+          "replication_sample_ancestry": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "genotyping_technologies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "summary_statistics": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "FTP path to the deposited summary statistics, or 'NA' when there are none. For a tool named after summary statistics this is the first thing a caller needs, and it was not returned."
+          },
+          "has_summary_statistics": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "False when summary_statistics is 'NA'; null when upstream says nothing"
+          },
+          "gene_environment_interaction": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Whether the study tested a gene-environment interaction, which makes its effect sizes answer a different question"
           }
         }
-      }
+      },
+      "description": "One row per study. Everything from `title` down was in the same response and was not returned."
     }
   },
   {
@@ -111,9 +229,127 @@
         "properties": {
           "study_accession": {
             "type": "string"
+          },
+          "reported_trait": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "efo_traits": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "pubmed_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "publication_date": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "first_author": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "association_count": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The paper's title"
+          },
+          "journal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "initial_sample_description": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The discovery sample, as the catalogue phrases it, e.g. '2,095 European ancestry exposed individuals'. This is what a GWAS result means, and it was dropped."
+          },
+          "replication_sample_description": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The replication sample; ['NA'] when the study has none"
+          },
+          "discovery_sample_ancestry": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Per-ancestry sample counts for the discovery stage"
+          },
+          "replication_sample_ancestry": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "genotyping_technologies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "summary_statistics": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "FTP path to the deposited summary statistics, or 'NA' when there are none. For a tool named after summary statistics this is the first thing a caller needs, and it was not returned."
+          },
+          "has_summary_statistics": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "False when summary_statistics is 'NA'; null when upstream says nothing"
+          },
+          "gene_environment_interaction": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Whether the study tested a gene-environment interaction, which makes its effect sizes answer a different question"
           }
         }
-      }
+      },
+      "description": "One row per study. Everything from `title` down was in the same response and was not returned."
     }
   },
   {

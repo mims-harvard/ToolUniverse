@@ -30,6 +30,32 @@ FILES_URL = "https://osdr.nasa.gov/osdr/data/osd/files"
 DATASET_URL = "https://visualization.osdr.nasa.gov/biodata/api/v2/dataset"
 
 
+DESCRIPTION_CHARACTERS = 600
+
+
+def _capped(value: Any, limit: int) -> "str | None":
+    """One study description, cut at `limit` with an ellipsis rather than
+    silently, since a search page carries one per row."""
+    text = str(value or "").strip()
+    if not text:
+        return None
+    return text if len(text) <= limit else text[:limit].rstrip() + "..."
+
+
+def _person(value: Any) -> "str | None":
+    """OSDR gives a study's investigator as separate name parts."""
+    if isinstance(value, list):
+        value = value[0] if value else None
+    if not isinstance(value, dict):
+        return value if isinstance(value, str) and value.strip() else None
+    parts = [
+        str(value.get(key) or value.get(key.title()) or "").strip()
+        for key in ("first name", "middle initials", "last name")
+    ]
+    name = " ".join(part for part in parts if part)
+    return name or None
+
+
 def _first(value: Any) -> Any:
     """OSDR search hits sometimes wrap a scalar in a one-item list."""
     if isinstance(value, list):
@@ -130,8 +156,33 @@ class NASAOSDRTool(BaseTool):
                     "assay_technology_type": source.get(
                         "Study Assay Technology Type"
                     ),
+                    # The platform the assay ran on, which is often the only
+                    # one of the three assay fields that is populated:
+                    # "Study Assay Technology Type" is empty on the first
+                    # microgravity hit while the platform reads GPL1219.
+                    "assay_technology_platform": source.get(
+                        "Study Assay Technology Platform"
+                    )
+                    or None,
+                    # The study design, e.g. "Expression profiling by array".
+                    "project_type": source.get("Project Type") or None,
                     "factor_name": source.get("Study Factor Name"),
                     "release_date": source.get("Study Public Release Date"),
+                    # What the study was, which is what a caller reads to
+                    # choose between search hits. Capped per row.
+                    "description": _capped(
+                        source.get("Study Description"), DESCRIPTION_CHARACTERS
+                    ),
+                    # Who ran the study, and -- for the cross-referenced rows
+                    # the note already warns about -- which repository the
+                    # record actually comes from.
+                    "investigator": _person(source.get("Study Person")),
+                    "data_source_type": source.get("Data Source Type") or None,
+                    "data_source_accession": source.get("Data Source Accession")
+                    or None,
+                    "funding_agency": source.get("Study Funding Agency") or None,
+                    "managing_nasa_center": source.get("Managing NASA Center")
+                    or None,
                     "usable_with_get_study": bool(
                         accession and str(accession).startswith("OSD-")
                     ),
@@ -223,6 +274,41 @@ class NASAOSDRTool(BaseTool):
                     "study publication author list"
                 ),
                 "release_date": metadata.get("study public release date"),
+                # The protocols are the methods, and all three fields naming
+                # them were dropped from a tool whose job is "full metadata
+                # for one OSDR study": OSD-1 lists eight protocol names with
+                # their types and their descriptions.
+                "protocol_names": metadata.get("study protocol name"),
+                "protocol_types": metadata.get("study protocol type"),
+                "protocol_descriptions": metadata.get("study protocol description"),
+                "investigator": _person(metadata.get("study person")),
+                "funding_agency": metadata.get("study funding agency"),
+                "grant_number": metadata.get("study grant number"),
+                "managing_nasa_center": metadata.get("managing nasa center"),
+                "space_program": metadata.get("space program"),
+                "project_identifier": metadata.get("project identifier"),
+                "project_link": metadata.get("project link"),
+                "project_type": metadata.get("project type"),
+                "experiment_platform": metadata.get("experiment platform"),
+                "assay_technology_platform": metadata.get(
+                    "study assay technology platform"
+                ),
+                "characteristics": metadata.get("characteristics"),
+                "factor_values": metadata.get("factor value"),
+                "parameter_values": metadata.get("parameter value"),
+                "identifiers": metadata.get("identifiers"),
+                "data_source_type": metadata.get("data source type"),
+                "data_source_accession": metadata.get("data source accession"),
+                "authoritative_source_url": metadata.get(
+                    "authoritative source url"
+                ),
+                "acknowledgments": metadata.get("acknowledgments"),
+                # `assays` and `files` on this endpoint are not lists -- each
+                # is {"REST_URL": ...}, a pointer to the real one -- so the
+                # link is what there is to report. Counting the dict gave 1
+                # for every study.
+                "assays_url": (payload.get("assays") or {}).get("REST_URL"),
+                "files_url": (payload.get("files") or {}).get("REST_URL"),
             },
             "metadata": {
                 "accession": accession,
@@ -270,6 +356,13 @@ class NASAOSDRTool(BaseTool):
                 "file_size_bytes": f.get("file_size"),
                 "restricted": bool(f.get("restricted")),
                 "download_path": f.get("remote_url"),
+                "date_created": f.get("date_created"),
+                "date_updated": f.get("date_updated"),
+                # Which group deposited the file, and where it sits in the
+                # study's directory tree.
+                "organization": f.get("organization") or None,
+                "subdirectory": f.get("subdirectory") or None,
+                "visible": f.get("visible"),
             }
             for f in all_files[:limit]
         ]

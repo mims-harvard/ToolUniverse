@@ -196,6 +196,9 @@ class ZoomaTool(BaseTool):
         prop = item.get("annotatedProperty") or {}
         prov = item.get("provenance") or {}
         source = prov.get("source") or {}
+        derived = item.get("derivedFrom") or {}
+        derived_prov = derived.get("provenance") or {}
+        derived_source = derived_prov.get("source") or {}
         olslinks = (item.get("_links") or {}).get("olslinks") or []
         ols_urls = [
             link.get("href")
@@ -213,6 +216,25 @@ class ZoomaTool(BaseTool):
             "source": source.get("name"),
             "source_type": source.get("type"),
             "evidence": prov.get("evidence"),
+            # `provenance` is ZOOMA's own inference step, so `source` was
+            # "zooma" and `evidence` "ZOOMA_INFERRED_FROM_CURATED" on every
+            # annotation -- the aggregator, not the curator. The database that
+            # actually made the mapping, and how directly, is under
+            # `derivedFrom.provenance`: faang with CURATED_EXACT for "bone
+            # marrow". Without it every annotation reads as ZOOMA's own.
+            "derived_from": {
+                "source": derived_source.get("name"),
+                "source_type": derived_source.get("type"),
+                "source_uri": derived_source.get("uri"),
+                "evidence": derived_prov.get("evidence"),
+                "annotator": derived_prov.get("annotator"),
+                "property_value": (derived.get("annotatedProperty") or {}).get(
+                    "propertyValue"
+                ),
+                "semantic_tags": derived.get("semanticTags") or [],
+            }
+            if derived
+            else None,
             "ols_links": ols_urls,
         }
 
@@ -233,6 +255,12 @@ class ZoomaTool(BaseTool):
         data = [
             {
                 "name": s.get("name"),
+                # The human-readable name of the source. 287 of ZOOMA's 301
+                # sources carry one -- "addicto" is the Addiction Ontology --
+                # and a tool whose whole job is to list the sources a caller
+                # can filter by returned the slug and not the name.
+                "title": s.get("title"),
+                "description": s.get("description"),
                 "type": s.get("type"),
                 "uri": s.get("uri"),
             }

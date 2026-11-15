@@ -23,6 +23,51 @@ ORCID_HEADERS = {
 }
 
 
+def _external_ids(node: Any) -> list:
+    """ORCID's external-id block as rows.
+
+    Each id carries the namespace, the value, the relationship ("self" or
+    "part-of") and sometimes a URL; `external-id-normalized` restates the
+    value and is left out.
+    """
+    if not isinstance(node, dict):
+        return []
+    rows = node.get("external-id")
+    if isinstance(rows, dict):
+        rows = [rows]
+    if not isinstance(rows, list):
+        return []
+    out = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        url = row.get("external-id-url")
+        out.append(
+            {
+                "type": row.get("external-id-type"),
+                "value": row.get("external-id-value"),
+                "relationship": row.get("external-id-relationship"),
+                "url": url.get("value") if isinstance(url, dict) else url,
+            }
+        )
+    return out
+
+
+def _source_name(node: Any) -> "str | None":
+    """Who asserted the record: the client or the ORCID holder."""
+    if not isinstance(node, dict):
+        return None
+    for key in ("source-name", "source-client-id", "source-orcid"):
+        value = node.get(key)
+        if isinstance(value, dict):
+            for inner in ("value", "path", "uri"):
+                if value.get(inner):
+                    return str(value[inner])
+        elif value:
+            return str(value)
+    return None
+
+
 @register_tool("ORCIDTool")
 class ORCIDTool(BaseTool):
     """
@@ -483,6 +528,24 @@ class ORCIDTool(BaseTool):
                             "subgroup_index": subgroup_index,
                             "summary_index": summary_index,
                             "group_external_ids": group.get("external-ids", {}),
+                            # The GROUP's external ids were read and the
+                            # review's own were not, though they are what
+                            # identifies the individual review, and the
+                            # subgroup's identify the venue it belongs to.
+                            "external_ids": _external_ids(s.get("external-ids")),
+                            "subgroup_external_ids": _external_ids(
+                                sub.get("external-ids")
+                            ),
+                            # Who deposited the record, and when it was
+                            # created and last changed: an ORCID record is an
+                            # assertion by a client, and the assertion's
+                            # provenance was dropped.
+                            "source": _source_name(s.get("source")),
+                            "created_date": (s.get("created-date") or {}).get("value"),
+                            "last_modified_date": (
+                                s.get("last-modified-date") or {}
+                            ).get("value"),
+                            "visibility": s.get("visibility"),
                             "put_code": s.get("put-code"),
                             "reviewer_role": s.get("reviewer-role"),
                             "review_type": s.get("review-type"),

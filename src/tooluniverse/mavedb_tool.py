@@ -21,6 +21,10 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 MAVEDB_API = "https://api.mavedb.org/api/v1"
+
+# A MaveDB publication can carry 21 authors and a score set can cite several
+# papers. The author list is capped per publication with the count beside it.
+AUTHORS_PER_PUBLICATION = 25
 UNIPROT_API = "https://rest.uniprot.org/uniprotkb"
 
 # Standard 20-amino-acid order (matches what every downstream skill expects)
@@ -61,6 +65,124 @@ class MaveDBTool(BaseTool):
         self.session = requests.Session()
         self.session.headers.update({"Accept": "application/json"})
 
+    @staticmethod
+    def _publication(pub: Dict[str, Any]) -> Dict[str, Any]:
+        """One publication identifier, as MaveDB answers it.
+
+        The tools returned the bare PubMed number. The same object carries the
+        title, the journal, the year, the DOI, a formatted citation and the
+        author list -- 21 authors on the UBE2I score set's paper -- so a
+        caller had an id to resolve elsewhere instead of the citation it was
+        already given.
+        """
+        authors = [a for a in (pub.get("authors") or []) if isinstance(a, dict)]
+        return {
+            "identifier": pub.get("identifier"),
+            "db_name": pub.get("dbName"),
+            "title": pub.get("title"),
+            "journal": pub.get("publicationJournal"),
+            "year": pub.get("publicationYear"),
+            "doi": pub.get("doi"),
+            "url": pub.get("url"),
+            "citation": pub.get("referenceHtml"),
+            "authors": [
+                {"name": a.get("name"), "primary": a.get("primary")}
+                for a in authors[:AUTHORS_PER_PUBLICATION]
+            ],
+            "author_count": len(authors),
+            "authors_truncated": len(authors) > AUTHORS_PER_PUBLICATION,
+        }
+
+    @staticmethod
+    def _keywords(record: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """The controlled keywords an experiment is indexed under.
+
+        MaveDB answers each as a {key, label, description} triple -- the
+        assay, the phenotype measured, the delivery method -- and none of it
+        reached the caller, who got a free-text title to guess from.
+        """
+        out = []
+        for item in record.get("keywords") or []:
+            if not isinstance(item, dict):
+                continue
+            keyword = item.get("keyword") or {}
+            out.append(
+                {
+                    "key": keyword.get("key"),
+                    "label": keyword.get("label"),
+                    "description": keyword.get("description"),
+                    "special": keyword.get("special"),
+                    # The ontology the term comes from, where MaveDB records
+                    # one, and the curator's own note on why this keyword
+                    # applies to this experiment -- a different thing from the
+                    # term's definition.
+                    "system": keyword.get("system"),
+                    "code": keyword.get("code"),
+                    "version": keyword.get("version"),
+                    "note": item.get("description"),
+                }
+            )
+        return out
+
+    @staticmethod
+    def _target_gene(tg: Dict[str, Any]) -> Dict[str, Any]:
+        """One target gene, with what it is and what organism it is from.
+
+        `uniprot_id` was read from `targetSequence.uniprot`, which a target
+        sequence does not carry, so it was None on every score set while the
+        accession sat in `uniprotIdFromMappedMetadata` -- P63279 for UBE2I.
+        `category` ("protein_coding"), the sequence type (dna or protein) and
+        the taxonomy were dropped too, and a DMS score set read against the
+        wrong organism is a different experiment.
+        """
+        sequence = tg.get("targetSequence") or {}
+        taxonomy = sequence.get("taxonomy") or {}
+        external = []
+        for item in tg.get("externalIdentifiers") or []:
+            if not isinstance(item, dict):
+                continue
+            identifier = item.get("identifier") or {}
+            external.append(
+                {
+                    "db_name": identifier.get("dbName"),
+                    "identifier": identifier.get("identifier"),
+                    "url": identifier.get("url"),
+                    "offset": item.get("offset"),
+                }
+            )
+        text = sequence.get("sequence") or ""
+        # A target is given either as a sequence or as an accession, and a
+        # search row usually gives the accession with `targetSequence: null`.
+        accession = tg.get("targetAccession") or {}
+        return {
+            "name": tg.get("name"),
+            "category": tg.get("category"),
+            "mapped_hgnc_name": tg.get("mappedHgncName"),
+            "accession": accession.get("accession"),
+            "accession_gene": accession.get("gene"),
+            "accession_assembly": accession.get("assembly"),
+            "is_base_editor": accession.get("isBaseEditor"),
+            "uniprot_id": tg.get("uniprotIdFromMappedMetadata")
+            or ((sequence.get("uniprot") or {}).get("identifier")),
+            "external_identifiers": external,
+            "sequence_type": sequence.get("sequenceType"),
+            "sequence_length": len(text) or None,
+            # The construct the assay was actually run on. Positions in a DMS
+            # score set are numbered against this, so a caller checking a
+            # variant's position has nothing to check it against without it.
+            "sequence": text or None,
+            "organism": taxonomy.get("organismName"),
+            "taxon_id": taxonomy.get("code"),
+            "common_name": taxonomy.get("commonName"),
+            "taxon_rank": taxonomy.get("rank"),
+            "taxon_url": taxonomy.get("url"),
+            "taxon_reference": taxonomy.get("articleReference"),
+            # MaveDB's internal numeric key. The urn is what its endpoints
+            # take; this is here so the same target gene can be recognised
+            # across responses.
+            "record_id": tg.get("id"),
+        }
+
     def _search(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Search MaveDB score sets by text query."""
         query = params.get("query", "")
@@ -90,6 +212,7 @@ class MaveDBTool(BaseTool):
                 for g in (ss.get("targetGenes") or [])
                 if isinstance(g, dict) and g.get("name")
             ]
+            experiment = ss.get("experiment") or {}
             results.append(
                 {
                     "urn": ss.get("urn"),
@@ -101,6 +224,38 @@ class MaveDBTool(BaseTool):
                     "target_genes": target_genes,
                     "num_variants": ss.get("numVariants"),
                     "published_date": ss.get("publishedDate"),
+                    # What the target actually is: the category, the accession
+                    # or sequence it was measured against, and the organism.
+                    # A search result naming "BAP1" does not say whether the
+                    # assay was run on human protein or a yeast construct.
+                    "target_gene_details": [
+                        self._target_gene(g)
+                        for g in (ss.get("targetGenes") or [])
+                        if isinstance(g, dict)
+                    ],
+                    # The paper, so a search result can be judged without a
+                    # second call per hit.
+                    "publications": [
+                        self._publication(pub)
+                        for pub in ss.get("primaryPublicationIdentifiers") or []
+                        if isinstance(pub, dict)
+                    ],
+                    # The assay the score set came from, and the controlled
+                    # keywords it is indexed under -- which is what tells two
+                    # score sets of the same gene apart.
+                    "experiment_urn": experiment.get("urn"),
+                    "experiment_title": experiment.get("title"),
+                    "experiment_method": experiment.get("methodText"),
+                    "experiment_set_urn": experiment.get("experimentSetUrn"),
+                    "keywords": self._keywords(experiment),
+                    "secondary_publications": [
+                        self._publication(pub)
+                        for pub in ss.get("secondaryPublicationIdentifiers") or []
+                        if isinstance(pub, dict)
+                    ],
+                    "license": (ss.get("license") or {}).get("shortName"),
+                    "license_name": (ss.get("license") or {}).get("longName"),
+                    "license_url": (ss.get("license") or {}).get("link"),
                 }
             )
         return {
@@ -141,17 +296,13 @@ class MaveDBTool(BaseTool):
             }
 
         d = resp.json()
-        target_genes = []
-        for tg in d.get("targetGenes") or []:
-            gene_info = {
-                "name": tg.get("name"),
-                "category": tg.get("category"),
-            }
-            ref = tg.get("targetSequence") or {}
-            gene_info["uniprot_id"] = (
-                ref.get("uniprot", {}).get("identifier") if ref.get("uniprot") else None
-            )
-            target_genes.append(gene_info)
+        target_genes = [
+            self._target_gene(tg)
+            for tg in d.get("targetGenes") or []
+            if isinstance(tg, dict)
+        ]
+        experiment = d.get("experiment") or {}
+        license_info = d.get("license") or {}
 
         result = {
             "urn": d.get("urn"),
@@ -161,17 +312,73 @@ class MaveDBTool(BaseTool):
             "method": d.get("methodText"),
             "num_variants": d.get("numVariants"),
             "published_date": d.get("publishedDate"),
-            "license": (
-                d.get("license", {}).get("shortName") if d.get("license") else None
-            ),
+            "license": license_info.get("shortName"),
+            "license_name": license_info.get("longName"),
+            "license_url": license_info.get("link"),
             "target_genes": target_genes,
             "doi_identifiers": [
                 doi.get("identifier") for doi in d.get("doiIdentifiers") or []
             ],
+            # Kept as it was, and the same papers in full beside it.
             "primary_publications": [
                 pub.get("identifier")
                 for pub in d.get("primaryPublicationIdentifiers") or []
             ],
+            "publications": [
+                self._publication(pub)
+                for pub in d.get("primaryPublicationIdentifiers") or []
+                if isinstance(pub, dict)
+            ],
+            "secondary_publications": [
+                self._publication(pub)
+                for pub in d.get("secondaryPublicationIdentifiers") or []
+                if isinstance(pub, dict)
+            ],
+            # What the scores look like. Without the range and the histogram a
+            # caller has no way to choose a threshold or even to know which
+            # direction is damaging: UBE2I runs -0.39 to 4.12 over 24 bins,
+            # and `nullCount` says how many variants have no score at all.
+            "score_distribution": d.get("scoreDistribution"),
+            # Which columns the score table actually has -- score, sd, se,
+            # exp.score, df, pred.score for UBE2I -- which is what decides
+            # whether a per-variant query can ask for an error estimate.
+            "dataset_columns": d.get("datasetColumns"),
+            # The clinical calibration, where MaveDB has one: the score ranges
+            # that map onto ACMG PS3/BS3 evidence strengths, with the number
+            # of variants in each band and MaveDB's own research-use-only
+            # flag. For a score set used to interpret a variant this is the
+            # part that says what a score MEANS, and it was dropped whole.
+            "score_calibrations": d.get("scoreCalibrations") or [],
+            # The parent experiment: its own abstract and method text, the
+            # keywords it is indexed under, and the other score sets derived
+            # from the same assay.
+            "experiment": {
+                "urn": experiment.get("urn"),
+                "title": experiment.get("title"),
+                "short_description": experiment.get("shortDescription"),
+                "abstract": experiment.get("abstractText"),
+                "method": experiment.get("methodText"),
+                "keywords": self._keywords(experiment),
+                "score_set_urns": experiment.get("scoreSetUrns") or [],
+                "num_score_sets": experiment.get("numScoreSets"),
+                "publications": [
+                    self._publication(pub)
+                    for pub in experiment.get("primaryPublicationIdentifiers") or []
+                    if isinstance(pub, dict)
+                ],
+            }
+            if experiment
+            else None,
+            # Whether this score set has been mapped to genomic coordinates
+            # yet. `mappingState: "incomplete"` is why a variant query can
+            # come back with no VRS allele, and nothing said so.
+            "mapping_state": d.get("mappingState"),
+            "processing_state": d.get("processingState"),
+            "meta_analyzes_score_set_urns": d.get("metaAnalyzesScoreSetUrns") or [],
+            "meta_analyzed_by_score_set_urns": d.get("metaAnalyzedByScoreSetUrns")
+            or [],
+            "official_collections": d.get("officialCollections") or [],
+            "external_links": d.get("externalLinks") or {},
         }
         return {
             "status": "success",
@@ -594,10 +801,22 @@ class MaveDBTool(BaseTool):
             if sig_filter and (significance or "").lower() != sig_filter:
                 continue
             sig_counts[significance or "Unknown"] += 1
+            # The link back to the score set's own variant. A clinical
+            # control answers "ClinVar calls 65709 in BRCA2 Pathogenic"; the
+            # link is what connects that to the measured score, which is the
+            # whole reason the endpoint exists. It arrives under
+            # `clinvarLinks` and was read from `mappedVariants`, a key the
+            # response does not carry, so `mapped_variant_urns` was empty on
+            # all 2,122 controls of urn:mavedb:00001263-a-2.
+            links = [
+                link
+                for link in (
+                    entry.get("clinvarLinks") or entry.get("mappedVariants") or []
+                )
+                if isinstance(link, dict)
+            ]
             mapped_urns = [
-                mv.get("variantUrn")
-                for mv in entry.get("mappedVariants") or []
-                if isinstance(mv, dict) and mv.get("variantUrn")
+                link.get("variantUrn") for link in links if link.get("variantUrn")
             ]
             controls.append(
                 {
@@ -607,7 +826,18 @@ class MaveDBTool(BaseTool):
                     "gene_symbol": entry.get("geneSymbol"),
                     "clinical_significance": significance,
                     "clinical_review_status": entry.get("clinicalReviewStatus"),
+                    "record_id": entry.get("id"),
                     "mapped_variant_urns": mapped_urns,
+                    # Each link with the allele digest it was matched on, so a
+                    # control that maps to one variant through two different
+                    # alleles is visible as that rather than as a duplicate.
+                    "variant_links": [
+                        {
+                            "variant_urn": link.get("variantUrn"),
+                            "allele_digest": link.get("alleleDigest"),
+                        }
+                        for link in links
+                    ],
                 }
             )
 
@@ -703,9 +933,28 @@ class MaveDBTool(BaseTool):
                     "db_name": entry.get("dbName"),
                     "db_identifier": entry.get("dbIdentifier"),
                     "db_version": entry.get("dbVersion"),
+                    "record_id": entry.get("id"),
                     "allele_count": entry.get("alleleCount"),
                     "allele_number": entry.get("alleleNumber"),
                     "allele_frequency": entry.get("alleleFrequency"),
+                    # The filtering allele frequency: the 95% confidence upper
+                    # bound in the ancestry group where it is highest. This,
+                    # not the raw alleleFrequency, is what ACMG BA1/BS1
+                    # thresholds are read against, and gnomAD publishes it for
+                    # exactly that reason.
+                    "faf95_max": entry.get("faf95Max"),
+                    "faf95_max_ancestry": entry.get("faf95MaxAncestry"),
+                    # Which rows of THIS score set the variant was observed in.
+                    # The tool exists to connect a score set to gnomAD, and
+                    # that connection is the join key.
+                    "score_set_variants": [
+                        {
+                            "variant_urn": link.get("variantUrn"),
+                            "allele_digest": link.get("alleleDigest"),
+                        }
+                        for link in (entry.get("variantLinks") or [])
+                        if isinstance(link, dict)
+                    ],
                     "mapped_genomic_alleles": mapped_post,
                 }
             )
@@ -771,12 +1020,9 @@ class MaveDBTool(BaseTool):
                 continue
 
             pubs = [
-                {
-                    "identifier": pub.get("identifier"),
-                    "db_name": pub.get("dbName"),
-                    "title": pub.get("title"),
-                }
+                self._publication(pub)
                 for pub in exp.get("primaryPublicationIdentifiers") or []
+                if isinstance(pub, dict)
             ]
             score_set_urns = exp.get("scoreSetUrns") or []
             experiments.append(
@@ -788,6 +1034,37 @@ class MaveDBTool(BaseTool):
                     "score_set_urns": score_set_urns,
                     "num_score_sets": len(score_set_urns),
                     "publications": pubs,
+                    # An experiment IS its method. The response carries the
+                    # abstract and the method text -- how the library was
+                    # made, how the phenotype was read -- and the row carried
+                    # a title and a one-line description, so two experiments
+                    # on the same gene were indistinguishable.
+                    "abstract": exp.get("abstractText"),
+                    "method": exp.get("methodText"),
+                    "keywords": self._keywords(exp),
+                    "experiment_set_urn": exp.get("experimentSetUrn"),
+                    # Who deposited it. MaveDB records ORCIDs, which is the
+                    # attribution the depositor asked for.
+                    "contributors": [
+                        {
+                            "orcid_id": c.get("orcidId"),
+                            "given_name": c.get("givenName"),
+                            "family_name": c.get("familyName"),
+                        }
+                        for c in (exp.get("contributors") or [])
+                        if isinstance(c, dict)
+                    ],
+                    "secondary_publications": [
+                        self._publication(pub)
+                        for pub in exp.get("secondaryPublicationIdentifiers") or []
+                        if isinstance(pub, dict)
+                    ],
+                    "raw_read_identifiers": exp.get("rawReadIdentifiers") or [],
+                    "doi_identifiers": [
+                        {"identifier": doi.get("identifier"), "url": doi.get("url")}
+                        for doi in exp.get("doiIdentifiers") or []
+                        if isinstance(doi, dict)
+                    ],
                 }
             )
 

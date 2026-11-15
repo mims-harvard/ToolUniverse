@@ -46,6 +46,13 @@
         },
         "data": {
           "type": "object"
+        },
+        "search_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The Enamine web search this query corresponds to, e.g. 'https://enamine.net/compound-search/quick?q=pyridine'. Where a human can see the same result, and the only route to the parts the API does not return."
         }
       }
     },
@@ -87,6 +94,13 @@
         },
         "data": {
           "type": "object"
+        },
+        "compound_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A human-usable Enamine store page for the requested compound id, e.g. 'https://enamine.net/compound/Z1234567890'. This tool is DEPRECATED -- the Enamine Store API it called has been withdrawn -- so it returns an error together with this URL, which is the only part of the reply that can still be acted on."
         }
       }
     },
@@ -151,6 +165,13 @@
         },
         "data": {
           "type": "object"
+        },
+        "search_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The Enamine structure search this query corresponds to, e.g. 'https://enamine.net/compound-search/structure?smiles=c1cccnc1'."
         }
       }
     },
@@ -186,6 +207,13 @@
         },
         "data": {
           "type": "object"
+        },
+        "main_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The Enamine compound-collections page, 'https://enamine.net/compound-collections'. This tool is DEPRECATED -- the API it called has been withdrawn -- so it returns an error together with this URL for browsing by hand."
         }
       }
     },

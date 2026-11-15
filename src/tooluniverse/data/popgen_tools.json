@@ -67,6 +67,34 @@
                 },
                 "interpretation": {
                   "type": "string"
+                },
+                "df": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Degrees of freedom, e.g. 1."
+                },
+                "obs_AA": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Observed homozygotes for the major allele, e.g. 735."
+                },
+                "obs_Aa": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Observed heterozygotes, e.g. 300."
+                },
+                "obs_aa": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Observed homozygotes for the minor allele, e.g. 65. The three counts are the whole test input; without them the p-value cannot be rechecked and the direction of the departure is unknown."
                 }
               }
             }
@@ -160,6 +188,34 @@
                 },
                 "interpretation": {
                   "type": "string"
+                },
+                "n1": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Sample size of population 1, e.g. 100."
+                },
+                "n2": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Sample size of population 2, e.g. 100. Fst from small samples is badly biased upward, which the statistic alone does not reveal."
+                },
+                "p1": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Allele frequency in population 1, e.g. 0.8."
+                },
+                "p2": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Allele frequency in population 2, e.g. 0.3. Fst follows from these two, and without them the value cannot be rechecked or signed."
                 }
               }
             }
@@ -246,6 +302,20 @@
                 },
                 "interpretation": {
                   "type": "string"
+                },
+                "base_F_per_mating": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Inbreeding coefficient added by one mating of the given type, e.g. 0.125 for full sibs. The per-generation increment the cumulative figure is built from."
+                },
+                "generations": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Generations of that mating, e.g. 3."
                 }
               }
             }
@@ -331,6 +401,41 @@
                 },
                 "interpretation": {
                   "type": "string"
+                },
+                "expected_crossovers_per_gamete_per_gen": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Expected crossovers per gamete per generation, e.g. 2.0. The product of rate and intervals, shown so the inputs can be checked against the answer."
+                },
+                "generations": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Generations simulated, e.g. 3."
+                },
+                "n_intervals": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of intervals between them, e.g. 4 - one fewer than the SNP count."
+                },
+                "n_snps": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of SNPs in the window, e.g. 5."
+                },
+                "recomb_rate_per_interval": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Recombination rate assumed per interval, e.g. 0.5. An assumption, not a measurement, and the result scales with it."
                 }
               }
             }

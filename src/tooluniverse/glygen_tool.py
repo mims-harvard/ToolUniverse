@@ -17,6 +17,56 @@ from .tool_registry import register_tool
 
 GLYGEN_BASE_URL = "https://api.glygen.org"
 
+# A GlyGen detail record is wide: P14210 answers 375 publications, 105 SNVs
+# and 202 cross-references. Lists are capped and every cap is disclosed with
+# the full count beside it, so a short list is never mistaken for a short
+# answer.
+ROWS_PER_SECTION = 50
+
+
+def _capped(rows, cap=ROWS_PER_SECTION):
+    """`(rows[:cap], full count, was it cut)` for one section of a record."""
+    rows = [row for row in (rows or []) if isinstance(row, dict)]
+    return rows[:cap], len(rows), len(rows) > cap
+
+
+def _first_number(row, *keys):
+    """The first of `keys` the row actually carries, else None.
+
+    None rather than 0, because a count the API never sent and a count of
+    zero are different answers and only one of them is a measurement.
+    """
+    for key in keys:
+        value = row.get(key)
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            return value
+    return None
+
+
+def _publications(rows, cap=ROWS_PER_SECTION):
+    """The papers behind a record, which only ever reached the caller as a count.
+
+    `publication_count: 375` says that evidence exists and not what it is.
+    GlyGen answers the title, journal, date, authors and the PubMed reference
+    for each one in the same response.
+    """
+    kept, total, cut = _capped(rows, cap)
+    return (
+        [
+            {
+                "title": row.get("title"),
+                "journal": row.get("journal"),
+                "date": row.get("date"),
+                "authors": row.get("authors"),
+                "reference": row.get("reference"),
+                "evidence": row.get("evidence") or [],
+            }
+            for row in kept
+        ],
+        total,
+        cut,
+    )
+
 
 @register_tool("GlyGenTool")
 class GlyGenTool(BaseTool):
@@ -119,6 +169,131 @@ class GlyGenTool(BaseTool):
             "byonic": raw.get("byonic"),
         }
 
+        # The biosynthetic enzymes. The class docstring names them among what
+        # GlyGen provides and no tool in this family exposed them, so which
+        # glycosyltransferases build a glycan was unreachable through
+        # ToolUniverse while sitting in a response already fetched: G17689DH
+        # answers 65 of them, with the gene, the UniProt accession, the
+        # organism and the evidence for each.
+        enzymes, enzyme_total, enzymes_cut = _capped(raw.get("enzyme"))
+        result["enzymes"] = [
+            {
+                "uniprot_canonical_ac": e.get("uniprot_canonical_ac"),
+                "gene": e.get("gene"),
+                "protein_name": e.get("protein_name"),
+                "tax_name": e.get("tax_name"),
+                "tax_common_name": e.get("tax_common_name"),
+                "tax_id": e.get("tax_id"),
+                "gene_link": e.get("gene_link"),
+                "xref_key": e.get("xref_key"),
+                "xref_id": e.get("xref_id"),
+                "evidence": e.get("evidence") or [],
+            }
+            for e in enzymes
+        ]
+        result["enzyme_count"] = enzyme_total
+        result["enzymes_truncated"] = enzymes_cut
+
+        # The structure as a graph. `number_monosaccharides: 12` was the only
+        # thing said about a composition the response spells out residue by
+        # residue, each with the residue it is attached to and the linkage.
+        residues, residue_total, residues_cut = _capped(
+            raw.get("residues"), cap=ROWS_PER_SECTION * 4
+        )
+        result["residues"] = [
+            {
+                "id": r.get("id"),
+                "name": r.get("name"),
+                "parent_id": r.get("parentid"),
+                "attached_by": r.get("attachedby"),
+            }
+            for r in residues
+        ]
+        result["residue_count"] = residue_total
+        result["residues_truncated"] = residues_cut
+
+        # Which named motifs the structure contains, and which other
+        # GlyTouCan accessions it subsumes or is subsumed by -- the topology
+        # and base composition of the same structure, which is how a glycan
+        # is matched at a coarser resolution.
+        result["motifs"] = [
+            {
+                "id": m.get("id"),
+                "name": m.get("name"),
+                "synonym": m.get("synonym"),
+                "keywords": m.get("keywords") or [],
+            }
+            for m in (raw.get("motifs") or [])
+            if isinstance(m, dict)
+        ]
+        subsumption, subsumption_total, subsumption_cut = _capped(
+            raw.get("subsumption"), cap=ROWS_PER_SECTION * 2
+        )
+        result["subsumption"] = [
+            {
+                "related_accession": x.get("related_accession"),
+                "relationship": x.get("relationship"),
+            }
+            for x in subsumption
+        ]
+        result["subsumption_count"] = subsumption_total
+        result["subsumption_truncated"] = subsumption_cut
+
+        publications, publication_total, publications_cut = _publications(
+            raw.get("publication")
+        )
+        result["publications"] = publications
+        result["publication_count"] = publication_total
+        result["publications_truncated"] = publications_cut
+
+        # Where the glycan has been observed, and the other databases that
+        # hold it. The expression rows name the tissue or cell line as an
+        # UBERON/CLO record, which is what makes them joinable.
+        expression, expression_total, expression_cut = _capped(raw.get("expression"))
+        result["expression"] = [
+            {
+                "category": e.get("category"),
+                "tissue": e.get("tissue"),
+                "cell_line": e.get("cell_line"),
+                "species": e.get("species"),
+                "uniprot_canonical_ac": e.get("uniprot_canonical_ac"),
+                "start_pos": e.get("start_pos"),
+                "end_pos": e.get("end_pos"),
+                "residue": e.get("residue"),
+                "evidence": e.get("evidence") or [],
+            }
+            for e in expression
+        ]
+        result["expression_count"] = expression_total
+        result["expression_truncated"] = expression_cut
+        crossref, crossref_total, crossref_cut = _capped(raw.get("crossref"))
+        result["crossref"] = [
+            {
+                "database": x.get("database"),
+                "id": x.get("id"),
+                "url": x.get("url"),
+                "categories": x.get("categories") or [],
+            }
+            for x in crossref
+        ]
+        result["crossref_count"] = crossref_total
+        result["crossref_truncated"] = crossref_cut
+
+        # How the structure is built, one step at a time: the precursor
+        # accession, the residue added and the enzyme that adds it. The
+        # enzyme list above says which enzymes are involved; this says what
+        # each one does, and it is GlyGen's own GlycoTree reconstruction.
+        result["biosynthesis_steps"] = [
+            {
+                "source": step.get("source"),
+                "target": step.get("target"),
+                "residue_affected": step.get("residue_affected"),
+                "enzymes": step.get("enzymes") or [],
+            }
+            for step in (raw.get("glycotree_pathways") or [])
+            if isinstance(step, dict)
+        ]
+
         return {
             "status": "success",
             "data": result,
@@ -211,6 +386,20 @@ class GlyGenTool(BaseTool):
                     "number_proteins": item.get("number_proteins"),
                     "number_enzymes": item.get("number_enzymes"),
                     "number_species": item.get("number_species"),
+                    # The literature behind the glycan. The row reported
+                    # three counts -- proteins, enzymes, species -- and not
+                    # this one, while the response carried both the count and
+                    # the PMIDs themselves. GlyGen joins them with "; " into
+                    # one string, so a caller that took it whole would have
+                    # a single 36-id "identifier".
+                    "publication_count": item.get("publication_count"),
+                    "pubmed_ids": [
+                        pmid.strip()
+                        for pmid in str(item.get("publication") or "").split(";")
+                        if pmid.strip()
+                    ],
+                    # GlyGen renders every glycan; the link was in the row.
+                    "image_url": item.get("image_url"),
                     "hit_score": item.get("hit_score"),
                     "byonic": item.get("byonic"),
                 }
@@ -340,11 +529,86 @@ class GlyGenTool(BaseTool):
             "function": raw.get("function", [{}])[0].get("annotation")
             if raw.get("function")
             else None,
-            "disease_count": len(raw.get("disease", [])),
-            "snv_count": len(raw.get("snv", [])),
-            "pathway_count": len(raw.get("pathway", [])),
-            "publication_count": len(raw.get("publication", [])),
         }
+
+        # Four counts and none of the four lists. The description said it
+        # "reports associated disease/pathway/SNV/publication counts", which
+        # was true and still left a caller unable to name one of them from a
+        # response that holds all four: P14210 answers 46 diseases with their
+        # ids and evidence, 105 SNVs with position, substitution and the
+        # glycosylation effect, 19 pathways with resource links and 375
+        # papers. The counts stay, with the things beside them.
+        diseases, disease_total, diseases_cut = _capped(raw.get("disease"))
+        result["diseases"] = [
+            {
+                "disease_id": d.get("disease_id"),
+                "name": (d.get("recommended_name") or {}).get("name"),
+                "id": (d.get("recommended_name") or {}).get("id"),
+                "resource": (d.get("recommended_name") or {}).get("resource"),
+                "description": (d.get("recommended_name") or {}).get("description"),
+                "evidence": d.get("evidence") or [],
+            }
+            for d in diseases
+        ]
+        result["disease_count"] = disease_total
+        result["diseases_truncated"] = diseases_cut
+
+        snvs, snv_total, snvs_cut = _capped(raw.get("snv"))
+        result["snvs"] = [
+            {
+                "chr_id": v.get("chr_id"),
+                "chr_pos": v.get("chr_pos"),
+                "ref_nt": v.get("ref_nt"),
+                "alt_nt": v.get("alt_nt"),
+                "start_pos": v.get("start_pos"),
+                "end_pos": v.get("end_pos"),
+                "sequence_org": v.get("sequence_org"),
+                "sequence_mut": v.get("sequence_mut"),
+                # GlyGen's own reading: what the substitution does to the
+                # glycosylation, which is the question this database answers
+                # and no other source in the catalogue carries.
+                "glycoeffect": v.get("glycoeffect"),
+                "site_label": v.get("site_lbl"),
+                "keywords": v.get("keywords") or [],
+                "comment": v.get("comment"),
+                "evidence": v.get("evidence") or [],
+            }
+            for v in snvs
+        ]
+        result["snv_count"] = snv_total
+        result["snvs_truncated"] = snvs_cut
+
+        pathways, pathway_total, pathways_cut = _capped(raw.get("pathway"))
+        result["pathways"] = [
+            {"id": x.get("id"), "resource": x.get("resource"), "url": x.get("url")}
+            for x in pathways
+        ]
+        result["pathway_count"] = pathway_total
+        result["pathways_truncated"] = pathways_cut
+
+        publications, publication_total, publications_cut = _publications(
+            raw.get("publication")
+        )
+        result["publications"] = publications
+        result["publication_count"] = publication_total
+        result["publications_truncated"] = publications_cut
+
+        # Where the protein is expressed, with the score behind "present".
+        result["expression_tissue"] = [
+            {
+                "tissue": t.get("tissue"),
+                "present": t.get("present"),
+                "score": t.get("score"),
+                "evidence": t.get("evidence") or [],
+            }
+            for t in (raw.get("expression_tissue") or [])
+            if isinstance(t, dict)
+        ]
+        # Deliberately not carried, because the catalogue answers them
+        # elsewhere and whole: the sequence itself, the 202 cross-references,
+        # the domain list and the structures, all of which the UniProt family
+        # of tools returns for the same accession. What is carried here is
+        # what is particular to GlyGen.
 
         return {
             "status": "success",
@@ -427,14 +691,57 @@ class GlyGenTool(BaseTool):
 
         results = []
         for item in list_data.get("results", []):
+            # `total_n_glycosites` and `total_o_glycosites` are not keys a
+            # /protein/list row carries. With `or 0` around each, the sum came
+            # out as 0 on every row of every search -- from a tool whose
+            # description promises "glycosylation-site counts" -- and a zero
+            # reads as a measurement, not as a field that was never there.
+            # The row states `reported_n_glycosites` and
+            # `reported_o_glycosites`, and separately how many of those sites
+            # have a glycan identified on them.
+            n_sites = _first_number(item, "reported_n_glycosites", "total_n_glycosites")
+            o_sites = _first_number(item, "reported_o_glycosites", "total_o_glycosites")
+            total = None
+            if n_sites is not None or o_sites is not None:
+                total = (n_sites or 0) + (o_sites or 0)
             results.append(
                 {
                     "uniprot_canonical_ac": item.get("uniprot_canonical_ac"),
                     "protein_name": item.get("protein_name"),
                     "gene_name": item.get("gene_name"),
                     "organism": item.get("organism"),
-                    "glycosylation_count": (item.get("total_n_glycosites") or 0)
-                    + (item.get("total_o_glycosites") or 0),
+                    # Null, not 0, when the row reports neither count: one
+                    # means "no sites", the other "nothing said".
+                    "glycosylation_count": total,
+                    # N-linked and O-linked are different questions and the
+                    # sum answered neither.
+                    "n_linked_site_count": n_sites,
+                    "o_linked_site_count": o_sites,
+                    "n_linked_sites_with_glycan": _first_number(
+                        item, "reported_n_glycosites_with_glycan"
+                    ),
+                    "o_linked_sites_with_glycan": _first_number(
+                        item, "reported_o_glycosites_with_glycan"
+                    ),
+                    "predicted_glycosite_count": _first_number(
+                        item, "predicted_glycosites"
+                    ),
+                    "fully_resolved_glycan_count": _first_number(
+                        item, "reported_fully_resolved_glycans"
+                    ),
+                    "publication_count": _first_number(item, "publication_count"),
+                    "mass": item.get("mass"),
+                    "sequence_length": item.get("length"),
+                    "uniprot_id": item.get("uniprot_id") or [],
+                    "refseq_ac": item.get("refseq_ac") or [],
+                    # RefSeq's names for the same protein and gene, which can
+                    # differ from UniProt's and are what a RefSeq-indexed
+                    # result would be looked up under.
+                    "protein_names_refseq": item.get("protein_names_refseq") or [],
+                    "gene_names_refseq": item.get("gene_names_refseq") or [],
+                    # The protein's enzyme classification, which a search for
+                    # glycoproteins by organism returned 51 of and showed none.
+                    "ec_numbers": item.get("ec_number_list") or [],
                     "hit_score": item.get("hit_score"),
                 }
             )
@@ -487,6 +794,42 @@ class GlyGenTool(BaseTool):
             "all_sites_count": len(raw.get("all_sites", [])),
             "categories": raw.get("categories", []),
         }
+
+        # Which protein the site is in. The tool answered a UniProt accession
+        # and left the caller to look up what it is, from a response that
+        # names it: P02724-1.52.52 is a site in Glycophorin-A, gene GYPA.
+        result["protein_name"] = raw.get("protein_name")
+        result["gene_name"] = raw.get("gene_name")
+
+        # Glycation is the same kind of site annotation as the phosphorylation
+        # and mutagenesis the description promises, and it was the one of the
+        # three that was never read.
+        result["glycation"] = raw.get("glycation") or []
+
+        # The annotated sites around this one, with how far and in which
+        # direction, which is what "site-specific glycosylation and its
+        # biological consequences" is read against: a glycosylation site 20
+        # residues downstream of an SNV site is a different finding from an
+        # isolated one.
+        neighbors, neighbor_total, neighbors_cut = _capped(raw.get("neighbors"))
+        result["neighbors"] = [
+            {
+                "id": n.get("id"),
+                "distance": n.get("distance"),
+                "direction": n.get("direction"),
+                "categories": n.get("categories") or [],
+            }
+            for n in neighbors
+        ]
+        result["neighbor_count"] = neighbor_total
+        result["neighbors_truncated"] = neighbors_cut
+
+        publications, publication_total, publications_cut = _publications(
+            raw.get("publication")
+        )
+        result["publications"] = publications
+        result["publication_count"] = publication_total
+        result["publications_truncated"] = publications_cut
 
         return {
             "status": "success",

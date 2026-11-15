@@ -519,14 +519,14 @@ Test your API key configuration:
            "limit": 5
        }
    })
-   print("PubMed test:", "success" if len(result) > 0 else "failed")
+   print("PubMed test:", "success" if result.get("status") == "success" else "failed")
 
    # Test OpenTargets (no API key needed - public API)
    result = tu.run({
        "name": "OpenTargets_get_associated_targets_by_disease_efoId",
        "arguments": {"efoId": "MONDO_0008383"}  # Rheumatoid arthritis
    })
-   print("OpenTargets test:", "success" if len(result) > 0 else "failed")
+   print("OpenTargets test:", "success" if result.get("status") == "success" else "failed")
 
 Troubleshooting
 ---------------

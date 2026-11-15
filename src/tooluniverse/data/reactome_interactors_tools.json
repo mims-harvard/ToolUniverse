@@ -344,6 +344,34 @@
                   "type": "string"
                 },
                 "description": "Cellular compartment locations"
+              },
+              "reference_identifier": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The entity's accession in the database it comes from, e.g. 'P04637'. This tool searches by name OR identifier, and without this the answer carries only Reactome's own stable id and joins to nothing outside Reactome."
+              },
+              "reference_database": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which database 'reference_identifier' belongs to, e.g. 'UniProt', 'ChEBI', 'ENSEMBL'."
+              },
+              "reference_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The name that database uses, which can differ from Reactome's. Search highlighting markup is stripped."
+              },
+              "reference_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Resolvable URL for the external record."
               }
             }
           }

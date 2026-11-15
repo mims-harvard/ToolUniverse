@@ -18,15 +18,27 @@
           "description": "Transcript to validate against (e.g., 'NM_007294.4'). Use 'all' to get all transcripts for a genomic variant."
         }
       },
-      "required": ["genome_build", "variant_description", "select_transcripts"]
+      "required": [
+        "genome_build",
+        "variant_description",
+        "select_transcripts"
+      ]
     },
     "fields": {
       "endpoint": "https://rest.variantvalidator.org/VariantValidator/variantvalidator/{genome_build}/{variant_description}/{select_transcripts}"
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"genome_build": "GRCh38", "variant_description": "NM_007294.4:c.5266dup", "select_transcripts": "NM_007294.4"},
-      {"genome_build": "GRCh38", "variant_description": "NM_000179.3:c.943C>T", "select_transcripts": "NM_000179.3"}
+      {
+        "genome_build": "GRCh38",
+        "variant_description": "NM_007294.4:c.5266dup",
+        "select_transcripts": "NM_007294.4"
+      },
+      {
+        "genome_build": "GRCh38",
+        "variant_description": "NM_000179.3:c.943C>T",
+        "select_transcripts": "NM_000179.3"
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -34,14 +46,29 @@
           "type": "object",
           "description": "Validated variant information. Contains 'flag' field, 'metadata' field, and dynamic keys for each validated variant.",
           "properties": {
-            "flag": {"type": ["string", "null"], "description": "Validation status: 'gene_variant', 'warning', 'error'"},
+            "flag": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Validation status: 'gene_variant', 'warning', 'error'"
+            },
             "metadata": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "VariantValidator version information",
               "properties": {
-                "variantvalidator_version": {"type": "string"},
-                "variantvalidator_hgvs_version": {"type": "string"},
-                "vvdb_version": {"type": "string"}
+                "variantvalidator_version": {
+                  "type": "string"
+                },
+                "variantvalidator_hgvs_version": {
+                  "type": "string"
+                },
+                "vvdb_version": {
+                  "type": "string"
+                }
               }
             }
           },
@@ -49,43 +76,120 @@
             "type": "object",
             "description": "HGVS variant key with validated transcript/genomic coordinates, protein consequence, and warnings",
             "properties": {
-              "hgvs_transcript_variant": {"type": ["string", "null"], "description": "Validated HGVS transcript notation"},
-              "hgvs_refseqgene_variant": {"type": ["string", "null"], "description": "HGVS RefSeqGene notation"},
+              "hgvs_transcript_variant": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Validated HGVS transcript notation"
+              },
+              "hgvs_refseqgene_variant": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "HGVS RefSeqGene notation"
+              },
               "hgvs_predicted_protein_consequence": {
-                "type": ["object", "null"],
+                "type": [
+                  "object",
+                  "null"
+                ],
                 "properties": {
-                  "tlr": {"type": ["string", "null"], "description": "Three-letter amino acid code"},
-                  "slr": {"type": ["string", "null"], "description": "Single-letter amino acid code"}
+                  "tlr": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Three-letter amino acid code"
+                  },
+                  "slr": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Single-letter amino acid code"
+                  }
                 }
               },
               "primary_assembly_loci": {
-                "type": ["object", "null"],
+                "type": [
+                  "object",
+                  "null"
+                ],
                 "description": "Genomic coordinates in GRCh37/GRCh38",
                 "properties": {
-                  "grch38": {"type": ["object", "null"]},
-                  "grch37": {"type": ["object", "null"]}
+                  "grch38": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "grch37": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  }
                 }
               },
               "gene_ids": {
-                "type": ["object", "null"],
+                "type": [
+                  "object",
+                  "null"
+                ],
                 "properties": {
-                  "hgnc_id": {"type": ["string", "null"]},
-                  "entrez_gene_id": {"type": ["string", "null"]},
-                  "ncbi_id": {"type": ["string", "null"]},
-                  "ensembl_gene_id": {"type": ["string", "null"]}
+                  "hgnc_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "entrez_gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ncbi_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ensembl_gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
               },
-              "gene_symbol": {"type": ["string", "null"]},
-              "validation_warnings": {"type": ["array", "null"]}
+              "gene_symbol": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "validation_warnings": {
+                "type": [
+                  "array",
+                  "null"
+                ]
+              }
             }
           }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -119,19 +223,32 @@
           "default": "GRCh38"
         }
       },
-      "required": ["gene_symbol"]
+      "required": [
+        "gene_symbol"
+      ]
     },
     "fields": {
       "endpoint": "https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/{gene_symbol}/{transcript_set}/all/{genome_build}",
-      "path_aliases": {"gene": "gene_symbol", "gene_name": "gene_symbol"},
+      "path_aliases": {
+        "gene": "gene_symbol",
+        "gene_name": "gene_symbol"
+      },
       "params": {
         "content-type": "application/json"
       }
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"gene_symbol": "TP53", "transcript_set": "mane", "genome_build": "GRCh38"},
-      {"gene_symbol": "BRCA1", "transcript_set": "mane", "genome_build": "GRCh38"}
+      {
+        "gene_symbol": "TP53",
+        "transcript_set": "mane",
+        "genome_build": "GRCh38"
+      },
+      {
+        "gene_symbol": "BRCA1",
+        "transcript_set": "mane",
+        "genome_build": "GRCh38"
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -140,30 +257,158 @@
           "items": {
             "type": "object",
             "properties": {
-              "current_name": {"type": ["string", "null"]},
-              "current_symbol": {"type": ["string", "null"]},
-              "hgnc": {"type": ["string", "null"]},
-              "previous_symbol": {"type": ["string", "null"]},
-              "requested_symbol": {"type": ["string", "null"]},
+              "current_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "current_symbol": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "hgnc": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "previous_symbol": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "requested_symbol": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "transcripts": {
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "reference": {"type": ["string", "null"], "description": "Transcript accession (e.g., NM_000546.6 or ENST00000269305.9)"},
-                    "description": {"type": ["string", "null"]},
-                    "coding_start": {"type": ["integer", "null"]},
-                    "coding_end": {"type": ["integer", "null"]},
-                    "length": {"type": ["integer", "null"]},
+                    "reference": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Transcript accession (e.g., NM_000546.6 or ENST00000269305.9)"
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "coding_start": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "coding_end": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "length": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
                     "annotations": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
-                        "chromosome": {"type": ["string", "null"]},
-                        "mane_select": {"type": ["boolean", "null"]},
-                        "mane_plus_clinical": {"type": ["boolean", "null"]},
-                        "ensembl_select": {"type": ["boolean", "null"]},
-                        "db_xref": {"type": ["object", "null"]}
-                      }
+                        "chromosome": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "mane_select": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ]
+                        },
+                        "mane_plus_clinical": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ]
+                        },
+                        "ensembl_select": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ]
+                        },
+                        "db_xref": {
+                          "type": [
+                            "object",
+                            "null"
+                          ],
+                          "description": "Cross-references for the transcript, keyed by database",
+                          "additionalProperties": {
+                            "type": [
+                              "string",
+                              "number",
+                              "boolean",
+                              "array",
+                              "object",
+                              "null"
+                            ]
+                          }
+                        },
+                        "refseq_select": {
+                          "type": [
+                            "boolean",
+                            "string",
+                            "null"
+                          ],
+                          "description": "Whether this is the RefSeq Select transcript - the one RefSeq nominates as representative, which is what a caller picking a single transcript should pick"
+                        },
+                        "map": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Map location of the transcript"
+                        },
+                        "note": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Curator note on the transcript"
+                        },
+                        "variant": {
+                          "type": [
+                            "string",
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Variant annotation flag"
+                        }
+                      },
+                      "description": "Annotations on the transcript"
+                    },
+                    "translation": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The protein the transcript translates to"
                     }
                   }
                 }
@@ -174,9 +419,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -197,21 +446,28 @@
           "description": "Genomic-level variant description. Accepts genomic HGVS (e.g. 'NC_000017.11:g.50198002C>A') or a pseudo-VCF string (e.g. '17-50198002-C-A')."
         }
       },
-      "required": ["variant_description"]
+      "required": [
+        "variant_description"
+      ]
     },
     "fields": {
       "endpoint": "https://rest.variantvalidator.org/VariantFormatter/variantformatter/{genome_build}/{variant_description}/refseq/all/False",
-      "headers": {"Accept": "application/json"}
+      "headers": {
+        "Accept": "application/json"
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"genome_build": "GRCh38", "variant_description": "NC_000017.11:g.50198002C>A"}
+      {
+        "genome_build": "GRCh38",
+        "variant_description": "NC_000017.11:g.50198002C>A"
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "VariantFormatter result. The top-level key is the submitted genomic variant; under it a nested key (the normalized g.HGVS) holds 'hgvs_t_and_p' (per-transcript projections keyed by RefSeq transcript accession), 'p_vcf', and 'selected_build'. A 'metadata' key carries VariantFormatter/VariantValidator versions.",
+          "description": "Keyed by the variant string submitted, e.g. 'NC_000017.11:g.50198002C>A', with `metadata` beside it. The fields inside a variant's record are declared below; the variant keys are data, so the audit reports them and that is expected - removing these properties would satisfy the audit by declaring less",
           "properties": {
             "metadata": {
               "type": [
@@ -236,18 +492,49 @@
                     "string",
                     "null"
                   ]
+                },
+                "variantvalidator_hgvs_version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Version of the HGVS library used"
+                },
+                "vvta_version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Version of the VVTA transcript database"
+                },
+                "vvseqrepo_db": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Version of the SeqRepo sequence database"
                 }
-              }
+              },
+              "description": "Versions of everything the mapping depended on. A transcript mapping is only reproducible against the same HGVS library, transcript database and sequence store, so these are what make a result citable"
             }
           },
           "additionalProperties": {
-            "type": "object",
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ],
             "description": "Per-variant block. Inner key is the normalized g.HGVS.",
             "additionalProperties": {
               "type": [
-                "object",
-                "array",
                 "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
                 "null"
               ],
               "properties": {
@@ -356,8 +643,63 @@
                     }
                   }
                 }
+              },
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ],
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

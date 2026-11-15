@@ -105,11 +105,124 @@
                 ]
               },
               "topNutrients": {
-                "type": "array"
+                "type": "array",
+                "description": "The first ten of `nutrients`. The API does not rank the array, so these are not the most important ten.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "value": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "unit": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "nutrient_id": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "nutrient_number": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The USDA nutrient number, which is the stable identifier a name is not"
+                    },
+                    "derivation_code": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "How the value was obtained, e.g. LCCS"
+                    },
+                    "derivation_description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The same in words, e.g. 'Calculated from value per serving size measure' -- the difference between a measurement and an estimate"
+                    },
+                    "percent_daily_value": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  }
+                }
               },
               "nutrients": {
                 "type": "array",
-                "description": "Complete nutrient list returned by the USDA search API"
+                "description": "Complete nutrient list returned by the USDA search API",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "value": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "unit": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "nutrient_id": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "nutrient_number": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The USDA nutrient number, which is the stable identifier a name is not"
+                    },
+                    "derivation_code": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "How the value was obtained, e.g. LCCS"
+                    },
+                    "derivation_description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The same in words, e.g. 'Calculated from value per serving size measure' -- the difference between a measurement and an estimate"
+                    },
+                    "percent_daily_value": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  }
+                }
               },
               "nutrientCount": {
                 "type": "integer",

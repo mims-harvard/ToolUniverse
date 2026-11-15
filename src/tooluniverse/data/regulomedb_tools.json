@@ -106,6 +106,48 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "alt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Alternate allele, e.g. 'G'. The regulatory evidence is for the change from ref to alt, and neither allele was declared."
+                  },
+                  "freq": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Population allele frequencies, keyed by source and population - bravo_af and the gnomad_af_* breakdowns including per-sex figures. A variant common in one population and absent in another is the usual explanation for a surprising regulatory call."
+                  },
+                  "gencode_category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the variant overlaps in GENCODE, e.g. 'coding'. A regulatory score on a coding variant needs reading differently."
+                  },
+                  "hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HGVS genomic notation, e.g. 'NC_000008.11:g.37966280A>G'. The unambiguous name for the variant, assembly accession included."
+                  },
+                  "ref": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Reference allele, e.g. 'A'."
+                  },
+                  "spdi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SPDI notation for the same variant, e.g. 'NC_000008.11:37966279:A:G'. Note it is 0-based where HGVS is 1-based, so the two positions differ by one by design."
                   }
                 }
               }
@@ -143,6 +185,27 @@
             },
             "total_supporting_datasets": {
               "type": "integer"
+            },
+            "motif_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many distinct motif target labels were found across the records, e.g. 0."
+            },
+            "motif_note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "States exactly what motif_count counts and how it differs from motif_records. Two near-identical numbers whose definitions differ is precisely the case where a caller needs telling."
+            },
+            "motif_records": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many motif records were found. It differs from motif_count because several records can share a target label, so the two count different things."
             }
           },
           "required": [

@@ -396,12 +396,35 @@ class ProteomeXchangeTool(BaseTool):
             if query_lower and query_lower not in searchable.lower():
                 continue
 
+            # The row searched Keywords, Publication and Repos locally and
+            # then returned none of them: good enough to match on, not good
+            # enough to show. ProteomeCentral answers with ten fields per
+            # dataset and this returned four, so a search result said nothing
+            # about when the dataset was announced, which repository holds it
+            # (and therefore how to fetch it), what instrument produced it, or
+            # which paper it belongs to.
+            publication = _strip_html(ds.get("Publication") or "")
+            dois = re.findall(r"10\.\d{4,9}/[^\s;\"<>]+", publication)
             matching_datasets.append(
                 {
                     "accession": acc,
                     "title": title,
                     "species": species,
                     "contact": contact,
+                    "announce_date": _strip_html(ds.get("Announce Date") or "") or None,
+                    "repository": _strip_html(ds.get("Repos") or "") or None,
+                    "instrument": _strip_html(ds.get("Instrument") or "") or None,
+                    # ProteomeCentral sends the keywords as one
+                    # comma-separated string with inconsistent spacing.
+                    "keywords": [
+                        k.strip()
+                        for k in str(_strip_html(ds.get("Keywords") or "")).split(",")
+                        if k.strip()
+                    ],
+                    # `Publication` arrives as HTML anchors; the DOIs inside
+                    # them are what makes the dataset citable.
+                    "publication": publication or None,
+                    "publication_dois": dois,
                 }
             )
         datasets = matching_datasets[offset : offset + limit]

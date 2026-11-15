@@ -135,6 +135,90 @@
                   "null"
                 ],
                 "description": "Web URL on anaconda.org"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Extended description"
+              },
+              "home": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Project homepage URL"
+              },
+              "builds": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Every build string published, e.g. 'py39hf48478c_1' -- 1736 of them for numpy. The python and ABI tags are encoded in the string; there is no structured form of this."
+              },
+              "conda_platforms": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Platforms the package has builds for, e.g. ['linux-64', 'osx-arm64', 'win-64', ...] (8 for numpy). A package absent from the caller's platform cannot be installed however popular it is."
+              },
+              "dev_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Development/source repository the recipe declares, e.g. 'https://github.com/numpy/numpy'. Present on only 1 of 20 search hits."
+              },
+              "doc_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Documentation URL the recipe declares, e.g. 'https://numpy.org/doc/stable/'. Present on only 1 of 20 search hits."
+              },
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Anaconda.org's internal package record id, e.g. '573efc1708df8671aa72838f'. Not the package name and not citable; use owner+name."
+              },
+              "license": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Licence as the package metadata declares it, e.g. 'BSD-3-Clause'. Present on 14 of 20 search hits -- a missing licence is a blocker for redistribution, so absence here is a finding, not a detail."
+              },
+              "license_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "URL of the licence text when the recipe gave one. Measured null on all 20 search hits."
+              },
+              "revision": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Anaconda.org's monotonically increasing revision counter for the package record, e.g. 6636. Bumped by any change, so it is not a version number."
+              },
+              "source_git_tag": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Git tag the recipe built from. Measured null on all 20 search hits."
+              },
+              "source_git_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Git URL the recipe built from. Measured null on all 20 search hits."
               }
             }
           }
@@ -252,6 +336,34 @@
                     "string",
                     "null"
                   ]
+                },
+                "url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "API URL for package details"
+                },
+                "company": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Company of the owning account. Measured null."
+                },
+                "created_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When the owning account was created, e.g. '2015-04-11 10:15:08.727000+00:00'."
+                },
+                "location": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Location of the owning account. Measured null."
                 }
               }
             },
@@ -284,6 +396,118 @@
                 "null"
               ],
               "description": "Total download count"
+            },
+            "html_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Web URL on anaconda.org"
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "API URL for package details"
+            },
+            "access": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Who may fetch the package, e.g. 'public'."
+            },
+            "builds": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Every build string published, e.g. 'py39hf48478c_1' -- 1736 of them for numpy. The python and ABI tags are encoded in the string; there is no structured form of this."
+            },
+            "conda_platforms": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Platforms the package has builds for, e.g. ['linux-64', 'osx-arm64', 'win-64', ...] (8 for numpy). A package absent from the caller's platform cannot be installed however popular it is."
+            },
+            "created_at": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the package was first published, e.g. '2020-06-06 23:22:39.637000+00:00'. A space, not a 'T', between date and time."
+            },
+            "dev_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Development/source repository the recipe declares, e.g. 'https://github.com/numpy/numpy'. Present on only 1 of 20 search hits."
+            },
+            "doc_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Documentation URL the recipe declares, e.g. 'https://numpy.org/doc/stable/'. Present on only 1 of 20 search hits."
+            },
+            "files": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Every distributed file, each with its own version, platform, size, upload date and dependency block -- 3868 entries for numpy. This is the full inventory and it is large; prefer releases for a version overview."
+            },
+            "id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Anaconda.org's internal package record id, e.g. '573efc1708df8671aa72838f'. Not the package name and not citable; use owner+name."
+            },
+            "license": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Licence as the package metadata declares it, e.g. 'BSD-3-Clause'. Present on 14 of 20 search hits -- a missing licence is a blocker for redistribution, so absence here is a finding, not a detail."
+            },
+            "modified_at": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the package record last changed, e.g. '2026-10-11 00:56:55.129000+00:00'."
+            },
+            "releases": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "One entry per version, each {version, distributions}, e.g. {'version': '1.11.0', 'distributions': [...]} -- 118 for numpy. The compact view of what versions exist."
+            },
+            "revision": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Anaconda.org's monotonically increasing revision counter for the package record, e.g. 6636. Bumped by any change, so it is not a version number."
+            },
+            "upvoted": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Count of upvotes on Anaconda.org, e.g. 0. Near-zero even for numpy, so it is not a usage signal."
+            },
+            "watchers": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Count of watchers, e.g. 1. Like upvoted, not a popularity measure -- the download counts in files are."
             }
           },
           "not": {

@@ -5,7 +5,7 @@
     "required_packages": [
       "requests"
     ],
-    "description": "Search and list cryo-electron tomography (cryo-ET) datasets from the CZ BioHub CryoET Data Portal (cryoetdataportal.czscience.com). Returns dataset metadata including title, description, organism, tissue/cell type, sample type, and S3/HTTPS data access paths. Supports filtering by organism name or tissue name. Use for: discovering available cryo-ET datasets, finding datasets by organism (e.g. 'Homo sapiens', 'Saccharomyces cerevisiae'), filtering by tissue or cell type. Returns up to `limit` datasets per call; use `offset` for pagination.",
+    "description": "Search and list cryo-electron tomography (cryo-ET) datasets from the CZ BioHub CryoET Data Portal (cryoetdataportal.czscience.com). Returns dataset metadata including title, description, organism, tissue/cell type, sample type, the parent depositionId, and S3/HTTPS data access paths. Supports filtering by organism name, tissue name, or deposition_id (every dataset of one submission). Use for: discovering available cryo-ET datasets, finding datasets by organism (e.g. 'Homo sapiens', 'Saccharomyces cerevisiae'), filtering by tissue or cell type. Returns up to `limit` datasets per call; use `offset` for pagination.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -30,6 +30,13 @@
             "null"
           ],
           "description": "Filter by tissue or cell type name (case-insensitive substring match). Examples: 'kidney', 'endothelial', 'prokaryotic cell'."
+        },
+        "deposition_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Return only the datasets belonging to this deposition (e.g. 10000). A deposition is the portal's top-level submission unit; CryoET_list_depositions names the first few of its datasets and this is how to reach the rest."
         },
         "limit": {
           "type": "integer",
@@ -104,6 +111,13 @@
                       "null",
                       "string"
                     ]
+                  },
+                  "depositionId": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "The deposition this dataset belongs to. The join key back to CryoET_list_depositions, and the value to pass as deposition_id to list this deposition's other datasets."
                   },
                   "s3Prefix": {
                     "type": "string"
@@ -217,6 +231,13 @@
                 },
                 "sampleType": {
                   "type": "string"
+                },
+                "depositionId": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "The deposition this dataset belongs to. The join key back to CryoET_list_depositions, and the value to pass as deposition_id to CryoET_list_datasets for this submission's other datasets."
                 },
                 "samplePreparation": {
                   "type": ["string", "null"],
@@ -993,7 +1014,7 @@
     "required_packages": [
       "requests"
     ],
-    "description": "Browse depositions from the CZ BioHub CryoET Data Portal. A deposition is the top-level submission unit that bundles a set of datasets, runs, tomograms, and annotations under one author submission, and carries cross-database links (e.g. EMDB entries) in relatedDatabaseEntries. The portal UI is organized by deposition, so this is the natural entry point for browsing what has been submitted. Returns, per deposition: id, title, description, deposition/release/lastModified dates, relatedDatabaseEntries (comma-separated EMDB/other IDs), publications, and a key photo URL. Optionally filter by deposition_id. Example: id 10014 'Dolichospermum flos-aquae ... by Przemek Dutka', relatedDatabaseEntries 'EMD-29922,EMD-29923,EMD-29924,EMD-29925'; id 10019 Bacillus subtilis.",
+    "description": "Browse depositions from the CZ BioHub CryoET Data Portal. A deposition is the top-level submission unit that bundles a set of datasets, runs, tomograms, and annotations under one author submission, and carries cross-database links (e.g. EMDB entries) in relatedDatabaseEntries. The portal UI is organized by deposition, so this is the natural entry point for browsing what has been submitted. Returns, per deposition: id, title, description, tag, deposition/release/lastModified dates, relatedDatabaseEntries (comma-separated EMDB/other IDs), publications, key photo URLs, the submitting authors in list order, the depositionTypes it contributes ('dataset', 'annotation', 'tomogram'), a `contents` count of everything it bundles (datasets, annotations, tomograms, tiltseries, frames, alignments), and up to 20 of its datasets by id and title -- call CryoET_list_datasets with deposition_id for all of them. Optionally filter by deposition_id. Example: id 10014 'Dolichospermum flos-aquae ... by Przemek Dutka', relatedDatabaseEntries 'EMD-29922,EMD-29923,EMD-29924,EMD-29925'; id 10019 Bacillus subtilis.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1097,6 +1118,96 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "keyPhotoThumbnailUrl": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tag": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "depositionTypes": {
+                    "type": "array",
+                    "description": "What this submission contributes: 'dataset', 'annotation', 'tomogram'. A deposition tagged only 'annotation' adds annotations to someone else's datasets.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "authors": {
+                    "type": "array",
+                    "description": "The submitting authors in list order, each with name, orcid, affiliationName and the primaryAuthorStatus / correspondingAuthorStatus flags.",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "contents": {
+                    "type": "object",
+                    "description": "How much this deposition holds, counted upstream: datasets, annotations, tomograms, tiltseries, frames, alignments. A deposition is defined by what it bundles, so these counts are the row's point.",
+                    "properties": {
+                      "datasets": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "annotations": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "tomograms": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "tiltseries": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "frames": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "alignments": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "datasets": {
+                    "type": "array",
+                    "description": "Up to 20 of the deposition's datasets, each with id, title, organismName and sampleType. Pass the id to CryoET_get_dataset, or the deposition's id to CryoET_list_datasets as deposition_id for all of them.",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "datasets_returned": {
+                    "type": "integer",
+                    "description": "How many datasets are named in `datasets`."
+                  },
+                  "datasets_total": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many the deposition has. When this exceeds datasets_returned the list is a sample, and `datasets_note` says so."
+                  },
+                  "datasets_note": {
+                    "type": "string",
+                    "description": "Present only when `datasets` is truncated."
                   }
                 }
               }

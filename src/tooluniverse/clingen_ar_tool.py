@@ -11,12 +11,150 @@ API: https://reg.clinicalgenome.org/
 No authentication required. Free public access.
 """
 
+import re
+
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 CLINGEN_AR_BASE_URL = "https://reg.clinicalgenome.org"
+
+# A registry allele carries one transcript allele per Ensembl/RefSeq transcript
+# of every overlapping gene: BRAF c.1799T>A has 48. They are returned in full up
+# to this cap, with the MANE Select one surfaced separately whatever its
+# position, and the count and the cut disclosed.
+TRANSCRIPTS_PER_ALLELE = 25
+
+# Each external database names its identifier differently, and `id` is absent on
+# several: dbSNP sends `rs`, ClinVar alleles send `alleleId`, ClinVar variations
+# send `variationId`. Reading `id` alone returned None for them.
+_ID_KEYS = ("rs", "alleleId", "variationId", "accession", "variant")
+
+
+def _snake(key: str) -> str:
+    """`alleleId` -> `allele_id`, `RCV` -> `rcv`, `@id` -> `id`."""
+    key = key.lstrip("@")
+    key = re.sub(r"(?<=[a-z0-9])([A-Z])", r"_\1", key)
+    return key.lower()
+
+
+def _coordinates(node: Dict[str, Any]) -> list:
+    """Where the allele sits and what it replaces, in this representation.
+
+    For an intronic variant the registry gives the position as an exon
+    boundary plus an offset into the intron: 6 of BRAF c.1799T>A's 48
+    transcript alleles read start 1258 with startIntronOffset 3918 in the
+    '-' direction, i.e. 1258-3918. Reporting the 1258 alone does not omit a
+    field, it names a different position.
+    """
+    out = []
+    for coord in node.get("coordinates") or []:
+        if not isinstance(coord, dict):
+            continue
+        row = {
+            "start": coord.get("start"),
+            "end": coord.get("end"),
+            "reference_allele": coord.get("referenceAllele"),
+            "allele": coord.get("allele"),
+            "start_intron_offset": coord.get("startIntronOffset"),
+            "start_intron_direction": coord.get("startIntronDirection"),
+            "end_intron_offset": coord.get("endIntronOffset"),
+            "end_intron_direction": coord.get("endIntronDirection"),
+        }
+        row["is_intronic"] = (
+            row["start_intron_offset"] is not None
+            or row["end_intron_offset"] is not None
+        )
+        out.append(row)
+    return out
+
+
+def _genomic_allele(ga: Dict[str, Any]) -> Dict[str, Any]:
+    """One assembly's representation: every HGVS spelling, not just the first."""
+    hgvs = [h for h in (ga.get("hgvs") or []) if h]
+    return {
+        "hgvs": hgvs[0] if hgvs else None,
+        "hgvs_all": hgvs,
+        "reference_genome": ga.get("referenceGenome"),
+        "chromosome": ga.get("chromosome"),
+        "coordinates": _coordinates(ga),
+        "reference_sequence": ga.get("referenceSequence"),
+    }
+
+
+def _transcript_allele(ta: Dict[str, Any]) -> Dict[str, Any]:
+    """One transcript's representation: the gene, the c. and the p. change."""
+    hgvs = [h for h in (ta.get("hgvs") or []) if h]
+    protein = ta.get("proteinEffect") or {}
+    mane = ta.get("MANE") or {}
+    nucleotide = mane.get("nucleotide") or {}
+    mane_protein = mane.get("protein") or {}
+    return {
+        "hgvs": hgvs[0] if hgvs else None,
+        "hgvs_all": hgvs,
+        "gene_symbol": ta.get("geneSymbol"),
+        "gene_ncbi_id": ta.get("geneNCBI_id"),
+        "gene_url": ta.get("gene"),
+        "protein_hgvs": protein.get("hgvs"),
+        "protein_hgvs_well_defined": protein.get("hgvsWellDefined"),
+        "coordinates": _coordinates(ta),
+        "reference_sequence": ta.get("referenceSequence"),
+        "mane_status": mane.get("maneStatus"),
+        "mane_version": mane.get("maneVersion"),
+        "mane_refseq_hgvs": (nucleotide.get("RefSeq") or {}).get("hgvs"),
+        "mane_ensembl_hgvs": (nucleotide.get("Ensembl") or {}).get("hgvs"),
+        "mane_refseq_protein_hgvs": (mane_protein.get("RefSeq") or {}).get("hgvs"),
+        "mane_ensembl_protein_hgvs": (mane_protein.get("Ensembl") or {}).get("hgvs"),
+    }
+
+
+def _transcript_summary(data: Dict[str, Any]) -> Dict[str, Any]:
+    """The gene and protein change the registry states, plus the transcripts.
+
+    The tool's own description promises 'CA000387 (TP53 p.Arg248Gln)', and
+    neither the gene symbol nor the protein effect was being read: both live
+    only on `transcriptAlleles`, which the wrapper never looked at.
+    """
+    rows = [
+        _transcript_allele(ta)
+        for ta in (data.get("transcriptAlleles") or [])
+        if isinstance(ta, dict)
+    ]
+    genes = sorted({row["gene_symbol"] for row in rows if row["gene_symbol"]})
+    mane = next((row for row in rows if row.get("mane_status")), None)
+    preferred = mane or (rows[0] if rows else None)
+    return {
+        "gene_symbol": genes[0] if len(genes) == 1 else None,
+        "gene_symbols": genes,
+        "gene_ncbi_id": next(
+            (row["gene_ncbi_id"] for row in rows if row.get("gene_ncbi_id")), None
+        ),
+        "protein_effect": (preferred or {}).get("protein_hgvs"),
+        "mane_select_transcript": mane,
+        "transcript_allele_count": len(rows),
+        "transcript_alleles": rows[:TRANSCRIPTS_PER_ALLELE],
+        "transcript_alleles_truncated": len(rows) > TRANSCRIPTS_PER_ALLELE,
+    }
+
+
+def _external_record(rec: Any) -> Dict[str, Any]:
+    """One database's record, with every key it sent and an id under some name."""
+    if not isinstance(rec, dict):
+        return {"id": rec, "url": None}
+    out: Dict[str, Any] = {"url": rec.get("@id")}
+    for key, value in rec.items():
+        if key == "@id":
+            continue
+        out[_snake(key)] = value
+    if out.get("id") is None:
+        for key in _ID_KEYS:
+            if rec.get(key) is not None:
+                out["id"] = (
+                    f"rs{rec[key]}" if key == "rs" else str(rec[key])
+                )
+                break
+    return out
 
 
 @register_tool("ClinGenARTool")
@@ -99,15 +237,11 @@ class ClinGenARTool(BaseTool):
         external_records = data.get("externalRecords", {})
 
         # Extract genomic alleles
-        genomic_alleles = []
-        for ga in data.get("genomicAlleles", []):
-            hgvs_list = ga.get("hgvs", [])
-            genomic_alleles.append(
-                {
-                    "hgvs": hgvs_list[0] if hgvs_list else None,
-                    "reference_genome": ga.get("referenceGenome"),
-                }
-            )
+        genomic_alleles = [
+            _genomic_allele(ga)
+            for ga in data.get("genomicAlleles", [])
+            if isinstance(ga, dict)
+        ]
 
         return {
             "status": "success",
@@ -115,8 +249,11 @@ class ClinGenARTool(BaseTool):
                 "allele_id": allele_id,
                 "allele_url": allele_url,
                 "community_standard_title": title,
+                "allele_type": data.get("type"),
+                "community_standard_titles": list(titles or []),
                 "external_records": external_records,
                 "genomic_alleles": genomic_alleles,
+                **_transcript_summary(data),
             },
             "metadata": {
                 "source": "ClinGen Allele Registry",
@@ -143,20 +280,14 @@ class ClinGenARTool(BaseTool):
         # Extract external records
         external_records = data.get("externalRecords", {})
 
-        # Build database summary
+        # Build database summary. `id` is not the identifier key every database
+        # uses -- dbSNP sends `rs`, ClinVar alleles `alleleId` -- so reading it
+        # alone handed back `{"id": None}` for them, and dropped the ClinVar
+        # preferred name, the RCV accessions and the gnomAD/ExAC variant string.
         databases = {}
         for db_name, records in external_records.items():
             if isinstance(records, list):
-                db_entries = []
-                for rec in records:
-                    entry = {
-                        "id": rec.get("id"),
-                        "url": rec.get("@id"),
-                    }
-                    if "variationId" in rec:
-                        entry["variation_id"] = rec["variationId"]
-                    db_entries.append(entry)
-                databases[db_name] = db_entries
+                databases[db_name] = [_external_record(rec) for rec in records]
 
         return {
             "status": "success",
@@ -165,6 +296,8 @@ class ClinGenARTool(BaseTool):
                 "community_standard_title": title,
                 "databases": databases,
                 "database_count": len(databases),
+                "record_count": sum(len(rows) for rows in databases.values()),
+                **_transcript_summary(data),
             },
             "metadata": {
                 "source": "ClinGen Allele Registry",
@@ -226,14 +359,14 @@ class ClinGenARTool(BaseTool):
                     "allele_id": allele_id,
                     "allele_url": allele_url,
                     "community_standard_title": title,
+                    "allele_type": rec.get("type"),
                     "external_records": rec.get("externalRecords", {}),
                     "genomic_alleles": [
-                        {
-                            "hgvs": (ga.get("hgvs") or [None])[0],
-                            "reference_genome": ga.get("referenceGenome"),
-                        }
+                        _genomic_allele(ga)
                         for ga in rec.get("genomicAlleles", [])
+                        if isinstance(ga, dict)
                     ],
+                    **_transcript_summary(rec),
                 }
             )
 

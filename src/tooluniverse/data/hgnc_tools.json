@@ -157,6 +157,132 @@
               "items": {
                 "type": "string"
               }
+            },
+            "agr": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Alliance of Genome Resources identifier, which for a human gene is its own HGNC id again, e.g. 'HGNC:11998'. Present on all 56 family members. Its use is as the key into AGR's cross-species orthology, not as new information about the gene."
+            },
+            "alias_name": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Previous or alternative FULL names of the gene (not symbols), e.g. ['Li-Fraumeni syndrome']. Present on 12 of 56 family members. alias_symbol carries the short forms."
+            },
+            "cosmic": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gene symbol as COSMIC spells it, e.g. 'TP53'. Only 3 of 56 family members carry one, so its absence says nothing about whether the gene is mutated in cancer -- only that COSMIC's name differs or is unmapped."
+            },
+            "date_approved_reserved": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the symbol was approved or reserved, ISO-8601 UTC, e.g. '1986-01-01T00:00:00Z'."
+            },
+            "date_modified": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the HGNC record was last changed, e.g. '2023-01-20T00:00:00Z'."
+            },
+            "date_name_changed": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the gene NAME last changed, e.g. '2018-04-23T00:00:00Z'. Null when it never has."
+            },
+            "ena": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "INSDC/ENA nucleotide accessions for the gene, e.g. ['AF307851']. Present on 54 of 56."
+            },
+            "gencc": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GenCC identifier, which is the gene's own HGNC id, e.g. 'HGNC:11998'. Present on 18 of 56, and its presence is the signal that GenCC holds curated gene-disease validity assertions for this gene."
+            },
+            "gene_group_id": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Numeric HGNC gene-group ids the gene belongs to, e.g. [4068]. Parallel to gene_group, which gives the same groups by name; feed one of these to the family tool."
+            },
+            "lsdb": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Locus-specific mutation databases, one entry per database as 'Name|URL' in a SINGLE string, e.g. 'IARC TP53 Mutation Database|http://www-p53.iarc.fr/'. Split each entry on '|'. Present on 6 of 56."
+            },
+            "mane_select": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The MANE Select transcript, given as BOTH identifiers in one list: the Ensembl transcript with version and the matching RefSeq, e.g. ['ENST00000269305.9', 'NM_000546.6']. Present on 55 of 56. This is the single transcript NCBI and EMBL-EBI agreed to treat as the representative one, so it is the right default for anything that needs one transcript per gene."
+            },
+            "mgd_id": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Mouse Genome Database ids of the mouse orthologue(s), e.g. ['MGI:98834']. Present on all 56. A list because a human gene can have more than one mouse orthologue."
+            },
+            "orphanet": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Orphanet gene identifier as a NUMBER, e.g. 120204 -- not the 'ORPHA:' disease code. Present on 9 of 56."
+            },
+            "pubmed_id": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "PubMed IDs behind the HGNC record, as NUMBERS not strings, e.g. [6396087, 3456488]. Present on 55 of 56."
+            },
+            "rgd_id": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Rat Genome Database ids of the rat orthologue(s), e.g. ['RGD:3889']. Present on 54 of 56."
+            },
+            "ucsc_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "UCSC Genome Browser transcript id, e.g. 'uc060aur.1'."
+            },
+            "uuid": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "HGNC's internal record UUID, e.g. 'cea1e056-2b30-44e1-88cd-65616aedd700'. Stable per record but not a citable gene identifier -- use hgnc_id for that."
+            },
+            "vega_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "VEGA/Havana manually annotated gene id, e.g. 'OTTHUMG00000162125'."
             }
           },
           "not": {
@@ -258,6 +384,176 @@
                 "array",
                 "null"
               ]
+            },
+            "alias_symbol": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Alias symbols",
+              "items": {
+                "type": "string"
+              }
+            },
+            "ccds_id": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "CCDS ID(s)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "gene_group": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Gene group memberships",
+              "items": {
+                "type": "string"
+              }
+            },
+            "locus_group": {
+              "type": "string",
+              "description": "Locus group classification"
+            },
+            "omim_id": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "OMIM ID(s)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "agr": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Alliance of Genome Resources identifier, which for a human gene is its own HGNC id again, e.g. 'HGNC:11998'. Present on all 56 family members. Its use is as the key into AGR's cross-species orthology, not as new information about the gene."
+            },
+            "alias_name": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Previous or alternative FULL names of the gene (not symbols), e.g. ['Li-Fraumeni syndrome']. Present on 12 of 56 family members. alias_symbol carries the short forms."
+            },
+            "cosmic": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gene symbol as COSMIC spells it, e.g. 'TP53'. Only 3 of 56 family members carry one, so its absence says nothing about whether the gene is mutated in cancer -- only that COSMIC's name differs or is unmapped."
+            },
+            "date_approved_reserved": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the symbol was approved or reserved, ISO-8601 UTC, e.g. '1986-01-01T00:00:00Z'."
+            },
+            "date_modified": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the HGNC record was last changed, e.g. '2023-01-20T00:00:00Z'."
+            },
+            "date_name_changed": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the gene NAME last changed, e.g. '2018-04-23T00:00:00Z'. Null when it never has."
+            },
+            "ena": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "INSDC/ENA nucleotide accessions for the gene, e.g. ['AF307851']. Present on 54 of 56."
+            },
+            "gencc": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GenCC identifier, which is the gene's own HGNC id, e.g. 'HGNC:11998'. Present on 18 of 56, and its presence is the signal that GenCC holds curated gene-disease validity assertions for this gene."
+            },
+            "gene_group_id": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Numeric HGNC gene-group ids the gene belongs to, e.g. [4068]. Parallel to gene_group, which gives the same groups by name; feed one of these to the family tool."
+            },
+            "lsdb": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Locus-specific mutation databases, one entry per database as 'Name|URL' in a SINGLE string, e.g. 'IARC TP53 Mutation Database|http://www-p53.iarc.fr/'. Split each entry on '|'. Present on 6 of 56."
+            },
+            "mane_select": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The MANE Select transcript, given as BOTH identifiers in one list: the Ensembl transcript with version and the matching RefSeq, e.g. ['ENST00000269305.9', 'NM_000546.6']. Present on 55 of 56. This is the single transcript NCBI and EMBL-EBI agreed to treat as the representative one, so it is the right default for anything that needs one transcript per gene."
+            },
+            "mgd_id": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Mouse Genome Database ids of the mouse orthologue(s), e.g. ['MGI:98834']. Present on all 56. A list because a human gene can have more than one mouse orthologue."
+            },
+            "orphanet": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Orphanet gene identifier as a NUMBER, e.g. 120204 -- not the 'ORPHA:' disease code. Present on 9 of 56."
+            },
+            "pubmed_id": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "PubMed IDs behind the HGNC record, as NUMBERS not strings, e.g. [6396087, 3456488]. Present on 55 of 56."
+            },
+            "rgd_id": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Rat Genome Database ids of the rat orthologue(s), e.g. ['RGD:3889']. Present on 54 of 56."
+            },
+            "ucsc_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "UCSC Genome Browser transcript id, e.g. 'uc060aur.1'."
+            },
+            "uuid": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "HGNC's internal record UUID, e.g. 'cea1e056-2b30-44e1-88cd-65616aedd700'. Stable per record but not a citable gene identifier -- use hgnc_id for that."
+            },
+            "vega_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "VEGA/Havana manually annotated gene id, e.g. 'OTTHUMG00000162125'."
             }
           },
           "not": {
@@ -355,6 +651,13 @@
                   "string",
                   "null"
                 ]
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Relevance score for the hit, e.g. 40.0. An exact symbol match scores far above a partial one, so this is what separates them."
               }
             }
           }
@@ -435,6 +738,13 @@
                   "string",
                   "null"
                 ]
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Relevance score for the hit, e.g. 2.5478106. Results come back ordered by it."
               }
             }
           }
@@ -548,6 +858,221 @@
                   "array",
                   "null"
                 ]
+              },
+              "alias_symbol": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Alias symbols",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "ccds_id": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "CCDS ID(s)",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "locus_group": {
+                "type": "string",
+                "description": "Locus group classification"
+              },
+              "omim_id": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "OMIM ID(s)",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "prev_name": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Previous gene names",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "prev_symbol": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Previous gene symbols",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "refseq_accession": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "RefSeq accession(s)",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "status": {
+                "type": "string",
+                "description": "Symbol status (Approved, etc.)"
+              },
+              "agr": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Alliance of Genome Resources identifier, which for a human gene is its own HGNC id again, e.g. 'HGNC:11998'. Present on all 56 family members. Its use is as the key into AGR's cross-species orthology, not as new information about the gene."
+              },
+              "alias_name": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Previous or alternative FULL names of the gene (not symbols), e.g. ['Li-Fraumeni syndrome']. Present on 12 of 56 family members. alias_symbol carries the short forms."
+              },
+              "cosmic": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Gene symbol as COSMIC spells it, e.g. 'TP53'. Only 3 of 56 family members carry one, so its absence says nothing about whether the gene is mutated in cancer -- only that COSMIC's name differs or is unmapped."
+              },
+              "date_approved_reserved": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the symbol was approved or reserved, ISO-8601 UTC, e.g. '1986-01-01T00:00:00Z'."
+              },
+              "date_modified": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the HGNC record was last changed, e.g. '2023-01-20T00:00:00Z'."
+              },
+              "date_name_changed": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the gene NAME last changed, e.g. '2018-04-23T00:00:00Z'. Null when it never has."
+              },
+              "date_symbol_changed": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the gene SYMBOL last changed, e.g. '2008-01-08T00:00:00Z'. Present on 6 of 56, and this is the field that explains why an older dataset's symbol no longer resolves."
+              },
+              "ena": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "INSDC/ENA nucleotide accessions for the gene, e.g. ['AF307851']. Present on 54 of 56."
+              },
+              "enzyme_id": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "EC numbers for the enzyme activity, e.g. ['3.4.19.12']. Present on 6 of 56."
+              },
+              "gencc": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "GenCC identifier, which is the gene's own HGNC id, e.g. 'HGNC:11998'. Present on 18 of 56, and its presence is the signal that GenCC holds curated gene-disease validity assertions for this gene."
+              },
+              "iuphar": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "IUPHAR/Guide to PHARMACOLOGY identifier, given as an HGNC id, e.g. 'HGNC:12607'. Present on 7 of 56; its presence means the gene product is a target GtoPdb curates pharmacology for."
+              },
+              "lsdb": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Locus-specific mutation databases, one entry per database as 'Name|URL' in a SINGLE string, e.g. 'IARC TP53 Mutation Database|http://www-p53.iarc.fr/'. Split each entry on '|'. Present on 6 of 56."
+              },
+              "mane_select": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "The MANE Select transcript, given as BOTH identifiers in one list: the Ensembl transcript with version and the matching RefSeq, e.g. ['ENST00000269305.9', 'NM_000546.6']. Present on 55 of 56. This is the single transcript NCBI and EMBL-EBI agreed to treat as the representative one, so it is the right default for anything that needs one transcript per gene."
+              },
+              "merops": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "MEROPS peptidase identifier, e.g. 'C19.978'. Present on 51 of the 56 USP family members, which is what makes them a peptidase family."
+              },
+              "mgd_id": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Mouse Genome Database ids of the mouse orthologue(s), e.g. ['MGI:98834']. Present on all 56. A list because a human gene can have more than one mouse orthologue."
+              },
+              "orphanet": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Orphanet gene identifier as a NUMBER, e.g. 120204 -- not the 'ORPHA:' disease code. Present on 9 of 56."
+              },
+              "pubmed_id": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "PubMed IDs behind the HGNC record, as NUMBERS not strings, e.g. [6396087, 3456488]. Present on 55 of 56."
+              },
+              "rgd_id": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Rat Genome Database ids of the rat orthologue(s), e.g. ['RGD:3889']. Present on 54 of 56."
+              },
+              "ucsc_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UCSC Genome Browser transcript id, e.g. 'uc060aur.1'."
+              },
+              "uuid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "HGNC's internal record UUID, e.g. 'cea1e056-2b30-44e1-88cd-65616aedd700'. Stable per record but not a citable gene identifier -- use hgnc_id for that."
+              },
+              "vega_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "VEGA/Havana manually annotated gene id, e.g. 'OTTHUMG00000162125'."
               }
             }
           }

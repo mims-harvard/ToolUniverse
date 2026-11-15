@@ -17,6 +17,119 @@ from .tool_registry import register_tool
 
 EBI_PROTEINS_BASE_URL = "https://www.ebi.ac.uk/proteins/api"
 
+# TP53's entry carries 9 disease annotations and 6 subcellular locations, each
+# with its own evidence list. The evidence is capped per record.
+EVIDENCE_PER_ANNOTATION = 10
+
+
+def _evidences(node: Any) -> list:
+    """Who says so: the ECO code and the publication behind an annotation."""
+    rows = node.get("evidences") if isinstance(node, dict) else None
+    if isinstance(rows, dict):
+        rows = [rows]
+    if not isinstance(rows, list):
+        return []
+    out = []
+    for row in rows[:EVIDENCE_PER_ANNOTATION]:
+        if not isinstance(row, dict):
+            continue
+        source = row.get("source") or {}
+        out.append(
+            {
+                "code": row.get("code"),
+                "source": source.get("name"),
+                "id": source.get("id"),
+                "url": source.get("url"),
+            }
+        )
+    return out
+
+
+def _disease_rows(entry: Dict[str, Any]) -> list:
+    """The disease annotations, not just the names of the named ones.
+
+    `diseases` was built by taking `diseaseId or acronym` and discarding
+    everything else, which dropped three things. The OMIM id sits in
+    `dbReference`; the definition sits in `description`; and one of TP53's
+    nine records has no diseaseId at all -- it is the free-text disease
+    involvement paragraph, which was therefore dropped entirely.
+    """
+    rows = entry.get("diseases")
+    if isinstance(rows, dict):
+        rows = [rows]
+    if not isinstance(rows, list):
+        return []
+    out = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        reference = row.get("dbReference") or {}
+        description = row.get("description") or {}
+        texts = row.get("text")
+        if isinstance(texts, dict):
+            texts = [texts]
+        out.append(
+            {
+                "name": row.get("diseaseId"),
+                "acronym": row.get("acronym"),
+                "description": description.get("value")
+                if isinstance(description, dict)
+                else description,
+                "reference_database": reference.get("type"),
+                "reference_id": reference.get("id"),
+                "notes": [
+                    item.get("value")
+                    for item in (texts or [])
+                    if isinstance(item, dict) and item.get("value")
+                ],
+                "evidences": _evidences(description)
+                or _evidences(row)
+                or [
+                    evidence
+                    for item in (texts or [])
+                    if isinstance(item, dict)
+                    for evidence in _evidences(item)
+                ],
+            }
+        )
+    return out
+
+
+def _location_rows(entry: Dict[str, Any]) -> list:
+    """Each subcellular location with its topology and its evidence."""
+    groups = entry.get("subcellularLocations")
+    if isinstance(groups, dict):
+        groups = [groups]
+    if not isinstance(groups, list):
+        return []
+    out = []
+    for group in groups:
+        if not isinstance(group, dict):
+            continue
+        for item in group.get("locations") or [group]:
+            if not isinstance(item, dict):
+                continue
+            location = item.get("location") or {}
+            topology = item.get("topology") or {}
+            orientation = item.get("orientation") or {}
+            out.append(
+                {
+                    "location": location.get("value")
+                    if isinstance(location, dict)
+                    else location,
+                    "topology": topology.get("value")
+                    if isinstance(topology, dict)
+                    else topology,
+                    "orientation": orientation.get("value")
+                    if isinstance(orientation, dict)
+                    else orientation,
+                    "evidences": _evidences(location)
+                    if isinstance(location, dict)
+                    else [],
+                }
+            )
+    return out
+
 
 def _entries_for_accession(data: Any, accession: str) -> list:
     """Keep only the payload entries describing `accession` itself.
@@ -227,6 +340,11 @@ class EBIProteinsInteractionsTool(BaseTool):
                         "gene_name": interaction.get("gene"),
                         "experiments": interaction.get("experiments", 0),
                         "organism_differ": interaction.get("organismDiffer", False),
+                        # The sibling tool over the same endpoint returns the
+                        # IntAct interactor ids and this one did not, so a
+                        # row here could not be followed into IntAct.
+                        "intact_id_a": interaction.get("interactor1"),
+                        "intact_id_b": interaction.get("interactor2"),
                     }
                 )
 
@@ -247,6 +365,11 @@ class EBIProteinsInteractionsTool(BaseTool):
                     loc_name = str(subloc)
                 if loc_name:
                     locations.add(str(loc_name))
+
+        # `diseases` and `subcellular_locations` stay the sorted name lists
+        # they have always been; these carry what the records also held.
+        disease_records = _disease_rows(first_entry)
+        location_records = _location_rows(first_entry)
 
         # Deduplicate and sort
         seen = {}
@@ -282,7 +405,9 @@ class EBIProteinsInteractionsTool(BaseTool):
                     offset + len(interaction_page) if interactions_truncated else None
                 ),
                 "diseases": sorted(diseases),
+                "disease_records": disease_records,
                 "subcellular_locations": sorted(locations),
+                "subcellular_location_records": location_records,
             },
             "metadata": {
                 "source": "EBI Proteins API / IntAct (ebi.ac.uk/proteins)",

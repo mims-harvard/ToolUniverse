@@ -26,6 +26,49 @@ from .tool_registry import register_tool
 GSRS_BASE = "https://gsrs.ncats.nih.gov/api/v1"
 
 
+# Citations resolved onto a single name or code. Aspirin's 64 names carry 1
+# to 15 references each, so a cap keeps one heavily-cited name from dwarfing
+# the record.
+CITATIONS_PER_ENTRY = 10
+
+
+def _reference_index(record: dict) -> dict:
+    """{uuid: citation record} from the substance's own ``references`` array.
+
+    A name's or code's ``references`` field is a list of uuids, which is
+    useless on its own and resolvable only against this array -- where the
+    citation lives: "EP 10.5" with docType "EP". Aspirin's record carries 78
+    of them and this tool returned none, although the module docstring above
+    promises "regulatory references from the ?view=full record".
+    """
+    index = {}
+    for reference in record.get("references") or []:
+        if not isinstance(reference, dict) or not reference.get("uuid"):
+            continue
+        index[reference["uuid"]] = {
+            "citation": reference.get("citation"),
+            "doc_type": reference.get("docType"),
+            "tags": [t for t in (reference.get("tags") or []) if t],
+            "public_domain": reference.get("publicDomain"),
+            "uuid": reference["uuid"],
+        }
+    return index
+
+
+def _citations(entry: dict, index: dict) -> list:
+    """Resolve one entry's reference uuids to their citations."""
+    out = []
+    for uuid in (entry.get("references") or [])[:CITATIONS_PER_ENTRY]:
+        resolved = index.get(uuid)
+        if resolved:
+            out.append(resolved)
+        elif uuid:
+            # The uuid is reported rather than dropped when the record does
+            # not inline the reference it points at.
+            out.append({"uuid": uuid, "citation": None, "doc_type": None})
+    return out
+
+
 @register_tool("FDAGSRSTool")
 class FDAGSRSTool(BaseTool):
     """
@@ -258,12 +301,19 @@ class FDAGSRSTool(BaseTool):
             }
 
         # Full record - include all codes and names
+        reference_index = _reference_index(r)
         codes = r.get("codes", [])
         all_codes = [
             {
                 "codeSystem": c.get("codeSystem", ""),
                 "code": c.get("code", ""),
                 "type": c.get("type", ""),
+                # For WHO-ATC this holds the classification path the code
+                # means: "ATC|CARDIOVASCULAR SYSTEM|BETA BLOCKING AGENTS|...".
+                "comments": c.get("comments") or None,
+                "url": c.get("url") or None,
+                "citations": _citations(c, reference_index),
+                "deprecated": bool(c.get("deprecated")),
             }
             for c in codes
             if c.get("codeSystem") and c.get("code")
@@ -275,6 +325,15 @@ class FDAGSRSTool(BaseTool):
                 "name": n.get("name", ""),
                 "type": n.get("type", ""),
                 "preferred": n.get("preferred", False),
+                "display_name": n.get("displayName"),
+                "standardized_name": n.get("stdName"),
+                "languages": [lang for lang in (n.get("languages") or []) if lang],
+                "jurisdictions": [
+                    j for j in (n.get("nameJurisdiction") or []) if j
+                ],
+                # Which pharmacopoeia or document establishes the name.
+                "citations": _citations(n, reference_index),
+                "deprecated": bool(n.get("deprecated")),
             }
             for n in names
             if n.get("name")
@@ -303,11 +362,18 @@ class FDAGSRSTool(BaseTool):
                 },
                 "names": all_names,
                 "codes": all_codes,
+                "references": list(reference_index.values()),
             },
             "metadata": {
                 "unii": unii,
                 "total_names": len(all_names),
                 "total_codes": len(all_codes),
+                "total_references": len(reference_index),
+                "citations_per_entry": CITATIONS_PER_ENTRY,
+                "references_note": "A name's or code's citations are resolved "
+                "from the record's own references array; an entry with more "
+                "than citations_per_entry of them is cut there and the whole "
+                "array is under data.references.",
             },
         }
 

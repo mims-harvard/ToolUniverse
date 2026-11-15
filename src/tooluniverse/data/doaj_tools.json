@@ -83,7 +83,41 @@
             "items": {
               "type": "string"
             },
-            "description": "List of subject keywords"
+            "description": "The article's own keywords, from DOAJ's bibjson.keywords (e.g. 'pyrolysis'). Distinct from `subjects`, which is the journal's classification; the string 'Keywords not available' when the record has none."
+          },
+          "subjects": {
+            "type": "array",
+            "description": "The record's subject classification, e.g. LCC 'Chemical engineering' with code TP155-156",
+            "items": {
+              "type": "object",
+              "properties": {
+                "term": {"type": ["string", "null"]},
+                "scheme": {"type": ["string", "null"], "description": "e.g. LCC"},
+                "code": {"type": ["string", "null"]}
+              }
+            }
+          },
+          "identifiers": {
+            "type": "array",
+            "description": "Every identifier DOAJ records, with its type: doi, eissn, pissn. The ISSN is what ties the article to its journal.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {"type": ["string", "null"]},
+                "type": {"type": ["string", "null"]}
+              }
+            }
+          },
+          "author_affiliations": {
+            "type": "array",
+            "description": "Each author with the affiliation DOAJ records for them, which is what tells two authors of the same name apart",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {"type": ["string", "null"]},
+                "affiliation": {"type": ["string", "null"]}
+              }
+            }
           },
           "article_type": {
             "type": ["string", "null"],

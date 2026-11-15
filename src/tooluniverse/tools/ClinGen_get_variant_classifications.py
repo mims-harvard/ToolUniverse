@@ -24,7 +24,7 @@ def ClinGen_get_variant_classifications(
     Parameters
     ----------
     gene : str
-        Optional: Filter by gene symbol
+        Optional: Filter by gene symbol. HGNC symbol only (e.g. BRCA1). A genomic ran...
     variant : str
         Optional: filter to one variant. Accepts a ClinGen canonical allele ID ('CA16...
     limit : int

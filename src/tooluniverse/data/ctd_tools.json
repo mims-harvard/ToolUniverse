@@ -235,6 +235,23 @@
                   "null"
                 ],
                 "description": "InfoRes id of the source database (e.g., infores:ctd)"
+              },
+              "direct_evidence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether CTD curated the association directly and how, e.g. 'marker/mechanism' or 'therapeutic'. An inferred association has this empty, so it separates a curated claim from one assembled through a shared gene."
+              },
+              "pubmed_ids": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "PubMed ids backing the association, e.g. ['34379355']. The citation."
               }
             }
           }
@@ -606,6 +623,23 @@
                   "null"
                 ],
                 "description": "InfoRes id of the source database (e.g., infores:ctd)"
+              },
+              "direct_evidence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether CTD curated the association directly and how, e.g. 'therapeutic' or 'marker/mechanism'. Empty for an inferred association, which is the difference between 'treats' and 'shares a gene with'."
+              },
+              "pubmed_ids": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "PubMed ids backing the association, e.g. ['35928613']."
               }
             }
           }

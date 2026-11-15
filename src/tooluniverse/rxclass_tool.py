@@ -306,11 +306,32 @@ class RxClassTool(BaseTool):
         drugs = []
         for m in page_members:
             mc = m.get("minConcept", {})
+            # RxClass states per member whether the membership is DIRECT or
+            # INDIRECT -- an indirect member belongs to a descendant class, not
+            # to this one -- along with the source's own id for the member
+            # (M01AE07 for suprofen under M01AE). None of it was read, so the
+            # two kinds of member arrived indistinguishable.
+            attributes = m.get("nodeAttr")
+            if isinstance(attributes, dict):
+                attributes = [attributes]
+            attributes = [a for a in (attributes or []) if isinstance(a, dict)]
+            by_name = {
+                str(a.get("attrName")): a.get("attrValue")
+                for a in attributes
+                if a.get("attrName")
+            }
             drugs.append(
                 {
                     "rxcui": mc.get("rxcui", ""),
                     "name": mc.get("name", ""),
                     "tty": mc.get("tty", ""),
+                    "relation": by_name.get("Relation"),
+                    "source_id": by_name.get("SourceId"),
+                    "source_name": by_name.get("SourceName"),
+                    "attributes": [
+                        {"name": a.get("attrName"), "value": a.get("attrValue")}
+                        for a in attributes
+                    ],
                 }
             )
 
@@ -382,6 +403,9 @@ class RxClassTool(BaseTool):
                 "classId": c.get("classId", ""),
                 "className": c.get("className", ""),
                 "classType": c.get("classType", ""),
+                # 625 of the 22,667 classes carry a link to the vocabulary
+                # that defines them, e.g. http://snomed.info/id/1002243003.
+                "classUrl": c.get("classUrl"),
             }
             for c in all_classes
             if kw in c.get("className", "").lower()
@@ -605,6 +629,10 @@ class RxClassTool(BaseTool):
                     "rela": it.get("rela", ""),
                     "rxcui": dmc.get("rxcui", ""),
                     "drugName": dmc.get("name", ""),
+                    # "albuterol sulfate" is a PIN, not the IN "albuterol",
+                    # and the row did not say which kind of concept it was.
+                    "tty": dmc.get("tty", ""),
+                    "relaSource": it.get("relaSource", ""),
                 }
             )
 

@@ -40,7 +40,9 @@
           "name": {"type": ["string", "null"]},
           "presented_samples": {"type": ["string", "null"]},
           "nr_phenotypes": {"type": ["integer", "null"]},
-          "pct_of_all_samples": {"type": ["string", "null"]}
+          "pct_of_all_samples": {"type": ["string", "null"]},
+          "is_marker": {"type": "boolean", "description": "True when GMrepo treats this species as a phenotype marker -- its `ismarker` flag, which is why a species is of interest in this database."},
+          "database_links": {"type": "array", "description": "Links GMrepo holds for the species in other resources, e.g. {'dbtype': 'MVP', 'url': ..., 'anno': 'assoc w/ 2 phage clusters'}. GMrepo answers these as a JSON string rather than an array and they are parsed here; a string that will not parse is reported under `raw`. 25 of 50 microbes sampled carry at least one.", "items": {"type": "object", "properties": {"dbtype": {"type": ["string", "null"], "description": "The resource, e.g. MVP (Microbe Versus Phage)."}, "url": {"type": ["string", "null"], "description": "Link to the species in that resource."}, "anno": {"type": ["string", "null"], "description": "GMrepo's note on the link, e.g. 'assoc w/ 2 phage clusters'."}, "raw": {"type": ["string", "null"], "description": "Present only when GMrepo's dblinks string would not parse; the string as sent."}}}}
         }
       }
     }

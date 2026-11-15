@@ -20,6 +20,35 @@ HPO_BASE_URL = "https://ontology.jax.org/api/hp"
 HPO_ANNOTATION_URL = "https://ontology.jax.org/api/network/annotation"
 
 
+def _hpo_medical_actions(payload):
+    """MAxO curated treatments, as the JAX annotation endpoint reports them.
+
+    Written once because two handlers read the same endpoint: the disease
+    annotation tool already returned these, and the phenotype association
+    tools read the same payload for an obsolescence probe and then discarded
+    them -- so a phenotype's medical actions were unreachable through any
+    tool while sitting in a response already paid for.
+    """
+    out = []
+    for action in payload.get("medicalActions") or []:
+        if not isinstance(action, dict):
+            continue
+        out.append(
+            {
+                "id": action.get("id"),
+                "name": action.get("name"),
+                "relations": action.get("relations") or [],
+                "sources": action.get("sources") or [],
+                "targets": [
+                    {"id": t.get("id"), "name": t.get("name")}
+                    for t in (action.get("targets") or [])
+                    if isinstance(t, dict)
+                ],
+            }
+        )
+    return out
+
+
 def _normalize_hpo_id(term_id: str) -> str:
     """Normalize an HPO term id to the canonical colon CURIE 'HP:0001250'.
 
@@ -60,6 +89,36 @@ def _merge_disclosure(requested_id: str, resolved_id: Any) -> Dict[str, Any]:
             "current preferred term."
         ),
     }
+
+
+TRANSLATIONS_PER_TERM = 25
+
+
+def _translations(payload) -> list:
+    """The term's labels in other languages, with how official each is.
+
+    HPO publishes nine translations for HP:0002069 and marks each OFFICIAL
+    or CANDIDATE. The status is the point: a CANDIDATE label is a proposal,
+    not a name the ontology stands behind, and a clinician matching a
+    Japanese or Spanish record needs to know which it is. The term handler
+    returned `language` and `name` and dropped the status and the
+    translated definition; the hierarchy handler returned no translations at
+    all, although `translations` is one of the four keys its endpoint sends.
+    """
+    rows = []
+    for item in (payload.get("translations") or [])[:TRANSLATIONS_PER_TERM]:
+        if not isinstance(item, dict) or not item.get("name"):
+            continue
+        rows.append(
+            {
+                "language": item.get("language"),
+                "name": item.get("name"),
+                "definition": item.get("definition") or None,
+                # OFFICIAL or CANDIDATE.
+                "status": item.get("status"),
+            }
+        )
+    return rows
 
 
 @register_tool("HPOTool")
@@ -157,22 +216,7 @@ class HPOTool(BaseTool):
         data = response.json()
 
         # --- Medical actions (MAxO curated treatments / management) ---
-        medical_actions = []
-        for ma in data.get("medicalActions") or []:
-            if not isinstance(ma, dict):
-                continue
-            targets = []
-            for t in ma.get("targets") or []:
-                if isinstance(t, dict):
-                    targets.append({"id": t.get("id"), "name": t.get("name")})
-            medical_actions.append(
-                {
-                    "id": ma.get("id"),
-                    "name": ma.get("name"),
-                    "relations": ma.get("relations") or [],
-                    "targets": targets,
-                }
-            )
+        medical_actions = _hpo_medical_actions(data)
 
         # --- Phenotypes grouped by body system ---
         categories = []
@@ -306,7 +350,25 @@ class HPOTool(BaseTool):
         ):
             metadata.update(self._merge_metadata(term_id))
 
-        return {"status": "success", "data": {kind: trimmed}, "metadata": metadata}
+        # One request answers genes, diseases, assays AND medical actions, and
+        # the counts are already in hand from the probe above. A caller asking
+        # for genes could not see that the same phenotype has 3,136 diseases
+        # and 14 curated medical actions behind it without asking again.
+        metadata["also_in_this_response"] = {
+            key: len(data.get(key) or [])
+            for key in ("genes", "diseases", "assays", "medicalActions")
+            if key != kind
+        }
+        return {
+            "status": "success",
+            "data": {
+                kind: trimmed,
+                # The only route to a PHENOTYPE's medical actions: the disease
+                # tool reports them per disease, and nothing else exposes them.
+                "medical_actions": _hpo_medical_actions(data),
+            },
+            "metadata": metadata,
+        }
 
     def _merge_metadata(self, term_id: str) -> Dict[str, Any]:
         """Report the replacement term when `term_id` was merged, else {}.
@@ -353,18 +415,11 @@ class HPOTool(BaseTool):
             "xref_count": len(data.get("xrefs", []) or []),
         }
 
-        # Extract translations if available
-        translations = data.get("translations", [])
-        if translations:
-            result["translations"] = [
-                {"language": t.get("language"), "name": t.get("name")}
-                for t in translations
-                if t and t.get("name")
-            ]
-            result["translation_count"] = len(result["translations"])
-        else:
-            result["translations"] = []
-            result["translation_count"] = 0
+        result["translations"] = _translations(data)
+        result["translation_count"] = len(data.get("translations") or [])
+        result["translations_truncated"] = len(
+            data.get("translations") or []
+        ) > len(result["translations"])
 
         metadata = {
             "source": "HPO (JAX Ontology)",
@@ -440,6 +495,12 @@ class HPOTool(BaseTool):
                     "descendant_count": term.get("descendantCount"),
                     "synonyms": term.get("synonyms", []) or [],
                     "synonym_count": len(term.get("synonyms", []) or []),
+                    # What the term's definition rests on, and what the
+                    # curators said about it. A definition with no reference
+                    # cannot be followed to the paper it came from.
+                    "publication_references": term.get("publicationReferences") or [],
+                    "comment": term.get("comment"),
+                    "xrefs": term.get("xrefs") or [],
                 }
             )
 
@@ -488,6 +549,15 @@ class HPOTool(BaseTool):
                     {
                         "id": term.get("id"),
                         "name": term.get("name"),
+                        # How many terms sit under this one. Walking a
+                        # hierarchy without it means expanding every child to
+                        # find out which branch is worth expanding.
+                        "descendant_count": term.get("descendantCount"),
+                        "definition": term.get("definition"),
+                        # One of the four keys this endpoint answers, and
+                        # the row carried none of it.
+                        "translations": _translations(term),
+                        "translation_count": len(term.get("translations") or []),
                     }
                 )
 

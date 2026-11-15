@@ -1,0 +1,271 @@
+{
+  "derived_on": "2026-11-15",
+  "derived_from": [
+    "src/tooluniverse/agentic_tool.py -- AgenticTool.run has exactly six returns: three for configs.return_metadata true (tool unavailable, success, exception) and three for false (a plain error string, the model's answer itself, format_error_response).",
+    "src/tooluniverse/llm_clients.py -- infer(...) -> Optional[str]. With no custom_format it returns resp.choices[0].message.content, and None once max_retries is spent. return_json only asks the API for JSON *mode*; the JSON comes back as unparsed text. GeminiClient.infer says the same in prose: 'Both hand back an unparsed JSON string.'",
+    "src/tooluniverse/utils.py -- format_error_response(...) builds the status/error/error_type/retriable/next_steps/details/tool_name/timestamp dict."
+  ],
+  "how": "These payloads are DERIVED FROM SOURCE, not measured live. Every AgenticTool is skipped at load time when no LLM API key is present (execute_function.py checks AgenticTool.has_any_api_keys before registering one), so no call could be made here and the error branches are not reachable through tu.run either. The derivation is exhaustive instead of a lower bound, which a live pass would not have been: run() has six returns and this file covers all six. What a live pass WOULD add is whether a given model honours its prompt's requested JSON shape -- which is why no declaration in this change narrows `result` beyond the type the client guarantees, and why the shapes the prompts ask for are described in prose or carried in an annotation-only contentSchema rather than asserted.",
+  "the_trap": "configs.return_json true does NOT mean `result` is a parsed object. 23 of these tools declared type object on that assumption. The project's own consumers get it right -- compose_scripts/tool_discover.py and tool_description_optimizer.py take obj['result'], check isinstance(str) and json.loads it -- so the code and the declarations disagreed, and only the declarations were wrong.",
+  "invariant": "every payload here validates against its tool's return_schema, and exactly one oneOf branch matches it; every payload under unreachable validates against none",
+  "reachable": {
+    "return_metadata_true": [
+      {
+        "branch": "success",
+        "note": "agentic_tool.py, the `if self.return_metadata` after inference. result is the model's text; JSON text when configs.return_json is set.",
+        "payload": {
+          "success": true,
+          "result": "The trial was a 12-month double-blind ...",
+          "metadata": {
+            "prompt_used": "You are a biomedical expert. Please summarize the following biomedical text in 100 words, focusing on methodology: ...",
+            "input_arguments": {
+              "text": "This study investigates ...",
+              "summary_length": "100",
+              "focus_area": "methodology"
+            },
+            "model_info": {
+              "api_type": "CHATGPT",
+              "model_id": "gpt-5",
+              "temperature": 0.2
+            },
+            "execution_time_seconds": 1.372,
+            "timestamp": "2026-11-15T01:20:00.123456"
+          }
+        }
+      },
+      {
+        "branch": "success",
+        "note": "Same branch with response None: infer() returned None after max_retries.",
+        "payload": {
+          "success": true,
+          "result": null,
+          "metadata": {
+            "prompt_used": "You are a biomedical expert. Please summarize the following biomedical text in 100 words, focusing on methodology: ...",
+            "input_arguments": {
+              "text": "This study investigates ...",
+              "summary_length": "100",
+              "focus_area": "methodology"
+            },
+            "model_info": {
+              "api_type": "CHATGPT",
+              "model_id": "gpt-5",
+              "temperature": 0.2
+            },
+            "execution_time_seconds": 1.372,
+            "timestamp": "2026-11-15T01:20:00.123456"
+          }
+        }
+      },
+      {
+        "branch": "success_json",
+        "note": "Same branch for a configs.return_json tool: the JSON arrives as text.",
+        "payload": {
+          "success": true,
+          "result": "{\"labels\": [\"protein-analysis\"], \"rationale\": \"...\"}",
+          "metadata": {
+            "prompt_used": "You are a biomedical expert. Please summarize the following biomedical text in 100 words, focusing on methodology: ...",
+            "input_arguments": {
+              "text": "This study investigates ...",
+              "summary_length": "100",
+              "focus_area": "methodology"
+            },
+            "model_info": {
+              "api_type": "CHATGPT",
+              "model_id": "gpt-5",
+              "temperature": 0.2
+            },
+            "execution_time_seconds": 1.372,
+            "timestamp": "2026-11-15T01:20:00.123456"
+          }
+        }
+      },
+      {
+        "branch": "exception",
+        "note": "The except clause: a missing required argument, a prompt that would not format, or anything the backend raised.",
+        "payload": {
+          "success": false,
+          "error": "Missing required input arguments: ['text']",
+          "error_type": "ValueError",
+          "metadata": {
+            "prompt_used": "You are a biomedical expert. Please summarize the following biomedical text in 100 words, focusing on methodology: ...",
+            "input_arguments": {
+              "text": "This study investigates ...",
+              "summary_length": "100",
+              "focus_area": "methodology"
+            },
+            "model_info": {
+              "api_type": "CHATGPT",
+              "model_id": "gpt-5",
+              "temperature": 0.2
+            },
+            "execution_time_seconds": 1.372,
+            "timestamp": "2026-11-15T01:20:00.123456"
+          }
+        }
+      },
+      {
+        "branch": "unavailable",
+        "note": "The not-self._is_available guard. metadata.model_info carries only api_type and model_id here, and execution_time_seconds is the int 0.",
+        "payload": {
+          "success": false,
+          "error": "Tool 'X' is not available due to initialization error: no API key",
+          "error_type": "ToolUnavailable",
+          "metadata": {
+            "prompt_used": "Tool unavailable",
+            "input_arguments": {
+              "text": null,
+              "summary_length": null,
+              "focus_area": null
+            },
+            "model_info": {
+              "api_type": "CHATGPT",
+              "model_id": "gpt-5"
+            },
+            "execution_time_seconds": 0,
+            "timestamp": "2026-11-15T01:20:00.123456"
+          }
+        }
+      }
+    ],
+    "return_metadata_false": [
+      {
+        "branch": "success",
+        "note": "run() hands back `response` itself.",
+        "payload": "M54.5 Low back pain"
+      },
+      {
+        "branch": "success_json",
+        "note": "Same branch for a configs.return_json tool.",
+        "payload": "{\"id\": \"3f2a\", \"name\": \"X\"}"
+      },
+      {
+        "branch": "success",
+        "note": "Same branch with response None.",
+        "payload": null
+      },
+      {
+        "branch": "error",
+        "note": "format_error_response(...). The `if self.return_metadata ... else` on the except path.",
+        "payload": {
+          "status": "error",
+          "error": "Missing required input arguments: ['text']",
+          "error_type": "ValueError",
+          "retriable": false,
+          "next_steps": [],
+          "details": {
+            "prompt_used": "Failed to format prompt",
+            "input_arguments": {},
+            "model_info": {
+              "api_type": "CHATGPT",
+              "model_id": "gpt-5"
+            },
+            "execution_time_seconds": 0.004
+          },
+          "tool_name": "AdverseEventICDMapper",
+          "timestamp": 1763169600.0
+        }
+      }
+    ]
+  },
+  "unreachable": {
+    "return_metadata_true": [
+      {
+        "why": "the old generated placeholder accepted this and nothing else was asserted; run() never returns a bare payload when return_metadata is true",
+        "payload": {
+          "labels": [
+            "protein-analysis"
+          ],
+          "rationale": "..."
+        }
+      },
+      {
+        "why": "run() never returns the model's text unwrapped on this branch",
+        "payload": "A clear, concise summary."
+      },
+      {
+        "why": "metadata is built unconditionally on all three branches",
+        "payload": {
+          "success": true,
+          "result": "x"
+        }
+      },
+      {
+        "why": "the success branch always carries result, even when it is None",
+        "payload": {
+          "success": true,
+          "metadata": {
+            "prompt_used": "You are a biomedical expert. Please summarize the following biomedical text in 100 words, focusing on methodology: ...",
+            "input_arguments": {
+              "text": "This study investigates ...",
+              "summary_length": "100",
+              "focus_area": "methodology"
+            },
+            "model_info": {
+              "api_type": "CHATGPT",
+              "model_id": "gpt-5",
+              "temperature": 0.2
+            },
+            "execution_time_seconds": 1.372,
+            "timestamp": "2026-11-15T01:20:00.123456"
+          }
+        }
+      },
+      {
+        "why": "the failure branches always carry error and error_type",
+        "payload": {
+          "success": false,
+          "result": "x",
+          "metadata": {
+            "prompt_used": "You are a biomedical expert. Please summarize the following biomedical text in 100 words, focusing on methodology: ...",
+            "input_arguments": {
+              "text": "This study investigates ...",
+              "summary_length": "100",
+              "focus_area": "methodology"
+            },
+            "model_info": {
+              "api_type": "CHATGPT",
+              "model_id": "gpt-5",
+              "temperature": 0.2
+            },
+            "execution_time_seconds": 1.372,
+            "timestamp": "2026-11-15T01:20:00.123456"
+          }
+        }
+      },
+      {
+        "why": "every metadata key is set on every branch",
+        "payload": {
+          "success": true,
+          "result": "x",
+          "metadata": {
+            "prompt_used": "You are a biomedical expert. Please summarize the following biomedical text in 100 words, focusing on methodology: ...",
+            "input_arguments": {
+              "text": "This study investigates ...",
+              "summary_length": "100",
+              "focus_area": "methodology"
+            },
+            "model_info": {
+              "api_type": "CHATGPT",
+              "model_id": "gpt-5",
+              "temperature": 0.2
+            },
+            "execution_time_seconds": 1.372
+          }
+        }
+      }
+    ],
+    "return_metadata_false": [
+      {
+        "why": "infer() returns a string or None, never a number",
+        "payload": 3
+      },
+      {
+        "why": "infer() returns a string or None, never a list",
+        "payload": [
+          1,
+          2
+        ]
+      }
+    ]
+  }
+}

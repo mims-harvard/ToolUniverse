@@ -16,7 +16,9 @@
           "default": false
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/ena/browser/api/fasta/{accession}",
@@ -47,7 +49,9 @@
           "description": "EMBL/GenBank accession number. NOT RefSeq (NC_*, NM_*, NP_*). Examples: 'U00096', 'AJ312385', 'M15390'"
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/ena/browser/api/embl/{accession}",
@@ -75,7 +79,9 @@
           "description": "ENA metadata record accession. Supported types: Study (ERP*, SRP*, PRJ*), Sample (ERS*, SRS*, SAM*), Run (ERR*, SRR*), Experiment (ERX*, SRX*), Analysis (ERZ*, SRZ*), Taxon (numeric ID). NOT for sequence accessions (U#####, M#####, etc.). Examples: 'SAMEA2620084' (sample), 'ERX2484999' (experiment), '562' (taxon)"
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/ena/browser/api/xml/{accession}",
@@ -108,7 +114,9 @@
           "default": false
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/ena/browser/api/fasta/{accession}",
@@ -123,6 +131,13 @@
         "data": {
           "type": "object",
           "description": "Entry metadata"
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Content type ENA served, e.g. 'application/json'. ENA answers some requests as EMBL flat file or XML, and this is what distinguishes them."
         }
       }
     },
@@ -144,7 +159,9 @@
           "description": "EMBL/GenBank accession number. NOT RefSeq (NC_*, NM_*, NP_*). Examples: 'U00096', 'AJ312385', 'M15390'"
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/ena/browser/api/summary/{accession}",
@@ -190,6 +207,48 @@
                   },
                   "publications": {
                     "type": "array"
+                  },
+                  "dataClass": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ENA data class, e.g. 'STD' for a standard entry, 'CON' for a constructed contig, 'WGS', 'TSA'. A CON entry has no sequence of its own, only instructions for assembling one."
+                  },
+                  "dataType": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the entry holds, e.g. 'SEQUENCE'."
+                  },
+                  "firstPublic": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the entry was first released, e.g. '23-FEB-2006'. ENA's own DD-MON-YYYY format, not ISO 8601."
+                  },
+                  "lastUpdated": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When it was last changed, e.g. '16-FEB-2025'. Same format."
+                  },
+                  "status": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "ENA's numeric status code, e.g. 4."
+                  },
+                  "statusDescription": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "That code in words, e.g. 'public', 'suppressed', 'killed'. A suppressed entry still answers a lookup and should not be used."
                   }
                 }
               }
@@ -199,6 +258,13 @@
             }
           },
           "description": "Comprehensive entry summary"
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Content type ENA served, e.g. 'application/json'. ENA answers some requests as EMBL flat file or XML, and this is what distinguishes them."
         }
       }
     },
@@ -223,7 +289,9 @@
           "description": "EMBL/GenBank accession number. NOT RefSeq (NC_*, NM_*, NP_*). Examples: 'U00096', 'AJ312385'"
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/ena/browser/api/versions/{accession}",
@@ -260,12 +328,36 @@
                   },
                   "status": {
                     "type": "string"
+                  },
+                  "secondaryAccession": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Secondary accessions for the version, e.g. ['AE000111-AE000510'] - often a RANGE in one string. Measured on 1 of 3 versions."
+                  },
+                  "text": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL of the version's EMBL flat file, e.g. 'https://www.ebi.ac.uk/ena/browser/api/embl/U00096.3'. Where the actual record for that version can be read."
                   }
                 }
               }
             }
           },
           "description": "Version history with details for each version"
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Content type ENA served, e.g. 'application/json'. ENA answers some requests as EMBL flat file or XML, and this is what distinguishes them."
         }
       }
     },

@@ -24,12 +24,21 @@
         "sortBy": {
           "type": "string",
           "description": "Sort field: 'relevance' (default), 'release_date', 'views', 'files' or 'links'. Other values (e.g. 'accession', 'title') are not supported by BioStudies and return no results.",
-          "enum": ["relevance", "release_date", "views", "files", "links"]
+          "enum": [
+            "relevance",
+            "release_date",
+            "views",
+            "files",
+            "links"
+          ]
         },
         "sortOrder": {
           "type": "string",
           "description": "Sort order: 'ascending' or 'descending'",
-          "enum": ["ascending", "descending"]
+          "enum": [
+            "ascending",
+            "descending"
+          ]
         }
       },
       "required": []
@@ -88,6 +97,20 @@
             },
             "result_set_complete": {
               "type": "boolean"
+            },
+            "sortBy": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the hits were ordered by, e.g. 'relevance'. A relevance order means the first page is not the newest or the largest studies."
+            },
+            "sortOrder": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Direction of that ordering, e.g. 'descending'."
             }
           }
         },
@@ -125,7 +148,12 @@
         "collection": {
           "type": "string",
           "description": "Collection name (e.g., 'arrayexpress', 'bioimages', 'biomodels')",
-          "enum": ["arrayexpress", "bioimages", "biomodels", "europepmc"]
+          "enum": [
+            "arrayexpress",
+            "bioimages",
+            "biomodels",
+            "europepmc"
+          ]
         },
         "pageSize": {
           "type": "integer",
@@ -139,7 +167,9 @@
           "default": 1
         }
       },
-      "required": ["collection"]
+      "required": [
+        "collection"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/biostudies/api/v1/search",
@@ -194,6 +224,20 @@
             },
             "result_set_complete": {
               "type": "boolean"
+            },
+            "sortBy": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the hits were ordered by, e.g. 'relevance'."
+            },
+            "sortOrder": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Direction of that ordering, e.g. 'descending'."
             }
           }
         },
@@ -230,7 +274,9 @@
           "description": "BioStudies accession number (e.g., 'S-BSST123', 'E-GEOD-26319' for ArrayExpress studies)"
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/biostudies/api/v1/studies/{accession}",
@@ -272,7 +318,9 @@
           "description": "BioStudies accession number"
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/biostudies/api/v1/studies/{accession}/files",
@@ -302,8 +350,12 @@
             "items": {
               "type": "object",
               "properties": {
-                "name": {"type": "string"},
-                "value": {"type": "string"}
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
               }
             }
           }

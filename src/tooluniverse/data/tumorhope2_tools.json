@@ -30,7 +30,159 @@
         {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "The database's own identifier for the peptide entry."
+              },
+              "sequence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The amino-acid sequence in one-letter code."
+              },
+              "n_term": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "N-terminal modification."
+              },
+              "c_term": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "C-terminal modification."
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The source the entry was taken from."
+              },
+              "pmid": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "PubMed ID of the paper reporting it."
+              },
+              "refrence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The reference as the database spells it (the misspelling is upstream's)."
+              },
+              "patent": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Patent covering the peptide, where one is recorded."
+              },
+              "comments": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Free-text notes on the entry."
+              },
+              "year": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Year of publication."
+              },
+              "target_tumor": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The tumour type the peptide targets."
+              },
+              "target_cell": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The cell type or line it was shown to bind."
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Title of the source publication."
+              },
+              "homing": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The tissue or tumour the peptide homes to -- the claim this database records."
+              },
+              "receptors_biomarker": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The receptor or biomarker it binds, where identified. Without it a homing claim has no mechanism."
+              },
+              "motif": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The binding motif within the sequence."
+              },
+              "conjugate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What the peptide was conjugated to when tested -- a dye, a drug, a nanoparticle. Homing shown with one conjugate may not hold with another."
+              },
+              "phage_display": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the peptide came from a phage-display screen. A screen hit is a starting point, not a validated binder."
+              },
+              "invitro": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What was shown in vitro."
+              },
+              "invivo": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What was shown in vivo. An in vitro-only entry has not been shown to home in an animal."
+              },
+              "name_source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Where the peptide's name comes from."
+              }
+            }
           },
           "description": "Matching tumor-homing peptide records. Each has id, title, pmid, year, source, name_source, sequence, n_term, c_term, motif, target_tumor, target_cell, receptors_biomarker, phage_display, invitro, invivo."
         },
@@ -48,8 +200,12 @@
       ]
     },
     "test_examples": [
-      { "source": "A33H" },
-      { "target_tumor": "Brain tumor" }
+      {
+        "source": "A33H"
+      },
+      {
+        "target_tumor": "Brain tumor"
+      }
     ]
   }
 ]

@@ -18,6 +18,189 @@ PROTEINS_API_BASE_URL = "https://www.ebi.ac.uk/proteins/api"
 UNIPROT_REST_BASE_URL = "https://rest.uniprot.org"
 
 
+# How many per-transcript feature mappings a coordinates response carries.
+# P04637 answers about 1,500 on one transcript, so the whole list would be the
+# response; `features_total` is the true count.
+FEATURES_PER_TRANSCRIPT = 50
+
+
+def _pos(node, outer, end):
+    """`node[outer][end].position`, which is how the API nests a coordinate."""
+    inner = (node.get(outer) or {}).get(end) or {}
+    return inner.get("position")
+
+
+def _status(node, outer, end):
+    """The coordinate's certainty, which sits beside the position."""
+    inner = (node.get(outer) or {}).get(end) or {}
+    return inner.get("status")
+
+
+def _peptide_evidence(feature):
+    """Peptide evidence with the numbers that make it evidence.
+
+    The Proteins API answers each peptide's source with a `properties` map
+    holding the mass-spectrometry support -- "Best Probability": "1.000",
+    "Times of observations": "2", and per source also Score, Number of PSMs
+    and Number of sample. Only the source name and id were carried, so a
+    caller was told that a peptide has HPP evidence and nothing about how
+    strong it is, for a tool whose description calls this "the stringent HPP
+    evidence set". The ECO code and the source URL were dropped the same way.
+    """
+    out = []
+    for ev in feature.get("evidences") or []:
+        if not isinstance(ev, dict):
+            continue
+        src = ev.get("source") or {}
+        properties = src.get("properties") if isinstance(src, dict) else None
+        out.append(
+            {
+                "code": ev.get("code"),
+                "source": src.get("name"),
+                "id": src.get("id"),
+                "url": src.get("url"),
+                "support": {
+                    str(key).strip().lower().replace(" ", "_"): value
+                    for key, value in (properties or {}).items()
+                },
+            }
+        )
+    return out
+
+
+def _clinical_significances(node):
+    """Clinical significance with the review status that qualifies it.
+
+    `reviewStatus` is what separates a ClinVar assertion with criteria and
+    multiple submitters from one unreviewed submission. Reporting the type
+    alone presents both as the same claim.
+    """
+    out = []
+    for cs in node.get("clinicalSignificances") or []:
+        if not isinstance(cs, dict):
+            continue
+        out.append(
+            {
+                "type": cs.get("type"),
+                "sources": cs.get("sources") or [],
+                "review_status": cs.get("reviewStatus"),
+            }
+        )
+    return out
+
+
+def _variation_feature(feature):
+    """The parts of a variation feature that are the variant.
+
+    Written once because the two code paths that read these features had
+    drifted apart: the by-accession lookup returned eight of the twenty-one
+    fields and the by-rsID lookup a different nine, and neither carried the
+    SIFT/PolyPhen predictions, the population frequencies, the somatic status
+    or the per-transcript HGVS that sit in the same response. Measured on
+    P04637: 3,662 features, every one with a `consequenceType` and a
+    `somaticStatus`, 1,127 with predictions, 526 with frequencies.
+    """
+    return {
+        "variant_id": feature.get("ftId"),
+        "feature_type": feature.get("type"),
+        "position_start": feature.get("begin"),
+        "position_end": feature.get("end"),
+        "wild_type": feature.get("wildType"),
+        "alternative": feature.get("alternativeSequence"),
+        "mutated_type": feature.get("mutatedType"),
+        "source_type": feature.get("sourceType"),
+        "consequence_type": feature.get("consequenceType"),
+        "somatic_status": feature.get("somaticStatus"),
+        "codon": feature.get("codon"),
+        "descriptions": [
+            {"value": entry.get("value"), "sources": entry.get("sources") or []}
+            for entry in (feature.get("descriptions") or [])
+            if isinstance(entry, dict)
+        ],
+        "genomic_location": feature.get("genomicLocation"),
+        "cytogenetic_band": feature.get("cytogeneticBand"),
+        "locations": [
+            {
+                "hgvs": loc.get("loc"),
+                "sequence_id": loc.get("seqId"),
+                "source": loc.get("source"),
+            }
+            for loc in (feature.get("locations") or [])
+            if isinstance(loc, dict)
+        ],
+        "predictions": [
+            {
+                "algorithm": pred.get("predAlgorithmNameType"),
+                "prediction": pred.get("predictionValType"),
+                "score": pred.get("score"),
+                "predictor_type": pred.get("predictorType"),
+                "sources": pred.get("sources") or [],
+            }
+            for pred in (feature.get("predictions") or [])
+            if isinstance(pred, dict)
+        ],
+        "population_frequencies": [
+            {
+                "population": freq.get("populationName"),
+                "frequency": freq.get("frequency"),
+                "source": freq.get("source"),
+            }
+            for freq in (feature.get("populationFrequencies") or [])
+            if isinstance(freq, dict)
+        ],
+        "evidences": _peptide_evidence(feature),
+        "clinical_significances": _clinical_significances(feature),
+        "associations": [
+            {
+                "name": a.get("name"),
+                "description": a.get("description"),
+                "is_disease": a.get("disease", False),
+                "evidences": _peptide_evidence(a),
+                "clinical_significances": _clinical_significances(a),
+                # The disease's own identifiers -- OMIM/MIM among them --
+                # without which a disease NAME cannot be resolved to a record.
+                "db_references": [
+                    {
+                        "database": ref.get("name"),
+                        "id": ref.get("id"),
+                        "url": ref.get("url"),
+                    }
+                    for ref in (a.get("dbReferences") or [])
+                    if isinstance(ref, dict)
+                ],
+            }
+            for a in (feature.get("association") or [])
+            if isinstance(a, dict)
+        ],
+    }
+
+
+def _feature_xrefs(feature):
+    """The feature's cross-references, with the properties each one carries.
+
+    An antigen xref's `properties` hold the source's "gene ID" and "protein
+    sequence ID"; a PTM's hold the Pubmed ID, the Universal Spectrum Id and the
+    ProForma string. Those are the identifiers the cross-reference exists to
+    give, so a name and an id without them is half the reference.
+    """
+    out = []
+    for x in feature.get("xrefs") or []:
+        if not isinstance(x, dict):
+            continue
+        out.append(
+            {
+                "name": x.get("name"),
+                "id": x.get("id"),
+                "url": x.get("url"),
+                "properties": {
+                    str(key).strip().lower().replace(" ", "_"): value
+                    for key, value in (x.get("properties") or {}).items()
+                },
+            }
+        )
+    return out
+
+
 def _paginate(items, arguments: Dict[str, Any], default_limit: int = 100):
     """Return one local page plus explicit collection completeness metadata."""
     limit = int(arguments.get("limit", default_limit))
@@ -143,6 +326,7 @@ class EBIProteinsExtTool(BaseTool):
                     "position_end": f.get("end"),
                     "original_sequence": f.get("alternativeSequence"),
                     "description": f.get("description"),
+                    "xrefs": _feature_xrefs(f),
                     "evidences": evidences,
                 }
             )
@@ -182,19 +366,7 @@ class EBIProteinsExtTool(BaseTool):
         page_features, paging = _paginate(raw_features, arguments)
         features = []
         for f in page_features:
-            # Extract source databases
-            evidences = []
-            for ev in f.get("evidences", []):
-                src = ev.get("source", {})
-                props = src.get("properties", {})
-                evidences.append(
-                    {
-                        "source": src.get("name"),
-                        "id": src.get("id"),
-                        "url": src.get("url"),
-                        "properties": props,
-                    }
-                )
+            evidences = _peptide_evidence(f)
 
             features.append(
                 {
@@ -202,6 +374,37 @@ class EBIProteinsExtTool(BaseTool):
                     "position_start": f.get("begin"),
                     "position_end": f.get("end"),
                     "description": f.get("description"),
+                    "xrefs": _feature_xrefs(f),
+                    # The modifications themselves. The response nests each
+                    # PTM under `ptms` with its name, the residue it sits on
+                    # and its own references -- the Pubmed ID, the Universal
+                    # Spectrum Id and the ProForma string that let a site be
+                    # traced back to a spectrum. A row that gives the feature
+                    # span and no PTM has not answered the question.
+                    "ptms": [
+                        {
+                            "name": ptm.get("name"),
+                            "position": ptm.get("position"),
+                            "sources": ptm.get("sources") or [],
+                            "db_references": [
+                                {
+                                    "database": ref.get("name"),
+                                    "id": ref.get("id"),
+                                    "url": ref.get("url"),
+                                    "properties": {
+                                        str(key).strip().lower().replace(" ", "_"): val
+                                        for key, val in (
+                                            ref.get("properties") or {}
+                                        ).items()
+                                    },
+                                }
+                                for ref in (ptm.get("dbReferences") or [])
+                                if isinstance(ref, dict)
+                            ],
+                        }
+                        for ptm in (f.get("ptms") or [])
+                        if isinstance(ptm, dict)
+                    ],
                     "evidences": evidences,
                 }
             )
@@ -263,52 +466,15 @@ class EBIProteinsExtTool(BaseTool):
         page_features, paging = _paginate(raw_features, arguments)
         variants = []
         for f in page_features:
-            # Extract clinical significance
-            clinical = []
-            for cs in f.get("clinicalSignificances", []):
-                clinical.append(
-                    {
-                        "type": cs.get("type"),
-                        "sources": cs.get("sources", []),
-                    }
-                )
-
-            # Extract disease associations
-            associations = []
-            for a in f.get("association", []):
-                associations.append(
-                    {
-                        "name": a.get("name"),
-                        "description": a.get("description"),
-                        "is_disease": a.get("disease", False),
-                    }
-                )
-
-            # Preserve all cross-references.  A real TP53 response contains up
+            # Preserve all cross-references. A real TP53 response contains up
             # to 43 references for a single variant; keeping only three made
             # ClinVar/COSMIC/dbSNP support disappear without warning.
-            xrefs = []
-            for x in f.get("xrefs", []):
-                xrefs.append(
-                    {
-                        "database": x.get("name"),
-                        "id": x.get("id"),
-                        "url": x.get("url"),
-                    }
-                )
-
-            variants.append(
-                {
-                    "position_start": f.get("begin"),
-                    "position_end": f.get("end"),
-                    "wild_type": f.get("wildType"),
-                    "alternative": f.get("alternativeSequence"),
-                    "source_type": f.get("sourceType"),
-                    "clinical_significances": clinical if clinical else None,
-                    "associations": associations if associations else None,
-                    "xrefs": xrefs if xrefs else None,
-                }
-            )
+            xrefs = [
+                {"database": x.get("name"), "id": x.get("id"), "url": x.get("url")}
+                for x in (f.get("xrefs") or [])
+                if isinstance(x, dict)
+            ]
+            variants.append({**_variation_feature(f), "xrefs": xrefs or None})
 
         return {
             "status": "success",
@@ -350,17 +516,9 @@ class EBIProteinsExtTool(BaseTool):
         page_features, paging = _paginate(raw_features, arguments)
         features = []
         for f in page_features:
-            evidences = []
-            for ev in f.get("evidences", []):
-                src = ev.get("source", {})
-                evidences.append(
-                    {
-                        "code": ev.get("code"),
-                        "source_name": src.get("name"),
-                        "source_id": src.get("id"),
-                    }
-                )
+            evidences = _peptide_evidence(f)
 
+            ligand = f.get("ligand") or {}
             features.append(
                 {
                     "type": f.get("type"),
@@ -368,6 +526,21 @@ class EBIProteinsExtTool(BaseTool):
                     "position_start": f.get("begin"),
                     "position_end": f.get("end"),
                     "description": f.get("description"),
+                    # For a binding site, WHAT binds there. A
+                    # DOMAINS_AND_SITES feature that says "Binding site" at
+                    # position 175 and not which ligand has named the location
+                    # and not the fact.
+                    "ligand": {
+                        "name": ligand.get("name"),
+                        "id": (ligand.get("dbReference") or {}).get("id"),
+                        "database": (ligand.get("dbReference") or {}).get("name"),
+                        "label": ligand.get("label"),
+                        "note": ligand.get("note"),
+                    }
+                    if ligand
+                    else None,
+                    "ligand_part": f.get("ligandPart"),
+                    "xrefs": _feature_xrefs(f),
                     "evidences": evidences if evidences else None,
                 }
             )
@@ -406,16 +579,11 @@ class EBIProteinsExtTool(BaseTool):
 
         regions = []
         for f in data.get("features", []):
-            evidences = []
-            for ev in f.get("evidences", [])[:3]:
-                src = ev.get("source", {})
-                evidences.append(
-                    {
-                        "code": ev.get("code"),
-                        "source_name": src.get("name"),
-                        "source_id": src.get("id"),
-                    }
-                )
+            # The evidence list was cut to three with nothing said. The cut
+            # stays, since an antigenic region can carry many, but the row now
+            # says what it is a cut of.
+            all_evidences = _peptide_evidence(f)
+            evidences = all_evidences[:3]
 
             regions.append(
                 {
@@ -424,7 +592,13 @@ class EBIProteinsExtTool(BaseTool):
                     "position_end": f.get("end"),
                     "match_score": f.get("matchScore"),
                     "antigen_sequence": f.get("antigenSequence"),
+                    # Which antibody or construct the region came from. The
+                    # xrefs carry the source's gene and protein sequence ids,
+                    # and without them a region is a span with no provenance.
+                    "xrefs": _feature_xrefs(f),
                     "evidences": evidences if evidences else None,
+                    "evidences_total": len(all_evidences),
+                    "evidences_truncated": len(evidences) < len(all_evidences),
                 }
             )
 
@@ -461,15 +635,73 @@ class EBIProteinsExtTool(BaseTool):
         for gc in data.get("gnCoordinate", []):
             gen_loc = gc.get("genomicLocation", {})
             exons = gen_loc.get("exon", [])
+            features = gc.get("feature") or []
             mappings.append(
                 {
                     "ensembl_gene_id": gc.get("ensemblGeneId"),
                     "ensembl_transcript_id": gc.get("ensemblTranscriptId"),
+                    "ensembl_translation_id": gc.get("ensemblTranslationId"),
                     "chromosome": gen_loc.get("chromosome"),
                     "start": gen_loc.get("start"),
                     "end": gen_loc.get("end"),
                     "reverseStrand": gen_loc.get("reverseStrand"),
+                    "assembly_name": gen_loc.get("assemblyName"),
+                    "nucleotide_id": gen_loc.get("nucleotideId"),
                     "num_exons": len(exons),
+                    # The exons themselves. A tool named for coordinates
+                    # answered `num_exons: 11` -- the count -- and dropped
+                    # every exon's protein span, genomic span and Ensembl id,
+                    # which is the mapping the caller came for.
+                    "exons": [
+                        {
+                            "exon_id": exon.get("id"),
+                            "protein_start": _pos(exon, "proteinLocation", "begin"),
+                            "protein_end": _pos(exon, "proteinLocation", "end"),
+                            "genome_start": _pos(exon, "genomeLocation", "begin"),
+                            "genome_end": _pos(exon, "genomeLocation", "end"),
+                        }
+                        for exon in exons
+                        if isinstance(exon, dict)
+                    ],
+                    # Where each annotated feature of the protein lands on the
+                    # genome. Capped, because P04637 answers 1,500 of them on
+                    # one transcript, and disclosed per the row-axis
+                    # convention.
+                    "features": [
+                        {
+                            "feature_id": feat.get("id"),
+                            "type": feat.get("type"),
+                            "description": feat.get("description"),
+                            "original": feat.get("original"),
+                            "variation": feat.get("variation") or [],
+                            "genome_start": _pos(feat, "genomeLocation", "begin"),
+                            "genome_end": _pos(feat, "genomeLocation", "end"),
+                            # "certain" or "uncertain". A coordinate whose
+                            # status the caller cannot see reads as exact.
+                            "genome_start_status": _status(
+                                feat, "genomeLocation", "begin"
+                            ),
+                            "genome_end_status": _status(feat, "genomeLocation", "end"),
+                            "protein_position": (
+                                (feat.get("location") or {}).get("position") or {}
+                            ).get("position"),
+                            "evidence": [
+                                {
+                                    "code": ev.get("code"),
+                                    "database": (ev.get("dbReference") or {}).get(
+                                        "name"
+                                    ),
+                                    "id": (ev.get("dbReference") or {}).get("id"),
+                                }
+                                for ev in (feat.get("evidence") or [])
+                                if isinstance(ev, dict)
+                            ],
+                        }
+                        for feat in features[:FEATURES_PER_TRANSCRIPT]
+                        if isinstance(feat, dict)
+                    ],
+                    "features_total": len(features),
+                    "features_truncated": FEATURES_PER_TRANSCRIPT < len(features),
                 }
             )
 
@@ -507,16 +739,7 @@ class EBIProteinsExtTool(BaseTool):
         page_features, paging = _paginate(raw_features, arguments)
         peptides = []
         for f in page_features:
-            evidences = []
-            for ev in f.get("evidences", []):
-                src = ev.get("source", {})
-                evidences.append(
-                    {
-                        "source": src.get("name"),
-                        "id": src.get("id"),
-                    }
-                )
-
+            evidences = _peptide_evidence(f)
             peptides.append(
                 {
                     "type": f.get("type"),
@@ -524,6 +747,7 @@ class EBIProteinsExtTool(BaseTool):
                     "position_end": f.get("end"),
                     "peptide": f.get("peptide"),
                     "unique": f.get("unique"),
+                    "xrefs": _feature_xrefs(f),
                     "evidences": evidences if evidences else None,
                 }
             )
@@ -644,9 +868,7 @@ class EBIProteinsExtTool(BaseTool):
                     }
                 )
             for text in (comment.get("note") or {}).get("texts") or []:
-                notes.append(
-                    {"text": text.get("value"), "evidences": _evidences(text)}
-                )
+                notes.append({"text": text.get("value"), "evidences": _evidences(text)})
 
         return {
             "status": "success",
@@ -671,9 +893,7 @@ class EBIProteinsExtTool(BaseTool):
             },
         }
 
-    def _parse_variation_entries(
-        self, data: Any, arguments: Dict[str, Any]
-    ) -> list:
+    def _parse_variation_entries(self, data: Any, arguments: Dict[str, Any]) -> list:
         """Normalize variation-by-id responses (list of UniProt entries)."""
         if not isinstance(data, list):
             data = [data] if isinstance(data, dict) else []
@@ -697,20 +917,15 @@ class EBIProteinsExtTool(BaseTool):
                             "url": x.get("url"),
                         }
                     )
-                clinical = [
-                    cs.get("type") for cs in f.get("clinicalSignificances", []) or []
-                ]
                 features.append(
                     {
+                        **_variation_feature(f),
+                        # Kept for callers that read the pre-existing names.
                         "type": f.get("type"),
                         "ft_id": f.get("ftId"),
-                        "wild_type": f.get("wildType"),
                         "alternative_sequence": f.get("alternativeSequence"),
                         "begin": f.get("begin"),
                         "end": f.get("end"),
-                        "genomic_location": f.get("genomicLocation"),
-                        "consequence_type": f.get("consequenceType"),
-                        "clinical_significances": clinical if clinical else None,
                         "xrefs": xrefs if xrefs else None,
                         "xrefs_total": len(all_xrefs),
                         "xrefs_returned": len(xref_page),
@@ -731,6 +946,13 @@ class EBIProteinsExtTool(BaseTool):
                     "protein_name": e.get("proteinName"),
                     "gene_name": e.get("geneName"),
                     "taxid": e.get("taxid"),
+                    # Which species the entry is. A reverse lookup by rsID
+                    # answers several UniProt entries and the taxid alone made
+                    # telling the human one from an ortholog a second call.
+                    "organism_name": e.get("organismName"),
+                    "protein_existence": e.get("proteinExistence"),
+                    "sequence": e.get("sequence"),
+                    "sequence_checksum": e.get("sequenceChecksum"),
                     "features": features,
                     "total_features": len(e.get("features", [])),
                 }
@@ -818,15 +1040,7 @@ class EBIProteinsExtTool(BaseTool):
         page_features, paging = _paginate(raw_features, arguments)
         peptides = []
         for f in page_features:
-            evidences = []
-            for ev in f.get("evidences", []):
-                src = ev.get("source", {}) or {}
-                evidences.append(
-                    {
-                        "source": src.get("name"),
-                        "id": src.get("id"),
-                    }
-                )
+            evidences = _peptide_evidence(f)
             peptides.append(
                 {
                     "type": f.get("type"),
@@ -834,6 +1048,7 @@ class EBIProteinsExtTool(BaseTool):
                     "position_end": f.get("end"),
                     "peptide": f.get("peptide"),
                     "unique": f.get("unique"),
+                    "xrefs": _feature_xrefs(f),
                     "evidences": evidences if evidences else None,
                 }
             )
