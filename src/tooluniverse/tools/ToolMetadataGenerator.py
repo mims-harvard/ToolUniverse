@@ -15,7 +15,7 @@ def ToolMetadataGenerator(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Optional[str | dict[str, Any]]:
     """
     Generates a JSON structure with the metadata of a tool in ToolUniverse, given the JSON configurat...
 
@@ -34,7 +34,7 @@ def ToolMetadataGenerator(
 
     Returns
     -------
-    dict[str, Any]
+    Optional[str | dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

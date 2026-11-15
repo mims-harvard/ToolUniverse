@@ -35,9 +35,94 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. This tool leaves configs.return_metadata at its default of true, so run() wraps the model's answer in an envelope rather than returning it directly -- see AgenticTool.run in agentic_tool.py, which has exactly these two shapes.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The backend answered.",
+          "properties": {
+            "success": {
+              "const": true
+            },
+            "result": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "A JSON object of the disease analysis. The prompt asks for disease_overview, molecular_mechanisms, therapeutic_targets and research_gaps. null when the backend never produced an answer: infer() returns None once its retries are spent.",
+              "contentMediaType": "application/json"
+            },
+            "metadata": {
+              "$ref": "#/$defs/metadata"
+            }
+          },
+          "required": [
+            "success",
+            "result",
+            "metadata"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The call failed: a missing required argument, a prompt that could not be formatted, an exception from the backend, or a tool that never initialised. No partial answer is returned on this branch.",
+          "properties": {
+            "success": {
+              "const": false
+            },
+            "error": {
+              "type": "string",
+              "description": "The exception's message."
+            },
+            "error_type": {
+              "type": "string",
+              "description": "The exception class name, or 'ToolUnavailable' when the tool failed to initialise."
+            },
+            "metadata": {
+              "$ref": "#/$defs/metadata"
+            }
+          },
+          "required": [
+            "success",
+            "error",
+            "error_type",
+            "metadata"
+          ]
+        }
+      ],
+      "$defs": {
+        "metadata": {
+          "type": "object",
+          "description": "How the call ran. AgenticTool builds this itself, so it is present on every branch and never comes from the model.",
+          "properties": {
+            "prompt_used": {
+              "type": "string",
+              "description": "The formatted prompt, truncated to the first 1000 characters followed by '...'."
+            },
+            "input_arguments": {
+              "type": "object",
+              "description": "The tool's declared input arguments as it received them, with defaults filled in for any that were omitted."
+            },
+            "model_info": {
+              "type": "object",
+              "description": "api_type and model_id of the backend that answered, plus the sampling parameters actually sent. Only api_type and model_id are present when the tool failed to initialise."
+            },
+            "execution_time_seconds": {
+              "type": "number"
+            },
+            "timestamp": {
+              "type": "string",
+              "description": "ISO-8601 start time of the call."
+            }
+          },
+          "required": [
+            "prompt_used",
+            "input_arguments",
+            "model_info",
+            "execution_time_seconds",
+            "timestamp"
+          ]
+        }
+      }
     }
   },
   {
@@ -83,9 +168,94 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. This tool leaves configs.return_metadata at its default of true, so run() wraps the model's answer in an envelope rather than returning it directly -- see AgenticTool.run in agentic_tool.py, which has exactly these two shapes.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The backend answered.",
+          "properties": {
+            "success": {
+              "const": true
+            },
+            "result": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "A JSON object of the compound candidates, grouped by discovery strategy: target_based_compounds, mechanism_based_compounds, repurposing_candidates, natural_products and novel_compounds. null when the backend never produced an answer: infer() returns None once its retries are spent.",
+              "contentMediaType": "application/json"
+            },
+            "metadata": {
+              "$ref": "#/$defs/metadata"
+            }
+          },
+          "required": [
+            "success",
+            "result",
+            "metadata"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The call failed: a missing required argument, a prompt that could not be formatted, an exception from the backend, or a tool that never initialised. No partial answer is returned on this branch.",
+          "properties": {
+            "success": {
+              "const": false
+            },
+            "error": {
+              "type": "string",
+              "description": "The exception's message."
+            },
+            "error_type": {
+              "type": "string",
+              "description": "The exception class name, or 'ToolUnavailable' when the tool failed to initialise."
+            },
+            "metadata": {
+              "$ref": "#/$defs/metadata"
+            }
+          },
+          "required": [
+            "success",
+            "error",
+            "error_type",
+            "metadata"
+          ]
+        }
+      ],
+      "$defs": {
+        "metadata": {
+          "type": "object",
+          "description": "How the call ran. AgenticTool builds this itself, so it is present on every branch and never comes from the model.",
+          "properties": {
+            "prompt_used": {
+              "type": "string",
+              "description": "The formatted prompt, truncated to the first 1000 characters followed by '...'."
+            },
+            "input_arguments": {
+              "type": "object",
+              "description": "The tool's declared input arguments as it received them, with defaults filled in for any that were omitted."
+            },
+            "model_info": {
+              "type": "object",
+              "description": "api_type and model_id of the backend that answered, plus the sampling parameters actually sent. Only api_type and model_id are present when the tool failed to initialise."
+            },
+            "execution_time_seconds": {
+              "type": "number"
+            },
+            "timestamp": {
+              "type": "string",
+              "description": "ISO-8601 start time of the call."
+            }
+          },
+          "required": [
+            "prompt_used",
+            "input_arguments",
+            "model_info",
+            "execution_time_seconds",
+            "timestamp"
+          ]
+        }
+      }
     }
   },
   {
@@ -131,9 +301,94 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. This tool leaves configs.return_metadata at its default of true, so run() wraps the model's answer in an envelope rather than returning it directly -- see AgenticTool.run in agentic_tool.py, which has exactly these two shapes.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The backend answered.",
+          "properties": {
+            "success": {
+              "const": true
+            },
+            "result": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "A JSON object with admet_analysis (one entry per compound) and comparative_analysis. null when the backend never produced an answer: infer() returns None once its retries are spent.",
+              "contentMediaType": "application/json"
+            },
+            "metadata": {
+              "$ref": "#/$defs/metadata"
+            }
+          },
+          "required": [
+            "success",
+            "result",
+            "metadata"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The call failed: a missing required argument, a prompt that could not be formatted, an exception from the backend, or a tool that never initialised. No partial answer is returned on this branch.",
+          "properties": {
+            "success": {
+              "const": false
+            },
+            "error": {
+              "type": "string",
+              "description": "The exception's message."
+            },
+            "error_type": {
+              "type": "string",
+              "description": "The exception class name, or 'ToolUnavailable' when the tool failed to initialise."
+            },
+            "metadata": {
+              "$ref": "#/$defs/metadata"
+            }
+          },
+          "required": [
+            "success",
+            "error",
+            "error_type",
+            "metadata"
+          ]
+        }
+      ],
+      "$defs": {
+        "metadata": {
+          "type": "object",
+          "description": "How the call ran. AgenticTool builds this itself, so it is present on every branch and never comes from the model.",
+          "properties": {
+            "prompt_used": {
+              "type": "string",
+              "description": "The formatted prompt, truncated to the first 1000 characters followed by '...'."
+            },
+            "input_arguments": {
+              "type": "object",
+              "description": "The tool's declared input arguments as it received them, with defaults filled in for any that were omitted."
+            },
+            "model_info": {
+              "type": "object",
+              "description": "api_type and model_id of the backend that answered, plus the sampling parameters actually sent. Only api_type and model_id are present when the tool failed to initialise."
+            },
+            "execution_time_seconds": {
+              "type": "number"
+            },
+            "timestamp": {
+              "type": "string",
+              "description": "ISO-8601 start time of the call."
+            }
+          },
+          "required": [
+            "prompt_used",
+            "input_arguments",
+            "model_info",
+            "execution_time_seconds",
+            "timestamp"
+          ]
+        }
+      }
     }
   },
   {
@@ -172,9 +427,94 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. This tool leaves configs.return_metadata at its default of true, so run() wraps the model's answer in an envelope rather than returning it directly -- see AgenticTool.run in agentic_tool.py, which has exactly these two shapes.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The backend answered.",
+          "properties": {
+            "success": {
+              "const": true
+            },
+            "result": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "A JSON object with interaction_analysis (one entry per compound pair) and overall_risk_assessment. null when the backend never produced an answer: infer() returns None once its retries are spent.",
+              "contentMediaType": "application/json"
+            },
+            "metadata": {
+              "$ref": "#/$defs/metadata"
+            }
+          },
+          "required": [
+            "success",
+            "result",
+            "metadata"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The call failed: a missing required argument, a prompt that could not be formatted, an exception from the backend, or a tool that never initialised. No partial answer is returned on this branch.",
+          "properties": {
+            "success": {
+              "const": false
+            },
+            "error": {
+              "type": "string",
+              "description": "The exception's message."
+            },
+            "error_type": {
+              "type": "string",
+              "description": "The exception class name, or 'ToolUnavailable' when the tool failed to initialise."
+            },
+            "metadata": {
+              "$ref": "#/$defs/metadata"
+            }
+          },
+          "required": [
+            "success",
+            "error",
+            "error_type",
+            "metadata"
+          ]
+        }
+      ],
+      "$defs": {
+        "metadata": {
+          "type": "object",
+          "description": "How the call ran. AgenticTool builds this itself, so it is present on every branch and never comes from the model.",
+          "properties": {
+            "prompt_used": {
+              "type": "string",
+              "description": "The formatted prompt, truncated to the first 1000 characters followed by '...'."
+            },
+            "input_arguments": {
+              "type": "object",
+              "description": "The tool's declared input arguments as it received them, with defaults filled in for any that were omitted."
+            },
+            "model_info": {
+              "type": "object",
+              "description": "api_type and model_id of the backend that answered, plus the sampling parameters actually sent. Only api_type and model_id are present when the tool failed to initialise."
+            },
+            "execution_time_seconds": {
+              "type": "number"
+            },
+            "timestamp": {
+              "type": "string",
+              "description": "ISO-8601 start time of the call."
+            }
+          },
+          "required": [
+            "prompt_used",
+            "input_arguments",
+            "model_info",
+            "execution_time_seconds",
+            "timestamp"
+          ]
+        }
+      }
     }
   },
   {
@@ -220,9 +560,94 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. This tool leaves configs.return_metadata at its default of true, so run() wraps the model's answer in an envelope rather than returning it directly -- see AgenticTool.run in agentic_tool.py, which has exactly these two shapes.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The backend answered.",
+          "properties": {
+            "success": {
+              "const": true
+            },
+            "result": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "A JSON object of the synthesis. The prompt asks for key_findings, evidence_quality, consensus_areas, controversies, research_gaps, clinical_relevance and recommendations. null when the backend never produced an answer: infer() returns None once its retries are spent.",
+              "contentMediaType": "application/json"
+            },
+            "metadata": {
+              "$ref": "#/$defs/metadata"
+            }
+          },
+          "required": [
+            "success",
+            "result",
+            "metadata"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The call failed: a missing required argument, a prompt that could not be formatted, an exception from the backend, or a tool that never initialised. No partial answer is returned on this branch.",
+          "properties": {
+            "success": {
+              "const": false
+            },
+            "error": {
+              "type": "string",
+              "description": "The exception's message."
+            },
+            "error_type": {
+              "type": "string",
+              "description": "The exception class name, or 'ToolUnavailable' when the tool failed to initialise."
+            },
+            "metadata": {
+              "$ref": "#/$defs/metadata"
+            }
+          },
+          "required": [
+            "success",
+            "error",
+            "error_type",
+            "metadata"
+          ]
+        }
+      ],
+      "$defs": {
+        "metadata": {
+          "type": "object",
+          "description": "How the call ran. AgenticTool builds this itself, so it is present on every branch and never comes from the model.",
+          "properties": {
+            "prompt_used": {
+              "type": "string",
+              "description": "The formatted prompt, truncated to the first 1000 characters followed by '...'."
+            },
+            "input_arguments": {
+              "type": "object",
+              "description": "The tool's declared input arguments as it received them, with defaults filled in for any that were omitted."
+            },
+            "model_info": {
+              "type": "object",
+              "description": "api_type and model_id of the backend that answered, plus the sampling parameters actually sent. Only api_type and model_id are present when the tool failed to initialise."
+            },
+            "execution_time_seconds": {
+              "type": "number"
+            },
+            "timestamp": {
+              "type": "string",
+              "description": "ISO-8601 start time of the call."
+            }
+          },
+          "required": [
+            "prompt_used",
+            "input_arguments",
+            "model_info",
+            "execution_time_seconds",
+            "timestamp"
+          ]
+        }
+      }
     }
   },
   {
@@ -275,9 +700,94 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. This tool leaves configs.return_metadata at its default of true, so run() wraps the model's answer in an envelope rather than returning it directly -- see AgenticTool.run in agentic_tool.py, which has exactly these two shapes.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The backend answered.",
+          "properties": {
+            "success": {
+              "const": true
+            },
+            "result": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "A JSON object with optimization_analysis (one entry per compound) and overall_recommendations. null when the backend never produced an answer: infer() returns None once its retries are spent.",
+              "contentMediaType": "application/json"
+            },
+            "metadata": {
+              "$ref": "#/$defs/metadata"
+            }
+          },
+          "required": [
+            "success",
+            "result",
+            "metadata"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The call failed: a missing required argument, a prompt that could not be formatted, an exception from the backend, or a tool that never initialised. No partial answer is returned on this branch.",
+          "properties": {
+            "success": {
+              "const": false
+            },
+            "error": {
+              "type": "string",
+              "description": "The exception's message."
+            },
+            "error_type": {
+              "type": "string",
+              "description": "The exception class name, or 'ToolUnavailable' when the tool failed to initialise."
+            },
+            "metadata": {
+              "$ref": "#/$defs/metadata"
+            }
+          },
+          "required": [
+            "success",
+            "error",
+            "error_type",
+            "metadata"
+          ]
+        }
+      ],
+      "$defs": {
+        "metadata": {
+          "type": "object",
+          "description": "How the call ran. AgenticTool builds this itself, so it is present on every branch and never comes from the model.",
+          "properties": {
+            "prompt_used": {
+              "type": "string",
+              "description": "The formatted prompt, truncated to the first 1000 characters followed by '...'."
+            },
+            "input_arguments": {
+              "type": "object",
+              "description": "The tool's declared input arguments as it received them, with defaults filled in for any that were omitted."
+            },
+            "model_info": {
+              "type": "object",
+              "description": "api_type and model_id of the backend that answered, plus the sampling parameters actually sent. Only api_type and model_id are present when the tool failed to initialise."
+            },
+            "execution_time_seconds": {
+              "type": "number"
+            },
+            "timestamp": {
+              "type": "string",
+              "description": "ISO-8601 start time of the call."
+            }
+          },
+          "required": [
+            "prompt_used",
+            "input_arguments",
+            "model_info",
+            "execution_time_seconds",
+            "timestamp"
+          ]
+        }
+      }
     }
   },
   {
@@ -330,9 +840,94 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. This tool leaves configs.return_metadata at its default of true, so run() wraps the model's answer in an envelope rather than returning it directly -- see AgenticTool.run in agentic_tool.py, which has exactly these two shapes.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The backend answered.",
+          "properties": {
+            "success": {
+              "const": true
+            },
+            "result": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "A JSON object of the trial protocol. The prompt asks for study_design, endpoints, patient_criteria, dosing_strategy, safety_monitoring, statistical_plan, regulatory_considerations, timeline and risk_mitigation. null when the backend never produced an answer: infer() returns None once its retries are spent.",
+              "contentMediaType": "application/json"
+            },
+            "metadata": {
+              "$ref": "#/$defs/metadata"
+            }
+          },
+          "required": [
+            "success",
+            "result",
+            "metadata"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The call failed: a missing required argument, a prompt that could not be formatted, an exception from the backend, or a tool that never initialised. No partial answer is returned on this branch.",
+          "properties": {
+            "success": {
+              "const": false
+            },
+            "error": {
+              "type": "string",
+              "description": "The exception's message."
+            },
+            "error_type": {
+              "type": "string",
+              "description": "The exception class name, or 'ToolUnavailable' when the tool failed to initialise."
+            },
+            "metadata": {
+              "$ref": "#/$defs/metadata"
+            }
+          },
+          "required": [
+            "success",
+            "error",
+            "error_type",
+            "metadata"
+          ]
+        }
+      ],
+      "$defs": {
+        "metadata": {
+          "type": "object",
+          "description": "How the call ran. AgenticTool builds this itself, so it is present on every branch and never comes from the model.",
+          "properties": {
+            "prompt_used": {
+              "type": "string",
+              "description": "The formatted prompt, truncated to the first 1000 characters followed by '...'."
+            },
+            "input_arguments": {
+              "type": "object",
+              "description": "The tool's declared input arguments as it received them, with defaults filled in for any that were omitted."
+            },
+            "model_info": {
+              "type": "object",
+              "description": "api_type and model_id of the backend that answered, plus the sampling parameters actually sent. Only api_type and model_id are present when the tool failed to initialise."
+            },
+            "execution_time_seconds": {
+              "type": "number"
+            },
+            "timestamp": {
+              "type": "string",
+              "description": "ISO-8601 start time of the call."
+            }
+          },
+          "required": [
+            "prompt_used",
+            "input_arguments",
+            "model_info",
+            "execution_time_seconds",
+            "timestamp"
+          ]
+        }
+      }
     }
   }
 ]
