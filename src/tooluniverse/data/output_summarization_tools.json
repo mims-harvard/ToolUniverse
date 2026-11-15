@@ -59,7 +59,11 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "string"
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The model's answer, as text. null when the backend never produced an answer: infer() returns None once its retries are spent."
         },
         {
           "type": "object"
