@@ -139,8 +139,7 @@ def test_unknown_database_reports_pubmlst_message(http):
     result = _run("PubMLST_list_schemes", {"database": "nope_seqdef"})
     assert result == {
         "status": "error",
-        "error": "PubMLST returned HTTP 404: "
-        "Database nope_seqdef has not been defined",
+        "error": "PubMLST returned HTTP 404: Database nope_seqdef has not been defined",
     }
 
 
@@ -171,7 +170,7 @@ def test_get_profile_turns_allele_links_into_numbers(http):
     assert result["metadata"]["locus_count"] == 7
 
 
-def test_get_profile_missing_st_mentions_the_public_cutoff(http):
+def test_get_profile_unknown_st_is_a_404_error(http):
     http(
         "GET",
         "db/pubmlst_neisseria_seqdef/schemes/1/profiles/999999",
@@ -182,9 +181,27 @@ def test_get_profile_missing_st_mentions_the_public_cutoff(http):
         "PubMLST_get_profile",
         {"database": "pubmlst_neisseria_seqdef", "st": 999999},
     )
+    assert result == {
+        "status": "error",
+        "error": "PubMLST returned HTTP 404: Profile ST-999999 does not exist.",
+    }
+
+
+def test_get_profile_after_the_public_cutoff_quotes_the_notice(http):
+    """Records newer than the anonymous cutoff answer 403, not 404."""
+    http(
+        "GET",
+        "db/pubmlst_neisseria_seqdef/schemes/1/profiles/20000",
+        _load("profile_403_after_cutoff.json"),
+        403,
+    )
+    result = _run(
+        "PubMLST_get_profile",
+        {"database": "pubmlst_neisseria_seqdef", "st": 20000},
+    )
     assert result["status"] == "error"
-    assert "Profile ST-999999 does not exist" in result["error"]
-    assert "cutoff" in result["error"]
+    assert result["error"].startswith("PubMLST returned HTTP 403: ")
+    assert "2024-12-31" in result["error"]
 
 
 @pytest.mark.parametrize("st", [None, "", "ST"])
@@ -197,13 +214,38 @@ def test_get_profile_requires_st(http, st):
     assert http.calls == []
 
 
-def test_bad_scheme_id_is_an_error(http):
+@pytest.mark.parametrize("st", ["11/../12", "abc", -3, 1.5])
+def test_get_profile_rejects_a_non_numeric_st(http, st):
+    result = _run(
+        "PubMLST_get_profile", {"database": "pubmlst_neisseria_seqdef", "st": st}
+    )
+    assert result["status"] == "error"
+    assert "st must be" in result["error"]
+    assert http.calls == []
+
+
+@pytest.mark.parametrize("scheme_id", ["mlst", 0, -1, True])
+def test_bad_scheme_id_is_an_error(http, scheme_id):
     result = _run(
         "PubMLST_get_profile",
-        {"database": "pubmlst_neisseria_seqdef", "scheme_id": "mlst", "st": 11},
+        {"database": "pubmlst_neisseria_seqdef", "scheme_id": scheme_id, "st": 11},
     )
     assert result["status"] == "error"
     assert "scheme_id" in result["error"]
+    assert http.calls == []
+
+
+def test_isolates_database_is_rejected_with_the_seqdef_name(http):
+    result = _run("PubMLST_list_schemes", {"database": "pubmlst_neisseria_isolates"})
+    assert result["status"] == "error"
+    assert "pubmlst_neisseria_seqdef" in result["error"]
+    assert http.calls == []
+
+
+def test_database_name_is_quoted_in_the_url(http):
+    http("GET", "db/a%2Fb_seqdef/schemes", {"records": 0, "schemes": []})
+    result = _run("PubMLST_list_schemes", {"database": "a/b_seqdef"})
+    assert result["status"] == "success" and result["data"] == []
 
 
 def test_type_sequence_assigns_st11_from_seven_loci(http):
@@ -267,19 +309,9 @@ def test_type_sequence_partial_matches_keep_only_hits_and_drop_sequences(http):
 
 
 def test_type_sequence_requires_a_sequence(http):
-    result = _run(
-        "PubMLST_type_sequence", {"database": "pubmlst_neisseria_seqdef"}
-    )
+    result = _run("PubMLST_type_sequence", {"database": "pubmlst_neisseria_seqdef"})
     assert result["status"] == "error"
     assert http.calls == []
-
-
-def test_access_note_is_passed_on(http):
-    body = dict(_load("neisseria_schemes.json"))
-    body["message"] = "restricted to data submitted on or prior to 2024-12-31"
-    http("GET", "db/pubmlst_neisseria_seqdef/schemes", body)
-    result = _run("PubMLST_list_schemes", {"database": "pubmlst_neisseria_seqdef"})
-    assert "2024-12-31" in result["metadata"]["access_note"]
 
 
 def test_network_failures_are_errors_not_exceptions(monkeypatch):
@@ -295,4 +327,7 @@ def test_network_failures_are_errors_not_exceptions(monkeypatch):
 def test_non_json_body_is_an_error(http):
     http("GET", "db", ValueError("not json"))
     result = _run("PubMLST_list_databases", {})
-    assert result == {"status": "error", "error": "PubMLST returned a non-JSON response"}
+    assert result == {
+        "status": "error",
+        "error": "PubMLST returned a non-JSON response",
+    }

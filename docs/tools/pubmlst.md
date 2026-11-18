@@ -22,6 +22,8 @@ profile = tu.tools.PubMLST_get_profile(
 
 `database` takes the full database name or the group name from `PubMLST_list_databases`.
 
-Without a login, PubMLST serves only data submitted on or before a cutoff date (2024-12-31 on 2026-11-18). When PubMLST sends that notice, the tools return it in `metadata.access_note`. An ST defined after the cutoff answers "does not exist". Some groups, such as rMLST, need a login for all data; `long_description` in `PubMLST_list_databases` says so.
+Without a login, PubMLST serves only data submitted on or before a cutoff date (2024-12-31 on 2026-11-18). A newer record, such as Neisseria ST 20000, answers HTTP 403, and the tool error quotes PubMLST's notice. An ST that does not exist answers 404 "does not exist". Some groups, such as rMLST, need a login for all data; `long_description` in `PubMLST_list_databases` says so.
+
+`database` must be a sequence-definition (`_seqdef`) database. An isolates database is rejected, because its scheme ids are not the same.
 
 `PubMLST_type_sequence` returns an empty `exact_matches` for a novel allele, not an error. Set `partial_matches=true` to get the closest allele, its identity and its mismatch count for each locus without an exact match. The tool leaves out the allele and flanking sequences, which are long for a whole assembly.

@@ -4,7 +4,7 @@ PubMLST REST API tools for ToolUniverse.
 
 PubMLST (University of Oxford) hosts the reference allele and sequence-type
 (ST) definitions for multilocus sequence typing (MLST), core-genome MLST and
-other schemes, for more than 100 bacterial and eukaryotic genera. Public
+other schemes, for about 90 bacterial and eukaryotic groups. Public
 health labs use it to name the strain type of an isolate (for example
 Neisseria meningitidis ST-11, the hypervirulent ST-11 clonal complex).
 
@@ -15,11 +15,12 @@ locus or a whole assembly) against a scheme.
 API: https://rest.pubmlst.org (BIGSdb REST interface).
 No authentication is needed for the routes used here. Without a login,
 PubMLST serves only data submitted on or before a cutoff date (2024-12-31 on
-2026-11-18). When PubMLST sends that notice, the tools pass it on in
-``metadata.access_note``.
+2026-11-18). A newer record answers HTTP 403 with that notice, and the tools
+return the notice in the error text.
 """
 
 from typing import Any, Dict, List, Optional
+from urllib.parse import quote
 
 import requests
 
@@ -142,12 +143,8 @@ class PubMLSTTool(BaseTool):
         return response.json()
 
     @staticmethod
-    def _metadata(payload: Any, **extra: Any) -> Dict[str, Any]:
+    def _metadata(**extra: Any) -> Dict[str, Any]:
         metadata: Dict[str, Any] = {"source": "PubMLST (rest.pubmlst.org)"}
-        if isinstance(payload, dict) and payload.get("message"):
-            # e.g. "you are currently restricted to accessing data that was
-            # submitted on or prior to 2024-12-31"
-            metadata["access_note"] = payload["message"]
         metadata.update({k: v for k, v in extra.items() if v is not None})
         return metadata
 
@@ -159,15 +156,21 @@ class PubMLSTTool(BaseTool):
                 "database is required, e.g. 'pubmlst_neisseria_seqdef' or the "
                 "organism group 'neisseria'. PubMLST_list_databases lists them."
             )
+        if database.endswith("_isolates"):
+            raise _PubMLSTError(
+                f"'{database}' is an isolates database. Typing schemes, profiles "
+                "and sequence queries use the sequence-definition database, "
+                f"e.g. '{database[: -len('_isolates')]}_seqdef'."
+            )
         if database.startswith("pubmlst_") or "_seqdef" in database:
-            return database
+            return quote(database, safe="")
         groups = self._request("GET", "db")
         for group in groups if isinstance(groups, list) else []:
             if str(group.get("name", "")).lower() != database.lower():
                 continue
             for db in group.get("databases") or []:
                 if str(db.get("name", "")).endswith("_seqdef"):
-                    return db["name"]
+                    return quote(db["name"], safe="")
         raise _PubMLSTError(
             f"No PubMLST sequence-definition database for '{database}'. "
             "Use PubMLST_list_databases to find the database name."
@@ -175,10 +178,16 @@ class PubMLSTTool(BaseTool):
 
     @staticmethod
     def _scheme_id(arguments: Dict[str, Any]) -> int:
+        value = arguments.get("scheme_id")
+        if value is None or value == "":
+            return 1
         try:
-            return int(arguments.get("scheme_id") or 1)
+            scheme_id = int(value)
         except (TypeError, ValueError):
-            raise _PubMLSTError("scheme_id must be an integer, e.g. 1 for MLST")
+            scheme_id = 0
+        if scheme_id < 1 or isinstance(value, bool):
+            raise _PubMLSTError("scheme_id must be a positive integer, e.g. 1 for MLST")
+        return scheme_id
 
     # -- operations -------------------------------------------------------
 
@@ -218,7 +227,6 @@ class PubMLSTTool(BaseTool):
             "status": "success",
             "data": rows,
             "metadata": self._metadata(
-                groups,
                 total_groups=len(groups),
                 returned=len(rows),
                 query=query or None,
@@ -246,7 +254,6 @@ class PubMLSTTool(BaseTool):
             "status": "success",
             "data": rows,
             "metadata": self._metadata(
-                payload,
                 database=database,
                 total_schemes=payload.get("records", len(schemes)),
                 returned=len(rows),
@@ -259,22 +266,17 @@ class PubMLSTTool(BaseTool):
         """Alleles and scheme fields (e.g. clonal complex) of one sequence type."""
         database = self._resolve_database(arguments)
         scheme_id = self._scheme_id(arguments)
-        st = str(arguments.get("st") or "").strip()
+        raw = arguments.get("st")
+        st = "" if raw is None else str(raw).strip()
         if st.upper().startswith("ST"):
             st = st[2:].lstrip("-")
         if not st:
             raise _PubMLSTError("st is required, e.g. 11 for ST-11")
-        try:
-            payload = self._request(
-                "GET", f"db/{database}/schemes/{scheme_id}/profiles/{st}"
-            )
-        except _PubMLSTError as e:
-            if "HTTP 404" in str(e) and "Profile" in str(e):
-                raise _PubMLSTError(
-                    f"{e}. Without a PubMLST login, sequence types submitted "
-                    "after the public cutoff date are not served either."
-                )
-            raise
+        if not st.isdigit():
+            raise _PubMLSTError(f"st must be a sequence type number, not '{raw}'")
+        payload = self._request(
+            "GET", f"db/{database}/schemes/{scheme_id}/profiles/{st}"
+        )
         if not isinstance(payload, dict):
             raise _PubMLSTError("PubMLST returned an unexpected profile")
         alleles: Dict[str, str] = {}
@@ -288,7 +290,6 @@ class PubMLSTTool(BaseTool):
             "status": "success",
             "data": data,
             "metadata": self._metadata(
-                payload,
                 database=database,
                 scheme_id=scheme_id,
                 locus_count=len(alleles),
@@ -346,7 +347,6 @@ class PubMLSTTool(BaseTool):
             "status": "success",
             "data": data,
             "metadata": self._metadata(
-                payload,
                 database=database,
                 scheme_id=scheme_id,
                 loci_matched=len(exact),
