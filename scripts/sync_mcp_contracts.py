@@ -72,6 +72,10 @@ MCP_ENDPOINTS = {
         "AGINGRESEARCH_MCP_URL",
         "https://agingresearch.news/api/mcp",
     ),
+    "mcp_auto_loader_deepdna": (
+        "DEEPDNA_MCP_URL",
+        "https://deepdna.ai/mcp",
+    ),
 }
 
 
