@@ -57,6 +57,7 @@ def http(monkeypatch):
         return _Response(body)
 
     monkeypatch.setattr(D.requests, "get", fake)
+    monkeypatch.setattr(D, "_marketed", {"products": None, "fetched": 0.0})
 
     def route(resource, body, **query):
         routes[(resource, tuple(sorted((k, str(v)) for k, v in query.items())))] = body
@@ -186,6 +187,66 @@ def test_search_by_ingredient_groups_rows_and_adds_product_names(http):
     assert len(http.calls) == 4
 
 
+def test_marketed_only_reads_the_marketed_list_once_and_needs_no_lookups(http):
+    """Common ingredients are mostly cancelled products, oldest codes first."""
+    http(
+        "activeingredient",
+        _load("activeingredient_imatinib.json"),
+        ingredientname="imatinib",
+    )
+    http(
+        "drugproduct",
+        _load("drugproduct_status_2_marketed_subset.json"),
+        status=2,
+    )
+    tool = D.HealthCanadaDPDTool(CONFIGS["HealthCanadaDPD_search_by_ingredient"])
+    first = tool.run({"ingredient": "imatinib", "marketed_only": True})
+    assert [r["drug_code"] for r in first["data"]] == [73824, 73825, 88465]
+    assert first["data"][0]["brand_name"] == "GLEEVEC"
+    assert first["metadata"]["total_products"] == 3
+    assert "next_offset" not in first["metadata"]  # last page
+    tool.run({"ingredient": "imatinib", "marketed_only": True})
+    marketed_calls = [c for c in http.calls if c == ("drugproduct", {"status": 2})]
+    assert len(marketed_calls) == 1
+    assert len(http.calls) == 3  # 2 ingredient searches + 1 marketed list
+
+
+def test_offset_pages_through_the_products(http):
+    http(
+        "activeingredient",
+        _load("activeingredient_imatinib.json"),
+        ingredientname="imatinib",
+    )
+    for code in (88465, 90919):
+        http("drugproduct", _load(f"drugproduct_{code}.json"), id=code)
+    result = _run(
+        "HealthCanadaDPD_search_by_ingredient",
+        {"ingredient": "imatinib", "limit": 2, "offset": 3},
+    )
+    assert [r["drug_code"] for r in result["data"]] == [88465, 90919]
+    assert result["metadata"]["next_offset"] == 5
+    assert result["metadata"]["total_products"] == 6
+
+
+def test_repeated_ingredient_rows_are_kept_once(http):
+    row = _load("activeingredient_73824.json")[0]
+    http("activeingredient", [row, dict(row)], ingredientname="imatinib")
+    http("drugproduct", _load("drugproduct_73824.json"), id=73824)
+    result = _run("HealthCanadaDPD_search_by_ingredient", {"ingredient": "imatinib"})
+    assert len(result["data"][0]["matched_ingredients"]) == 1
+
+
+@pytest.mark.parametrize(
+    "arguments", [{"limit": 0}, {"limit": -1}, {"offset": -1}, {"limit": True}]
+)
+def test_search_by_ingredient_rejects_bad_paging(http, arguments):
+    result = _run(
+        "HealthCanadaDPD_search_by_ingredient", {"ingredient": "x", **arguments}
+    )
+    assert result["status"] == "error"
+    assert http.calls == []
+
+
 def test_search_by_ingredient_caps_limit_at_25(http):
     http("activeingredient", [], ingredientname="x")
     result = _run(
@@ -233,6 +294,15 @@ def test_get_product_reads_404_sub_resources_as_empty(http):
     assert data["dosage_forms"] == [] and data["atc"] == []
     assert data["status"] is None
     assert data["pharmaceutical_standard"] is None
+
+
+def test_din_and_drug_code_of_different_products_is_an_error(http):
+    _serve_gleevec_73824(http)
+    result = _run(
+        "HealthCanadaDPD_get_product", {"drug_code": 73824, "din": "02244725"}
+    )
+    assert result["status"] == "error"
+    assert "drug_code 73824 is DIN 02253275" in result["error"]
 
 
 def test_unknown_drug_code_is_not_found_even_though_dpd_answers_200(http):

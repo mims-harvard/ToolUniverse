@@ -18,6 +18,6 @@ product = tu.tools.HealthCanadaDPD_get_product(din="02253275")
 # PRESCRIPTION, ATC L01EA01
 ```
 
-`HealthCanadaDPD_search_by_ingredient` makes one product lookup per returned row, so `limit` is at most 25. `metadata.total_products` gives the full count.
+Common ingredients have many cancelled products: acetaminophen is in 1354 products, and the 25 with the lowest drug codes are all cancelled (2026-11-18). Use `marketed_only=true` on `HealthCanadaDPD_search_by_ingredient` to keep marketed products. That option reads the list of all marketed products once (about 13,400 rows) and keeps it for an hour. Without it, the tool makes one product lookup per row, so `limit` is at most 25 (100 with `marketed_only`). Page with `offset` and `metadata.next_offset`.
 
 The API answers an unknown `drug_code` with HTTP 200 and a record of nulls. `HealthCanadaDPD_get_product` reports that as "not found". Sub-resources such as dosage form answer 404 when a product has no entry; the tool returns an empty list for them.

@@ -43,6 +43,6 @@ def test_gleevec_round_trip(tu):
         }
     )
     assert by_ingredient["metadata"]["total_products"] >= 2
-    assert "IMATINIB" in by_ingredient["data"][0]["matched_ingredients"][0][
-        "ingredient"
-    ]
+    assert (
+        "IMATINIB" in by_ingredient["data"][0]["matched_ingredients"][0]["ingredient"]
+    )

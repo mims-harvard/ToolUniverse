@@ -20,8 +20,15 @@ Two API habits the tools handle:
   that as "not found".
 * The sub-resources (form, route, schedule, therapeuticclass) answer 404
   when a product has no entry; the tools report that as an empty list.
+
+``activeingredient`` has no status filter: 1354 products hold acetaminophen,
+and the 25 with the lowest drug codes are all cancelled (2026-11-18). For
+``marketed_only`` the tool reads the list of marketed products once
+(``drugproduct/?status=2``: about 13,400 rows, 3.4 MB) and keeps it for an hour.
 """
 
+import threading
+import time
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -35,6 +42,11 @@ MAX_LIMIT = 100
 INGREDIENT_DEFAULT_LIMIT = 10
 INGREDIENT_MAX_LIMIT = 25  # each row costs one product lookup
 MARKETED_STATUS = 2  # DPD status code for "Marketed"
+MARKETED_TTL_S = 3600
+
+# drug_code -> product record of every marketed product, read on first use.
+_marketed: Dict[str, Any] = {"products": None, "fetched": 0.0}
+_marketed_lock = threading.Lock()
 
 
 class _DPDError(Exception):
@@ -69,12 +81,21 @@ def _ingredient(a: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def _limit(arguments: Dict[str, Any], default: int, maximum: int) -> int:
+def _whole(arguments: Dict[str, Any], key: str, default: int, minimum: int) -> int:
+    value = arguments.get(key)
+    if value is None or value == "":
+        return default
     try:
-        value = int(arguments.get("limit") or default)
+        number = int(value)
     except (TypeError, ValueError):
-        raise _DPDError("limit must be an integer")
-    return min(max(value, 1), maximum)
+        number = minimum - 1
+    if isinstance(value, bool) or number < minimum:
+        raise _DPDError(f"{key} must be an integer of at least {minimum}")
+    return number
+
+
+def _limit(arguments: Dict[str, Any], default: int, maximum: int) -> int:
+    return min(_whole(arguments, "limit", default, 1), maximum)
 
 
 @register_tool("HealthCanadaDPDTool")
@@ -94,7 +115,7 @@ class HealthCanadaDPDTool(BaseTool):
 
     def __init__(self, tool_config: Dict[str, Any]):
         super().__init__(tool_config)
-        self.timeout = tool_config.get("timeout", 30)
+        self.timeout = tool_config.get("timeout", 60)
         self.operation = tool_config.get("fields", {}).get(
             "operation", "search_products"
         )
@@ -177,6 +198,24 @@ class HealthCanadaDPDTool(BaseTool):
             return None  # unknown codes come back as drug_code 0, all null
         return payload
 
+    def _marketed_products(self) -> Dict[int, Dict[str, Any]]:
+        """Every marketed product by drug_code; kept for an hour."""
+        with _marketed_lock:
+            if (
+                _marketed["products"] is not None
+                and time.time() - _marketed["fetched"] < MARKETED_TTL_S
+            ):
+                return _marketed["products"]
+        payload = self._get("drugproduct", status=MARKETED_STATUS)
+        products = {
+            p["drug_code"]: p
+            for p in payload or []
+            if isinstance(p, dict) and p.get("drug_code")
+        }
+        with _marketed_lock:
+            _marketed.update(products=products, fetched=time.time())
+        return products
+
     @staticmethod
     def _metadata(**extra: Any) -> Dict[str, Any]:
         metadata = {"source": "Health Canada Drug Product Database (DPD)"}
@@ -236,7 +275,12 @@ class HealthCanadaDPDTool(BaseTool):
         ingredient = str(arguments.get("ingredient") or "").strip()
         if not ingredient:
             raise _DPDError("ingredient is required, e.g. 'imatinib'")
-        limit = _limit(arguments, INGREDIENT_DEFAULT_LIMIT, INGREDIENT_MAX_LIMIT)
+        marketed_only = bool(arguments.get("marketed_only"))
+        # Marketed rows come from the cached marketed list, so they cost no
+        # extra call and may be more; other rows cost one product lookup each.
+        maximum = MAX_LIMIT if marketed_only else INGREDIENT_MAX_LIMIT
+        limit = _limit(arguments, INGREDIENT_DEFAULT_LIMIT, maximum)
+        offset = _whole(arguments, "offset", 0, 0)
         try:
             payload = self._get("activeingredient", ingredientname=ingredient)
         except _NotFound:
@@ -244,29 +288,45 @@ class HealthCanadaDPDTool(BaseTool):
         if isinstance(payload, dict):
             payload = [payload]
         # One row per ingredient per product; a combination product has several.
+        # The API repeats some rows (drug_code 15609), so duplicates are dropped.
         by_code: Dict[int, List[Dict[str, Any]]] = {}
         for row in payload or []:
             if isinstance(row, dict) and row.get("drug_code"):
-                by_code.setdefault(row["drug_code"], []).append(row)
-        codes = sorted(by_code)[:limit]
+                kept = by_code.setdefault(row["drug_code"], [])
+                ingredient_row = _ingredient(row)
+                if ingredient_row not in kept:
+                    kept.append(ingredient_row)
+        codes = sorted(by_code)
+        marketed: Dict[int, Dict[str, Any]] = {}
+        if marketed_only:
+            marketed = self._marketed_products()
+            codes = [code for code in codes if code in marketed]
+        page = codes[offset : offset + limit]
         rows = []
-        for code in codes:
-            product = self._product(code) or {"drug_code": code}
+        for code in page:
+            if marketed_only:
+                product = marketed[code]
+            else:
+                product = self._product(code) or {"drug_code": code}
             row = _product_row(product)
-            row["matched_ingredients"] = [_ingredient(a) for a in by_code[code]]
+            row["matched_ingredients"] = by_code[code]
             rows.append(row)
+        next_offset = offset + len(page)
         return {
             "status": "success",
             "data": rows,
             "metadata": self._metadata(
                 ingredient=ingredient,
-                total_products=len(by_code),
+                marketed_only=marketed_only,
+                total_products=len(codes),
                 returned=len(rows),
+                offset=offset,
+                next_offset=next_offset if next_offset < len(codes) else None,
                 note=(
                     "Ingredient names match as substrings ('imatinib' also "
-                    "finds 'IMATINIB (IMATINIB MESYLATE)'). Products include "
-                    "cancelled ones; pass drug_code to HealthCanadaDPD_get_product "
-                    "for the marketing status. Raise limit (at most 25) for more."
+                    "finds 'IMATINIB (IMATINIB MESYLATE)'). Rows are in drug_code "
+                    "order, lowest first, and include cancelled products unless "
+                    "marketed_only=true. Page with offset (metadata.next_offset)."
                 ),
             ),
         }
@@ -279,9 +339,9 @@ class HealthCanadaDPDTool(BaseTool):
             raise _DPDError(
                 "Give drug_code (from a HealthCanadaDPD search) or din (8 digits)."
             )
+        if din and not (din.isdigit() and len(din) <= 8):
+            raise _DPDError("din must be up to 8 digits, e.g. '02253275'")
         if code in (None, ""):
-            if not (din.isdigit() and len(din) <= 8):
-                raise _DPDError("din must be up to 8 digits, e.g. '02253275'")
             try:
                 found = self._get("drugproduct", din=din.zfill(8))
             except _NotFound:
@@ -299,6 +359,12 @@ class HealthCanadaDPDTool(BaseTool):
         product = self._product(code)
         if product is None:
             raise _DPDError(f"No Health Canada DPD product with drug_code {code}")
+        product_din = product.get("drug_identification_number")
+        if din and product_din and product_din != din.zfill(8):
+            raise _DPDError(
+                f"drug_code {code} is DIN {product_din}, not DIN {din}. "
+                "Give one of them."
+            )
 
         statuses = self._get_list("status", id=code)
         status = statuses[0] if statuses else {}

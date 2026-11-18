@@ -10,7 +10,9 @@ from ._shared_client import get_shared_client
 
 def HealthCanadaDPD_search_by_ingredient(
     ingredient: str,
+    marketed_only: Optional[bool] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,8 +25,12 @@ def HealthCanadaDPD_search_by_ingredient(
     ----------
     ingredient : str
         Active ingredient name or part of it, e.g. 'imatinib', 'acetaminophen'.
+    marketed_only : bool
+        Keep only products with status Marketed (default false: all statuses).
     limit : int
-        Products to return (default 10, at most 25), lowest drug_code first.
+        Products to return (default 10; at most 25, or 100 with marketed_only).
+    offset : int
+        Matching products to skip, for paging (metadata.next_offset).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +47,12 @@ def HealthCanadaDPD_search_by_ingredient(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"ingredient": ingredient, "limit": limit}.items()
+        for k, v in {
+            "ingredient": ingredient,
+            "marketed_only": marketed_only,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

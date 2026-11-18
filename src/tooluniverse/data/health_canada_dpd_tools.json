@@ -143,7 +143,7 @@
   {
     "name": "HealthCanadaDPD_search_by_ingredient",
     "type": "HealthCanadaDPDTool",
-    "description": "Find drug products authorized in Canada that contain an active ingredient, from the Health Canada Drug Product Database (DPD). The name matches as a substring, e.g. 'imatinib' also finds 'IMATINIB (IMATINIB MESYLATE)'. Returns, per product, drug_code, DIN, brand name, company and the matched ingredient with its strength (e.g. 400 MG). Results include cancelled products; pass drug_code to HealthCanadaDPD_get_product for the marketing status, form, route, schedule and ATC code. metadata.total_products gives the full count; limit is at most 25 because each product costs one lookup.",
+    "description": "Find drug products authorized in Canada that contain an active ingredient, from the Health Canada Drug Product Database (DPD). The name matches as a substring, e.g. 'imatinib' also finds 'IMATINIB (IMATINIB MESYLATE)'. Returns, per product, drug_code, DIN, brand name, company and the matched ingredient with its strength (e.g. 400 MG). Set marketed_only=true to keep products marketed now: common ingredients have hundreds of cancelled products (acetaminophen: 1354 products; the 25 with the lowest drug codes are all cancelled). Rows are in drug_code order; page with offset and metadata.next_offset, and metadata.total_products gives the count. limit is at most 25, or 100 with marketed_only. Pass drug_code to HealthCanadaDPD_get_product for status, form, route, schedule and ATC code.",
     "fields": {
       "operation": "search_by_ingredient"
     },
@@ -157,12 +157,26 @@
           "type": "string",
           "description": "Active ingredient name or part of it, e.g. 'imatinib', 'acetaminophen'."
         },
+        "marketed_only": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Keep only products with status Marketed (default false: all statuses)."
+        },
         "limit": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Products to return (default 10, at most 25), lowest drug_code first."
+          "description": "Products to return (default 10; at most 25, or 100 with marketed_only)."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Matching products to skip, for paging (metadata.next_offset)."
         }
       }
     },
@@ -294,6 +308,11 @@
       {
         "ingredient": "imatinib",
         "limit": 3
+      },
+      {
+        "ingredient": "acetaminophen",
+        "marketed_only": true,
+        "limit": 5
       },
       {
         "ingredient": "semaglutide"
