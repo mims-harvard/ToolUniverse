@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2893 scientific tools.
+Type-safe Python interface to 2896 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -1312,6 +1312,9 @@ from .Harmonizome_get_gene_set_members import Harmonizome_get_gene_set_members
 from .Harmonizome_list_datasets import Harmonizome_list_datasets
 from .Harmonizome_search import Harmonizome_search
 from .Harmonizome_search_genes import Harmonizome_search_genes
+from .HealthCanadaDPD_get_product import HealthCanadaDPD_get_product
+from .HealthCanadaDPD_search_by_ingredient import HealthCanadaDPD_search_by_ingredient
+from .HealthCanadaDPD_search_products import HealthCanadaDPD_search_products
 from .HealthConditions_search import HealthConditions_search
 from .Hemolytik2_search_peptides import Hemolytik2_search_peptides
 from .HuBMAP_get_dataset import HuBMAP_get_dataset
@@ -4501,6 +4504,9 @@ __all__ = [
     "Harmonizome_list_datasets",
     "Harmonizome_search",
     "Harmonizome_search_genes",
+    "HealthCanadaDPD_get_product",
+    "HealthCanadaDPD_search_by_ingredient",
+    "HealthCanadaDPD_search_products",
     "HealthConditions_search",
     "Hemolytik2_search_peptides",
     "HuBMAP_get_dataset",
