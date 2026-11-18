@@ -927,9 +927,18 @@ class UniProtRESTTool(BaseTool):
                 from_value = result.get("from", "")
                 to_value = result.get("to")
                 if isinstance(to_value, dict):
-                    # UniProtKB entry: extract accession and gene name
-                    gene_names = to_value.get("geneNames", [])
-                    gene_name = gene_names[0].get("value", "") if gene_names else ""
+                    # UniProtKB entry: extract accession and gene name.
+                    # The gene is in genes[].geneName.value, as in a normal
+                    # UniProtKB entry.
+                    gene_name = next(
+                        (
+                            (gene.get("geneName") or {}).get("value")
+                            for gene in (to_value.get("genes") or [])
+                            if isinstance(gene, dict)
+                            and (gene.get("geneName") or {}).get("value")
+                        ),
+                        "",
+                    )
                     formatted_results.append(
                         {
                             "from": from_value,
