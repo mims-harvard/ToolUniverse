@@ -531,6 +531,6 @@ Need Help?
 
 - **Documentation**: :doc:`../index`
 - **Issues**: `GitHub Issues <https://github.com/mims-harvard/ToolUniverse/issues>`_
-- **Community**: `Slack Channel <https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ>`_
+- **Community**: `Slack Channel <https://join.slack.com/t/tooluniversehq/shared_invite/zt-4hbw8ff4y-AaMwpTbkvbjWsnmMqHmQYA>`_
 - **FAQ**: :doc:`../help/faq`
 

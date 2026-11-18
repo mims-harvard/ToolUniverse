@@ -5,7 +5,7 @@
 [![PyPI version](https://badge.fury.io/py/tooluniverse.svg)](https://badge.fury.io/py/tooluniverse)
 [![MCP Registry](https://img.shields.io/badge/MCP_Registry-Listed-blue)](https://registry.modelcontextprotocol.io)
 [![Website](https://img.shields.io/badge/Website-aiscientist.tools-blue)](https://aiscientist.tools)
-[![Slack](https://img.shields.io/badge/Slack-Join_Community-orange)](https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ)
+[![Slack](https://img.shields.io/badge/Slack-Join_Community-orange)](https://join.slack.com/t/tooluniversehq/shared_invite/zt-4hbw8ff4y-AaMwpTbkvbjWsnmMqHmQYA)
 [![WeChat](https://img.shields.io/badge/WeChat-Community-07C160)](https://aiscientist.tools/wechat)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Follow-0077B5)](https://www.linkedin.com/in/shanghua-gao-96b0b3168/)
 [![X](https://img.shields.io/badge/X-Follow-000000)](https://x.com/ScientistTools)
@@ -137,7 +137,7 @@ Full documentation: [zitniklab.hms.harvard.edu/ToolUniverse](https://zitniklab.h
 
 **[Shanghua Gao](https://shgao.site)**, the lead creator of this project, is currently on the job market.
 
-[Slack](https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ) · [GitHub Issues](https://github.com/mims-harvard/ToolUniverse/issues) · [Shanghua Gao](mailto:shanghuagao@gmail.com) · [Marinka Zitnik](mailto:marinka@hms.harvard.edu)
+[Slack](https://join.slack.com/t/tooluniversehq/shared_invite/zt-4hbw8ff4y-AaMwpTbkvbjWsnmMqHmQYA) · [GitHub Issues](https://github.com/mims-harvard/ToolUniverse/issues) · [Shanghua Gao](mailto:shanghuagao@gmail.com) · [Marinka Zitnik](mailto:marinka@hms.harvard.edu)
 
 
 **Leaders:** [Shanghua Gao](https://shgao.site) · [Marinka Zitnik](https://zitniklab.hms.harvard.edu/)

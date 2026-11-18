@@ -504,4 +504,4 @@ except Exception as e:
 - **API Reference**: https://zitniklab.hms.harvard.edu/ToolUniverse/api/modules.html
 - **Tutorials**: https://zitniklab.hms.harvard.edu/ToolUniverse/guide/scientific_workflows.html
 - **GitHub Examples**: https://github.com/mims-harvard/ToolUniverse/tree/main/examples
-- **Community Slack**: https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ
+- **Community Slack**: https://join.slack.com/t/tooluniversehq/shared_invite/zt-4hbw8ff4y-AaMwpTbkvbjWsnmMqHmQYA
