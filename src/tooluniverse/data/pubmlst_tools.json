@@ -1,0 +1,388 @@
+[
+  {
+    "name": "PubMLST_list_databases",
+    "type": "PubMLSTTool",
+    "description": "List the organism groups in PubMLST (University of Oxford), the reference resource for multilocus sequence typing (MLST) and core-genome MLST of about 90 bacterial and eukaryotic groups, e.g. Neisseria, Campylobacter, Streptococcus, Klebsiella, Candida. Each group has a sequence-definition database (seqdef: loci, alleles, sequence types) and often an isolates database. Optional query keeps groups whose name or description contains the text, e.g. 'neisseria' or 'Staphylococcus aureus'. Pass seqdef_database to PubMLST_list_schemes, PubMLST_get_profile or PubMLST_type_sequence.",
+    "fields": {
+      "operation": "list_databases"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Text to find in the group name or description, e.g. 'neisseria', 'aureus'. Omit to list all groups."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Organism groups",
+          "items": {
+            "type": "object",
+            "properties": {
+              "group": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Group name, e.g. 'neisseria'"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "long_description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Longer note from PubMLST, e.g. that a group needs a login"
+              },
+              "seqdef_database": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Sequence-definition database name to pass on, e.g. 'pubmlst_neisseria_seqdef'"
+              },
+              "isolates_database": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Isolates database name, if the group has one"
+              },
+              "databases": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "query": "neisseria"
+      },
+      {
+        "query": "Staphylococcus"
+      },
+      {}
+    ]
+  },
+  {
+    "name": "PubMLST_list_schemes",
+    "type": "PubMLSTTool",
+    "description": "List the typing schemes of one PubMLST sequence-definition database: the classic 7-locus MLST scheme (usually scheme_id 1), core-genome MLST (cgMLST), ribosomal MLST, antigen fine-typing and antimicrobial-resistance locus sets. Optional query keeps schemes whose description contains the text, e.g. 'MLST' or 'cgMLST'. Pass a scheme_id to PubMLST_get_profile or PubMLST_type_sequence.",
+    "fields": {
+      "operation": "list_schemes"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "database"
+      ],
+      "properties": {
+        "database": {
+          "type": "string",
+          "description": "PubMLST sequence-definition database, e.g. 'pubmlst_neisseria_seqdef', or an organism group name from PubMLST_list_databases, e.g. 'neisseria'."
+        },
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Text to find in the scheme description, e.g. 'MLST'. Omit to list all schemes."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Schemes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "scheme_id": {
+                "type": "integer",
+                "description": "Scheme id to pass on"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Scheme name, e.g. 'MLST' or 'N. meningitidis cgMLST v3'"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "database": "pubmlst_neisseria_seqdef",
+        "query": "MLST"
+      },
+      {
+        "database": "campylobacter"
+      }
+    ]
+  },
+  {
+    "name": "PubMLST_get_profile",
+    "type": "PubMLSTTool",
+    "description": "Get the allelic profile of one sequence type (ST) from a PubMLST typing scheme: the allele number at each locus, plus the scheme's extra fields such as clonal complex, and the date the ST was defined. Example: database='pubmlst_neisseria_seqdef', scheme_id=1, st=11 gives ST-11 (ST-11 complex) with abcZ 2, adk 3, aroE 4, fumC 3, gdh 8, pdhC 4, pgm 6. Without a PubMLST login, only data submitted up to a public cutoff date (2024-12-31 on 2026-11-18) is served: a newer ST returns an error that quotes PubMLST's notice. An unknown ST returns 'does not exist'.",
+    "fields": {
+      "operation": "get_profile"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "database",
+        "st"
+      ],
+      "properties": {
+        "database": {
+          "type": "string",
+          "description": "PubMLST sequence-definition database, e.g. 'pubmlst_neisseria_seqdef', or an organism group name from PubMLST_list_databases, e.g. 'neisseria'."
+        },
+        "scheme_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Scheme id from PubMLST_list_schemes (default 1, usually the 7-locus MLST scheme)."
+        },
+        "st": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Sequence type number, e.g. 11 (also accepts 'ST-11')."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Sequence-type profile",
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
+          "properties": {
+            "ST": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "Sequence type (the key is the scheme's primary field, e.g. ST, cgST or rST)"
+            },
+            "clonal_complex": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Clonal complex, when the scheme defines one"
+            },
+            "alleles": {
+              "type": "object",
+              "description": "Allele number per locus, e.g. {'abcZ': '2'}",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "date_entered": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "datestamp": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "database": "pubmlst_neisseria_seqdef",
+        "scheme_id": 1,
+        "st": 11
+      },
+      {
+        "database": "neisseria",
+        "st": "ST-32"
+      }
+    ]
+  },
+  {
+    "name": "PubMLST_type_sequence",
+    "type": "PubMLSTTool",
+    "description": "Type a DNA sequence against a PubMLST scheme: find the exact allele match at each locus and, when every locus matches and the combination is defined, the sequence type (ST) and fields such as clonal complex. The sequence can be one locus or a FASTA of assembly contigs (raw DNA or FASTA text). Set partial_matches=true to also get the closest allele, identity and mismatches for loci with no exact match (novel alleles). Example: database='pubmlst_neisseria_seqdef', scheme_id=1, sequence=<7 MLST loci of an isolate> gives ST 11, ST-11 complex.",
+    "fields": {
+      "operation": "type_sequence"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "database",
+        "sequence"
+      ],
+      "properties": {
+        "database": {
+          "type": "string",
+          "description": "PubMLST sequence-definition database, e.g. 'pubmlst_neisseria_seqdef', or an organism group name from PubMLST_list_databases, e.g. 'neisseria'."
+        },
+        "scheme_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Scheme id from PubMLST_list_schemes (default 1, usually the 7-locus MLST scheme)."
+        },
+        "sequence": {
+          "type": "string",
+          "description": "DNA sequence or FASTA text (one locus or assembly contigs)."
+        },
+        "partial_matches": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Also return the closest allele for loci without an exact match (default false)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Typing result",
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
+          "properties": {
+            "exact_matches": {
+              "type": "object",
+              "description": "Allele numbers that match exactly, per locus, e.g. {'abcZ': ['2']}",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "fields": {
+              "type": "object",
+              "description": "Scheme fields of the assigned type, e.g. {'ST': '11', 'clonal_complex': 'ST-11 complex'}; empty when no type is assigned"
+            },
+            "partial_matches": {
+              "type": "object",
+              "description": "Closest allele per locus without an exact match (only with partial_matches=true): allele, identity, length, alignment, mismatches, gaps, contig, start, end",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "database": "pubmlst_neisseria_seqdef",
+        "scheme_id": 1,
+        "sequence": "TTTGATACCGTTGCCGAAGGTTTGGGTGAAATTCGCGATTTATTGCGCCGTTACCACCGCGTCGGCCATGAGTTGGAAAACGGTTCGGGTGAGGCTTTGTTGAAAGAACTCAACGAATTACAACTTGAAATCGAAGCGAAGGACGGCTGGAAGCTGGATGCGGCAGTCAAGCAGACTTTGGGGGAACTCGGTTTGCCGGAAAACGAAAAAATCGGCAACCTTTCCGGCGGTCAGAAAAAGCGTGTCGCCTTGGCGCAGGCTTGGGTGCAGAAGCCCGACGTATTGCTGCTGGACGAACCGACCAACCATTTGGATATCGACGCGATTATTTGGCTGGAAAATCTGCTCAAAGCGTTTGAAGGCAGCTTGGTTGTGATTACCCACGACCGCCGTTTTTTGGACAATATCGCCACGCGGATTGTCGAACTCGATC"
+      }
+    ]
+  }
+]

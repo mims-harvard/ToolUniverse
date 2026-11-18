@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2893 scientific tools.
+Type-safe Python interface to 2897 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -2318,6 +2318,10 @@ from .PubChem_search_compounds_by_similarity import (
 from .PubChem_search_compounds_by_substructure import (
     PubChem_search_compounds_by_substructure,
 )
+from .PubMLST_get_profile import PubMLST_get_profile
+from .PubMLST_list_databases import PubMLST_list_databases
+from .PubMLST_list_schemes import PubMLST_list_schemes
+from .PubMLST_type_sequence import PubMLST_type_sequence
 from .PubMed_Guidelines_Search import PubMed_Guidelines_Search
 from .PubMed_convert_article_ids import PubMed_convert_article_ids
 from .PubMed_get_article import PubMed_get_article
@@ -5327,6 +5331,10 @@ __all__ = [
     "PubChem_search_assays_by_type",
     "PubChem_search_compounds_by_similarity",
     "PubChem_search_compounds_by_substructure",
+    "PubMLST_get_profile",
+    "PubMLST_list_databases",
+    "PubMLST_list_schemes",
+    "PubMLST_type_sequence",
     "PubMed_Guidelines_Search",
     "PubMed_convert_article_ids",
     "PubMed_get_article",
