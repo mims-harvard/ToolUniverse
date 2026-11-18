@@ -1,0 +1,50 @@
+[
+ {
+  "dosage_unit": "",
+  "dosage_value": "",
+  "drug_code": 73824,
+  "ingredient_name": "IMATINIB (IMATINIB MESYLATE)",
+  "strength": "100",
+  "strength_unit": "MG"
+ },
+ {
+  "dosage_unit": "",
+  "dosage_value": "",
+  "drug_code": 91556,
+  "ingredient_name": "IMATINIB (IMATINIB MESYLATE)",
+  "strength": "400",
+  "strength_unit": "MG"
+ },
+ {
+  "dosage_unit": "",
+  "dosage_value": "",
+  "drug_code": 68714,
+  "ingredient_name": "IMATINIB (IMATINIB MESYLATE)",
+  "strength": "100",
+  "strength_unit": "MG"
+ },
+ {
+  "dosage_unit": "",
+  "dosage_value": "",
+  "drug_code": 90919,
+  "ingredient_name": "IMATINIB (IMATINIB MESYLATE)",
+  "strength": "400",
+  "strength_unit": "MG"
+ },
+ {
+  "dosage_unit": "",
+  "dosage_value": "",
+  "drug_code": 88465,
+  "ingredient_name": "IMATINIB (IMATINIB MESYLATE)",
+  "strength": "100",
+  "strength_unit": "MG"
+ },
+ {
+  "dosage_unit": "",
+  "dosage_value": "",
+  "drug_code": 73825,
+  "ingredient_name": "IMATINIB (IMATINIB MESYLATE)",
+  "strength": "400",
+  "strength_unit": "MG"
+ }
+]

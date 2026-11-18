@@ -1,0 +1,559 @@
+[
+  {
+    "name": "HealthCanadaDPD_search_products",
+    "type": "HealthCanadaDPDTool",
+    "description": "Search the Health Canada Drug Product Database (DPD), the register of every drug product authorized for sale in Canada (human, veterinary, biologic, radiopharmaceutical, disinfectant; marketed and cancelled), by brand name or Drug Identification Number (DIN). Brand names match as substrings, e.g. 'gleevec' or 'tylenol'. Set marketed_only=true to keep products now marketed. Returns drug_code, DIN, brand name, company and class per product; pass drug_code to HealthCanadaDPD_get_product for ingredients, status, form, route, schedule and ATC code. For an active ingredient use HealthCanadaDPD_search_by_ingredient. US equivalents: openFDA and DailyMed tools.",
+    "fields": {
+      "operation": "search_products"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "brand_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Brand name or part of it, e.g. 'gleevec'. Give this or din."
+        },
+        "din": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Drug Identification Number, up to 8 digits, e.g. '02253275'."
+        },
+        "marketed_only": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Keep only products with status Marketed (default false: all statuses)."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Products to return (default 25, at most 100)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Matching products",
+          "items": {
+            "type": "object",
+            "properties": {
+              "drug_code": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "DPD drug code: pass it to HealthCanadaDPD_get_product"
+              },
+              "din": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Drug Identification Number (8 digits)"
+              },
+              "brand_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "descriptor": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Extra product descriptor, e.g. a strength"
+              },
+              "class": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human, Veterinary, Radiopharmaceutical, Disinfectant ..."
+              },
+              "company": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Company that holds the authorization"
+              },
+              "number_of_active_ingredients": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ai_group_no": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Active-ingredient group number (products with the same ingredients and strengths share it)"
+              },
+              "last_update_date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "brand_name": "gleevec"
+      },
+      {
+        "din": "02253275"
+      },
+      {
+        "brand_name": "tylenol",
+        "marketed_only": true,
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "name": "HealthCanadaDPD_search_by_ingredient",
+    "type": "HealthCanadaDPDTool",
+    "description": "Find drug products authorized in Canada that contain an active ingredient, from the Health Canada Drug Product Database (DPD). The name matches as a substring, e.g. 'imatinib' also finds 'IMATINIB (IMATINIB MESYLATE)'. Returns, per product, drug_code, DIN, brand name, company and the matched ingredient with its strength (e.g. 400 MG). Set marketed_only=true to keep products marketed now: common ingredients have hundreds of cancelled products (acetaminophen: 1354 products; the 25 with the lowest drug codes are all cancelled). Rows are in drug_code order; page with offset and metadata.next_offset, and metadata.total_products gives the count. limit is at most 25, or 100 with marketed_only. Pass drug_code to HealthCanadaDPD_get_product for status, form, route, schedule and ATC code.",
+    "fields": {
+      "operation": "search_by_ingredient"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "ingredient"
+      ],
+      "properties": {
+        "ingredient": {
+          "type": "string",
+          "description": "Active ingredient name or part of it, e.g. 'imatinib', 'acetaminophen'."
+        },
+        "marketed_only": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Keep only products with status Marketed (default false: all statuses)."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Products to return (default 10; at most 25, or 100 with marketed_only)."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Matching products to skip, for paging (metadata.next_offset)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Products with the ingredient",
+          "items": {
+            "type": "object",
+            "properties": {
+              "drug_code": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "DPD drug code: pass it to HealthCanadaDPD_get_product"
+              },
+              "din": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Drug Identification Number (8 digits)"
+              },
+              "brand_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "descriptor": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Extra product descriptor, e.g. a strength"
+              },
+              "class": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human, Veterinary, Radiopharmaceutical, Disinfectant ..."
+              },
+              "company": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Company that holds the authorization"
+              },
+              "number_of_active_ingredients": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ai_group_no": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Active-ingredient group number (products with the same ingredients and strengths share it)"
+              },
+              "last_update_date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "matched_ingredients": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "ingredient": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "strength": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "strength_unit": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "dosage_value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "dosage_unit": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "ingredient": "imatinib",
+        "limit": 3
+      },
+      {
+        "ingredient": "acetaminophen",
+        "marketed_only": true,
+        "limit": 5
+      },
+      {
+        "ingredient": "semaglutide"
+      }
+    ]
+  },
+  {
+    "name": "HealthCanadaDPD_get_product",
+    "type": "HealthCanadaDPDTool",
+    "description": "Get one drug product's record from the Health Canada Drug Product Database (DPD) by drug_code or DIN: brand name, company, active ingredients with strengths, marketing status (Marketed, Approved, Cancelled Post Market ...) with its date and the original market date, dosage forms, routes of administration, schedules (Prescription, OTC, Narcotic ...), ATC code and pharmaceutical standard. Example: drug_code=73824 (GLEEVEC 100 mg tablet) gives imatinib 100 MG, Marketed, Oral, PRESCRIPTION, ATC L01EA01.",
+    "fields": {
+      "operation": "get_product"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "drug_code": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "DPD drug code from a HealthCanadaDPD search, e.g. 73824. Give this or din."
+        },
+        "din": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Drug Identification Number, up to 8 digits, e.g. '02253275'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Product record",
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
+          "properties": {
+            "drug_code": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "DPD drug code: pass it to HealthCanadaDPD_get_product"
+            },
+            "din": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Drug Identification Number (8 digits)"
+            },
+            "brand_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "descriptor": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Extra product descriptor, e.g. a strength"
+            },
+            "class": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Human, Veterinary, Radiopharmaceutical, Disinfectant ..."
+            },
+            "company": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Company that holds the authorization"
+            },
+            "number_of_active_ingredients": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ai_group_no": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Active-ingredient group number (products with the same ingredients and strengths share it)"
+            },
+            "last_update_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "active_ingredients": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ingredient": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "strength": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "strength_unit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "dosage_value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "dosage_unit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Current status, e.g. Marketed or Cancelled Post Market"
+            },
+            "status_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Date of the current status"
+            },
+            "original_market_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "dosage_forms": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "routes": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "schedules": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "atc": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ATC code, e.g. L01EA01"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "pharmaceutical_standard": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "e.g. MFR, USP, BP"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "drug_code": 73824
+      },
+      {
+        "din": "02253275"
+      }
+    ]
+  }
+]

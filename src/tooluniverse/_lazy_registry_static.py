@@ -385,6 +385,7 @@ STATIC_LAZY_REGISTRY = {
     "HPAXmlApiTool": "hpa_tool",
     "HPOTool": "hpo_tool",
     "HarmonizomeTool": "harmonizome_tool",
+    "HealthCanadaDPDTool": "health_canada_dpd_tool",
     "HealthDisparitiesTool": "health_disparities_tool",
     "Hemolytik2SearchPeptidesTool": "hemolytik2_tool",
     "HocomocoTool": "hocomoco_tool",
