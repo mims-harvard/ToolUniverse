@@ -1,6 +1,6 @@
 # ToolUniverse Skills
 
-69 pre-built research skills for AI agents. Skills are automatically available — just ask naturally.
+70 pre-built research skills for AI agents. Skills are automatically available — just ask naturally.
 
 ```
 "Find the E. coli K-12 genome"           → tooluniverse-sequence-retrieval
@@ -75,6 +75,7 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-protein-therapeutic-design` | AI-guided protein therapeutic design (RFdiffusion, etc.) |
 | `tooluniverse-proteomics-analysis` | Mass spectrometry proteomics analysis |
 | `tooluniverse-rare-disease-diagnosis` | Rare disease differential diagnosis from phenotype and genetics |
+| `tooluniverse-reaction-engineering` | Chemical reaction engineering — reactor sizing, rate laws, Arrhenius corrections |
 | `tooluniverse-rnaseq-deseq2` | RNA-seq differential expression with PyDESeq2 |
 | `tooluniverse-scientific-problem-selection` | Research strategy: idea pitching, risk assessment, stuck-project troubleshooting |
 | `tooluniverse-scvi-tools` | Deep-learning single-cell integration (scVI, scANVI, totalVI, PeakVI, MultiVI, DestVI, veloVI) |

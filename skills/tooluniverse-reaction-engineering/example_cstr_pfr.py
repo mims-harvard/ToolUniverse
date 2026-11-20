@@ -17,9 +17,9 @@ def cstr_volume_first_order(F_A0, k, C_A0, X):
     return F_A0 * X / (k * C_A0 * (1 - X))
 
 
-def pfr_volume_first_order(F_A0, k, X):
-    """PFR volume for first-order reaction (analytic)."""
-    return (F_A0 / k) * math.log(1 / (1 - X))
+def pfr_volume_first_order(F_A0, k, C_A0, X):
+    """PFR volume for first-order reaction (analytic, constant density)."""
+    return (F_A0 / (k * C_A0)) * math.log(1 / (1 - X))
 
 
 def batch_time_first_order(k, X):
@@ -45,7 +45,7 @@ def main():
     # --- Phase 1: kinetics stated (first-order) ---
     print("=== Phase 1: Kinetics ===")
     print(f"Rate law: -r_A = k * C_A,  k = {k_25} min^-1 at 25 C")
-    print(f"Reaction order: 1 (first-order)")
+    print("Reaction order: 1 (first-order)")
     print()
 
     # --- Phase 2: reactor sizing at 25 C ---
@@ -53,7 +53,7 @@ def main():
     v0 = F_A0 / C_A0  # L/min
 
     V_cstr = cstr_volume_first_order(F_A0, k_25, C_A0, X)
-    V_pfr = pfr_volume_first_order(F_A0, k_25, X)
+    V_pfr = pfr_volume_first_order(F_A0, k_25, C_A0, X)
     t_batch = batch_time_first_order(k_25, X)
 
     tau_cstr = V_cstr / v0
@@ -74,7 +74,7 @@ def main():
     print(f"k at 50 C = {k_50:.4f} min^-1")
 
     V_cstr_50 = cstr_volume_first_order(F_A0, k_50, C_A0, X)
-    V_pfr_50 = pfr_volume_first_order(F_A0, k_50, X)
+    V_pfr_50 = pfr_volume_first_order(F_A0, k_50, C_A0, X)
     print(f"CSTR volume at 50 C = {V_cstr_50:.1f} L")
     print(f"PFR volume at 50 C = {V_pfr_50:.1f} L")
     print()
