@@ -135,6 +135,7 @@ default_tool_files = {
     "software_genomics": os.path.join(
         current_dir, "data", "packages", "genomics_tools.json"
     ),
+    "gen": os.path.join(current_dir, "data", "gen_tools.json"),
     "software_single_cell": os.path.join(
         current_dir, "data", "packages", "single_cell_tools.json"
     ),

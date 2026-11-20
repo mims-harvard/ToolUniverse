@@ -1,0 +1,129 @@
+[
+  {
+    "type": "GenRepositoryInspectTool",
+    "name": "Gen_inspect_repository",
+    "description": "Inspect bounded metadata in an existing local Gen genome version control repository. List the active branch and named branch heads, operation identifiers and timestamps, or sample names and collections for sequence graph workflows involving genomes, genes, variants, lineages, FASTA, VCF, GenBank, or GFA. Use get_gen_info for Gen CLI, Python, and R installation and API details. The Gen Python API opens the repository and may update its internal database metadata or run migrations. Repository paths must be inside the administrator-configured TOOLUNIVERSE_GEN_ROOT.",
+    "cacheable": false,
+    "required_packages": ["gen>=0.5.1"],
+    "requires_local_input": true,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "repository_path": {
+          "type": "string",
+          "description": "A path to an existing Gen workspace, relative to TOOLUNIVERSE_GEN_ROOT. The workspace must already contain non-empty .gen/gen.db and .gen/default.db files."
+        },
+        "view": {
+          "type": "string",
+          "enum": ["branches", "operations", "samples"],
+          "description": "Metadata to inspect: branches and current branch state, recent operation history, or sample names and collections."
+        },
+        "branch": {
+          "type": ["string", "null"],
+          "description": "Optional branch name for the operations view. Omit to inspect the checked-out branch history."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20,
+          "description": "Maximum number of branch, operation, or sample records to return."
+        }
+      },
+      "required": ["repository_path", "view"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "view": {"type": "string", "enum": ["branches", "operations", "samples"]},
+                "branch": {"type": ["string", "null"]},
+                "current_branch": {"type": ["string", "null"]},
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "name": {"type": "string"},
+                          "is_current": {"type": "boolean"},
+                          "head": {"type": "string"},
+                          "dirty": {"type": "boolean"}
+                        },
+                        "required": ["name", "is_current", "head", "dirty"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "string"},
+                          "parent_id": {"type": ["string", "null"]},
+                          "date": {"type": "string"},
+                          "is_head": {"type": "boolean"}
+                        },
+                        "required": ["id", "parent_id", "date", "is_head"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "name": {"type": "string"},
+                          "collection": {"type": "string"}
+                        },
+                        "required": ["name", "collection"]
+                      }
+                    ]
+                  }
+                },
+                "returned": {"type": "integer", "minimum": 0},
+                "total_count": {"type": ["integer", "null"], "minimum": 0},
+                "truncated": {"type": "boolean"}
+              },
+              "required": ["view", "branch", "current_branch", "items", "returned", "total_count", "truncated"]
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "examples": [
+      {
+        "description": "List branches in an existing Gen repository inside TOOLUNIVERSE_GEN_ROOT.",
+        "arguments": {"repository_path": "yeast-study", "view": "branches", "limit": 20}
+      },
+      {
+        "description": "Read the latest operation identifiers for one branch without returning author details or operation messages.",
+        "arguments": {"repository_path": "yeast-study", "view": "operations", "branch": "main", "limit": 10}
+      },
+      {
+        "description": "List sample names and collections.",
+        "arguments": {"repository_path": "yeast-study", "view": "samples", "limit": 20}
+      }
+    ],
+    "test_examples": [
+      {
+        "repository_path": "yeast-study",
+        "view": "branches",
+        "limit": 20
+      }
+    ],
+    "tags": ["Gen", "genomics", "genome", "sequence graph", "version control", "variant tracking", "lineage", "bioinformatics"],
+    "category": "genomics",
+    "source": "https://github.com/genhub-bio/gen",
+    "license": "Apache-2.0",
+    "author": "GenHub contributors",
+    "version": "1.0.0"
+  }
+]

@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2893 scientific tools.
+Type-safe Python interface to 2895 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -1222,6 +1222,7 @@ from .GWAS_search_associations_by_gene import GWAS_search_associations_by_gene
 from .GenCC_get_classifications import GenCC_get_classifications
 from .GenCC_search_disease import GenCC_search_disease
 from .GenCC_search_gene import GenCC_search_gene
+from .Gen_inspect_repository import Gen_inspect_repository
 from .GeneBe_classify_variant import GeneBe_classify_variant
 from .GeneBe_classify_variants_batch import GeneBe_classify_variants_batch
 from .GeneNetwork_get_dataset_info import GeneNetwork_get_dataset_info
@@ -3107,6 +3108,7 @@ from .get_flowkit_info import get_flowkit_info
 from .get_flowutils_info import get_flowutils_info
 from .get_freesasa_info import get_freesasa_info
 from .get_galpy_info import get_galpy_info
+from .get_gen_info import get_gen_info
 from .get_gene_name_by_entity_id import get_gene_name_by_entity_id
 from .get_geopandas_info import get_geopandas_info
 from .get_gget_info import get_gget_info
@@ -4421,6 +4423,7 @@ __all__ = [
     "GenCC_get_classifications",
     "GenCC_search_disease",
     "GenCC_search_gene",
+    "Gen_inspect_repository",
     "GeneBe_classify_variant",
     "GeneBe_classify_variants_batch",
     "GeneNetwork_get_dataset_info",
@@ -6026,6 +6029,7 @@ __all__ = [
     "get_flowutils_info",
     "get_freesasa_info",
     "get_galpy_info",
+    "get_gen_info",
     "get_gene_name_by_entity_id",
     "get_geopandas_info",
     "get_gget_info",

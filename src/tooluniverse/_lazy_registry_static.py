@@ -346,6 +346,7 @@ STATIC_LAZY_REGISTRY = {
     "GWASVariantsForTrait": "gwas_tool",
     "Geant4DepthDoseTool": "geant4_tool",
     "GenCCTool": "gencc_tool",
+    "GenRepositoryInspectTool": "gen_tool",
     "GeneBeTool": "genebe_tool",
     "GeneOntologyTool": "gene_ontology_tool",
     "GenebassTool": "pheweb_phewas_tool",
