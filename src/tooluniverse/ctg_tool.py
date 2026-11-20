@@ -344,8 +344,8 @@ def _results_summary(study: dict) -> dict:
         "has_results": bool(has_results),
         "results_summary": {
             "outcome_measure_results": count(outcomes, "outcomeMeasures"),
-            "serious_adverse_events": count(adverse, "seriousEvents"),
-            "other_adverse_events": count(adverse, "otherEvents"),
+            "serious_adverse_event_terms": count(adverse, "seriousEvents"),
+            "other_adverse_event_terms": count(adverse, "otherEvents"),
             "adverse_event_groups": count(adverse, "eventGroups"),
             "adverse_event_frequency_threshold": adverse.get("frequencyThreshold"),
             "participant_flow_groups": count(flow, "groups"),
@@ -2927,7 +2927,7 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
                                 group_stats["percentage"] = (
                                     str(
                                         round(
-                                            group_stats.get("numeEvents", 0)
+                                            group_stats.get("numEvents", 0)
                                             / group_stats.get("numAtRisk", 1)
                                             * 100,
                                             2,
