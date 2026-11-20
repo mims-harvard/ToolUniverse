@@ -1,6 +1,6 @@
 # ToolUniverse Skills
 
-229 skills for AI agents: 153 research skills, 11 for setup and access, 63 that install a GPU-backed model on this machine, and 2 for developing ToolUniverse itself. Skills are automatically available — just ask naturally.
+230 skills for AI agents: 154 research skills, 11 for setup and access, 63 that install a GPU-backed model on this machine, and 2 for developing ToolUniverse itself. Skills are automatically available — just ask naturally.
 
 ```
 "Find the E. coli K-12 genome"           → tooluniverse-sequence-retrieval
@@ -17,7 +17,7 @@ npx skills add mims-harvard/ToolUniverse
 
 ## All Skills
 
-### Research Skills (153)
+### Research Skills (154)
 
 | Skill | Description |
 |-------|-------------|
@@ -145,6 +145,7 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-proteomics-data-retrieval` | Find and retrieve proteomics datasets from MassIVE, ProteomeXchange, PRIDE Archive, and the NCI Proteomics Data... |
 | `tooluniverse-rare-disease-diagnosis` | Rare disease differential diagnosis from patient phenotype — HPO term matching to candidate diseases (Orphanet,... |
 | `tooluniverse-rare-disease-genomics` | Rare disease genomics — disease identification (Orphanet), causative gene discovery, gene-disease validity... |
+| `tooluniverse-reaction-engineering` | Chemical reaction engineering — reactor sizing, rate laws, Arrhenius corrections |
 | `tooluniverse-regulatory-genomics` | Transcription factor binding, cis-regulatory elements (cCREs), chromatin accessibility, and regulatory... |
 | `tooluniverse-regulatory-variant-analysis` | Non-coding/regulatory variant interpretation — GWAS association lookup, eQTL evidence (GTEx), chromatin state... |
 | `tooluniverse-residue-functional-mechanism-interpretation` | Given a set of residues in a protein, explain WHY they are functionally critical by combining structural... |
