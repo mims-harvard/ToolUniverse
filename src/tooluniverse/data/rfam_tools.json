@@ -242,6 +242,34 @@
             },
             "hits": {
               "type": "object"
+            },
+            "closed": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When it finished, e.g. '2026-11-11 04:59:37'. The three timestamps together say whether the search had time to complete or was cut short."
+            },
+            "jobId": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The Infernal job id, e.g. 'infernal_cmscan-R20261111-045928-0907-96620345'. What identifies the run if it has to be re-fetched."
+            },
+            "opened": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the job was queued, e.g. '2026-11-11 04:59:32'."
+            },
+            "started": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When it began running."
             }
           }
         },

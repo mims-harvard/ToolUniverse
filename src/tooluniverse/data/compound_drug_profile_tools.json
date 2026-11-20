@@ -153,6 +153,40 @@
                 },
                 "synonyms_truncated": {
                   "type": "boolean"
+                },
+                "synonym_details": {
+                  "type": "array",
+                  "description": "The same synonyms with ChEMBL's type for each, so a brand name can be told from a research code",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "synonym": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The synonym"
+                      },
+                      "type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "ChEMBL's syn_type: TRADE_NAME, INN, USAN, RESEARCH_CODE, ATC, BNF, FDA, MERCK_INDEX, OTHER"
+                      }
+                    }
+                  }
+                },
+                "synonym_count": {
+                  "type": "integer",
+                  "description": "Distinct synonyms ChEMBL holds, before the cap"
+                },
+                "synonym_type_counts": {
+                  "type": "object",
+                  "description": "How many synonyms of each type ChEMBL holds, counted over all of them rather than the capped page, so the cap's loss is visible (aspirin: 64 TRADE_NAME of 75)",
+                  "additionalProperties": {
+                    "type": "integer"
+                  }
                 }
               }
             },

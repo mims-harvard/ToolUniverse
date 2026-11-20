@@ -269,6 +269,7 @@ class NCBIDatasetsTool(BaseTool):
                 "synonyms": gene_data.get("synonyms", []),
                 "nomenclature_authority": gene_data.get("nomenclature_authority"),
                 "genomic_locations": self._extract_locations(gene_data),
+                **self._gene_extras(gene_data),
             },
             "metadata": {
                 "total_results": len(reports),
@@ -376,6 +377,13 @@ class NCBIDatasetsTool(BaseTool):
                     "swiss_prot_accessions": gene_data.get("swiss_prot_accessions", []),
                     "ensembl_gene_ids": gene_data.get("ensembl_gene_ids", []),
                     "synonyms": gene_data.get("synonyms", []),
+                    "omim_ids": gene_data.get("omim_ids", []),
+                    "orientation": gene_data.get("orientation"),
+                    "nomenclature_authority": gene_data.get(
+                        "nomenclature_authority"
+                    ),
+                    "genomic_locations": self._extract_locations(gene_data),
+                    **self._gene_extras(gene_data),
                 }
             )
 
@@ -448,6 +456,26 @@ class NCBIDatasetsTool(BaseTool):
                     "common_name": gene_data.get("common_name"),
                     "type": gene_data.get("type"),
                     "chromosomes": gene_data.get("chromosomes", []),
+                    # An orthologs page answers the same full gene records as
+                    # the single-gene tool -- 2,622 GO terms across one page
+                    # of them -- so the counts are reported here and the terms
+                    # are not. NCBIDatasets_get_gene has them per gene.
+                    "gene_ontology_counts": {
+                        key: len((gene_data.get("gene_ontology") or {}).get(key) or [])
+                        for key in (
+                            "biological_processes",
+                            "molecular_functions",
+                            "cellular_components",
+                        )
+                    },
+                    "transcript_count": gene_data.get("transcript_count"),
+                    "protein_count": gene_data.get("protein_count"),
+                    "swiss_prot_accessions": gene_data.get(
+                        "swiss_prot_accessions", []
+                    ),
+                    "ensembl_gene_ids": gene_data.get("ensembl_gene_ids", []),
+                    "orientation": gene_data.get("orientation"),
+                    "genomic_locations": self._extract_locations(gene_data),
                 }
             )
 
@@ -516,6 +544,22 @@ class NCBIDatasetsTool(BaseTool):
                 "lineage_names": self._resolve_lineage_names(lineage_ids),
                 "children": tax_data.get("children", []),
                 "counts": tax_data.get("counts", []),
+                # Which translation tables apply. A taxonomy record used for
+                # sequence work needs them: 1/Standard for the nuclear genome
+                # and 2/Vertebrate Mitochondrial for the mitochondrion, and
+                # reading a mitochondrial ORF with the standard code gives
+                # the wrong protein.
+                "genetic_code": tax_data.get("genetic_code"),
+                "genomic_moltype": tax_data.get("genomic_moltype"),
+                # The authority that published the name, which is part of the
+                # name in taxonomy.
+                "scientific_name_authority": scientific_name.get("authority"),
+                "scientific_name_is_formal": tax_data.get(
+                    "current_scientific_name_is_formal"
+                ),
+                "classification": tax_data.get("classification"),
+                "group_name": tax_data.get("group_name"),
+                "curator_common_name": tax_data.get("curator_common_name"),
             },
             "metadata": {
                 "total_results": len(reports),
@@ -778,6 +822,79 @@ class NCBIDatasetsTool(BaseTool):
                 "page_size": page_size,
                 "source": "NCBI Datasets API v2",
             },
+        }
+
+    @staticmethod
+    def _gene_ontology(gene_data: Dict[str, Any]) -> Dict[str, Any]:
+        """The GO annotations on an NCBI gene record, which were dropped whole.
+
+        TP53's record carries 122 biological processes, each with the GO id,
+        the evidence code, the qualifier (`acts_upstream_of_or_within` is not
+        `involved_in`) and the PMIDs it was asserted from. An orthologs query
+        answers 2,622 of them. None reached the caller, from a tool whose
+        record is the gene.
+        """
+        ontology = gene_data.get("gene_ontology") or {}
+
+        def terms(key):
+            return [
+                {
+                    "go_id": term.get("go_id"),
+                    "name": term.get("name"),
+                    "evidence_code": term.get("evidence_code"),
+                    "qualifier": term.get("qualifier"),
+                    "pmids": ((term.get("reference") or {}).get("pmids")) or [],
+                }
+                for term in (ontology.get(key) or [])
+                if isinstance(term, dict)
+            ]
+
+        return {
+            "assigned_by": ontology.get("assigned_by"),
+            "biological_processes": terms("biological_processes"),
+            "molecular_functions": terms("molecular_functions"),
+            "cellular_components": terms("cellular_components"),
+        }
+
+    @classmethod
+    def _gene_extras(cls, gene_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Fields every one of the three gene handlers left behind."""
+        summary = gene_data.get("summary") or []
+        return {
+            "gene_ontology": cls._gene_ontology(gene_data),
+            # RefSeq's own summary of what the gene does. `description` is
+            # "tumor protein p53"; this is the paragraph.
+            "summary": [
+                {
+                    "description": item.get("description"),
+                    "source": item.get("source"),
+                    "source_url": item.get("source_url"),
+                }
+                for item in summary
+                if isinstance(item, dict)
+            ],
+            "transcript_count": gene_data.get("transcript_count"),
+            "protein_count": gene_data.get("protein_count"),
+            "transcript_type_counts": gene_data.get("transcript_type_counts"),
+            # Which annotation release the coordinates come from. The
+            # locations carry an assembly name; this carries the accession and
+            # the release date, which is what makes a coordinate reproducible.
+            "annotation_releases": [
+                {
+                    "assembly_accession": ann.get("assembly_accession"),
+                    "assembly_name": ann.get("assembly_name"),
+                    "annotation_name": ann.get("annotation_name"),
+                    "annotation_release_date": ann.get("annotation_release_date"),
+                }
+                for ann in (gene_data.get("annotations") or [])
+                if isinstance(ann, dict)
+            ],
+            # The RefSeqGene record, which is the stable coordinate system
+            # clinical variant nomenclature is written against.
+            "reference_standards": gene_data.get("reference_standards") or [],
+            "gene_groups": gene_data.get("gene_groups") or [],
+            "alternate_names": gene_data.get("alternate_names") or [],
+            "map_locations": gene_data.get("map_locations") or [],
         }
 
     def _extract_locations(self, gene_data: Dict[str, Any]) -> list:

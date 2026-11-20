@@ -131,6 +131,7 @@ def _json_default(value: Any) -> Any:
         return sorted(value, key=str)
     return str(value)
 
+
 from .execute_function import ToolUniverse
 from .agentic_tool import render_agentic_instruction
 from .credentials import ContextThreadPoolExecutor
@@ -626,6 +627,84 @@ class SMCP(FastMCP):
         # Register custom MCP methods
         self._register_custom_mcp_methods()
 
+        # Tell the host model what this server is for. FastMCP's `instructions`
+        # is the one piece of text an MCP host puts verbatim into the model's
+        # context at session start, and this server never set it (#875). With
+        # deferred tools -- Claude Code lists MCP tools by name only -- the
+        # model otherwise sees `find_tools`, `grep_tools`, `execute_tool` and
+        # nothing that says those names lead to genes, drugs, trials or
+        # variants. A caller-supplied value flows through **kwargs to FastMCP
+        # and is left alone; this is a floor, not a ceiling.
+        if not getattr(self, "instructions", None):
+            try:
+                self.instructions = self._default_instructions()
+            except Exception as exc:  # pragma: no cover - never fail a server start
+                self.logger.debug("Could not derive server instructions: %s", exc)
+
+    def _default_instructions(self) -> str:
+        """Describe this server from what it actually loaded, not from a fixed list.
+
+        Deriving the text keeps it true as the catalogue grows and as a
+        deployment's own category filters narrow it, which a hard-coded
+        paragraph does not.
+        """
+        registered = set(self._exposed_tools)
+        if getattr(self, "_find_tools_registered", False):
+            # find_tools is registered straight onto FastMCP by
+            # _register_search_tools, so it never enters _exposed_tools.
+            registered.add("find_tools")
+        entry_points = [
+            name
+            for name in (
+                "find_tools",
+                "list_tools",
+                "grep_tools",
+                "get_tool_info",
+                "execute_tool",
+            )
+            if name in registered
+        ]
+        # compact_mode and tool_finder are this server's own plumbing, not
+        # subject areas; naming them would tell the model to look for a
+        # "compact_mode" database.
+        plumbing = {"compact_mode", "tool_finder", "special_tools", "mcp_clients"}
+        categories = sorted(
+            str(name)
+            for name, configs in (
+                getattr(self.tooluniverse, "tool_category_dicts", {}) or {}
+            ).items()
+            if configs and str(name) not in plumbing
+        )
+        total = len(getattr(self.tooluniverse, "all_tool_dict", {}) or {})
+
+        lines = []
+        if total:
+            lines.append(
+                f"ToolUniverse exposes {total} scientific and biomedical tools "
+                "through this server."
+            )
+        else:
+            lines.append(
+                "ToolUniverse exposes scientific and biomedical tools through "
+                "this server."
+            )
+        if entry_points:
+            lines.append("Entry points: " + ", ".join(entry_points) + ".")
+            first = "find_tools" if "find_tools" in entry_points else entry_points[0]
+            lines.append(
+                f"Call {first} FIRST for any factual question whose answer lives in a "
+                "scientific or biomedical resource rather than in your own knowledge: "
+                "identifiers, nomenclature, reference sequences, catalogue codes, "
+                "measured values, annotations, approvals, trials and literature."
+            )
+        if categories:
+            shown = categories[:60]
+            text = ", ".join(shown)
+            if len(categories) > len(shown):
+                text += f", and {len(categories) - len(shown)} more"
+            lines.append(f"Subject areas loaded on this server: {text}.")
+        return "\n\n".join(lines)
+
     def _load_profile_configs(self, profile: Union[str, List[str]]):
         """
         Load Profile configurations.
@@ -1072,7 +1151,9 @@ class SMCP(FastMCP):
                         {"tools": [], "result": result}, ensure_ascii=False
                     )
             elif isinstance(result, dict) or isinstance(result, list):
-                serialized = json.dumps(result, ensure_ascii=False, default=_json_default)
+                serialized = json.dumps(
+                    result, ensure_ascii=False, default=_json_default
+                )
             else:
                 serialized = json.dumps(
                     {"tools": [], "result": str(result)}, ensure_ascii=False
@@ -1516,6 +1597,8 @@ class SMCP(FastMCP):
         #         JSON string containing matching tools information
         #     """
         #     return await self._perform_tool_search(query, categories, limit, use_advanced_search, search_method)
+
+        self._find_tools_registered = True
 
     def _init_tool_finder(self):
         """Initialize the best available tool finder (LLM > RAG > keyword).
@@ -2427,7 +2510,9 @@ class SMCP(FastMCP):
                                 {"result": result}, ensure_ascii=False
                             )
                     elif isinstance(result, (dict, list)):
-                        serialized = json.dumps(result, ensure_ascii=False, default=_json_default)
+                        serialized = json.dumps(
+                            result, ensure_ascii=False, default=_json_default
+                        )
                     else:
                         # For other types, convert to JSON
                         serialized = json.dumps(

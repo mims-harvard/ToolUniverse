@@ -45,6 +45,124 @@
         },
         "record": {
           "type": "object"
+        },
+        "authors": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "The author list, each with author_position ('first', 'middle', 'last'), is_corresponding, raw_affiliation_strings and name parts. 8 on the measured record, and the only place authorship and affiliation appear."
+        },
+        "data_standard": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Which Unpaywall data generation the record was built with, e.g. 2. Records built under an older standard are not directly comparable."
+        },
+        "doi_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Resolvable DOI URL, e.g. 'https://doi.org/10.1038/nature12373'."
+        },
+        "first_oa_location": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The copy Unpaywall would send a reader to, with the same fields as an entry in oa_locations. Which of several copies is the preferred one; the list order does not say."
+        },
+        "genre": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "What kind of work it is, e.g. 'journal-article', 'book-chapter', 'posted-content'. A preprint and an article carry different weight and this is the only field that separates them."
+        },
+        "has_repository_copy": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when a copy sits in a repository. Green open access survives a publisher paywalling the article again, so this is the durable route."
+        },
+        "is_paratext": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when the record is front matter, an index or an editorial listing rather than a work. Counting paratext as articles inflates any count built from a search."
+        },
+        "journal_is_in_doaj": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when the journal is indexed in DOAJ. The usual proxy for a vetted open-access journal rather than a predatory one."
+        },
+        "journal_is_oa": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when the journal itself is fully open access, as distinct from this one article being free."
+        },
+        "journal_issn_l": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The linking ISSN, e.g. '0028-0836' - the one id that is stable across a journal's print and electronic forms."
+        },
+        "journal_issns": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Every ISSN for the journal as a comma-delimited STRING, e.g. '0028-0836,1476-4687'. Not a list."
+        },
+        "oa_locations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "Every open copy Unpaywall knows, each with host_type ('publisher' or 'repository'), url_for_pdf, license, version ('publishedVersion', 'acceptedVersion', 'submittedVersion'), oa_date and evidence. 5 on the measured record. The version matters: an accepted manuscript is not the published paper."
+        },
+        "published_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Publication date, e.g. '2013-07-30'."
+        },
+        "publisher": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Publisher name, e.g. 'Springer Science and Business Media LLC'."
+        },
+        "updated": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When Unpaywall last refreshed the record, e.g. '2026-11-10T14:03:09Z'. OA status changes, so this says how stale the answer may be."
+        },
+        "year": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Publication year, e.g. 2013."
         }
       },
       "required": [
@@ -122,6 +240,41 @@
         },
         "record": {
           "type": "object"
+        },
+        "publisher": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Publisher name, e.g. 'Springer Science and Business Media LLC'."
+        },
+        "year": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Publication year, e.g. 2013."
+        },
+        "best_oa_host_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Where the best open copy is hosted, 'publisher' or 'repository'. A publisher copy can be paywalled again later; a repository copy cannot."
+        },
+        "best_oa_version": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which version that copy is, e.g. 'publishedVersion', 'acceptedVersion' or 'submittedVersion'. An accepted manuscript is not the published paper and a submitted one is not peer-reviewed, so quoting page numbers or text from the wrong version is a citation error."
+        },
+        "journal_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Journal the article appeared in, e.g. 'Nature'."
         }
       },
       "required": [

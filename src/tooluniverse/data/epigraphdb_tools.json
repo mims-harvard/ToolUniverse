@@ -124,6 +124,13 @@
                       "number",
                       "null"
                     ]
+                  },
+                  "selection": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which instrument-selection strategy produced the estimate, e.g. 'HF'. MR estimates from different selection strategies are not comparable, and the effect size alone does not say which was used."
                   }
                 }
               }
@@ -281,6 +288,61 @@
                       "number",
                       "null"
                     ]
+                  },
+                  "z": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "LDSC test statistic the p-value came from, which survives a p-value reaching the 1e-309 floor"
+                  },
+                  "rg_intercept": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "LDSC rg intercept; away from 0 it indicates sample overlap between the two GWAS"
+                  },
+                  "rg_intercept_se": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "h2_se": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Standard error of h2, which was reported without one"
+                  },
+                  "h2_intercept_se": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Standard error of the h2 intercept; the intercept away from 1 indicates population stratification or unmodelled confounding"
+                  },
+                  "h2": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "SNP heritability of the trait, e.g. 0.203. A genetic correlation with a low-heritability trait is poorly estimated whatever its own standard error says."
+                  },
+                  "h2_intercept": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "LDSC intercept from the heritability regression, e.g. 1.055. Above 1 indicates confounding or population stratification, which inflates the correlation."
+                  },
+                  "rg_se": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Standard error of the genetic correlation, e.g. 0.003421. Without it an rg cannot be tested or compared."
                   }
                 }
               }
@@ -411,19 +473,133 @@
                     "type": [
                       "string",
                       "null"
-                    ]
+                    ],
+                    "description": "The first supporting gene, kept for compatibility; `genes` lists them all"
                   },
                   "variant": {
                     "type": [
                       "string",
                       "null"
-                    ]
+                    ],
+                    "description": "The first supporting variant; `variants` lists them all"
                   },
                   "evidence_count": {
                     "type": [
                       "integer",
                       "null"
+                    ],
+                    "description": "How many risk-factor rows support this drug. `evidence` carries the most significant of them."
+                  },
+                  "genes": {
+                    "type": "array",
+                    "description": "Every gene behind this drug's evidence, not only the first",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "gene_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Distinct genes, before the cap on `genes`"
+                  },
+                  "variants": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "outcome_traits": {
+                    "type": "array",
+                    "description": "The outcome traits the exposure was tested against",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "outcome_trait_count": {
+                    "type": [
+                      "integer",
+                      "null"
                     ]
+                  },
+                  "evidence_truncated": {
+                    "type": "boolean",
+                    "description": "True when evidence_count exceeds the rows returned in `evidence`"
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "description": "The Mendelian randomisation rows this repurposing claim rests on, most significant first. Each estimate belongs to the exposure->outcome trait pair rather than to the gene: the gene and variant are the instrument linking the drug to that pair, so rows of one drug can share a beta while naming different genes.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "gene": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "variant": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "outcome_trait": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "outcome_trait_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "IEU OpenGWAS id of the outcome"
+                        },
+                        "beta": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "Causal effect estimate"
+                        },
+                        "se": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "pval": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "method": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "MR method, e.g. FE IVW"
+                        },
+                        "selection": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Instrument selection, e.g. Tophits or DF"
+                        },
+                        "moescore": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "Mixture-of-experts score; above 0.9 suggests high-quality instruments"
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -457,6 +633,24 @@
                 "integer",
                 "null"
               ]
+            },
+            "evidence_rows_per_drug": {
+              "type": "integer",
+              "description": "The per-drug cap on `evidence`"
+            },
+            "exposure_trait": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The exposure trait as EpiGraphDB labels it"
+            },
+            "exposure_trait_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "IEU OpenGWAS id of the exposure study the estimates came from, which the echoed label alone could not identify"
             }
           },
           "not": {
@@ -700,6 +894,27 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Gene end coordinate, e.g. 41277500. With start this is the interval to query other resources on; the gene name alone is not a locus."
+                  },
+                  "gene_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene biotype, e.g. 'protein_coding'."
+                  },
+                  "start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Gene start coordinate, e.g. 41196312."
                   }
                 }
               }
@@ -834,6 +1049,21 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "action_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the drug does to the gene product: INHIBITOR, AGONIST, ANTAGONIST. Present on OPENTARGETS_DRUG_TO_TARGET rows, which carry none of the CPIC fields above."
+                  },
+                  "clinical_phase": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How far the drug got in the clinic, as OpenTargets reports it"
                   }
                 }
               }
@@ -1069,6 +1299,34 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "gwas_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "IEU OpenGWAS id of the study the triple was linked through"
+                  },
+                  "pval": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Association p-value, which pval_threshold filters on and which was not reported before"
+                  },
+                  "local_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "SemMedDB local support count for the triple"
+                  },
+                  "triple_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SemMedDB's own id for the assertion, e.g. C0245514:INHIBITS:3952"
                   }
                 }
               }

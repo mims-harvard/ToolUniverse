@@ -89,6 +89,32 @@
                                             "null"
                                         ],
                                         "description": "Integrated InterPro accession"
+                                    },
+                                    "source_database": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Which member database the entry is from; the same endpoint serves InterPro's other member databases"
+                                    },
+                                    "member_databases": {
+                                        "type": [
+                                            "object",
+                                            "null"
+                                        ]
+                                    },
+                                    "go_terms": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "description": {
+                                        "type": [
+                                            "array",
+                                            "string",
+                                            "null"
+                                        ]
                                     }
                                 }
                             }
@@ -391,12 +417,68 @@
                                                 },
                                                 "end": {
                                                     "type": "integer"
+                                                },
+                                                "score": {
+                                                    "type": [
+                                                        "number",
+                                                        "null"
+                                                    ],
+                                                    "description": "A domain position without the match score is a claim with no strength attached"
+                                                },
+                                                "model_accession": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "dc_status": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
                                                 }
                                             }
                                         }
                                     },
                                     "in_alphafold": {
                                         "type": "boolean"
+                                    },
+                                    "source_database": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Reviewed (Swiss-Prot) or not -- the distinction the reviewed_only filter is about, which the rows never stated"
+                                    },
+                                    "organism_full_name": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "entry_types": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "entry_source_databases": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "entries_integrated": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "taxa": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object"
+                                        }
                                     }
                                 }
                             }
@@ -504,6 +586,70 @@
                                             "number",
                                             "null"
                                         ]
+                                    },
+                                    "protein_accession": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Which protein the domain is on; the row named the family and the coordinates and left the protein unnamed"
+                                    },
+                                    "protein_source_database": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "protein_organism": {
+                                        "type": [
+                                            "object",
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "protein_length": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ]
+                                    },
+                                    "protein_name": {
+                                        "type": [
+                                            "object",
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "model_accession": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "fragment_dc_status": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "source_database": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "entry_type": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "\"domain\" against \"family\" changes what the match means"
+                                    },
+                                    "go_terms": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object"
+                                        }
                                     }
                                 }
                             }
@@ -717,6 +863,39 @@
                                     },
                                     "is_reference": {
                                         "type": "boolean"
+                                    },
+                                    "lineage": {
+                                        "type": [
+                                            "string",
+                                            "array",
+                                            "null"
+                                        ]
+                                    },
+                                    "source_database": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "strain": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "assembly": {
+                                        "type": [
+                                            "string",
+                                            "object",
+                                            "null"
+                                        ]
+                                    },
+                                    "proteins": {
+                                        "type": "array",
+                                        "description": "Which proteins of the proteome matched, how long they are and how well they scored -- a proteome row without them is a name and a tax id",
+                                        "items": {
+                                            "type": "object"
+                                        }
                                     }
                                 }
                             }

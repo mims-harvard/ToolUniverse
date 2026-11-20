@@ -229,6 +229,23 @@ class OMATool(BaseTool):
                     "score": orth.get("score"),
                     "sequence_length": orth.get("sequence_length"),
                     "chromosome": orth.get("chromosome"),
+                    # `entry_nr` is the key OMA's own endpoints take, so a
+                    # result the caller cannot pass back to OMA is a dead end.
+                    # The locus is where the gene is, and `oma_hog_id` is the
+                    # hierarchical group the orthology was inferred in.
+                    "entry_nr": orth.get("entry_nr"),
+                    "oma_hog_id": orth.get("oma_hog_id"),
+                    "oma_group": orth.get("oma_group"),
+                    # OMA's own REST links for the entry and its genome. Kept
+                    # rather than filtered out of the report: a navigation URL
+                    # is cheap, and teaching the auditor to ignore every
+                    # `*_url` would hide a genuine download link later.
+                    "entry_url": orth.get("entry_url"),
+                    "genome_url": (orth.get("species") or {}).get("genome_url"),
+                    "locus_start": (orth.get("locus") or {}).get("start"),
+                    "locus_end": (orth.get("locus") or {}).get("end"),
+                    "locus_strand": (orth.get("locus") or {}).get("strand"),
+                    "sequence_md5": orth.get("sequence_md5"),
                 }
             )
 
@@ -364,6 +381,14 @@ class OMATool(BaseTool):
                     "taxon_id": species.get("taxon_id"),
                     "sequence_length": m.get("sequence_length"),
                     "chromosome": m.get("chromosome"),
+                    "entry_nr": m.get("entry_nr"),
+                    "oma_hog_id": m.get("oma_hog_id"),
+                    "entry_url": m.get("entry_url"),
+                    "genome_url": (m.get("species") or {}).get("genome_url"),
+                    "locus_start": (m.get("locus") or {}).get("start"),
+                    "locus_end": (m.get("locus") or {}).get("end"),
+                    "locus_strand": (m.get("locus") or {}).get("strand"),
+                    "sequence_md5": m.get("sequence_md5"),
                 }
             )
 
@@ -586,6 +611,14 @@ class OMATool(BaseTool):
                     "information_content": go.get("ic"),
                     "evidence": go.get("evidence"),
                     "reference": go.get("reference"),
+                    # Which OMA entry the annotation is on. A GO list for a
+                    # protein group spans several entries, and entry_nr is the
+                    # key OMA's other endpoints take.
+                    "entry_nr": go.get("entry_nr"),
+                    "annotation_id": go.get("id"),
+                    "with_from": go.get("with"),
+                    "assigned_by": go.get("assigned_by"),
+                    "date": go.get("date"),
                 }
             )
 

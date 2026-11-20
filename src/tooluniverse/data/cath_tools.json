@@ -216,6 +216,111 @@
                 "null"
               ],
               "description": "Number of residues in domain"
+            },
+            "pdb_code": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pdb_segments": {
+              "type": "array",
+              "description": "The residue ranges of the chain that make up the domain. A domain is its segments, and the summary reported only how many residues there were.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "atom_length": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "go_terms": {
+              "type": "array",
+              "description": "GO annotations with the evidence code that qualifies each and the aspect it belongs to. An IDA and an IEA are not the same claim. The sibling CATH_get_funfam has always returned these; the domain summary dropped them.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "go_acc": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "term_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "molecular_function, biological_process or cellular_component"
+                  },
+                  "evidence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GO evidence code, e.g. IDA, IEA"
+                  },
+                  "definition": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "definition_truncated": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "go_term_count": {
+              "type": "integer"
+            },
+            "ec_terms": {
+              "type": "array",
+              "description": "EC numbers assigned to the domain",
+              "items": {
+                "type": [
+                  "object",
+                  "string"
+                ]
+              }
+            },
+            "funfam_number": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ],
+              "description": "The FunFam this domain belongs to, for CATH_get_funfam"
+            },
+            "s35_cluster_id": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ]
+            },
+            "ssg5_number": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ]
+            },
+            "ssg9_number": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ]
             }
           },
           "not": {

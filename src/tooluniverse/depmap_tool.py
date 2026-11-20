@@ -71,15 +71,63 @@ class DepMapTool(BaseTool):
 
     @staticmethod
     def _parse_model_list(data: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """Map a JSON:API /models response's ``data`` array to
-        [{model_id, model_name}] rows (model_name is ``names[0]``, a list)."""
+        """Map a JSON:API /models response's ``data`` array to model rows.
+
+        The row was {model_id, model_name}. A /models list item carries 24
+        attributes, and the ones that were dropped are what the tool's own
+        description means by "for target validation studies": whether the
+        line has CRISPR knockout data at all, and expression, mutation,
+        RNA-seq, CNV, methylation, proteomics, fusion and drug-response
+        data. PK-59 is crispr_ko_available false and mutations_available
+        true, and a caller planning a knockout screen could not see either.
+
+        Its measured characteristics went too: mutations_per_mb 24.79 is the
+        tumour mutational burden, ploidy_wes 3.51 the ploidy, model_type
+        says cell line against organoid, and growth_properties adherent
+        against suspension.
+
+        tissue and cancer_type genuinely are not on this resource -- they
+        live on related sample/patient resources, one request per model --
+        which is why they are absent here and why DepMap_get_cell_line
+        exists.
+        """
+        availability_keys = (
+            "crispr_ko",
+            "expression",
+            "mutations",
+            "rnaseq",
+            "cnv",
+            "methylation",
+            "proteomics",
+            "fusions",
+            "drugs",
+        )
         models = []
         for item in data.get("data", []):
-            names = item.get("attributes", {}).get("names")
+            attributes = item.get("attributes", {}) or {}
+            names = attributes.get("names")
             models.append(
                 {
                     "model_id": item.get("id"),
                     "model_name": names[0] if names else None,
+                    "model_names": [n for n in (names or []) if n],
+                    "model_type": attributes.get("model_type"),
+                    "growth_properties": attributes.get("growth_properties"),
+                    "model_treatment": attributes.get("model_treatment"),
+                    "mutations_per_mb": attributes.get("mutations_per_mb"),
+                    "ploidy_wes": attributes.get("ploidy_wes"),
+                    "ploidy_wgs": attributes.get("ploidy_wgs"),
+                    "ploidy": attributes.get("ploidy"),
+                    "pubmed_id": attributes.get("pmed"),
+                    "doi": attributes.get("doi"),
+                    "comment": attributes.get("comment"),
+                    "commercially_available": attributes.get("commercial_available"),
+                    # Which assays exist for the line, which is the question a
+                    # target-validation screen starts from.
+                    "data_available": {
+                        key: attributes.get(f"{key}_available")
+                        for key in availability_keys
+                    },
                 }
             )
         return models
@@ -536,6 +584,19 @@ class DepMapTool(BaseTool):
                             "hgnc_id": attrs.get("hgnc_id"),
                             "ensembl_id": attrs.get("ensembl_gene_id"),
                             "exact_match": (symbol.upper() == query_upper),
+                            # The tool's description says it returns "gene IDs
+                            # and annotations" and returned the ids alone.
+                            # hgnc_status is the one that can mislead: a
+                            # withdrawn or merged symbol resolves silently,
+                            # and the caller has no way to see that the
+                            # symbol they searched is no longer the current
+                            # one. location is the cytogenetic locus, and
+                            # method_of_action is what a target-validation
+                            # question asks after essentiality.
+                            "hgnc_status": attrs.get("hgnc_status"),
+                            "location": attrs.get("location"),
+                            "method_of_action": attrs.get("method_of_action"),
+                            "hgnc_merge_comment": attrs.get("hgnc_merge_comment"),
                         }
                     )
 

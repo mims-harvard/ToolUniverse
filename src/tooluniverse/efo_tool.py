@@ -210,6 +210,7 @@ class OLSRESTTool(BaseTool):
                             "detail": resp.text[:2000],
                         }
                     t = resp.json()
+                    annotation = t.get("annotation") or {}
                     term = {
                         "iri": t.get("iri"),
                         "obo_id": t.get("obo_id"),
@@ -221,6 +222,56 @@ class OLSRESTTool(BaseTool):
                         "is_obsolete": t.get("is_obsolete"),
                         "ontology_name": t.get("ontology_name"),
                         "ontology_prefix": t.get("ontology_prefix"),
+                        # An obsolete term is only half an answer without
+                        # what replaced it. EFO:0000400 comes back as
+                        # "obsolete_diabetes mellitus" with `is_obsolete`
+                        # true, and the record names the replacement and the
+                        # ids merged into it -- in `annotation`, which was
+                        # not read.
+                        "term_replaced_by": annotation.get("term_replaced_by")
+                        or t.get("term_replaced_by"),
+                        "alternative_ids": annotation.get("has_alternative_id")
+                        or [],
+                        "obsolescence_reason": annotation.get(
+                            "has_obsolescence_reason"
+                        ),
+                        # Each synonym with the scope OBO gives it: an exact
+                        # synonym can be substituted for the label and a
+                        # related one cannot, and `synonyms` is the flattened
+                        # list of both.
+                        "synonym_scopes": [
+                            {
+                                "name": item.get("name"),
+                                "scope": item.get("scope"),
+                                "type": item.get("type"),
+                                "xrefs": item.get("xrefs") or [],
+                            }
+                            for item in (t.get("obo_synonym") or [])
+                            if isinstance(item, dict)
+                        ],
+                        # The term's cross-references to other vocabularies,
+                        # which is how an EFO id is carried into a resource
+                        # that does not speak EFO.
+                        "cross_references": annotation.get(
+                            "database_cross_reference"
+                        )
+                        or [],
+                        "obo_xrefs": [
+                            {
+                                "database": item.get("database"),
+                                "id": item.get("id"),
+                                "description": item.get("description"),
+                                "url": item.get("url"),
+                            }
+                            for item in (t.get("obo_xref") or [])
+                            if isinstance(item, dict)
+                        ],
+                        "obo_definition_citations": t.get(
+                            "obo_definition_citation"
+                        )
+                        or [],
+                        "in_subset": t.get("in_subset") or [],
+                        "lang": t.get("lang"),
                     }
                     result = {"status": "success", "url": resp.url, "term": term}
                     return {"status": "success", "data": result}
@@ -252,6 +303,36 @@ class OLSRESTTool(BaseTool):
                         "obo_id": c.get("obo_id"),
                         "short_form": c.get("short_form"),
                         "label": c.get("label"),
+                        # A descendant list of labels cannot be filtered or
+                        # followed. The same rows carry the definition, the
+                        # synonyms, whether the term is itself obsolete, and
+                        # which ontology it came from -- which matters here
+                        # because OLS returns descendants from importing
+                        # ontologies too.
+                        "description": c.get("description") or [],
+                        "synonyms": c.get("synonyms") or [],
+                        "is_obsolete": c.get("is_obsolete"),
+                        "has_children": c.get("has_children"),
+                        "ontology_name": c.get("ontology_name"),
+                        "ontology_prefix": c.get("ontology_prefix"),
+                        "alternative_ids": (c.get("annotation") or {}).get(
+                            "has_alternative_id"
+                        )
+                        or [],
+                        "synonym_scopes": [
+                            {
+                                "name": item.get("name"),
+                                "scope": item.get("scope"),
+                                "type": item.get("type"),
+                                "xrefs": item.get("xrefs") or [],
+                            }
+                            for item in (c.get("obo_synonym") or [])
+                            if isinstance(item, dict)
+                        ],
+                        "obo_definition_citations": c.get("obo_definition_citation")
+                        or [],
+                        "ontology_iri": c.get("ontology_iri"),
+                        "lang": c.get("lang"),
                     }
                     for c in rows
                 ]
@@ -311,6 +392,13 @@ class OLSRESTTool(BaseTool):
                     "title": (o.get("config") or {}).get("title"),
                     "description": (o.get("config") or {}).get("description"),
                     "homepage": (o.get("config") or {}).get("homepage"),
+                    "preferredPrefix": (o.get("config") or {}).get("preferredPrefix"),
+                    "loaded": o.get("loaded"),
+                    "numberOfProperties": o.get("numberOfProperties"),
+                    "numberOfIndividuals": o.get("numberOfIndividuals"),
+                    "languages": o.get("languages")
+                    or (o.get("config") or {}).get("languages")
+                    or [],
                 }
                 result = {"status": "success", "url": resp.url, "ontology": ontology}
                 return {"status": "success", "data": result}
@@ -337,6 +425,24 @@ class OLSRESTTool(BaseTool):
                         "title": (o.get("config") or {}).get("title"),
                         "numberOfTerms": o.get("numberOfTerms"),
                         "status": o.get("status"),
+                        # What the ontology IS, which version is loaded and
+                        # when: a list of ids and term counts cannot be chosen
+                        # between. `languages` matters for a term lookup
+                        # against a multilingual ontology, where a label comes
+                        # back in whichever language was asked for.
+                        "description": (o.get("config") or {}).get("description"),
+                        "preferredPrefix": (o.get("config") or {}).get(
+                            "preferredPrefix"
+                        ),
+                        "homepage": (o.get("config") or {}).get("homepage"),
+                        "version": o.get("version"),
+                        "updated": o.get("updated"),
+                        "loaded": o.get("loaded"),
+                        "numberOfProperties": o.get("numberOfProperties"),
+                        "numberOfIndividuals": o.get("numberOfIndividuals"),
+                        "languages": o.get("languages")
+                        or (o.get("config") or {}).get("languages")
+                        or [],
                     }
                     for o in onts
                 ]

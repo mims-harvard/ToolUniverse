@@ -56,6 +56,34 @@
                         "string",
                         "null"
                       ]
+                    },
+                    "deprecatedNamespace": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when the namespace prefix the caller used has been retired. The call still resolves, which is exactly why this flag matters."
+                    },
+                    "namespaceEmbeddedInLui": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when the namespace prefix is part of the local id itself (as in 'CHEBI:17234'), so the id must not have the prefix stripped before use."
+                    },
+                    "rawRequest": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The compact identifier exactly as received, e.g. 'uniprot:P04637'. What was parsed, before any normalisation."
+                    },
+                    "renderDeprecatedLanding": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "Whether Identifiers.org would still show a landing page for the deprecated namespace."
                     }
                   }
                 },
@@ -87,8 +115,106 @@
                           },
                           "homeUrl": {
                             "type": "string"
+                          },
+                          "description": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The institution's own description of itself, e.g. 'The National Center for Biotechnology Information advances science and health by providing...'."
+                          },
+                          "id": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ],
+                            "description": "Identifiers.org's numeric id for the institution, e.g. 26."
+                          },
+                          "location": {
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "description": "The institution's country, as 'countryCode' and 'countryName'."
+                          },
+                          "rorId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The institution's ROR identifier as a URL, e.g. 'https://ror.org/02meqm098'. Links the provider to the global research-organisation registry."
                           }
                         }
+                      },
+                      "deprecatedNamespace": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when the namespace prefix the caller used has been retired. The call still resolves, which is exactly why this flag matters."
+                      },
+                      "deprecatedResource": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when this particular provider has been retired. Resolving to it will likely fail, and it is listed alongside live providers."
+                      },
+                      "id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Identifiers.org's internal numeric id for the resource, e.g. 27."
+                      },
+                      "location": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The country the resource is hosted in, as 'countryCode' and 'countryName'. Which jurisdiction the data is served from, and it can differ from the institution's own."
+                      },
+                      "mirId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The resource's permanent MIR identifier, e.g. 'MIR:00100330'. The stable way to name one provider; the numeric id is not guaranteed stable."
+                      },
+                      "namespacePrefix": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The namespace this provider serves, e.g. 'uniprot'. Says which of the resolved providers belong to the requested namespace."
+                      },
+                      "protectedUrls": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when the provider's URLs sit behind authentication, so the resolved URL will not open for an anonymous caller."
+                      },
+                      "recommendation": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "Identifiers.org's own advice on the provider: 'recommendationIndex' (higher is more recommended) and 'recommendationExplanation'. Which of several resolved URLs to prefer - the list order does not say."
+                      },
+                      "renderDeprecatedLanding": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "Whether a landing page is still rendered for this deprecated resource."
+                      },
+                      "renderProtectedLanding": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "Whether Identifiers.org shows an interstitial page for those protected URLs."
                       }
                     }
                   }
@@ -176,6 +302,34 @@
             },
             "deprecated": {
               "type": "boolean"
+            },
+            "_links": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "HAL links for the namespace - self, namespace, successor, resources, contactPerson and curationWarnings. 'successor' is where a retired namespace points, and 'curationWarnings' is where Identifiers.org records known problems with it."
+            },
+            "created": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the namespace was registered, e.g. '2019-06-11T14:15:29.457+00:00'."
+            },
+            "modified": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When its registration was last changed, e.g. '2025-08-28T14:39:34.041+00:00'."
+            },
+            "renderDeprecatedLanding": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether Identifiers.org still shows a landing page for the namespace if it has been deprecated."
             }
           },
           "not": {
@@ -269,6 +423,55 @@
                       },
                       "sampleId": {
                         "type": "string"
+                      },
+                      "_links": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "HAL links for the namespace - self, namespace, successor, resources, contactPerson and curationWarnings. 'successor' is where a retired namespace points, and 'curationWarnings' is where Identifiers.org records known problems with it."
+                      },
+                      "created": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the namespace was registered, e.g. '2019-06-11T14:15:29.457+00:00'."
+                      },
+                      "mirId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The resource's permanent MIR identifier, e.g. 'MIR:00100330'. The stable way to name one provider; the numeric id is not guaranteed stable."
+                      },
+                      "modified": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When its registration was last changed, e.g. '2025-08-28T14:39:34.041+00:00'."
+                      },
+                      "namespaceEmbeddedInLui": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when the namespace prefix is part of the local id itself (as in 'CHEBI:17234'), so the id must not have the prefix stripped before use."
+                      },
+                      "renderDeprecatedLanding": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "Whether Identifiers.org still shows a landing page for the namespace if it has been deprecated."
+                      },
+                      "deprecated": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when the namespace has been retired. It still resolves, which is why the flag matters."
                       }
                     }
                   }
@@ -291,6 +494,13 @@
                   "type": "integer"
                 }
               }
+            },
+            "_links": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "HAL links for the namespace - self, namespace, successor, resources, contactPerson and curationWarnings. 'successor' is where a retired namespace points, and 'curationWarnings' is where Identifiers.org records known problems with it."
             }
           },
           "not": {
@@ -384,6 +594,62 @@
                       },
                       "deprecated": {
                         "type": "boolean"
+                      },
+                      "_links": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "HAL links for the namespace - self, namespace, successor, resources, contactPerson and curationWarnings. 'successor' is where a retired namespace points, and 'curationWarnings' is where Identifiers.org records known problems with it."
+                      },
+                      "created": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the namespace was registered, e.g. '2019-06-11T14:15:29.457+00:00'."
+                      },
+                      "mirId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The resource's permanent MIR identifier, e.g. 'MIR:00100330'. The stable way to name one provider; the numeric id is not guaranteed stable."
+                      },
+                      "modified": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When its registration was last changed, e.g. '2025-08-28T14:39:34.041+00:00'."
+                      },
+                      "namespaceEmbeddedInLui": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "True when the namespace prefix is part of the local id itself (as in 'CHEBI:17234'), so the id must not have the prefix stripped before use."
+                      },
+                      "renderDeprecatedLanding": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "Whether Identifiers.org still shows a landing page for the namespace if it has been deprecated."
+                      },
+                      "deprecationDate": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the namespace was deprecated, e.g. '2023-01-05T20:09:01.370+00:00'. Measured on 2 of 10 namespaces."
+                      },
+                      "deprecationStatement": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Why it was deprecated, e.g. 'The Wellcome Sanger Institute no longer curates any of the...'. Measured on 2 of 10. A deprecated namespace still resolves, so this sentence is the only warning not to build on it."
                       }
                     }
                   }
@@ -406,6 +672,13 @@
                   "type": "integer"
                 }
               }
+            },
+            "_links": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "HAL links for the namespace - self, namespace, successor, resources, contactPerson and curationWarnings. 'successor' is where a retired namespace points, and 'curationWarnings' is where Identifiers.org records known problems with it."
             }
           },
           "not": {

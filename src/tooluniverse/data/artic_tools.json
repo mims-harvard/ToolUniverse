@@ -284,6 +284,27 @@
                 },
                 "image_id": {
                   "type": "string"
+                },
+                "config": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The IIIF image server base URL and the website URL. An image id is useless without the iiif_url to build a request from."
+                },
+                "data": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The artwork record itself - id, title, date_display, artist_display, place_of_origin, medium, dimensions, credit_line and the image id. The payload, nested one level below the envelope's own 'data'."
+                },
+                "info": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The licence under which the metadata is offered - license_text, license_links and version. The attribution the museum's terms require."
                 }
               }
             },

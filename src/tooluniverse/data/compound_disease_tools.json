@@ -73,7 +73,10 @@
           "description": "Raw-ish per-source parsed results; sources that failed or returned nothing appear as {}.",
           "properties": {
             "orphanet": {
-              "type": "object",
+              "type": [
+                "object",
+                "string"
+              ],
               "properties": {
                 "orpha_code": {
                   "type": "string"
@@ -86,11 +89,21 @@
                 },
                 "inheritance": {
                   "type": "string"
+                },
+                "match": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "How well the disease name matched in Orphanet, e.g. 'approximate'. An 'approximate' match means the Orphanet section of this profile may describe a NEIGHBOURING disease, and nothing else in the reply flags that."
                 }
               }
             },
             "omim": {
-              "type": "object",
+              "type": [
+                "integer",
+                "object"
+              ],
               "properties": {
                 "entries": {
                   "type": "array",
@@ -98,7 +111,7 @@
                     "type": "object",
                     "properties": {
                       "mim_number": {
-                        "type": "string"
+                        "type": "integer"
                       },
                       "title": {
                         "type": "string"

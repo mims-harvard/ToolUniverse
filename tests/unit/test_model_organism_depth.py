@@ -275,6 +275,7 @@ class TestWormBaseInteractions:
 
     def test_parse_and_classify(self, monkeypatch):
         """Covers parse and classify: Alliance splits the two kinds by route."""
+
         def pair(subject_id, subject, object_id, obj, kind):
             return {
                 "geneAssociationSubject": {
@@ -593,7 +594,18 @@ class TestAllianceMolecularInteractions:
                             "taxon": {"name": "Mus musculus"},
                         },
                         "interactionType": {"name": "direct interaction"},
-                        "evidence": [{"pubModID": "MGI:6822438", "curie": "AGRKB:1"}],
+                        "detectionMethod": {"curie": "MI:0096", "name": "pull down"},
+                        "interactorARole": {"curie": "MI:0496", "name": "bait"},
+                        "interactorBRole": {"curie": "MI:0498", "name": "prey"},
+                        "interactionSource": {"curie": "MI:0463", "name": "biogrid"},
+                        "evidence": [
+                            {
+                                "pubModID": "MGI:6822438",
+                                "curie": "AGRKB:1",
+                                "referenceID": "PMID:22863532",
+                                "shortCitation": "Kawabe Y (2012) Cell Stem Cell",
+                            }
+                        ],
                     }
                 }
             ],
@@ -606,7 +618,19 @@ class TestAllianceMolecularInteractions:
         assert out["status"] == "success"
         row = out["data"][0]
         assert row["interactor_symbol"] == "Carm1"
-        assert "MGI:6822438" in row["references"]
+        # `references` is a list of OBJECTS, as this tool's return_schema has
+        # always declared. It previously emitted bare strings and this test
+        # pinned that, so the declaration and the wrapper disagreed and the
+        # test agreed with the wrapper.
+        assert row["references"][0]["mod_id"] == "MGI:6822438"
+        assert row["references"][0]["pubmed_id"] == "PMID:22863532"
+        assert row["references"][0]["citation"].startswith("Kawabe Y")
+        # How the interaction was detected: a pull down and a two-hybrid screen
+        # are not the same evidence, and neither implementation carried it.
+        assert row["detection_method"] == {"id": "MI:0096", "name": "pull down"}
+        assert row["subject_role"]["name"] == "bait"
+        assert row["interactor_role"]["name"] == "prey"
+        assert row["interaction_source"]["name"] == "biogrid"
 
     def test_error_path(self):
         """Covers error path."""

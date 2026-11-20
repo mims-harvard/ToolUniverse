@@ -104,6 +104,56 @@
                   "null"
                 ],
                 "description": "Interactive Cell Browser URL"
+              },
+              "sample_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many cells the dataset has, which is the first thing a single-cell dataset is chosen by. 138 of the catalogue's 329 entries state it and the row did not."
+              },
+              "collection_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "has_files": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Which downloadable files exist, so a browsable dataset can be told from one with an expression matrix to fetch"
+              },
+              "assays": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "life_stages": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "projects": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "domains": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -297,10 +347,110 @@
                       "null"
                     ],
                     "description": "Interactive Cell Browser URL"
+                  },
+                  "sample_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many cells the dataset has, which is the first thing a single-cell dataset is chosen by. 138 of the catalogue's 329 entries state it and the row did not."
+                  },
+                  "collection_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "has_files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Which downloadable files exist, so a browsable dataset can be told from one with an expression matrix to fetch"
+                  },
+                  "assays": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "life_stages": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "projects": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "domains": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               },
               "description": "Child datasets if a collection"
+            },
+            "sample_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many cells the dataset has, which is the first thing a single-cell dataset is chosen by. 138 of the catalogue's 329 entries state it and the row did not."
+            },
+            "collection_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "has_files": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Which downloadable files exist, so a browsable dataset can be told from one with an expression matrix to fetch"
+            },
+            "assays": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "life_stages": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "projects": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "domains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           "description": "Dataset detail",

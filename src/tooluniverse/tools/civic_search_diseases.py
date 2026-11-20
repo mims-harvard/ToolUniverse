@@ -1,7 +1,7 @@
 """
 civic_search_diseases
 
-Search CIViC diseases with cursor pagination. CIViC publishes no filter-aware total for this brow...
+Search CIViC's disease list by name substring. Each disease returns its id, name, display name, D...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def civic_search_diseases(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search CIViC diseases with cursor pagination. CIViC publishes no filter-aware total for this brow...
+    Search CIViC's disease list by name substring. Each disease returns its id, name, display name, D...
 
     Parameters
     ----------

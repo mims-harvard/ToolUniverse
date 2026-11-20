@@ -110,6 +110,31 @@
             },
             "disease_associations": {
               "type": "array"
+            },
+            "allele_names": {
+              "type": "array",
+              "description": "The alleles IMPC phenotyped -- 147 on one response. A summary that reports a phenotype status and not which allele produced it cannot be ordered from.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "es_cell_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mouse_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "assignment_status": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
           "required": [
@@ -206,8 +231,9 @@
             "total_phenotype_calls": {
               "type": [
                 "integer",
-                "number"
-              ]
+                "null"
+              ],
+              "description": "Total calls IMPC holds for the gene"
             },
             "unique_phenotypes": {
               "type": [
@@ -303,6 +329,40 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "statistical_method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which test produced the p-value. A phenotype hit is a statistical result and the query asked for this already."
+                  },
+                  "pipeline_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which IMPC pipeline ran it"
+                  },
+                  "resource_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which IMPC data release the call comes from"
+                  },
+                  "allele_accession_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The allele's own accession; a symbol is not a key"
+                  },
+                  "marker_accession_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -335,6 +395,69 @@
                   }
                 }
               }
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether more phenotype calls remain beyond this page"
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied"
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of this page"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset for the next page, or null at the end"
+            },
+            "phenotype_calls_returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Phenotype calls on this page"
+            },
+            "total_results_is_exact": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the total is exact or a lower bound"
+            },
+            "result_set_complete": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the page is the whole result set"
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the list was cut"
+            },
+            "unique_phenotypes_scope": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the unique-phenotype list covers - this page or the whole result set, which changes how the count may be used"
             }
           },
           "required": [
@@ -472,6 +595,26 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "assignment_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "`production_status` falls back from mouse_production_status to this, so neither was visible on its own: a gene with an assignment but no mouse yet read the same as one in production"
+                  },
+                  "mouse_production_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "marker_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Protein-coding against pseudogene"
                   }
                 }
               }
@@ -487,6 +630,55 @@
                 "integer",
                 "number"
               ]
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether more phenotype calls remain beyond this page"
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied"
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of this page"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset for the next page, or null at the end"
+            },
+            "total_results_is_exact": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the total is exact or a lower bound"
+            },
+            "result_set_complete": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the page is the whole result set"
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the list was cut"
             }
           },
           "required": [
@@ -701,9 +893,86 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "pipeline_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which IMPC pipeline ran it"
+                  },
+                  "resource_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which IMPC data release the call comes from"
+                  },
+                  "allele_accession_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The allele's own accession; a symbol is not a key"
+                  },
+                  "marker_accession_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "top_level_mp_term_id": {
+                    "type": [
+                      "string",
+                      "array",
+                      "null"
+                    ],
+                    "description": "The MP term's top-level id beside its name, which is what groups hits across genes"
                   }
                 }
               }
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more records match than this response carries. The field that says the answer is a page and not the whole set."
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to this call."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Records skipped before this page."
+            },
+            "result_set_complete": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when this response holds every matching record, so no further call is needed."
+            },
+            "total_results_is_exact": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the total is a count and not an estimate. An estimated total must not be used as a denominator."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result was cut by a cap rather than reaching the end of the data."
             }
           },
           "required": [

@@ -17,6 +17,52 @@ from .tool_registry import register_tool
 
 ITIS_BASE_URL = "https://www.itis.gov/ITISWebService/jsonservice"
 
+# Homo sapiens carries 29 synonyms, 7 jurisdictional origins and 8 references
+# across three lists. Each is capped here and the count and the cut reported.
+SYNONYMS_PER_RECORD = 50
+REFERENCES_PER_RECORD = 25
+JURISDICTIONS_PER_RECORD = 50
+
+
+def _clean(value: Any) -> Any:
+    """ITIS pads several string fields to a fixed width: 'Species        '."""
+    return value.strip() if isinstance(value, str) else value
+
+
+def _rows(node: Any, key: str) -> List[Dict[str, Any]]:
+    """The rows inside one of ITIS's `...List` wrappers.
+
+    Every list is wrapped in an object with the row array under its own key,
+    and ITIS puts a literal null in the array when the list is empty
+    (`acceptedNames: [null]` for a valid taxon).
+    """
+    if not isinstance(node, dict):
+        return []
+    rows = node.get(key)
+    if isinstance(rows, dict):
+        rows = [rows]
+    if not isinstance(rows, list):
+        return []
+    return [row for row in rows if isinstance(row, dict)]
+
+
+def _referred(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """What a reference is a reference *for*: the taxa it covers."""
+    return [
+        {
+            "name": _clean(row.get("name")),
+            "tsn": row.get("referredTsn"),
+            "language": row.get("refLanguage"),
+        }
+        for row in rows
+        if isinstance(row, dict)
+    ]
+
+
+def _capped(rows: List[Dict[str, Any]], cap: int) -> Dict[str, Any]:
+    """A capped list beside its full count and whether it was cut."""
+    return {"rows": rows[:cap], "total": len(rows), "truncated": len(rows) > cap}
+
 
 @register_tool("ITISTool")
 class ITISTool(BaseTool):
@@ -98,6 +144,18 @@ class ITISTool(BaseTool):
                         "combined_name": n.get("combinedName"),
                         "author": n.get("author"),
                         "kingdom": n.get("kingdom"),
+                        # ITIS splits the name into its ranked parts, which is
+                        # how a subspecies or a variety is told from a species.
+                        "name_parts": [
+                            _clean(n.get(f"unitName{i}"))
+                            for i in (1, 2, 3, 4)
+                            if n.get(f"unitName{i}")
+                        ],
+                        "name_indicators": [
+                            _clean(n.get(f"unitInd{i}"))
+                            for i in (1, 2, 3, 4)
+                            if n.get(f"unitInd{i}")
+                        ],
                     }
                 )
 
@@ -167,8 +225,14 @@ class ITISTool(BaseTool):
                     {
                         "tsn": h.get("tsn"),
                         "taxon_name": h.get("taxonName"),
-                        "rank_name": h.get("rankName"),
+                        "rank_name": _clean(h.get("rankName")),
                         "parent_tsn": h.get("parentTsn"),
+                        # The parent's name, so the chain reads without
+                        # re-looking-up every parent_tsn.
+                        "parent_name": _clean(h.get("parentName")) or None,
+                        # The naming authority for the rank, e.g.
+                        # "Linnaeus, 1758" -- which is the citation for the name.
+                        "author": _clean(h.get("author")),
                     }
                 )
 
@@ -179,6 +243,11 @@ class ITISTool(BaseTool):
                 "source": "ITIS",
                 "query_tsn": str(tsn),
                 "hierarchy_depth": len(results),
+                # The response names the taxon the hierarchy was requested
+                # for -- as an empty string for some TSNs, reported as null.
+                "taxon_name": _clean(data.get("sciName")) or None,
+                "rank_name": _clean(data.get("rankName")) or None,
+                "author": _clean(data.get("author")) or None,
             },
         }
 
@@ -217,6 +286,101 @@ class ITISTool(BaseTool):
         # Get parent TSN
         parent_tsn_data = data.get("parentTSN", {})
 
+        # An invalid name is only half an answer without the name that replaced
+        # it: TSN 944513 is reported "invalid", and the record says in the same
+        # response that it is a "junior synonym" of Homo sapiens, TSN 180092.
+        accepted = [
+            {
+                "tsn": row.get("acceptedTsn"),
+                "scientific_name": _clean(row.get("acceptedName")),
+                "author": _clean(row.get("author")),
+            }
+            for row in _rows(data.get("acceptedNameList"), "acceptedNames")
+        ]
+        synonyms = _capped(
+            [
+                {
+                    "tsn": row.get("tsn"),
+                    "scientific_name": _clean(row.get("sciName")),
+                    "author": _clean(row.get("author")),
+                }
+                for row in _rows(data.get("synonymList"), "synonyms")
+            ],
+            SYNONYMS_PER_RECORD,
+        )
+        jurisdictions = _capped(
+            [
+                {
+                    "jurisdiction": _clean(row.get("jurisdictionValue")),
+                    "origin": _clean(row.get("origin")),
+                    "update_date": row.get("updateDate"),
+                }
+                for row in _rows(
+                    data.get("jurisdictionalOriginList"), "jurisdictionalOrigins"
+                )
+            ],
+            JURISDICTIONS_PER_RECORD,
+        )
+        publications = _capped(
+            [
+                {
+                    "title": _clean(row.get("title")),
+                    "authors": _clean(row.get("referenceAuthor")),
+                    "publication": _clean(row.get("pubName")),
+                    "publisher": _clean(row.get("publisher")),
+                    "place": _clean(row.get("pubPlace")),
+                    "date": row.get("actualPubDate") or row.get("listedPubDate"),
+                    "pages": _clean(row.get("pages")),
+                    "isbn": _clean(row.get("isbn")) or None,
+                    "issn": _clean(row.get("issn")) or None,
+                    "comment": _clean(row.get("pubComment")) or None,
+                    "reference_for": _referred(row.get("referenceFor") or []),
+                }
+                for row in _rows(data.get("publicationList"), "publications")
+            ],
+            REFERENCES_PER_RECORD,
+        )
+        experts = _capped(
+            [
+                {
+                    "expert": _clean(row.get("expert")),
+                    "comment": _clean(row.get("comment")) or None,
+                    "update_date": row.get("updateDate"),
+                    "reference_for": _referred(row.get("referenceFor") or []),
+                }
+                for row in _rows(data.get("expertList"), "experts")
+            ],
+            REFERENCES_PER_RECORD,
+        )
+        other_sources = _capped(
+            [
+                {
+                    "source": _clean(row.get("source")),
+                    "source_type": _clean(row.get("sourceType")),
+                    "version": _clean(row.get("version")),
+                    "acquisition_date": row.get("acquisitionDate"),
+                    "comment": _clean(row.get("sourceComment")) or None,
+                    "reference_for": _referred(row.get("referenceFor") or []),
+                }
+                for row in _rows(data.get("otherSourceList"), "otherSources")
+            ],
+            REFERENCES_PER_RECORD,
+        )
+        comments = _capped(
+            [
+                {
+                    "comment": _clean(row.get("commentDetail")),
+                    "commentator": _clean(row.get("commentator")),
+                    "comment_id": row.get("commentId"),
+                    "update_date": row.get("updateDate"),
+                }
+                for row in _rows(data.get("commentList"), "comments")
+            ],
+            REFERENCES_PER_RECORD,
+        )
+        core = data.get("coreMetadata") or {}
+        tax_rank = data.get("taxRank") or {}
+
         result = {
             "tsn": str(tsn),
             "scientific_name": sci_name.get("combinedName"),
@@ -226,6 +390,53 @@ class ITISTool(BaseTool):
             "common_names": common_names,
             "parent_tsn": parent_tsn_data.get("parentTsn"),
             "rank": data.get("taxRank", {}).get("rankName"),
+            "parent_name": _clean((data.get("hierarchyUp") or {}).get("parentName")),
+            "rank_id": tax_rank.get("rankId"),
+            "accepted_names": accepted,
+            "unaccept_reason": _clean(
+                (data.get("unacceptReason") or {}).get("unacceptReason")
+            )
+            or None,
+            # "TWG standards met" is the Taxonomic Work Group's own verdict on
+            # the record, and it was dropped from a tool whose point is to be
+            # the authoritative name.
+            "credibility_rating": _clean(
+                (data.get("credibilityRating") or {}).get("credRating")
+                or core.get("credRating")
+            ),
+            "taxon_currency": _clean(
+                (data.get("currencyRating") or {}).get("taxonCurrency")
+                or core.get("taxonCurrency")
+            )
+            or None,
+            "completeness": _clean(
+                (data.get("completenessRating") or {}).get("completeness")
+            )
+            or None,
+            "update_date": (data.get("dateData") or {}).get("updateDate"),
+            "initial_timestamp": (data.get("dateData") or {}).get("initialTimeStamp"),
+            "geographic_divisions": [
+                _clean(row.get("geographicValue"))
+                for row in _rows(data.get("geographicDivisionList"), "geoDivisions")
+            ],
+            "jurisdictional_origins": jurisdictions["rows"],
+            "jurisdictional_origin_count": jurisdictions["total"],
+            "jurisdictional_origins_truncated": jurisdictions["truncated"],
+            "synonyms": synonyms["rows"],
+            "synonym_count": synonyms["total"],
+            "synonyms_truncated": synonyms["truncated"],
+            "publications": publications["rows"],
+            "publication_count": publications["total"],
+            "publications_truncated": publications["truncated"],
+            "experts": experts["rows"],
+            "expert_count": experts["total"],
+            "experts_truncated": experts["truncated"],
+            "other_sources": other_sources["rows"],
+            "other_source_count": other_sources["total"],
+            "other_sources_truncated": other_sources["truncated"],
+            "comments": comments["rows"],
+            "comment_count": comments["total"],
+            "comments_truncated": comments["truncated"],
         }
 
         return {
@@ -234,5 +445,7 @@ class ITISTool(BaseTool):
             "metadata": {
                 "source": "ITIS",
                 "query_tsn": str(tsn),
+                "synonyms_per_record": SYNONYMS_PER_RECORD,
+                "references_per_record": REFERENCES_PER_RECORD,
             },
         }

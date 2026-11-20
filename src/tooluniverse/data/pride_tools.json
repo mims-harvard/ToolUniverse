@@ -90,6 +90,127 @@
             "items": {
               "type": "string"
             }
+          },
+          "experimentTypes": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Experiment types as PRIDE controlled-vocabulary terms, each with cvLabel, accession and name."
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Publications for the project, each with a referenceLine and its identifiers."
+          },
+          "sampleAttributes": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Sample characteristics as key/value pairs of ontology terms - organism, tissue, disease and the rest."
+          },
+          "submissionType": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "'COMPLETE' or 'PARTIAL'. A PARTIAL submission has no search results attached, so what can be done with the project depends on this."
+          },
+          "affiliations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Submitting institutions, e.g. ['UKSH Kiel, Germany']."
+          },
+          "avgDownloadsPerFile": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Downloads averaged per file, when carried."
+          },
+          "dataProcessingProtocol": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "How the data were processed, including the quantification scale - 'NPX, log2 scale' on this project, which changes what the numbers mean."
+          },
+          "doi": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The project's DOI, e.g. '10.6019/PAD000072'. The citable handle, and it was not in the search result."
+          },
+          "downloadCount": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Total downloads, when PRIDE's search index carries it."
+          },
+          "highlights": {
+            "description": "The search terms' matches within the project's text fields, keyed by field. This is what explains WHY a project matched the query."
+          },
+          "labPIs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Principal investigators."
+          },
+          "organismsPart": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tissues or sample parts, e.g. ['Cell culture']."
+          },
+          "percentile": {
+            "description": "PRIDE's relevance percentile for the hit within the result set."
+          },
+          "projectFileNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Names of the project's files, so a search result shows what is actually downloadable."
+          },
+          "quantificationMethods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Quantification methods used. Empty when the project declares none."
+          },
+          "sampleProcessingProtocol": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "How the samples were prepared, in the submitters' words."
+          },
+          "sdrf": {
+            "description": "The project's SDRF sample-and-data-relationship file, when one was submitted."
+          },
+          "softwares": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Software used in the analysis. Empty when the project declares none."
+          },
+          "updatedDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "When the project was last updated, YYYY-MM-DD."
           }
         }
       }
@@ -346,6 +467,90 @@
         },
         "doi": {
           "type": "string"
+        },
+        "submissionType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'COMPLETE' or 'PARTIAL'. A PARTIAL submission has no search results attached, so what can be done with the project depends on this."
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Terms the data is released under, e.g. 'EBI terms of use'."
+        },
+        "experimentTypes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Experiment types as PRIDE controlled-vocabulary terms, each with cvLabel, accession and name."
+        },
+        "identifiedPTMStrings": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Post-translational modifications identified in the project, as MOD ontology terms. For a proteomics project this is a large part of what the data is about."
+        },
+        "sampleAttributes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Sample characteristics as key/value pairs of ontology terms - organism, tissue, disease and the rest."
+        },
+        "projectTags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "PRIDE's tags for the project, e.g. ['Prime-xs project']."
+        },
+        "countries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Countries of the submitting labs."
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Publications for the project, each with a referenceLine and its identifiers."
+        },
+        "totalFileDownloads": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Times the project's files have been downloaded, e.g. 543735."
+        },
+        "botCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Downloads PRIDE attributes to automated clients, e.g. 330234. Subtract it from totalFileDownloads before reading that number as human interest - here the bots are the majority."
+        },
+        "hubCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Downloads through PRIDE's hub, e.g. 201086."
+        },
+        "organicCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Downloads PRIDE classes as organic, e.g. 12415."
         }
       }
     },
@@ -410,9 +615,79 @@
                 },
                 "value": {
                   "type": "string"
+                },
+                "@type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The term's type, 'CvParam' for a controlled-vocabulary term."
+                },
+                "accession": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Accession of the location type in PRIDE's vocabulary, e.g. 'PRIDE:0000469' for an FTP protocol."
+                },
+                "cvLabel": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which vocabulary the accession is from, e.g. 'PRIDE'."
                 }
               }
             }
+          },
+          "checksum": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Checksum of the file, empty string when PRIDE records none. The means of verifying a download - and when it is empty, that itself is worth seeing."
+          },
+          "compress": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Whether the file is compressed."
+          },
+          "fileSizeBytes": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Size in bytes, e.g. 497985. Needed before downloading and absent from the row."
+          },
+          "publicationDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "When it became public, ISO 8601."
+          },
+          "submissionDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "When the file was submitted, ISO 8601."
+          },
+          "totalDownloads": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Times this file has been downloaded, e.g. 701."
+          },
+          "updatedDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "When it last changed, ISO 8601."
           }
         }
       }

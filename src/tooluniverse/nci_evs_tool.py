@@ -155,6 +155,13 @@ class NCIEVSTool(BaseTool):
                 "code": c.get("code"),
                 "name": c.get("name"),
                 "leaf": c.get("leaf"),
+                # Whether the concept is still current. EVS retires concepts
+                # and keeps answering for them, so a search that reports a
+                # code and a name and not its status can hand back a retired
+                # concept as though it were in use.
+                "concept_status": c.get("conceptStatus"),
+                "terminology_version": c.get("version"),
+                "terminology": c.get("terminology"),
             }
             for c in concepts
         ]

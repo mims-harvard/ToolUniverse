@@ -273,6 +273,154 @@
               },
               "missing_atoms": {
                 "type": "integer"
+              },
+              "Grich_angle": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Conformation of the G-rich loop - angle in degrees, e.g. 59.5972."
+              },
+              "Grich_distance": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Conformation of the G-rich loop (P-loop) - distance, in angstroms, e.g. 18.0522. The three Grich_* values together say whether the loop is collapsed over the ATP site or lifted away, which changes what fits underneath it."
+              },
+              "Grich_rotation": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Conformation of the G-rich loop - rotation in degrees, e.g. 57.1354."
+              },
+              "allosteric_ligand": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ],
+                "description": "3-letter PDB code of a ligand bound OUTSIDE the main pocket. Returned as the INTEGER 0, not as null or an empty string, when there is no allosteric ligand -- measured 0 on all 85 rows -- so test it for 0 rather than for falsiness alone."
+              },
+              "back": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to the back pocket. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_III": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-III. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_II_A_in": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-II-A-in. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_II_B": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-II-B. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_II_B_in": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-II-B-in. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_II_in": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-II-in, reachable in the DFG-in conformation. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_II_out": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-II-out, the subsite opened up by the DFG-out conformation. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_IV": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-IV. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_I_A": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-I-A, a back-pocket subsite. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_I_B": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-I-B, a back-pocket subsite. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_V": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-V. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "fp_I": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to FP-I, a front-pocket subsite. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "fp_II": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to FP-II, a front-pocket subsite. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "front": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to the front pocket. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "gate": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to the gate area (the gatekeeper region between front and back pockets). One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "rmsd1": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "RMSD against the reference template for the SUPERPOSE pocket, in angstroms, e.g. 0.778."
+              },
+              "rmsd2": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "RMSD against the reference template for the FULL pocket, e.g. 2.093. Larger than rmsd1 by construction; a big gap between the two means the pocket deviates where it was not superposed, i.e. a genuinely different conformation rather than a fitting artefact."
               }
             }
           }
@@ -367,6 +515,187 @@
                   "null"
                 ],
                 "description": "KLIFS quality score (higher is better). A number, integral for most structures and fractional for some (7.6)."
+              },
+              "kinase_ID": {
+                "type": "integer",
+                "description": "KLIFS kinase ID"
+              },
+              "pocket": {
+                "type": "string",
+                "description": "80-residue standardized KLIFS kinase pocket sequence"
+              },
+              "species": {
+                "type": "string",
+                "description": "Species: Human, Mouse, Rat"
+              },
+              "Grich_angle": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Conformation of the G-rich loop - angle in degrees, e.g. 59.5972."
+              },
+              "Grich_distance": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Conformation of the G-rich loop (P-loop) - distance, in angstroms, e.g. 18.0522. The three Grich_* values together say whether the loop is collapsed over the ATP site or lifted away, which changes what fits underneath it."
+              },
+              "Grich_rotation": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Conformation of the G-rich loop - rotation in degrees, e.g. 57.1354."
+              },
+              "allosteric_ligand": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ],
+                "description": "3-letter PDB code of a ligand bound OUTSIDE the main pocket. Returned as the INTEGER 0, not as null or an empty string, when there is no allosteric ligand -- measured 0 on all 85 rows -- so test it for 0 rather than for falsiness alone."
+              },
+              "alt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The alternate model of the structure, e.g. 'A'; empty when the entry has only one. Measured on 2 of the 4 chains of the example PDB entry, so a pdb+chain pair is not unique on its own: pdb+chain+alt is."
+              },
+              "back": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to the back pocket. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_III": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-III. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_II_A_in": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-II-A-in. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_II_B": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-II-B. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_II_B_in": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-II-B-in. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_II_in": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-II-in, reachable in the DFG-in conformation. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_II_out": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-II-out, the subsite opened up by the DFG-out conformation. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_IV": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-IV. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_I_A": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-I-A, a back-pocket subsite. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_I_B": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-I-B, a back-pocket subsite. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "bp_V": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to BP-V. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "fp_I": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to FP-I, a front-pocket subsite. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "fp_II": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to FP-II, a front-pocket subsite. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "front": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to the front pocket. One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "gate": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "The ligand binds to the gate area (the gatekeeper region between front and back pockets). One of the KLIFS subpockets (van Linden et al. 2014). Which of front/gate/back, fp_I, fp_II and the bp_* flags are true is what separates a type-I binder (front pocket and gate only) from one that reaches the back pocket, and it is only interpretable alongside the DFG and aC_helix conformations in the same row."
+              },
+              "missing_atoms": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of atoms missing from pocket residues, not counting residues missing entirely, e.g. 0."
+              },
+              "missing_residues": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of residues missing from the 85-residue pocket, e.g. 0. Non-zero means the pocket alignment has gaps and the subpocket flags below rest on an incomplete structure."
+              },
+              "rmsd1": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "RMSD against the reference template for the SUPERPOSE pocket, in angstroms, e.g. 0.778."
+              },
+              "rmsd2": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "RMSD against the reference template for the FULL pocket, e.g. 2.093. Larger than rmsd1 by construction; a big gap between the two means the pocket deviates where it was not superposed, i.e. a genuinely different conformation rather than a fitting artefact."
               }
             }
           }

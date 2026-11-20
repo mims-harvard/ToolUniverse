@@ -17,7 +17,7 @@ def ReMap_list_datasets_for_target(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List ReMap ChIP-seq datasets for a transcription factor, one row per dataset, optionally filtered...
 
@@ -40,7 +40,7 @@ def ReMap_list_datasets_for_target(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

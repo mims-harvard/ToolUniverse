@@ -88,6 +88,67 @@
                 "querytranslation": {
                   "type": "string",
                   "description": "Translated search query."
+                },
+                "translationset": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "How NCBI expanded the query terms",
+                  "items": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "translationstack": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "The parsed query stack NCBI actually ran, which is what explains an unexpected result count",
+                  "items": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "header": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The eUtils response header",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
                 }
               }
             }
@@ -127,6 +188,13 @@
         },
         "url": {
           "type": "string"
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Media type NCBI returned"
         }
       }
     },
@@ -210,8 +278,25 @@
             "samples": {
               "type": "string",
               "description": "Number of samples"
+            },
+            "uids": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "The UIDs this response carries, e.g. ['200002606']. The keys of the `result` object, which is keyed by UID."
             }
+          },
+          "additionalProperties": {
+            "type": "object",
+            "description": "One GEO record, keyed by its UID."
           }
+        },
+        "header": {
+          "description": "NCBI's envelope header: the esummary type and version."
         }
       }
     },
@@ -263,8 +348,11 @@
       "description": "GEO sample information",
       "properties": {
         "result": {
-          "type": "object",
-          "description": "Sample information from GEO",
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The sample records, keyed by GEO UID, plus a `uids` key listing which keys are records. The record fields are declared below; the UID keys are data, so the declared-fields audit reports them and that is expected rather than a gap - removing these properties would satisfy the audit by declaring less",
           "properties": {
             "uid": {
               "type": "string",
@@ -281,6 +369,63 @@
             "summary": {
               "type": "string",
               "description": "Dataset summary text"
+            }
+          },
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ],
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ],
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "header": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The NCBI eUtils response header",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ],
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ]
             }
           }
         }

@@ -1,7 +1,7 @@
 """
 civic_get_assertion
 
-Get a specific CIViC assertion by assertion ID. Assertions are higher-level clinical interpretati...
+Get one CIViC assertion by id, with THE EVIDENCE IT IS MADE FROM. Returns the assertion's type, d...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def civic_get_assertion(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get a specific CIViC assertion by assertion ID. Assertions are higher-level clinical interpretati...
+    Get one CIViC assertion by id, with THE EVIDENCE IT IS MADE FROM. Returns the assertion's type, d...
 
     Parameters
     ----------

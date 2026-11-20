@@ -55,6 +55,36 @@ AA_1TO3 = {
 AA_3TO1 = {v: k for k, v in AA_1TO3.items()}
 
 
+def _effect(ddg) -> str:
+    """Stabilizing, destabilizing, or unknown when there is no number.
+
+    The two call sites were an if/else with no third branch:
+
+        "stabilizing" if isinstance(ddg, (int, float)) and ddg > 0
+        else "destabilizing"
+
+    so a prediction DynaMut2 did not return, or returned unparseably, came
+    back as a confident "destabilizing". The float() above these sites
+    handles the ordinary string case, which is why this is narrower than it
+    looks -- but a directional call with nothing behind it is still an
+    answer the data does not support. How often DynaMut2 leaves `prediction`
+    unparseable is not measured here: it submits jobs by ticket and polls,
+    so a population estimate would take hours of queueing.
+    """
+    if isinstance(ddg, bool):
+        # isinstance(True, int) is True, and True > 0, so a bool would
+        # otherwise read as a stabilizing prediction.
+        return "unknown"
+    if not isinstance(ddg, (int, float)):
+        try:
+            ddg = float(str(ddg).strip())
+        except (TypeError, ValueError):
+            return "unknown"
+    # A ddG of exactly 0 keeps reading as destabilizing, which is what this
+    # tool has always said; only the no-number case changes.
+    return "stabilizing" if ddg > 0 else "destabilizing"
+
+
 @register_tool("DynaMut2Tool")
 class DynaMut2Tool(BaseTool):
     """
@@ -292,11 +322,7 @@ class DynaMut2Tool(BaseTool):
         )
         mut_1 = AA_3TO1.get(mutant_3, new_aa) if isinstance(mutant_3, str) else new_aa
 
-        effect = (
-            "stabilizing"
-            if isinstance(ddg, (int, float)) and ddg > 0
-            else "destabilizing"
-        )
+        effect = _effect(ddg)
 
         return {
             "status": "success",
@@ -381,11 +407,7 @@ class DynaMut2Tool(BaseTool):
 
             wt_1 = AA_3TO1.get(wild_type_3, "?")
             mut_1 = AA_3TO1.get(mutant_3, "?")
-            effect = (
-                "stabilizing"
-                if isinstance(ddg, (int, float)) and ddg > 0
-                else "destabilizing"
-            )
+            effect = _effect(ddg)
 
             return {
                 "status": "success",

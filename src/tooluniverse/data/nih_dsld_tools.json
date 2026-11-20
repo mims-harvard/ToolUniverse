@@ -81,7 +81,19 @@
             "brand": {"type": ["string", "null"]},
             "upc": {"type": ["string", "null"]},
             "product_type": {"type": ["string", "null"]},
-            "serving_size": {"type": ["object", "null"]},
+            "serving_size": {
+              "type": ["object", "null"],
+              "description": "The label's serving size",
+              "properties": {
+                "order": {"type": ["integer", "null"]},
+                "unit": {"type": ["string", "null"], "description": "e.g. 'Gummy(ies)'"},
+                "minQuantity": {"type": ["number", "null"], "description": "Serving size, lower bound"},
+                "maxQuantity": {"type": ["number", "null"], "description": "Serving size, upper bound"},
+                "minDailyServings": {"type": ["number", "null"], "description": "Servings per day, lower bound"},
+                "maxDailyServings": {"type": ["number", "null"], "description": "Servings per day, upper bound"},
+                "inSFB": {"type": ["boolean", "null"], "description": "Whether it appears in the supplement facts box"}
+              }
+            },
             "servings_per_container": {},
             "ingredients": {
               "type": "array",
@@ -99,6 +111,80 @@
                 }
               }
             },
+            "other_ingredients": {
+              "type": "object",
+              "description": "The inactive ingredients, the other half of 'every ingredient'",
+              "properties": {
+                "text": {"type": ["string", "null"], "description": "DSLD's free-text other-ingredients line, where present"},
+                "ingredient_count": {"type": ["integer", "null"], "description": "How many the label carries, before the cap"},
+                "ingredients": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {"type": ["string", "null"]},
+                      "category": {"type": ["string", "null"], "description": "DSLD category, e.g. sugar"},
+                      "ingredient_group": {"type": ["string", "null"]},
+                      "unii_code": {"type": ["string", "null"], "description": "FDA UNII for the substance"},
+                      "alternate_names": {"type": "array", "items": {"type": "string"}}
+                    }
+                  }
+                }
+              }
+            },
+            "statements": {
+              "type": "array",
+              "description": "What the package says, capped at metadata.statements_per_label. The audited label has 23, four of them precautions",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {"type": ["string", "null"], "description": "DSLD's statement type, e.g. 'Precautions re: Pregnant or Nursing or Prescription Medications', 'Suggested/Recommended/Usage/Directions', 'Storage', 'FDA Disclaimer Statement'"},
+                  "text": {"type": ["string", "null"], "description": "The statement as printed"}
+                }
+              }
+            },
+            "net_contents": {
+              "type": "array",
+              "description": "How much is in the package",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "quantity": {"type": ["number", "null"]},
+                  "unit": {"type": ["string", "null"], "description": "e.g. 'Gummy Vitamin(s)'"},
+                  "display": {"type": ["string", "null"], "description": "As printed, e.g. '75 Gummy Vitamin(s)'"}
+                }
+              }
+            },
+            "percent_dv_footnote": {"type": ["string", "null"], "description": "What the percent_daily_value figures are a percentage of, e.g. 'Percent Daily Values are based on a 2,000 calorie diet.'"},
+            "claim_types": {"type": "array", "items": {"type": "string"}, "description": "LanguaL claim categories on the label, e.g. 'Structure/Function'"},
+            "contacts": {
+              "type": "array",
+              "description": "Who makes or distributes the product, as printed",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "role": {"type": ["string", "null"], "description": "The label's wording, e.g. 'Manufactured By'"},
+                  "types": {"type": "array", "items": {"type": "string"}},
+                  "name": {"type": ["string", "null"], "description": "Company name"},
+                  "city": {"type": ["string", "null"]},
+                  "state": {"type": ["string", "null"]},
+                  "country": {"type": ["string", "null"]},
+                  "web_address": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "events": {
+              "type": "array",
+              "description": "Dated label events. off_market says whether; these say when",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "date": {"type": ["string", "null"]},
+                  "type": {"type": ["string", "null"], "description": "e.g. 'Off Market', 'Date entered into DSLD'"}
+                }
+              }
+            },
+            "pdf_url": {"type": ["string", "null"], "description": "DSLD's scan of the label, where it has one"},
             "off_market": {"type": "boolean"}
           }
         },

@@ -159,6 +159,13 @@
                   "prettyUrlName": {
                     "type": "string",
                     "description": "URL-friendly drug name"
+                  },
+                  "firstLetter": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The letter this drug is filed under in the NCI dictionary's A-Z index, e.g. 'i'. A navigation aid."
                   }
                 }
               }
@@ -288,6 +295,21 @@
                   "type": "string"
                 }
               }
+            },
+            "prettyUrlName": {
+              "type": "string",
+              "description": "URL-friendly drug name"
+            },
+            "termNameType": {
+              "type": "string",
+              "description": "Name type: PreferredName, USBrandName, CodeName, ChemicalStructureName, etc."
+            },
+            "firstLetter": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The letter the drug is filed under in the NCI dictionary's A-Z index, e.g. 'i'. A navigation aid, not a property of the drug."
             }
           },
           "not": {

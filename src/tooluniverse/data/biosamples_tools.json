@@ -60,6 +60,16 @@
             },
             "characteristics": {
               "type": "object"
+            },
+            "external_references": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "Links to the same sample in other archives, each with its 'url', e.g. the ENA browser record. How a BioSample is joined to the sequencing data taken from it."
             }
           },
           "not": {

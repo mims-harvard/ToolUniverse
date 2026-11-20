@@ -16,7 +16,9 @@
                     "default": "homo_sapiens"
                 }
             },
-            "required": ["gene_id"]
+            "required": [
+                "gene_id"
+            ]
         },
         "return_schema": {
             "type": "array",
@@ -24,16 +26,129 @@
             "items": {
                 "type": "object",
                 "properties": {
-                    "transcript_id": {"type": ["string", "null"]},
-                    "transcript_name": {"type": ["string", "null"]},
-                    "gene_id": {"type": ["string", "null"]},
-                    "annotation": {"type": ["string", "null"]},
-                    "reliability": {"type": ["string", "null"]},
-                    "biotype": {"type": ["string", "null"]},
-                    "length_aa": {"type": ["string", "null"]},
-                    "length_na": {"type": ["string", "null"]},
-                    "ccds_id": {"type": ["string", "null"]},
-                    "tsl": {"type": ["string", "null"]}
+                    "transcript_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "transcript_name": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "gene_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "annotation": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "reliability": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "biotype": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "length_aa": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "length_na": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "ccds_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "tsl": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "end": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "End coordinate as a STRING, e.g. '7687427', 1-based inclusive."
+                    },
+                    "frame": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "GTF frame column, likewise the placeholder '.' on every row measured."
+                    },
+                    "score": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "GTF score column. APPRIS does not use it and returns the GTF placeholder '.', not a number and not null -- so this field never carries a confidence value."
+                    },
+                    "seqname": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Chromosome as GTF names it, e.g. '17' -- no 'chr' prefix."
+                    },
+                    "source": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Which pipeline produced the row, e.g. 'APPRIS'."
+                    },
+                    "start": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Start coordinate as a STRING, e.g. '7668421'. GTF is 1-based and inclusive."
+                    },
+                    "strand": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Strand, '+' or '-', e.g. '-'. Needed before start/end mean anything."
+                    },
+                    "tag": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "The GENCODE/APPRIS tags for the transcript, comma-separated in ONE string, e.g. 'alternative_5_UTR,mRNA_end_NF,inferred_exon_combination,appris_principal_1,CCDS'. This is where the APPRIS verdict itself lives -- the 'appris_principal_N' or 'appris_alternative_N' tag -- alongside 'CCDS' and the incompleteness flags 'mRNA_end_NF' / 'mRNA_start_NF'. Present on 162 of 184 isoform rows; split on ',' and look for the 'appris_' prefix."
+                    },
+                    "type": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "What the row asserts, e.g. 'principal_isoform'."
+                    }
                 },
                 "additionalProperties": true
             }
@@ -68,20 +183,139 @@
                     "default": "homo_sapiens"
                 }
             },
-            "required": ["gene_id"]
+            "required": [
+                "gene_id"
+            ]
         },
         "return_schema": {
             "type": "object",
             "description": "The principal isoform with its APPRIS annotation.",
             "properties": {
-                "transcript_id": {"type": ["string", "null"]},
-                "transcript_name": {"type": ["string", "null"]},
-                "gene_id": {"type": ["string", "null"]},
-                "annotation": {"type": ["string", "null"]},
-                "reliability": {"type": ["string", "null"]},
-                "biotype": {"type": ["string", "null"]},
-                "length_aa": {"type": ["string", "null"]},
-                "ccds_id": {"type": ["string", "null"]}
+                "transcript_id": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "transcript_name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "gene_id": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "annotation": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "reliability": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "biotype": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "length_aa": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "ccds_id": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "end": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "End coordinate as a STRING, e.g. '7687427', 1-based inclusive."
+                },
+                "frame": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "GTF frame column, likewise the placeholder '.' on every row measured."
+                },
+                "length_na": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Transcript length in nucleotides as a STRING, e.g. '2552'."
+                },
+                "score": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "GTF score column. APPRIS does not use it and returns the GTF placeholder '.', not a number and not null -- so this field never carries a confidence value."
+                },
+                "seqname": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Chromosome as GTF names it, e.g. '17' -- no 'chr' prefix."
+                },
+                "source": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Which pipeline produced the row, e.g. 'APPRIS'."
+                },
+                "start": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Start coordinate as a STRING, e.g. '7668421'. GTF is 1-based and inclusive."
+                },
+                "strand": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Strand, '+' or '-', e.g. '-'. Needed before start/end mean anything."
+                },
+                "tag": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "The GENCODE/APPRIS tags for the transcript, comma-separated in ONE string, e.g. 'alternative_5_UTR,mRNA_end_NF,inferred_exon_combination,appris_principal_1,CCDS'. This is where the APPRIS verdict itself lives -- the 'appris_principal_N' or 'appris_alternative_N' tag -- alongside 'CCDS' and the incompleteness flags 'mRNA_end_NF' / 'mRNA_start_NF'. Present on 162 of 184 isoform rows; split on ',' and look for the 'appris_' prefix."
+                },
+                "tsl": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Ensembl Transcript Support Level as a STRING, '1' (best supported) to '5' (weakest), e.g. '5'. A principal isoform with tsl 5 is APPRIS's structural call on a thinly supported transcript."
+                },
+                "type": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "What the row asserts, e.g. 'principal_isoform'."
+                }
             },
             "additionalProperties": true
         },
@@ -122,7 +356,9 @@
                     "description": "Optional Ensembl transcript ID to filter results for a specific isoform (e.g., ENST00000269305)."
                 }
             },
-            "required": ["gene_id"]
+            "required": [
+                "gene_id"
+            ]
         },
         "return_schema": {
             "type": "object",
@@ -132,10 +368,30 @@
                 "items": {
                     "type": "object",
                     "properties": {
-                        "transcript_id": {"type": ["string", "null"]},
-                        "type": {"type": ["string", "null"]},
-                        "annotation": {"type": ["string", "null"]},
-                        "score": {"type": ["string", "null"]}
+                        "transcript_id": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "type": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "annotation": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "score": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
                     },
                     "additionalProperties": true
                 }

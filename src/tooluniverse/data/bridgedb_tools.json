@@ -304,50 +304,86 @@
             },
             "attributes": {
               "type": "object",
-              "description": "Key-value pairs of attributes. Common keys: Symbol, BrutoFormula, Monoisotopic Weight, InChI, InChIKey, Synonyms (array)",
+              "description": "Attributes for the identifier, keyed by BridgeDb's own attribute name. BridgeDb serves one 'name<TAB>value' line per attribute and the set depends on the entity: a metabolite answers Symbol, BrutoFormula, InChI, InChIKey, SMILES, 'Monoisotopic Weight' and a Synonym line per synonym (28 for D-glucose); a gene or protein answers Symbol, Type, Description and Chromosome. Empty object when BridgeDb knows the identifier but holds no attributes for it (HTTP 204).",
               "properties": {
                 "Symbol": {
                   "type": [
                     "string",
                     "null"
                   ],
-                  "description": "Common symbol/name"
+                  "description": "Common name or gene symbol, e.g. 'D-Glucose' for HMDB0000122, 'TP53' for ENSG00000141510."
                 },
                 "BrutoFormula": {
                   "type": [
                     "string",
                     "null"
                   ],
-                  "description": "Molecular formula"
+                  "description": "Molecular formula, e.g. 'C6H12O6'. Metabolite entries only."
                 },
                 "InChI": {
                   "type": [
                     "string",
                     "null"
                   ],
-                  "description": "InChI chemical identifier"
+                  "description": "Full InChI including stereochemistry layers, e.g. 'InChI=1S/C6H12O6/c7-1-2-3(8)4(9)5(10)6(11)12-2/h2-11H,1H2/t2-,3-,4+,5-,6-/m1/s1'."
                 },
                 "InChIKey": {
                   "type": [
                     "string",
                     "null"
                   ],
-                  "description": "InChIKey hash"
+                  "description": "The 27-character InChIKey, e.g. 'WQZGKKKJIJFFOK-VFUOTHLCSA-N'."
                 },
                 "Monoisotopic Weight": {
                   "type": [
                     "string",
                     "null"
                   ],
-                  "description": "Monoisotopic molecular weight"
+                  "description": "Monoisotopic mass as a STRING, e.g. '180.063388116' -- BridgeDb serves it as text, so it needs converting before arithmetic. Note the space in the property name."
                 },
                 "Synonyms": {
                   "type": "array",
-                  "description": "Alternative names",
+                  "description": "Every alternative name BridgeDb holds, collected from its repeated 'Synonym' lines -- 28 for D-glucose, spanning spellings ('beta-D-Glucose', 'b-D-Glucose', 'beta-D-Glucose'), trade names ('Dextrose') and the systematic name. The one field here that is a list rather than a string.",
                   "items": {
                     "type": "string"
                   }
+                },
+                "SMILES": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Isomeric SMILES for the structure, e.g. 'OC[C@H]1O[C@@H](O)[C@H](O)[C@@H](O)[C@@H]1O'. Metabolite entries only, and the only machine-readable structure here besides InChI."
+                },
+                "Type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What kind of entity the identifier names, e.g. 'protein_coding' for a gene. Gene and protein entries only."
+                },
+                "Description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The source database's own description of the entity, with its provenance appended, e.g. 'tumor protein p53 [Source:HGNC Symbol;Acc:HGNC:11998]'."
+                },
+                "Chromosome": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Chromosome the gene sits on, as a bare name without a 'chr' prefix, e.g. '17'."
                 }
+              },
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "array",
+                  "null"
+                ],
+                "description": "BridgeDb may answer an attribute name beyond the ones above; the value is then its string, or a list where the name repeated across lines."
               }
             }
           },

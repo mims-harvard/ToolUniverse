@@ -233,6 +233,23 @@ class DiseaseOntologyTool(BaseTool):
                         "definition": parent_data.get("definition"),
                         "relationship": parent["relationship"],
                         "source": parent["source"],
+                        # This handler fetches each parent's whole term
+                        # record to read its name and definition, so the
+                        # vocabulary mappings and synonyms on that record
+                        # are already paid for. Without the xrefs a caller
+                        # cannot carry the hierarchy into ICD-10-CM, MeSH,
+                        # UMLS or NCIt; without the synonyms it cannot
+                        # recognise the parent under the name its own data
+                        # uses.
+                        "cross_references": self._validated_list(
+                            parent_data, "xrefs"
+                        ),
+                        "synonyms": self._validated_list(
+                            parent_data, "synonyms"
+                        ),
+                        "subsets": self._validated_list(
+                            parent_data, "subsets"
+                        ),
                         "grandparents": grandparents,
                         "fetch_complete": True,
                     }

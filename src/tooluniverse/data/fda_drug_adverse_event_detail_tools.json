@@ -212,6 +212,57 @@
                             "drugdosagetext": {
                               "type": "string",
                               "description": "Drug dosage information"
+                            },
+                            "rxcui": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ],
+                              "description": "The RxNorm concept. `medicinalproduct` is free text the reporter typed -- \"TYLENOL\", \"acetaminophen\", \"PARACETAMOL\" are three strings for one drug -- and this is what resolves them to one thing."
+                            },
+                            "unii": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_generic_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_brand_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_substance_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "pharm_class_epc": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ],
+                              "description": "Established pharmacologic class, so a class effect can be seen across reports"
+                            },
+                            "pharm_class_moa": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
                             }
                           }
                         }
@@ -419,7 +470,111 @@
                   },
                   "patient": {
                     "type": "object",
-                    "description": "Patient information including reactions and drugs"
+                    "description": "Patient information including reactions and drugs",
+                    "properties": {
+                      "drug": {
+                        "type": "array",
+                        "description": "One entry per drug on the report. `medicinalproduct` is free text the reporter typed -- \"TYLENOL\", \"acetaminophen\" and \"PARACETAMOL\" are three strings for one drug -- and the openFDA codes beside it are what resolve them to one thing.",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "medicinalproduct": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugindication": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugadministrationroute": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugdosagetext": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugdosageform": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugstartdate": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "actiondrug": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "rxcui": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ],
+                              "description": "The RxNorm concept, which is what makes two reports of the same drug comparable"
+                            },
+                            "unii": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_generic_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_brand_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_substance_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "pharm_class_epc": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ],
+                              "description": "Established pharmacologic class, so a class effect can be seen across reports"
+                            },
+                            "pharm_class_moa": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               },
@@ -640,7 +795,111 @@
                   },
                   "patient": {
                     "type": "object",
-                    "description": "Patient information including reactions and drugs"
+                    "description": "Patient information including reactions and drugs",
+                    "properties": {
+                      "drug": {
+                        "type": "array",
+                        "description": "One entry per drug on the report. `medicinalproduct` is free text the reporter typed -- \"TYLENOL\", \"acetaminophen\" and \"PARACETAMOL\" are three strings for one drug -- and the openFDA codes beside it are what resolve them to one thing.",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "medicinalproduct": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugindication": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugadministrationroute": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugdosagetext": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugdosageform": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugstartdate": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "actiondrug": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "rxcui": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ],
+                              "description": "The RxNorm concept, which is what makes two reports of the same drug comparable"
+                            },
+                            "unii": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_generic_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_brand_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_substance_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "pharm_class_epc": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ],
+                              "description": "Established pharmacologic class, so a class effect can be seen across reports"
+                            },
+                            "pharm_class_moa": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               },
@@ -817,7 +1076,111 @@
                   },
                   "patient": {
                     "type": "object",
-                    "description": "Patient information including drugs with indications and reactions"
+                    "description": "Patient information including drugs with indications and reactions",
+                    "properties": {
+                      "drug": {
+                        "type": "array",
+                        "description": "One entry per drug on the report. `medicinalproduct` is free text the reporter typed -- \"TYLENOL\", \"acetaminophen\" and \"PARACETAMOL\" are three strings for one drug -- and the openFDA codes beside it are what resolve them to one thing.",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "medicinalproduct": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugindication": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugadministrationroute": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugdosagetext": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugdosageform": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugstartdate": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "actiondrug": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "rxcui": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ],
+                              "description": "The RxNorm concept, which is what makes two reports of the same drug comparable"
+                            },
+                            "unii": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_generic_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_brand_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_substance_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "pharm_class_epc": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ],
+                              "description": "Established pharmacologic class, so a class effect can be seen across reports"
+                            },
+                            "pharm_class_moa": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               },
@@ -1006,7 +1369,111 @@
                   },
                   "patient": {
                     "type": "object",
-                    "description": "Patient information including reactions with outcomes"
+                    "description": "Patient information including reactions with outcomes",
+                    "properties": {
+                      "drug": {
+                        "type": "array",
+                        "description": "One entry per drug on the report. `medicinalproduct` is free text the reporter typed -- \"TYLENOL\", \"acetaminophen\" and \"PARACETAMOL\" are three strings for one drug -- and the openFDA codes beside it are what resolve them to one thing.",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "medicinalproduct": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugindication": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugadministrationroute": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugdosagetext": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugdosageform": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugstartdate": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "actiondrug": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "rxcui": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ],
+                              "description": "The RxNorm concept, which is what makes two reports of the same drug comparable"
+                            },
+                            "unii": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_generic_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_brand_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_substance_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "pharm_class_epc": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ],
+                              "description": "Established pharmacologic class, so a class effect can be seen across reports"
+                            },
+                            "pharm_class_moa": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               },
@@ -1179,7 +1646,111 @@
                   },
                   "patient": {
                     "type": "object",
-                    "description": "Patient information including all drugs and reactions"
+                    "description": "Patient information including all drugs and reactions",
+                    "properties": {
+                      "drug": {
+                        "type": "array",
+                        "description": "One entry per drug on the report. `medicinalproduct` is free text the reporter typed -- \"TYLENOL\", \"acetaminophen\" and \"PARACETAMOL\" are three strings for one drug -- and the openFDA codes beside it are what resolve them to one thing.",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "medicinalproduct": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugindication": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugadministrationroute": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugdosagetext": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugdosageform": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "drugstartdate": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "actiondrug": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "rxcui": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ],
+                              "description": "The RxNorm concept, which is what makes two reports of the same drug comparable"
+                            },
+                            "unii": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_generic_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_brand_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_substance_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "pharm_class_epc": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ],
+                              "description": "Established pharmacologic class, so a class effect can be seen across reports"
+                            },
+                            "pharm_class_moa": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               },

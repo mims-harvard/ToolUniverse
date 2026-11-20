@@ -177,6 +177,27 @@
                     },
                     "url": {
                       "type": "string"
+                    },
+                    "created_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "When the record was created in TeSS, ISO-8601 UTC, e.g. '2026-09-05T05:12:11.782Z'."
+                    },
+                    "type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Kind of linked resource, e.g. 'other'."
+                    },
+                    "updated_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "When the record was last changed, e.g. '2026-11-11T04:42:13.398Z'."
                     }
                   }
                 }
@@ -379,6 +400,97 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "capacity": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of places, e.g. 8. Present on 2 of the 5 events; absent means not stated, not unlimited."
+              },
+              "content_provider_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Numeric id of the TeSS content provider that supplied the record, e.g. 2."
+              },
+              "created_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the record was created in TeSS, ISO-8601 UTC, e.g. '2026-09-05T05:12:11.782Z'."
+              },
+              "event_types": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "What kind of event it is, e.g. ['workshops_and_courses']. TeSS's controlled vocabulary."
+              },
+              "last_scraped": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Date the harvester last refreshed the record, 'YYYY-MM-DD', e.g. '2026-11-11'. A stale date means the upstream listing may have moved on."
+              },
+              "latitude": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Latitude of the venue as a STRING, e.g. '43.590472'. Present on 2 of 5 -- online events have none."
+              },
+              "longitude": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Longitude of the venue as a STRING, e.g. '3.859513'. Present on 2 of 5."
+              },
+              "nodes": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "ELIXIR nodes the record belongs to, each {name, node_id}, e.g. {'name': 'EMBL-EBI', 'node_id': 4}."
+              },
+              "scraper_record": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the record was harvested automatically rather than entered by hand. True on all 5 events measured, which is why some fields are sparse."
+              },
+              "slug": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "TeSS's URL slug for the record, e.g. 'uniprot-b58010bb-9cd8-41a5-b74b-20bbdbddeff2'. This, not the numeric id, is what appends to https://tess.elixir-europe.org/events/."
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Where TeSS got the record, e.g. 'tess'."
+              },
+              "updated_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the record was last changed, e.g. '2026-11-11T04:42:13.398Z'."
+              },
+              "user_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Numeric TeSS user who owns the record, e.g. 1."
               }
             }
           }

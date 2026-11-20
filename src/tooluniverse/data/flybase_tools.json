@@ -153,9 +153,94 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
+            },
+            "secondary_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Retired accessions for the gene. Older literature cites these, and nothing else recovers them."
+            },
+            "cross_references_total": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "xref_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "cross_references_returned": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "cross_references_truncated": {
+              "type": "boolean"
+            },
+            "next_xref_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "notes": {
+              "type": "array",
+              "description": "Curator notes the model-organism database wrote about the gene",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "note_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What kind of note this is, as the source database classifies it"
+                  },
+                  "text": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The note's text"
+                  }
+                }
+              }
+            },
+            "reference_curies": {
+              "type": "array",
+              "description": "Publication curies for the gene. Alliance lists thousands for a well-studied gene, so this is capped; reference_curies_total is the true count."
+            },
+            "reference_curies_total": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many publications Alliance links to the gene"
+            },
+            "reference_curies_returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many are carried on this response"
+            },
+            "reference_curies_truncated": {
+              "type": "boolean",
+              "description": "True when reference_curies is a prefix of the full list"
             }
           },
           "not": {
@@ -282,6 +367,72 @@
               },
               "method_count": {
                 "type": "integer"
+              },
+              "methods_not_matched": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Ortholog prediction methods that did NOT support the call, which is what makes method_count interpretable"
+              },
+              "stringency": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which stringency band this ortholog row satisfies. The request asks for a stringency and the rows did not say what each one met."
+              },
+              "subject_taxon_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ortholog_taxon_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "confidence": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "relationship": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Alliance's category for the row: 'gene_to_gene_orthology' or 'gene_to_gene_paralogy'"
+              },
+              "is_paralogy": {
+                "type": "boolean",
+                "description": "True when the row is a paralogy call - a same-species relative, not an ortholog"
+              },
+              "similarity": {
+                "type": [
+                  "number",
+                  "integer",
+                  "null"
+                ],
+                "description": "Sequence similarity percent, paralogy rows only"
+              },
+              "identity": {
+                "type": [
+                  "number",
+                  "integer",
+                  "null"
+                ],
+                "description": "Sequence identity percent, paralogy rows only"
+              },
+              "alignment_length": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Aligned length in residues, paralogy rows only"
               }
             }
           }
@@ -389,28 +540,99 @@
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "The variant's id"
                     },
                     "name": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "The variant's genomic HGVS"
                     },
                     "type": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "e.g. point_mutation, deletion"
                     },
                     "location": {
                       "type": [
                         "object",
                         "null"
-                      ]
+                      ],
+                      "properties": {
+                        "chromosome": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "end": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "hgvs": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
+                    "most_severe_consequence": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The most severe predicted consequence"
                     }
                   }
-                }
+                },
+                "description": "The allele's variants. variants_total says how many it has; the list is cut to three."
+              },
+              "alliance_curie": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The curie Alliance's own endpoints take, which differs from the source database's primary id"
+              },
+              "synonyms": {
+                "type": "array"
+              },
+              "alteration_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "variants_total": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many variants the record has, as opposed to how many are carried"
+              },
+              "variants_returned": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many variants are carried on this response"
+              },
+              "variants_truncated": {
+                "type": "boolean",
+                "description": "True when the variant list is a prefix"
               }
             }
           }
@@ -525,6 +747,71 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "anatomical_structure": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where the gene is expressed, e.g. 'abdominal 1 transverse muscle cell'."
+                  },
+                  "anatomical_structure_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The FBbt ontology id for that structure, e.g. 'FBbt:00000671'. The name is free text; only the CURIE joins to an ontology."
+                  },
+                  "assay": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How the expression was measured, e.g. 'in situ reporter'. A reporter construct and an antibody stain are different evidence for the same claim."
+                  },
+                  "assay_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The MMO ontology id for that assay, e.g. 'MMO:0000670'."
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What kind of annotation the row is, e.g. 'gene_expression_annotation'."
+                  },
+                  "stage_terms": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Developmental stages the annotation applies to, e.g. ['UBERON:0000068']. Expression at one stage is not expression at another."
+                  },
+                  "term_ids": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Every ontology id attached to the annotation, e.g. ['UBERON:0000068', ...] - 4 on the measured row. The union, so it does not say which id is the structure and which the stage."
+                  },
+                  "uberon_term_ids": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Just the UBERON ids among them, e.g. 2 of the 4. The cross-species terms, which are what make a fly annotation comparable to a mouse or human one."
                   }
                 }
               }
@@ -638,6 +925,167 @@
                   "string",
                   "null"
                 ]
+              },
+              "relation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The association's own relation, e.g. genetically_interacts_with"
+              },
+              "subject_role": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI ontology id, e.g. MI:0582"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "The queried gene's part in the interaction, e.g. 'suppressed gene'. Without it an interaction type names a pair but not a direction."
+              },
+              "interactor_role": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI ontology id, e.g. MI:0582"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "The partner gene's part, e.g. 'suppressor gene'"
+              },
+              "subject_type": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI ontology id, e.g. MI:0582"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "Interactor type of the queried gene, e.g. 'gene', 'protein'"
+              },
+              "interactor_type": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI ontology id, e.g. MI:0582"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "Interactor type of the partner"
+              },
+              "interaction_source": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI ontology id, e.g. MI:0582"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "The database that asserted the interaction, e.g. MI:0478 flybase"
+              },
+              "references": {
+                "type": "array",
+                "description": "The publications behind this interaction. Empty when Alliance reports none.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "agr_curie": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Alliance reference curie"
+                    },
+                    "pubmed_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "e.g. PMID:29735293"
+                    },
+                    "mod_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The model-organism database's own reference id, e.g. FB:FBrf0238983"
+                    },
+                    "citation": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Short citation, e.g. 'Wang XC (2018) Eur J Cell Biol 97(4):308-317'"
+                    },
+                    "cross_references": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Every curie Alliance cross-references, DOI included"
+                    }
+                  }
+                }
               }
             }
           }
@@ -739,13 +1187,15 @@
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "The human disease the genotype models, e.g. 'amyotrophic lateral sclerosis type 15'. Alliance supplies this under `diseaseModel` rather than inside its `disease` object, which is empty on every row measured."
                     },
                     "disease_id": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "The disease's DO curie, where Alliance populates its `disease` object. NULL on every row measured, because that object is empty and only the name is sent -- so the disease must be resolved from the name."
                     },
                     "association_type": {
                       "type": [
@@ -755,6 +1205,34 @@
                     }
                   }
                 }
+              },
+              "modifier_relationship_types": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "In which directions the model's phenotype is modified by other alleles -- 'ameliorated_by', 'exacerbated_by', or both. Present on all 25 rows measured, and the thing a modifier screen on the model is looking for.",
+                "items": {
+                  "type": [
+                    "string",
+                    "object"
+                  ],
+                  "description": "One modifier relationship type."
+                }
+              },
+              "has_disease_annotations": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the model carries disease annotations. A model listed with this false is here for its phenotype annotations alone."
+              },
+              "has_phenotype_annotations": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the model carries phenotype annotations."
               }
             }
           }

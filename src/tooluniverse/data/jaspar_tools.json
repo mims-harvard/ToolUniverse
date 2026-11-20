@@ -217,6 +217,67 @@
             "string",
             "null"
           ]
+        },
+        "family": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "The transcription factor's structural family, e.g. ['Runt-related factors']. Factors in one family share a motif, which is why a match can be ambiguous between them."
+        },
+        "medline": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "The same references under JASPAR's older field name; both are returned and they agree."
+        },
+        "pubmed_ids": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "PubMed ids for the papers the matrix came from, e.g. ['8413232']."
+        },
+        "remap_tf_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The factor's name in ReMap, e.g. 'Runx1'. ReMap uses its own naming, so this is what joins a JASPAR motif to ReMap's ChIP-seq peaks."
+        },
+        "tffm": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The companion TFFM (transcription factor flexible model), with its tffm_id, base_id, version and log-likelihoods. A TFFM captures dependencies between positions that a position-weight matrix cannot, so where it exists it is the better model."
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "What evidence the motif was derived from, e.g. 'ChIP-seq', 'SELEX', 'PBM'. In-vitro and in-vivo motifs differ systematically, and the matrix alone does not say which this is."
+        },
+        "uniprot_ids": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "UniProt accessions for the factor, e.g. ['Q03347']. The join from a motif to the protein; the JASPAR name is not an accession."
         }
       }
     },

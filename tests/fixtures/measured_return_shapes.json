@@ -1,0 +1,715 @@
+{
+  "measured_on": "2026-11-14",
+  "how": "Each payload is what the tool actually returned on 2026-11-14, taken from the inner `data` of a success envelope or from the whole result when the call errored -- which is the value `tu test` validates a return_schema against. Recorded verbatim except where a row's `note` says otherwise. A reading like this is a LOWER BOUND on the shapes a live API can produce, never the complete set; it is enough to catch a declaration that contradicts a shape that was seen.",
+  "invariant": "Every recorded payload validates against its tool's declared return_schema, and when that schema is a oneOf, EXACTLY ONE branch matches it. Two branches matching means the union is not discriminated and `oneOf` rejects a payload both halves accept; zero means the declaration contradicts the data.",
+  "rows": [
+    {
+      "tool": "AMPSphere_search_amps",
+      "config": "ampsphere_tools.json",
+      "operation": "search",
+      "arguments": {
+        "family": "SPHERE-III.001_396",
+        "page_size": 2,
+        "page": 0
+      },
+      "root_type": "array",
+      "payload": [
+        {
+          "accession": "AMP10.072_299",
+          "sequence": "AGIIVKIGKGIDSGKVSYID",
+          "family": "SPHERE-III.001_396",
+          "length": 20,
+          "molecular_weight": 2033.3679000000002,
+          "isoelectric_point": 8.474062919616703,
+          "charge": 0.7973010073450761,
+          "aromaticity": 0.05,
+          "instability_index": -16.270000000000003,
+          "gravy": 0.4749999999999998,
+          "Antifam": "Passed",
+          "RNAcode": "Passed",
+          "metaproteomes": "Failed",
+          "metatranscriptomes": "Failed",
+          "coordinates": "Passed",
+          "num_genes": 9,
+          "secondary_structure": null,
+          "metadata": null
+        },
+        {
+          "accession": "AMP10.085_907",
+          "sequence": "GGLIVKVGSKMIDTSLANKINKLKIAMKGA",
+          "family": "SPHERE-III.001_396",
+          "length": 30,
+          "molecular_weight": 3099.796300000001,
+          "isoelectric_point": 10.301548194885253,
+          "charge": 4.755228369135143,
+          "aromaticity": 0.0,
+          "instability_index": 8.993333333333329,
+          "gravy": 0.30666666666666664,
+          "Antifam": "Passed",
+          "RNAcode": "Passed",
+          "metaproteomes": "Failed",
+          "metatranscriptomes": "Failed",
+          "coordinates": "Failed",
+          "num_genes": 8,
+          "secondary_structure": null,
+          "metadata": null
+        }
+      ],
+      "note": "Recorded whole. Two AMP records, every field the API sent."
+    },
+    {
+      "tool": "AMPSphere_search_amps",
+      "config": "ampsphere_tools.json",
+      "operation": "search",
+      "arguments": {
+        "habitat": "not a real habitat",
+        "page_size": 5,
+        "page": 0
+      },
+      "root_type": "array",
+      "payload": [],
+      "note": "A filter that matches nothing is an empty page, not an error. Recorded whole."
+    },
+    {
+      "tool": "AMPSphere_search_amps",
+      "config": "ampsphere_tools.json",
+      "operation": "list_options",
+      "arguments": {
+        "list_options": true
+      },
+      "root_type": "object",
+      "payload": {
+        "quality": [
+          "Passed",
+          "Failed",
+          "Not tested"
+        ],
+        "habitat": [
+          "Progenomes",
+          "activated sludge",
+          "air",
+          "algae associated",
+          "annelidae associated",
+          "anthropogenic",
+          "bat gut",
+          "bear gut",
+          "beatle gut",
+          "bee gut",
+          "bird gut",
+          "bird skin",
+          "built environment",
+          "cat gut",
+          "cattle associated",
+          "cattle gut",
+          "cattle rumen",
+          "chicken gut",
+          "coral associated",
+          "coyote gut",
+          "crustacean associated",
+          "crustacean gut",
+          "deer gut",
+          "dog associated",
+          "dog gut",
+          "extreme pH",
+          "fermented food",
+          "fish gut",
+          "fisher gut",
+          "food",
+          "goat gut",
+          "goat rumen",
+          "groundwater",
+          "guinea pig gut",
+          "horse gut",
+          "hot spring associated",
+          "human associated",
+          "human digestive tract",
+          "human gut",
+          "human mouth",
+          "human respiratory tract",
+          "human saliva",
+          "human skin",
+          "human urogenital tract",
+          "ice associated",
+          "insect associated",
+          "insect gut",
+          "lake associated",
+          "marine",
+          "mine",
+          "mock community",
+          "mollusc associated",
+          "mouse gut",
+          "mussel associated",
+          "pig gut",
+          "planarian associated",
+          "plant associated",
+          "pond associated",
+          "primate gut",
+          "rabbit gut",
+          "rat gut",
+          "river associated",
+          "rodent gut",
+          "sediment",
+          "ship worm associated",
+          "soil",
+          "sponge associated",
+          "termite gut",
+          "thermal vent associated",
+          "tunicate associated",
+          "wasp gut",
+          "wastewater",
+          "water associated"
+        ],
+        "microbial_source": [
+          "0-14-0-10-38-17 sp002774085",
+          "0-14-0-20-30-16 sp002779075",
+          "0-14-0-20-40-13 sp002774285",
+          "0-14-0-20-45-22 sp002774355",
+          "0-14-0-20-51-18 sp002774685"
+        ],
+        "pep_length": {
+          "min": 8,
+          "max": 99
+        },
+        "molecular_weight": {
+          "min": 813,
+          "max": 12286
+        },
+        "isoelectric_point": {
+          "min": 4,
+          "max": 12
+        },
+        "charge_at_pH_7": {
+          "min": -57,
+          "max": 44
+        }
+      },
+      "note": "microbial_source truncated from 29504 strings to 5 to keep the fixture small; quality (3) and habitat (73) kept whole. Truncating an array changes its length, not the types this guard checks."
+    },
+    {
+      "tool": "AMPSphere_search_amps",
+      "config": "ampsphere_tools.json",
+      "operation": "error",
+      "arguments": {
+        "page_size": 0
+      },
+      "root_type": "object",
+      "payload": {
+        "status": "error",
+        "error": "page_size must be a positive integer"
+      },
+      "note": "Recorded whole. wrapper rejects the argument before any request."
+    },
+    {
+      "tool": "AMPSphere_search_amps",
+      "config": "ampsphere_tools.json",
+      "operation": "error",
+      "arguments": {
+        "page": -5
+      },
+      "root_type": "object",
+      "payload": {
+        "status": "error",
+        "error": "page must be a non-negative integer"
+      },
+      "note": "Recorded whole. wrapper rejects the argument before any request."
+    },
+    {
+      "tool": "AMPSphere_search_amps",
+      "config": "ampsphere_tools.json",
+      "operation": "error",
+      "arguments": {
+        "habitat": 5
+      },
+      "root_type": "object",
+      "payload": {
+        "status": "error",
+        "error": "Parameter validation failed for 'habitat': 5 is not of type 'string'. Expected string, got int.",
+        "error_details": {
+          "type": "ToolValidationError",
+          "message": "Parameter validation failed for 'habitat': 5 is not of type 'string'. Expected string, got int.",
+          "retriable": false,
+          "next_steps": [
+            "Check parameter types and values",
+            "Review tool documentation",
+            "Verify required parameters are provided"
+          ],
+          "details": {
+            "validation_error": "5 is not of type 'string'\n\nFailed validating 'type' in schema['properties']['habitat']:\n    {'type': 'string',\n     'description': \"Environmental habitat filter, e.g. 'human gut', \"\n                    \"'soil', 'marine'. Must match an AMPSphere habitat \"\n                    'label (see list_options).'}\n\nOn instance['habitat']:\n    5",
+            "path": [
+              "habitat"
+            ],
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list_options": {
+                  "type": "boolean",
+                  "description": "If true, ignore all other filters and return the valid filter enumerations from /v1/all_available_options (quality labels, habitat list, microbial_source list, and min/max ranges for pep_length, molecular_weight, isoelectric_point, charge_at_pH_7). Use this first to discover valid habitat / microbial_source values."
+                },
+                "habitat": {
+                  "type": "string",
+                  "description": "Environmental habitat filter, e.g. 'human gut', 'soil', 'marine'. Must match an AMPSphere habitat label (see list_options)."
+                },
+                "family": {
+                  "type": "string",
+                  "description": "SPHERE family accession filter, e.g. 'SPHERE-III.001_396'. Returns the AMPs in that family."
+                },
+                "microbial_source": {
+                  "type": "string",
+                  "description": "Microbial taxonomic source filter (GTDB-style name), e.g. 'Faecalibacterium'. See list_options for valid values."
+                },
+                "exp_evidence": {
+                  "type": "string",
+                  "description": "Experimental-evidence quality flag filter: 'Passed', 'Failed', or 'Not tested'."
+                },
+                "antifam": {
+                  "type": "string",
+                  "description": "Antifam quality flag filter: 'Passed', 'Failed', or 'Not tested' (Antifam = not a spurious/false ORF)."
+                },
+                "RNAcode": {
+                  "type": "string",
+                  "description": "RNAcode coding-potential quality flag filter: 'Passed', 'Failed', or 'Not tested'."
+                },
+                "coordinates": {
+                  "type": "string",
+                  "description": "Genomic-coordinates quality flag filter: 'Passed', 'Failed', or 'Not tested'."
+                },
+                "pep_length_interval": {
+                  "type": "string",
+                  "description": "Peptide-length range as 'min,max' (residues), e.g. '8,20'. Catalogue range is 8-99."
+                },
+                "mw_interval": {
+                  "type": "string",
+                  "description": "Molecular-weight range as 'min,max' (Da), e.g. '800,3000'. Catalogue range is ~813-12286."
+                },
+                "pI_interval": {
+                  "type": "string",
+                  "description": "Isoelectric-point range as 'min,max', e.g. '9,12'. Catalogue range is ~4-12."
+                },
+                "charge_interval": {
+                  "type": "string",
+                  "description": "Net-charge-at-pH-7 range as 'min,max', e.g. '0,10'. Catalogue range is ~-57 to 44."
+                },
+                "page_size": {
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "description": "Results per page (default 20)."
+                },
+                "page": {
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "description": "Zero-based page index (default 0)."
+                }
+              },
+              "required": []
+            },
+            "parameter": "habitat",
+            "expected": "string"
+          }
+        }
+      },
+      "note": "Recorded whole. wrapper rejects a non-string filter."
+    },
+    {
+      "tool": "AMPSphere_search_amps",
+      "config": "ampsphere_tools.json",
+      "operation": "error",
+      "arguments": {
+        "pep_length_interval": "not,a,range"
+      },
+      "root_type": "object",
+      "payload": {
+        "status": "error",
+        "error": "AMPSphere returned HTTP 500",
+        "url": "https://ampsphere-api.big-data-biology.org/v1/amps?pep_length_interval=not%2Ca%2Crange&page_size=20&page=0",
+        "response_snippet": "Internal Server Error"
+      },
+      "note": "Recorded whole. AMPSphere answers HTTP 500."
+    },
+    {
+      "tool": "PharmGKB_get_drug_label_annotations",
+      "config": "pharmgkb_tools.json",
+      "operation": "search",
+      "arguments": {
+        "source": "FDA",
+        "limit": 3
+      },
+      "root_type": "array",
+      "payload": [
+        {
+          "objCls": "LabelAnnotation",
+          "id": "PA166114907",
+          "name": "Annotation of FDA Drug Label for bosutinib and ABL1, BCR",
+          "crossReferences": []
+        },
+        {
+          "objCls": "LabelAnnotation",
+          "id": "PA166273561",
+          "name": "Annotation of FDA Drug Label for inclisiran and APOB, LDLR, PCSK9",
+          "crossReferences": []
+        },
+        {
+          "objCls": "LabelAnnotation",
+          "id": "PA166293341",
+          "name": "Annotation of FDA Drug Label for tremelimumab and ALK, EGFR",
+          "crossReferences": []
+        }
+      ],
+      "note": "Recorded whole. The listing form: three trimmed entries, not full annotations."
+    },
+    {
+      "tool": "PharmGKB_get_drug_label_annotations",
+      "config": "pharmgkb_tools.json",
+      "operation": "search",
+      "arguments": {
+        "source": "FDA",
+        "drug_name": "imatinib"
+      },
+      "root_type": "array",
+      "payload": [
+        {
+          "objCls": "LabelAnnotation",
+          "id": "PA166104790",
+          "name": "Annotation of FDA Drug Label for imatinib and ABL1, BCR, FIP1L1, KIT, PDGFRA, PDGFRB",
+          "crossReferences": []
+        }
+      ],
+      "note": "Recorded whole."
+    },
+    {
+      "tool": "PharmGKB_get_drug_label_annotations",
+      "config": "pharmgkb_tools.json",
+      "operation": "search",
+      "arguments": {
+        "label_id": "PA000000000"
+      },
+      "root_type": "array",
+      "payload": [],
+      "note": "An unknown label_id is answered with an empty array, not an error -- so the `label_id` argument does not pin the shape to an object. Recorded whole."
+    },
+    {
+      "tool": "PharmGKB_get_drug_label_annotations",
+      "config": "pharmgkb_tools.json",
+      "operation": "get_one",
+      "arguments": {
+        "label_id": "PA166114907"
+      },
+      "root_type": "object",
+      "payload": {
+        "objCls": "LabelAnnotation",
+        "id": "PA166114907",
+        "name": "Annotation of FDA Drug Label for bosutinib and ABL1, BCR",
+        "alternateDrugAvailable": false,
+        "biomarkerStatus": "On FDA Biomarker List",
+        "cancerGenome": true,
+        "crossReferences": [],
+        "dosingInformation": false,
+        "highlightedLabelLink": "Bosutinib_2025_01_15_FDA.pdf",
+        "history": [
+          {
+            "id": 1183704736,
+            "date": "2013-12-13T00:00:00-08:00",
+            "type": "Create",
+            "version": 0
+          },
+          {
+            "id": 1450399529,
+            "date": "2019-05-09T11:49:49.124-07:00",
+            "description": "Added prescribing info",
+            "type": "Update",
+            "version": 0
+          },
+          {
+            "id": 1450824096,
+            "date": "2019-10-21T06:03:00.178-07:00",
+            "description": "Label update with no change to annotation.",
+            "type": "Update",
+            "version": 0
+          },
+          {
+            "id": 1452226161,
+            "date": "2023-09-01T11:05:44.708-07:00",
+            "description": "removed prescribing info section and alternate drug tag and added indication tag",
+            "type": "Update",
+            "version": 0
+          },
+          {
+            "id": 1452547600,
+            "date": "2024-08-05T11:22:33.386-07:00",
+            "description": "removed Testing Required PGx level; testing is not mentioned",
+            "type": "Update",
+            "version": 0
+          },
+          {
+            "id": 1452566166,
+            "date": "2024-08-26T16:43:54.209-07:00",
+            "description": "added Testing Required PGx level back; genetic testing is implied",
+            "type": "Update",
+            "version": 0
+          },
+          {
+            "id": 1452810243,
+            "date": "2025-01-15T12:16:00.76-08:00",
+            "description": "updated label, added Pediatric tag and info",
+            "type": "Update",
+            "version": 0
+          }
+        ],
+        "indication": true,
+        "labelDocumentAvailable": true,
+        "literature": [
+          {
+            "id": 15173082,
+            "title": "Drugs@FDA: Drug Product BOSULIF (Bosutinib), Pfizer Laboratories Div Pfizer Inc - NDA203341/SUPPL-26, 12/03/2024",
+            "_sameAs": "https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&varApplNo=203341",
+            "crossReferences": [
+              {
+                "id": 1452810241,
+                "resource": "FDA Application",
+                "resourceId": "NDA203341/SUPPL-26",
+                "_url": "https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&varApplNo=203341"
+              }
+            ],
+            "fullTextUrl": "https://api.clinpgx.org/v1/download/file/attachment/Bosutinib_2025_01_15_FDA.pdf",
+            "objCls": "Literature",
+            "pubDate": "2024-12-03",
+            "terms": [
+              {
+                "id": 1452267780,
+                "resource": "ClinPGx Tags",
+                "term": "Has PGx",
+                "termId": "pgkbTags:1452267780"
+              }
+            ],
+            "type": "Drug Label"
+          },
+          {
+            "id": 15101829,
+            "title": "Drugs@FDA: Drug Product BOSULIF (Bosutinib monohydrate), NDA203341, Pfizer Laboratories Div Pfizer Inc",
+            "_sameAs": "https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&varApplNo=203341",
+            "crossReferences": [
+              {
+                "id": 1449894503,
+                "resource": "FDA Application",
+                "resourceId": "NDA203341",
+                "_url": "https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&varApplNo=203341"
+              }
+            ],
+            "fullTextUrl": "https://api.clinpgx.org/v1/download/file/attachment/bosutinib_10_17_2019FDA.pdf",
+            "objCls": "Literature",
+            "terms": [
+              {
+                "id": 1452267780,
+                "resource": "ClinPGx Tags",
+                "term": "Has PGx",
+                "termId": "pgkbTags:1452267780"
+              }
+            ],
+            "type": "Drug Label"
+          }
+        ],
+        "otherPrescribingGuidance": false,
+        "pediatric": true,
+        "pediatricMarkdown": {
+          "id": 1452810242,
+          "html": "<blockquote class=\"blockquote\">\n<p>BOSULIF is a kinase inhibitor indicated for the treatment of</p>\n<ul>\n<li>adult and pediatric patients 1 year of age and older with chronic phase Ph+ chronic myelogenous leukemia (CML), newly-diagnosed or resistant or intolerant to prior therapy.</li>\n</ul>\n</blockquote>\n"
+        },
+        "pgxRelated": true,
+        "prescribingGenes": [],
+        "relatedAlleles": [],
+        "relatedChemicals": [
+          {
+            "objCls": "Chemical",
+            "id": "PA166114906",
+            "name": "bosutinib"
+          }
+        ],
+        "relatedGenes": [
+          {
+            "objCls": "Gene",
+            "id": "PA24413",
+            "symbol": "ABL1",
+            "name": "ABL proto-oncogene 1, non-receptor tyrosine kinase"
+          },
+          {
+            "objCls": "Gene",
+            "id": "PA25321",
+            "symbol": "BCR",
+            "name": "BCR activator of RhoGEF and GTPase"
+          }
+        ],
+        "source": "FDA",
+        "summaryMarkdown": {
+          "id": 1450186431,
+          "html": "<p>The FDA-approved drug label for bosutinib (BOSULIF) notes that it is intended for adult and pediatric patients with chronic phase Philadelphia chromosome-positive (Ph+) chronic myelogenous leukemia (CML) and for adult patients with accelerated or blast phase Ph+ CML with resistance or intolerance to prior therapy.</p>\n"
+        },
+        "testing": {
+          "id": 1183672041,
+          "resource": "Genetic Testing Level",
+          "synonyms": [],
+          "term": "Testing Required",
+          "termId": "geneTestLevel:1183672041",
+          "valid": true
+        },
+        "textMarkdown": {
+          "id": 1450186432,
+          "html": "<p>Bosutinib is a tyrosine kinase inhibitor whose substrates include the Bcr-Abl kinase that promotes chronic myeloid leukemia (CML) and is encoded by the Philadelphia chromosome.</p>\n<p>Excerpts from the bosutinib (BOSULIF) drug label:</p>\n<blockquote class=\"blockquote\">\n<p>BOSULIF is a kinase inhibitor indicated for the treatment of</p>\n<ul>\n<li>adult and pediatric patients 1 year of age and older with chronic phase Ph+ chronic myelogenous leukemia (CML), newly-diagnosed or resistant or intolerant to prior therapy.</li>\n<li>adult patients with accelerated, or blast phase Ph+ CML with resistance or intolerance to prior therapy.</li>\n</ul>\n</blockquote>\n<blockquote class=\"blockquote\">\n<p>Bosutinib is a TKI. Bosutinib inhibits the BCR-ABL kinase that promotes CML; it is also an inhibitor of Src-family kinases including Src, Lyn, and Hck. Bosutinib inhibited 16 of 18 imatinib-resistant forms of BCR-ABL kinase expressed in murine myeloid cell lines. Bosutinib did not inhibit the T315I and V299L mutant cells.</p>\n</blockquote>\n<p>For the complete drug label text with sections containing pharmacogenetic information highlighted, see the <a download=\"Bosutinib_2025_01_15_FDA.pdf\" href=\"https://api.clinpgx.org/v1/download/file/attachment/Bosutinib_2025_01_15_FDA.pdf\">bosutinib drug label</a>.</p>\n"
+        }
+      },
+      "note": "Recorded whole. The full annotation, 25 keys."
+    },
+    {
+      "tool": "PharmGKB_get_drug_label_annotations",
+      "config": "pharmgkb_tools.json",
+      "operation": "error",
+      "arguments": {
+        "source": "Swissmedic",
+        "limit": 3
+      },
+      "root_type": "object",
+      "payload": {
+        "status": "error",
+        "error": "Parameter validation failed for 'source': 'Swissmedic' is not one of ['FDA', 'EMA', 'HCSC', 'PMDA']. Allowed values: ['FDA', 'EMA', 'HCSC', 'PMDA'].",
+        "error_details": {
+          "type": "ToolValidationError",
+          "message": "Parameter validation failed for 'source': 'Swissmedic' is not one of ['FDA', 'EMA', 'HCSC', 'PMDA']. Allowed values: ['FDA', 'EMA', 'HCSC', 'PMDA'].",
+          "retriable": false,
+          "next_steps": [
+            "Check parameter types and values",
+            "Review tool documentation",
+            "Verify required parameters are provided"
+          ],
+          "details": {
+            "validation_error": "'Swissmedic' is not one of ['FDA', 'EMA', 'HCSC', 'PMDA']\n\nFailed validating 'enum' in schema['properties']['source']:\n    {'type': 'string',\n     'description': 'Regulatory agency for the listing mode. One of FDA, '\n                    'EMA, HCSC, PMDA. Defaults to FDA. Ignored when '\n                    'label_id is given.',\n     'enum': ['FDA', 'EMA', 'HCSC', 'PMDA']}\n\nOn instance['source']:\n    'Swissmedic'",
+            "path": [
+              "source"
+            ],
+            "schema": {
+              "type": "object",
+              "properties": {
+                "label_id": {
+                  "type": "string",
+                  "description": "PharmGKB Label Annotation ID (e.g., 'PA166114907' for the FDA bosutinib label). When provided, returns the full single annotation and ignores 'source'/'limit'/'drug_name'."
+                },
+                "source": {
+                  "type": "string",
+                  "description": "Regulatory agency for the listing mode. One of FDA, EMA, HCSC, PMDA. Defaults to FDA. Ignored when label_id is given.",
+                  "enum": [
+                    "FDA",
+                    "EMA",
+                    "HCSC",
+                    "PMDA"
+                  ]
+                },
+                "drug_name": {
+                  "type": "string",
+                  "description": "Filter the listing to annotations whose name mentions this drug (case-insensitive substring match, e.g. 'imatinib'). Ignored when label_id is given."
+                },
+                "limit": {
+                  "type": "integer",
+                  "description": "Maximum number of label annotations to return in listing mode (default 50, max 500)."
+                },
+                "offset": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "default": 0,
+                  "description": "Zero-based listing offset. Ignored for label_id lookup."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "Alias for label_id."
+                },
+                "drug": {
+                  "type": "string",
+                  "description": "Alias for drug_name."
+                }
+              },
+              "required": []
+            },
+            "parameter": "source",
+            "expected": "['FDA', 'EMA', 'HCSC', 'PMDA']"
+          }
+        }
+      },
+      "note": "Recorded whole. An agency PharmGKB does not serve."
+    },
+    {
+      "tool": "PharmGKB_get_drug_label_annotations",
+      "config": "pharmgkb_tools.json",
+      "operation": "error",
+      "arguments": {
+        "source": "NotAnAgency",
+        "limit": 3
+      },
+      "root_type": "object",
+      "payload": {
+        "status": "error",
+        "error": "Parameter validation failed for 'source': 'NotAnAgency' is not one of ['FDA', 'EMA', 'HCSC', 'PMDA']. Allowed values: ['FDA', 'EMA', 'HCSC', 'PMDA'].",
+        "error_details": {
+          "type": "ToolValidationError",
+          "message": "Parameter validation failed for 'source': 'NotAnAgency' is not one of ['FDA', 'EMA', 'HCSC', 'PMDA']. Allowed values: ['FDA', 'EMA', 'HCSC', 'PMDA'].",
+          "retriable": false,
+          "next_steps": [
+            "Check parameter types and values",
+            "Review tool documentation",
+            "Verify required parameters are provided"
+          ],
+          "details": {
+            "validation_error": "'NotAnAgency' is not one of ['FDA', 'EMA', 'HCSC', 'PMDA']\n\nFailed validating 'enum' in schema['properties']['source']:\n    {'type': 'string',\n     'description': 'Regulatory agency for the listing mode. One of FDA, '\n                    'EMA, HCSC, PMDA. Defaults to FDA. Ignored when '\n                    'label_id is given.',\n     'enum': ['FDA', 'EMA', 'HCSC', 'PMDA']}\n\nOn instance['source']:\n    'NotAnAgency'",
+            "path": [
+              "source"
+            ],
+            "schema": {
+              "type": "object",
+              "properties": {
+                "label_id": {
+                  "type": "string",
+                  "description": "PharmGKB Label Annotation ID (e.g., 'PA166114907' for the FDA bosutinib label). When provided, returns the full single annotation and ignores 'source'/'limit'/'drug_name'."
+                },
+                "source": {
+                  "type": "string",
+                  "description": "Regulatory agency for the listing mode. One of FDA, EMA, HCSC, PMDA. Defaults to FDA. Ignored when label_id is given.",
+                  "enum": [
+                    "FDA",
+                    "EMA",
+                    "HCSC",
+                    "PMDA"
+                  ]
+                },
+                "drug_name": {
+                  "type": "string",
+                  "description": "Filter the listing to annotations whose name mentions this drug (case-insensitive substring match, e.g. 'imatinib'). Ignored when label_id is given."
+                },
+                "limit": {
+                  "type": "integer",
+                  "description": "Maximum number of label annotations to return in listing mode (default 50, max 500)."
+                },
+                "offset": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "default": 0,
+                  "description": "Zero-based listing offset. Ignored for label_id lookup."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "Alias for label_id."
+                },
+                "drug": {
+                  "type": "string",
+                  "description": "Alias for drug_name."
+                }
+              },
+              "required": []
+            },
+            "parameter": "source",
+            "expected": "['FDA', 'EMA', 'HCSC', 'PMDA']"
+          }
+        }
+      },
+      "note": "Recorded whole."
+    }
+  ]
+}

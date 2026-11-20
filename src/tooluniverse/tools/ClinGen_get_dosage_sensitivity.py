@@ -24,7 +24,7 @@ def ClinGen_get_dosage_sensitivity(
     Parameters
     ----------
     gene : str
-        Optional: Filter by gene symbol
+        Optional: Filter by gene symbol. HGNC symbol only (e.g. BRCA1). A genomic ran...
     include_regions : bool
         Include recurrent CNV regions (default: false)
     limit : int

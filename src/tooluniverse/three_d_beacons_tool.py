@@ -19,6 +19,40 @@ from .base_tool import BaseTool
 BEACONS_BASE_URL = "https://www.ebi.ac.uk/pdbe/pdbe-kb/3dbeacons/api"
 
 
+# Entity records per structure. P04637's 375 structures carry 1,220 of them
+# -- 640 NON-POLYMER, 579 POLYMER, 1 BRANCHED -- so roughly three each; the
+# cap only guards a pathological entry.
+ENTITIES_PER_STRUCTURE = 25
+
+
+def _entities(summary: dict) -> list:
+    """What is in the structure besides the queried protein.
+
+    An entity is a chain or a bound component: `entity_type` separates a
+    POLYMER from a NON-POLYMER ligand or a BRANCHED glycan,
+    `entity_poly_type` says POLYPEPTIDE(L) against a nucleic acid, and the
+    identifier and description name it. "Which of these 375 models has a
+    ligand bound" is a question the row could not answer at all.
+    """
+    rows = []
+    for entity in summary.get("entities") or []:
+        if not isinstance(entity, dict):
+            continue
+        rows.append(
+            {
+                "entity_type": entity.get("entity_type"),
+                "entity_poly_type": entity.get("entity_poly_type"),
+                "identifier": entity.get("identifier"),
+                "identifier_category": entity.get("identifier_category"),
+                "description": entity.get("description"),
+                "chain_ids": [c for c in (entity.get("chain_ids") or []) if c],
+            }
+        )
+        if len(rows) >= ENTITIES_PER_STRUCTURE:
+            break
+    return rows
+
+
 class ThreeDBeaconsTool(BaseTool):
     """
     Tool for 3D Beacons Hub API providing aggregated 3D structure models
@@ -172,12 +206,30 @@ class ThreeDBeaconsTool(BaseTool):
         result_structures = []
         for s in structures:
             sm = s.get("summary", {})
+            entities = _entities(sm)
+            entity_counts: Dict[str, int] = {}
+            for entity in sm.get("entities") or []:
+                if isinstance(entity, dict):
+                    kind = entity.get("entity_type") or "UNKNOWN"
+                    entity_counts[kind] = entity_counts.get(kind, 0) + 1
             entry = {
                 "model_identifier": sm.get("model_identifier"),
                 "model_category": sm.get("model_category"),
                 "provider": sm.get("provider"),
                 "coverage": sm.get("coverage"),
                 "model_url": sm.get("model_url"),
+                # The format of the file at model_url, which the caller needs
+                # to parse it: MMCIF on 373 of P04637's 375 models and PDB on
+                # the other 2.
+                "model_format": sm.get("model_format"),
+                "model_page_url": sm.get("model_page_url"),
+                # How close the template is, for a model rather than an
+                # experimental structure.
+                "sequence_identity": sm.get("sequence_identity"),
+                "entities": entities,
+                "entity_count": sum(entity_counts.values()),
+                "entity_counts_by_type": entity_counts,
+                "entities_truncated": sum(entity_counts.values()) > len(entities),
                 "created": sm.get("created"),
             }
             # Add resolution for experimental structures

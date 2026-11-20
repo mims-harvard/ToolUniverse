@@ -20,6 +20,11 @@ from .uniprot_pagination import pagination_metadata
 UNIPROT_BASE_URL = "https://rest.uniprot.org"
 
 
+# A proteome search row names this many of its components; a plant
+# proteome can list hundreds of scaffolds.
+COMPONENT_NAMES_PER_PROTEOME = 50
+
+
 def _validated_search_size(arguments: Dict[str, Any]) -> tuple[int | None, str | None]:
     """Validate the shared UniProt REST search page size (official max 500)."""
     raw_size = arguments.get("size")
@@ -125,6 +130,11 @@ class UniProtRefTool(BaseTool):
                     {
                         "database": xr.get("databaseType"),
                         "id": xr.get("id"),
+                        # MIM cross-references carry the property that says
+                        # which KIND of entry the id is -- "gene", "phenotype"
+                        # -- and an OMIM gene id used as a disease id is a
+                        # different claim.
+                        "properties": xr.get("properties") or [],
                     }
                 )
 
@@ -139,6 +149,10 @@ class UniProtRefTool(BaseTool):
                     "reviewed_protein_count": r.get("statistics", {}).get(
                         "reviewedProteinCount"
                     ),
+                    "unreviewed_protein_count": r.get("statistics", {}).get(
+                        "unreviewedProteinCount"
+                    ),
+                    "keywords": r.get("keywords") or [],
                 }
             )
 
@@ -229,6 +243,42 @@ class UniProtRefTool(BaseTool):
                     "reviewed_protein_count": r.get("statistics", {}).get(
                         "reviewedProteinCount"
                     ),
+                    # The unreviewed count beside the reviewed one. A keyword
+                    # on 300 Swiss-Prot entries and 40,000 TrEMBL ones is a
+                    # different thing from one on 300 and 12, and only half
+                    # the pair was reported.
+                    "unreviewed_protein_count": r.get("statistics", {}).get(
+                        "unreviewedProteinCount"
+                    ),
+                    "category_id": r.get("category", {}).get("id")
+                    if isinstance(r.get("category"), dict)
+                    else None,
+                    # Where the keyword sits in the hierarchy, and the GO
+                    # terms it corresponds to -- which is how a keyword
+                    # search is carried into an enrichment analysis.
+                    "parents": [
+                        {
+                            "id": (parent.get("keyword") or {}).get("id"),
+                            "name": (parent.get("keyword") or {}).get("name"),
+                        }
+                        for parent in (r.get("parents") or [])
+                        if isinstance(parent, dict)
+                    ],
+                    "children": [
+                        {
+                            "id": (child.get("keyword") or {}).get("id"),
+                            "name": (child.get("keyword") or {}).get("name"),
+                        }
+                        for child in (r.get("children") or [])
+                        if isinstance(child, dict)
+                    ],
+                    "gene_ontologies": [
+                        {"go_id": go.get("goId"), "name": go.get("name")}
+                        for go in (r.get("geneOntologies") or [])
+                        if isinstance(go, dict)
+                    ],
+                    "synonyms": r.get("synonyms") or [],
+                    "links": r.get("links") or [],
                 }
             )
 
@@ -351,6 +401,71 @@ class UniProtRefTool(BaseTool):
                 "proteome_type": r.get("proteomeType"),
                 "components": components,
                 "total_protein_count": total_proteins,
+                # The organism's place in the tree, which a taxon id alone
+                # does not give: 30 ranks of lineage are in the same record.
+                "taxon_lineage": [
+                    {
+                        "taxon_id": node.get("taxonId"),
+                        "scientific_name": node.get("scientificName"),
+                        "common_name": node.get("commonName"),
+                        "rank": node.get("rank"),
+                    }
+                    for node in (r.get("taxonLineage") or [])
+                    if isinstance(node, dict)
+                ],
+                "strain": tax.get("strain"),
+                "synonyms": tax.get("synonyms") or [],
+                # The papers describing the proteome, with the 2,840 author
+                # names and the cross-references that make them citable. The
+                # record carries them; the answer had none.
+                "citations": [
+                    {
+                        "id": (citation.get("citation") or citation).get("id"),
+                        "title": (citation.get("citation") or citation).get("title"),
+                        "journal": (citation.get("citation") or citation).get(
+                            "journal"
+                        ),
+                        "publication_date": (
+                            citation.get("citation") or citation
+                        ).get("publicationDate"),
+                        "authors": (citation.get("citation") or citation).get(
+                            "authors"
+                        )
+                        or [],
+                        "cross_references": (
+                            citation.get("citation") or citation
+                        ).get("citationCrossReferences")
+                        or [],
+                        "citation_type": (citation.get("citation") or citation).get(
+                            "citationType"
+                        ),
+                        "first_page": (citation.get("citation") or citation).get(
+                            "firstPage"
+                        ),
+                        "last_page": (citation.get("citation") or citation).get(
+                            "lastPage"
+                        ),
+                        "volume": (citation.get("citation") or citation).get("volume"),
+                        # A consortium paper has an authoring group and no
+                        # author list, so without this the citation reads as
+                        # having no authors at all.
+                        "authoring_group": (citation.get("citation") or citation).get(
+                            "authoringGroup"
+                        )
+                        or [],
+                    }
+                    for citation in (r.get("citations") or [])
+                    if isinstance(citation, dict)
+                ],
+                "genome_assembly": r.get("genomeAssembly"),
+                "genome_annotation": r.get("genomeAnnotation"),
+                "annotation_score": r.get("annotationScore"),
+                "busco": r.get("proteomeCompletenessReport", {}).get("buscoReport")
+                if isinstance(r.get("proteomeCompletenessReport"), dict)
+                else None,
+                "cpd": r.get("proteomeCompletenessReport", {}).get("cpdReport")
+                if isinstance(r.get("proteomeCompletenessReport"), dict)
+                else None,
             },
             "metadata": {
                 "source": "UniProt Proteomes",
@@ -397,6 +512,63 @@ class UniProtRefTool(BaseTool):
                     "taxon_id": tax.get("taxonId"),
                     "proteome_type": r.get("proteomeType"),
                     "protein_count": total_proteins,
+                    # A proteome search is scanned to choose one, and the row
+                    # gave four fields of a record that also says where the
+                    # organism sits in the tree, how complete the proteome is
+                    # and what describes it. The lineage and the citations are
+                    # summarised here, in full on UniProtRef_get_proteome.
+                    "taxon_lineage": [
+                        node.get("scientificName")
+                        for node in (r.get("taxonLineage") or [])
+                        if isinstance(node, dict) and node.get("scientificName")
+                    ],
+                    "taxon_rank": tax.get("rank"),
+                    "strain": tax.get("strain"),
+                    # `taxon_lineage` is names only, and the id is how a
+                    # lineage is followed rather than matched; the rank is
+                    # what makes "Mammalia" a class rather than a guess.
+                    "taxon_lineage_nodes": [
+                        {
+                            "scientific_name": node.get("scientificName"),
+                            "taxon_id": node.get("taxonId"),
+                            "rank": node.get("rank"),
+                        }
+                        for node in (r.get("taxonLineage") or [])
+                        if isinstance(node, dict)
+                    ],
+                    "component_count": len(r.get("components") or []),
+                    # What the components are -- "Chromosome 1", "Mitochondrion"
+                    # -- where the row gave only how many there were and which
+                    # databases they cross-reference.
+                    "component_names": [
+                        component.get("name")
+                        for component in (r.get("components") or [])
+                        if isinstance(component, dict) and component.get("name")
+                    ][:COMPONENT_NAMES_PER_PROTEOME],
+                    "citation_count": len(r.get("citations") or []),
+                    "annotation_score": r.get("annotationScore"),
+                    "genome_assembly_id": (r.get("genomeAssembly") or {}).get(
+                        "assemblyId"
+                    )
+                    if isinstance(r.get("genomeAssembly"), dict)
+                    else None,
+                    "busco_complete_percent": (
+                        (r.get("proteomeCompletenessReport") or {}).get("buscoReport")
+                        or {}
+                    ).get("complete")
+                    if isinstance(r.get("proteomeCompletenessReport"), dict)
+                    else None,
+                    "component_databases": sorted(
+                        {
+                            xref.get("database")
+                            for component in (r.get("components") or [])
+                            if isinstance(component, dict)
+                            for xref in (
+                                component.get("proteomeCrossReferences") or []
+                            )
+                            if isinstance(xref, dict) and xref.get("database")
+                        }
+                    ),
                 }
             )
 

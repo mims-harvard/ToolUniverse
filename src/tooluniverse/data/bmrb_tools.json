@@ -45,6 +45,32 @@
             "required": [
               "error"
             ]
+          },
+          "additionalProperties": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The entry itself, with its 'entry_id' and 'saveframes'. BMRB keys the reply BY THE ENTRY ID, so the property name is the id that was requested ('15000') rather than a fixed name - the level is data-keyed and cannot be enumerated. A caller that looks for a field called 'entry' finds nothing.",
+            "properties": {
+              "entry_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The entry id, repeated inside the record."
+              },
+              "saveframes": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "object"
+                },
+                "description": "The NMR-STAR saveframes making up the entry - the assignments, conditions and metadata, each a block with its own category."
+              }
+            }
           }
         },
         {
@@ -176,6 +202,40 @@
               },
               "smiles": {
                 "type": "string"
+              },
+              "citations": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "The paper titles associated with the entry. The publication behind the data."
+              },
+              "data_types": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "object"
+                },
+                "description": "What data the entry holds, each with its 'type' and a count, e.g. {'type': 'assigned_chemical_shifts', 'count': ...}. Whether the entry has the measurement a caller needs before it is fetched."
+              },
+              "label": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The entry's title, e.g. 'Backbone 1H and 15N chemical shift assignments for yeast...'. What the entry is actually about."
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "BMRB entry id for the hit, e.g. '53883'. Named 'value' rather than anything suggesting an accession."
               }
             }
           }
@@ -330,6 +390,34 @@
               },
               "bit_score": {
                 "type": "number"
+              },
+              "q.start": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Start position of the alignment in the QUERY sequence, 1-based. The property name contains a literal '.', so it is one key, not a nested object."
+              },
+              "q.end": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "End position of the alignment in the query sequence. With q.start it says which part of the submitted sequence matched - a 100% identity over 20 of 300 residues is a very different hit from one over all 300."
+              },
+              "s.start": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Start position of the alignment in the matched BMRB entry's sequence."
+              },
+              "s.end": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "End position in the matched entry's sequence. Together with the query pair it locates the shared region in both sequences."
               }
             }
           }
@@ -536,6 +624,34 @@
               },
               "link": {
                 "type": "string"
+              },
+              "Accession_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The UniProt accession matched, e.g. 'P04637'. Echoes what the query resolved to."
+              },
+              "Entity_ID": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Which molecule within the entry, e.g. 1. An entry can hold several, and chemical shifts belong to one of them."
+              },
+              "Entry_ID": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "BMRB entry id, e.g. '11578'. The accession to fetch the NMR data with."
+              },
+              "Link_Type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the entry was linked to the accession, e.g. 'PDB cross-referencing'. An inferred link via PDB is weaker evidence than a direct annotation, and the row otherwise looks the same."
               }
             }
           }

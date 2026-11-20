@@ -312,6 +312,27 @@
                 "download_url": {
                   "type": "string",
                   "description": "Direct download URL"
+                },
+                "file_type_display": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Human-readable form of 'file_type', e.g. 'SMILES (smi.gz)'."
+                },
+                "sha256_checksum": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "SHA-256 of the file, as the hexadecimal digest. These files run to 2.4 GB and the row gave the URL and the size with no way to tell a complete download from a truncated one."
+                },
+                "file_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Mcule's own id for this file."
                 }
               }
             },
@@ -407,6 +428,27 @@
               "download_url": {
                 "type": "string",
                 "description": "Direct download URL"
+              },
+              "file_type_display": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable form of 'file_type', e.g. 'SMILES (smi.gz)'."
+              },
+              "sha256_checksum": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SHA-256 of the file, as the hexadecimal digest. These files run to 2.4 GB and the row gave the URL and the size with no way to tell a complete download from a truncated one."
+              },
+              "file_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Mcule's own id for this file."
               }
             }
           },

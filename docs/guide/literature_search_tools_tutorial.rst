@@ -173,10 +173,11 @@ All literature search tools follow a similar usage pattern:
         }
     })
 
-    # Check if results were found
-    if isinstance(result, list) and len(result) > 0:
-        print(f"Found {len(result)} results")
-        for i, paper in enumerate(result, 1):
+    # A tool call returns {"status", "data", "metadata"}; the papers are in "data".
+    papers = result.get("data") or []
+    if result.get("status") == "success" and papers:
+        print(f"Found {len(papers)} results")
+        for i, paper in enumerate(papers, 1):
             print(f"{i}. {paper.get('title', 'No title')}")
             print(f"   Authors: {', '.join(paper.get('authors', [])[:3])}")
             print(f"   Year: {paper.get('year', 'Unknown')}")
@@ -427,7 +428,7 @@ Search across multiple databases for comprehensive results:
         "name": tool_name,
         "arguments": {"query": query, "limit": max_results}
                 })
-                results[db_name] = result if isinstance(result, list) else []
+                results[db_name] = result.get("data") or []
             except Exception as e:
                 print(f"Error searching {db_name}: {e}")
                 results[db_name] = []
@@ -494,9 +495,10 @@ Always include proper error handling for robust applications:
             "arguments": arguments
             })
         
-            if isinstance(result, list):
-                return {"success": True, "data": result, "count": len(result)}
-            elif isinstance(result, dict) and "error" in result:
+            if result.get("status") == "success":
+                papers = result.get("data") or []
+                return {"success": True, "data": papers, "count": len(papers)}
+            elif "error" in result:
                 return {"success": False, "error": result["error"]}
             else:
                 return {"success": False, "error": "Unexpected result format"}
@@ -612,12 +614,13 @@ Here's a complete example that demonstrates searching across multiple literature
         "arguments": tool["args"]
                 })
             
-                if isinstance(result, list) and len(result) > 0:
-                    print(f"✅ Found {len(result)} results")
-                    all_results.extend(result)
+                papers = result.get("data") or []
+                if result.get("status") == "success" and papers:
+                    print(f"✅ Found {len(papers)} results")
+                    all_results.extend(papers)
         
                     # Show first result
-                    first_paper = result[0]
+                    first_paper = papers[0]
                     print(f"📄 Sample: {first_paper.get('title', 'No title')[:60]}...")
                 else:
                     print(f"❌ No results or error: {result}")
@@ -987,8 +990,9 @@ Here are examples showing the enhanced features of the optimized tools:
         }
     })
     
-    if isinstance(result, list) and result:
-        paper = result[0]
+    papers = result.get("data") or []
+    if papers:
+        paper = papers[0]
         print(f"Title: {paper.get('title')}")
         print(f"Authors: {paper.get('authors')}")
         print(f"Journal: {paper.get('journal')}")
@@ -1011,8 +1015,9 @@ Here are examples showing the enhanced features of the optimized tools:
         }
     })
     
-    if isinstance(result, list) and result:
-        paper = result[0]
+    papers = result.get("data") or []
+    if papers:
+        paper = papers[0]
         print(f"Title: {paper.get('title')}")
         print(f"Abstract: {paper.get('abstract')[:200]}...")
         print(f"Authors: {paper.get('authors')}")
@@ -1033,8 +1038,9 @@ Here are examples showing the enhanced features of the optimized tools:
         }
     })
     
-    if isinstance(result, list) and result:
-        paper = result[0]
+    papers = result.get("data") or []
+    if papers:
+        paper = papers[0]
         print(f"Title: {paper.get('title')}")
         print(f"Abstract: {paper.get('abstract')}")
         print(f"Journal: {paper.get('journal')}")
@@ -1053,8 +1059,9 @@ Here are examples showing the enhanced features of the optimized tools:
         }
     })
     
-    if isinstance(result, list) and result:
-        paper = result[0]
+    papers = result.get("data") or []
+    if papers:
+        paper = papers[0]
         print(f"Title: {paper.get('title')}")
         print(f"Clean Abstract: {paper.get('abstract')}")
         print(f"Authors: {paper.get('authors')}")
@@ -1099,5 +1106,6 @@ Here are examples showing the enhanced features of the optimized tools:
         }
     })
     
-    if isinstance(result, list):
-        analyze_data_quality(result)
+    papers = result.get("data") or []
+    if papers:
+        analyze_data_quality(papers)

@@ -143,6 +143,48 @@
               },
               "tty": {
                 "type": "string"
+              },
+              "relation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DIRECT or INDIRECT. An INDIRECT member belongs to a descendant class, not to this one, and the two arrived indistinguishable."
+              },
+              "source_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The source vocabulary's own id for this member within the class, e.g. M01AE07 for suprofen under ATC M01AE"
+              },
+              "source_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "attributes": {
+                "type": "array",
+                "description": "Every node attribute RxClass sends for the member",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "value": {
+                      "type": [
+                        "string",
+                        "number",
+                        "null"
+                      ]
+                    }
+                  }
+                }
               }
             }
           }
@@ -214,6 +256,13 @@
               },
               "classType": {
                 "type": "string"
+              },
+              "classUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Link to the vocabulary that defines the class; 625 of the 22,667 classes carry one, e.g. http://snomed.info/id/1002243003"
               }
             }
           }
@@ -400,7 +449,15 @@
                 "type": "string"
               },
               "tty": {
-                "type": "string"
+                "type": "string",
+                "description": "RxNorm term type of the related drug concept: IN ingredient, PIN precise ingredient, BN brand name. 'albuterol sulfate' is a PIN, not the IN 'albuterol'."
+              },
+              "relaSource": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which source asserts the relationship, e.g. MEDRT"
               }
             }
           }

@@ -137,6 +137,13 @@
         },
         "count": {
           "type": "integer"
+        },
+        "total_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Total records matching, which the returned list alone does not say."
         }
       }
     },
@@ -213,7 +220,131 @@
           "type": "integer"
         },
         "diseases": {
-          "type": "array"
+          "type": "array",
+          "description": "One row per CTD chemical-disease edge, each naming the chemical the metabolite was matched to",
+          "items": {
+            "type": "object",
+            "properties": {
+              "disease_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "disease_name_source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "disease_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "disease_categories": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ]
+              },
+              "direct_evidence": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pubmed_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "chemical_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "WHICH chemical the match landed on"
+              },
+              "mesh_chemical_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "cas_registry_number": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "ctd_terms_tried": {
+          "type": "array",
+          "description": "Every name variant tried, in order. An empty result means all of them missed, which is a different statement from \"this metabolite has no disease associations\".",
+          "items": {
+            "type": "string"
+          }
+        },
+        "has_more": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether more phenotype calls remain beyond this page"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page size applied"
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset of this page"
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset for the next page, or null at the end"
+        },
+        "result_set_complete": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether the page is the whole result set"
+        },
+        "returned": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Rows on this page"
+        },
+        "unresolved_disease_name_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many rows on this page carry a disease id whose name could not be resolved. A row with an id and no name is still an association, and this says how much of the page is in that state"
         }
       }
     },
@@ -303,6 +434,13 @@
             "count": {
               "type": "integer",
               "description": "Number of compounds returned"
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total records matching, which the returned list alone does not say."
             }
           },
           "required": [
@@ -558,8 +696,41 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "chemical_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "WHICH chemical the match landed on. The lookup walks the title, a stereochemistry-stripped form, a CAS number and up to ten synonyms, and reported only the term that worked -- not the CTD chemical it resolved to."
+                  },
+                  "mesh_chemical_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cas_registry_number": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The CTD table the edge came from"
                   }
                 }
+              }
+            },
+            "ctd_terms_tried": {
+              "type": "array",
+              "description": "Every name variant tried, in order. An empty result means all of them missed, which is a different statement from \"this metabolite has no disease associations\".",
+              "items": {
+                "type": "string"
               }
             }
           },

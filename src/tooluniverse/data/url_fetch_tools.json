@@ -32,7 +32,15 @@
     "return_schema": {
       "type": "object",
       "description": "Output of the tool execution.",
-      "properties": {}
+      "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The page's <title>, which is the site's own claim about the page rather than a verified description."
+        }
+      }
     },
     "test_examples": [
       {

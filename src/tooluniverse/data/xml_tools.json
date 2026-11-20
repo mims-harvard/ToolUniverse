@@ -157,6 +157,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; ONE offset governs them all, so they page in step rather than independently. 0 means the nested lists start from their first entry."
             }
           }
         }
@@ -329,6 +336,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; ONE offset governs them all, so they page in step rather than independently. 0 means the nested lists start from their first entry."
             }
           }
         }
@@ -503,6 +517,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; ONE offset governs them all, so they page in step rather than independently. 0 means the nested lists start from their first entry."
             }
           }
         }
@@ -675,6 +696,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; ONE offset governs them all, so they page in step rather than independently. 0 means the nested lists start from their first entry."
             }
           }
         }
@@ -849,6 +877,13 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list. Measured present on 3 of 5 result rows, and it must be split on ' | '."
               }
             }
           }
@@ -867,6 +902,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }
@@ -1032,6 +1074,41 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "atc_codes_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many atc_codes were skipped before this page."
+              },
+              "atc_codes_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of those atc_codes this reply contains. Equal to the total only when nothing was cut."
+              },
+              "atc_codes_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many atc_codes DrugBank holds for the drug, e.g. 21."
+              },
+              "atc_codes_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the atc_codes list was cut. The flag that separates 'the drug has this many' from 'here are some of them'."
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list, e.g. '10 Person ANSI | 217 | 222 Tablets | ...'. It runs to thousands of characters and must be split on ' | '. Measured present on 3 of 5 result rows."
               }
             }
           }
@@ -1050,6 +1127,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to all of the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }
@@ -1195,6 +1279,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }
@@ -1366,6 +1457,13 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list, e.g. '10 Person ANSI | 217 | 222 Tablets | ...'. It runs to thousands of characters and must be split on ' | '. Measured present on 3 of 5 result rows."
               }
             }
           }
@@ -1384,6 +1482,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to all of the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }
@@ -1572,6 +1677,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }
@@ -1759,6 +1871,13 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list, e.g. '10 Person ANSI | 217 | 217 Strong Tab | 222 Tablets | ...'. It can run to thousands of characters and must be split on ' | ' to be used."
               }
             }
           }
@@ -2055,6 +2174,125 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list, e.g. '10 Person ANSI | 217 | 222 Tablets | ...'. It runs to thousands of characters and must be split on ' | '. Measured present on 3 of 5 result rows."
+              },
+              "carriers_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many carriers were skipped before this page."
+              },
+              "carriers_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of those carriers this reply contains. Equal to the total only when nothing was cut."
+              },
+              "carriers_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many carriers DrugBank holds for the drug; 0 on the measured call, which means DrugBank records none rather than that the field was dropped."
+              },
+              "carriers_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the carriers list was cut. The flag that separates 'the drug has this many' from 'here are some of them'."
+              },
+              "enzymes_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many enzymes were skipped before this page."
+              },
+              "enzymes_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of those enzymes this reply contains. Equal to the total only when nothing was cut."
+              },
+              "enzymes_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many enzymes DrugBank holds for the drug, e.g. 4."
+              },
+              "enzymes_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the enzymes list was cut. The flag that separates 'the drug has this many' from 'here are some of them'."
+              },
+              "targets_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many targets were skipped before this page."
+              },
+              "targets_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of those targets this reply contains. Equal to the total only when nothing was cut."
+              },
+              "targets_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many targets DrugBank holds for the drug, e.g. 20."
+              },
+              "targets_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the targets list was cut. The flag that separates 'the drug has this many' from 'here are some of them'."
+              },
+              "transporters_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many transporters were skipped before this page."
+              },
+              "transporters_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of those transporters this reply contains. Equal to the total only when nothing was cut."
+              },
+              "transporters_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many transporters DrugBank holds for the drug, e.g. 3."
+              },
+              "transporters_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the transporters list was cut. The flag that separates 'the drug has this many' from 'here are some of them'."
               }
             }
           }
@@ -2073,6 +2311,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to all of the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }
@@ -2236,6 +2481,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }
@@ -2460,6 +2712,69 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list, e.g. '10 Person ANSI | 217 | 217 Strong Tab | 222 Tablets | ...'. It can run to thousands of characters and must be split on ' | ' to be used."
+              },
+              "prices_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many price records were skipped before this page."
+              },
+              "prices_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of them came back."
+              },
+              "prices_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many price records exist for the drug; 1 on the measured call. DrugBank holds pricing for only a minority of drugs, so a total of 0 is common and does not mean the drug is unmarketed."
+              },
+              "prices_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the price list was cut."
+              },
+              "products_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many products were skipped before this page."
+              },
+              "products_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of them this reply contains, e.g. 25. Against a total of 2269, the returned list is about 1% of the answer."
+              },
+              "products_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many marketed products DrugBank holds for the drug, e.g. 2269."
+              },
+              "products_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the product list was cut. The flag that separates 'this drug has 25 products' from 'here are 25 of its 2269 products'."
               }
             }
           }
@@ -2478,6 +2793,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists above - products, prices, pathways, reactions. One offset governs all of them, so they page together."
             }
           }
         }
@@ -2619,6 +2941,13 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list. It runs to thousands of characters and must be split on ' | '."
               }
             }
           }
@@ -2637,6 +2966,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }
@@ -2834,6 +3170,13 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list, e.g. '10 Person ANSI | 217 | 217 Strong Tab | 222 Tablets | ...'. It can run to thousands of characters and must be split on ' | ' to be used."
               }
             }
           }
@@ -2852,6 +3195,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists above - products, prices, pathways, reactions. One offset governs all of them, so they page together."
             }
           }
         }
@@ -3049,6 +3399,69 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "articles_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many articles were skipped before this page."
+              },
+              "articles_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of them came back, e.g. 17."
+              },
+              "articles_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many cited articles DrugBank holds for the drug, e.g. 17."
+              },
+              "articles_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the article list was cut."
+              },
+              "brand_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Every brand the drug has been sold under, as a single ' | '-delimited STRING rather than a list. Measured present on 3 of 5 result rows, and it must be split on ' | '."
+              },
+              "patents_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many patents were skipped before this page."
+              },
+              "patents_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many came back."
+              },
+              "patents_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many patents DrugBank holds; 0 on the measured call."
+              },
+              "patents_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the patent list was cut. False with a total of 0 means DrugBank genuinely holds none, which a bare empty list does not distinguish from a dropped field."
               }
             }
           }
@@ -3067,6 +3480,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; one offset governs them together."
             }
           }
         }
@@ -3272,6 +3692,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested pathway and reaction lists; one offset governs both, so they page in step."
             }
           }
         }
@@ -3447,6 +3874,62 @@
                   "type": "string"
                 },
                 "description": "List of fields that matched the search query"
+              },
+              "pathways_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many pathways were skipped before this page."
+              },
+              "pathways_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of them came back, e.g. 25."
+              },
+              "pathways_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many pathways DrugBank associates with the drug, e.g. 30."
+              },
+              "pathways_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the pathway list was cut - true on the measured call, where 25 of 30 came back."
+              },
+              "reactions_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many reactions were skipped before this page."
+              },
+              "reactions_shown_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many of them came back."
+              },
+              "reactions_total_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many metabolic reactions DrugBank holds for the drug; 0 on the measured call."
+              },
+              "reactions_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the reaction list was cut. False with a total of 0 means DrugBank genuinely holds none, which a bare empty list does not distinguish from a dropped field."
               }
             }
           }
@@ -3465,6 +3948,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists above - products, prices, pathways, reactions. One offset governs all of them, so they page together."
             }
           }
         }
@@ -3603,6 +4093,13 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset applied to the nested lists in each result row; one offset governs them together, so they page in step."
             }
           }
         }

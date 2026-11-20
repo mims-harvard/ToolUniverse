@@ -9,21 +9,152 @@
         "dataType": {
           "type": "string",
           "description": "Field to filter on. One of: 'nature' (peptide nature, e.g. Anticancer, Antimicrobial, CPP), 'source' (source organism, e.g. Human), or 'seq' (sequence). Default: 'nature'.",
-          "enum": ["nature", "source", "seq"]
+          "enum": [
+            "nature",
+            "source",
+            "seq"
+          ]
         },
         "dataValue": {
           "type": "string",
           "description": "Value to match for the chosen dataType. Examples: 'Anticancer' (with dataType=nature) -> ~166 records; 'Human' (with dataType=source) -> ~9255 records."
         }
       },
-      "required": ["dataValue"]
+      "required": [
+        "dataValue"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "The database's own identifier for the peptide entry."
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The peptide's published name."
+              },
+              "seq": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The amino-acid sequence in one-letter code."
+              },
+              "length": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Sequence length in residues."
+              },
+              "nter": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "N-terminal modification, e.g. acetylation. A free versus a blocked terminus changes stability and activity."
+              },
+              "cter": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "C-terminal modification, e.g. amidation."
+              },
+              "lyn_cyc": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the peptide is linear or cyclic."
+              },
+              "non_nat": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Non-natural residues present, where any."
+              },
+              "nature": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The peptide's class or origin as the database records it."
+              },
+              "origin": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Where the peptide came from -- the organism, or the design it was derived from."
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The source the entry was taken from."
+              },
+              "pmid": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "PubMed ID of the paper reporting it."
+              },
+              "year": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Year of publication."
+              },
+              "activity": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The measured haemolytic activity -- what this database records."
+              },
+              "non_hem": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The non-haemolytic concentration, where reported. The gap between this and `activity` is the therapeutic window."
+              },
+              "ldmix": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Lipid or detergent mixture used in the assay. Haemolysis measured against different red-cell preparations is not comparable."
+              },
+              "exp_str": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The experimental conditions as free text."
+              }
+            }
           },
           "description": "Matching hemolytic peptide records. Each has id, pmid, year, seq, name, cter, nter, lyn_cyc, ldmix, non_nat, length, nature, activity (e.g. 'LC50 =1.4 micromolar'), source, origin, exp_str, non_hem."
         },
@@ -41,8 +172,14 @@
       ]
     },
     "test_examples": [
-      { "dataType": "nature", "dataValue": "Anticancer" },
-      { "dataType": "source", "dataValue": "Human" }
+      {
+        "dataType": "nature",
+        "dataValue": "Anticancer"
+      },
+      {
+        "dataType": "source",
+        "dataValue": "Human"
+      }
     ]
   }
 ]

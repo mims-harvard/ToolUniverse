@@ -234,6 +234,34 @@
               },
               "uniprotSequence": {
                 "type": "string"
+              },
+              "chainId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Chain identifier in the predicted model, e.g. 'A'."
+              },
+              "isComplex": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the prediction is of a complex rather than a single chain. A complex's per-residue confidence has to be read per chain."
+              },
+              "msaUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "URL of the multiple sequence alignment the prediction was built from, e.g. '.../AF-P69905-F1-msa_v6.a3m'. Prediction confidence follows alignment depth, so this is how a low-confidence model is diagnosed."
+              },
+              "plddtDocUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "URL of the per-residue confidence file, e.g. '.../AF-P69905-F1-confidence_v6.json'. The pLDDT per residue, as distinct from any single summary score."
               }
             }
           }

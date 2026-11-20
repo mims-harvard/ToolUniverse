@@ -15,7 +15,7 @@
           "default": 10,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of taxon matches to return (1\u2013100)."
+          "description": "Number of taxon matches to return (1–100)."
         },
         "offset": {
           "type": "integer",
@@ -77,6 +77,160 @@
                   },
                   "genus": {
                     "type": "string"
+                  },
+                  "acceptedNameUsage": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The accepted name for this taxon, e.g. 'Gadus'. For a synonym this is the name to use instead; for an accepted name it is itself."
+                  },
+                  "acceptedNameUsageID": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of that accepted name, e.g. 125732. The id to query OBIS occurrences under."
+                  },
+                  "classid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the class, e.g. 293496."
+                  },
+                  "familyid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the family, e.g. 125469."
+                  },
+                  "genusid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the genus, e.g. 125732. The ranks come with both a name and an id; only the id is safe to join on."
+                  },
+                  "infraphylum": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Infraphylum name, e.g. 'Gnathostomata'."
+                  },
+                  "infraphylumid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the infraphylum, e.g. 1828."
+                  },
+                  "is_brackish": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when it is classed as brackish-water."
+                  },
+                  "is_freshwater": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when it is classed as freshwater."
+                  },
+                  "is_marine": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when WoRMS classes the taxon as marine."
+                  },
+                  "is_terrestrial": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when it is classed as terrestrial. The four habitat flags together are how an occurrence placed in the wrong environment is spotted - a terrestrial-only taxon in a marine dataset is a data error, and more than one flag can be true."
+                  },
+                  "kingdomid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the kingdom, e.g. 2."
+                  },
+                  "orderid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the order, e.g. 10313."
+                  },
+                  "phylumid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the phylum, e.g. 1821."
+                  },
+                  "scientificNameAuthorship": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Author and year of the name, e.g. 'Linnaeus, 1758'. Part of the name for citation, and what distinguishes homonyms."
+                  },
+                  "subphylum": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Subphylum name, e.g. 'Vertebrata'."
+                  },
+                  "subphylumid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the subphylum, e.g. 146419."
+                  },
+                  "superclass": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Superclass name, e.g. 'Actinopteri'."
+                  },
+                  "superclassid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "AphiaID of the superclass, e.g. 843664."
+                  },
+                  "taxonID": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "WoRMS AphiaID for the matched name, e.g. 125732. The id survives a rename; the name does not."
+                  },
+                  "taxonRank": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Rank of the match, e.g. 'Genus'. A genus-level match and a species-level one answer different questions, and the name alone does not say which this is."
+                  },
+                  "taxonomicStatus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the name is 'accepted', a 'synonym' or 'unaccepted'. Counting records under a synonym and under its accepted name as different taxa is the error this prevents."
                   }
                 }
               }
@@ -145,7 +299,7 @@
           "default": 10,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of records in this cursor page (1\u2013100)."
+          "description": "Number of records in this cursor page (1–100)."
         },
         "after": {
           "type": "string",
@@ -428,6 +582,125 @@
                       "integer",
                       "number"
                     ]
+                  },
+                  "brackish": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when OBIS classes the taxon as brackish-water. One of the environment flags used to spot records placed in the wrong habitat."
+                  },
+                  "country": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Country of the occurrence, e.g. 'Australia'."
+                  },
+                  "fieldNumber": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The collector's field or instrument number, e.g. 'VR2W-109072' - here an acoustic receiver's serial. What ties the record back to the physical sampling effort."
+                  },
+                  "footprintWKT": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The occurrence's geometry as WKT. Measured as the degenerate 'POINT ( )' on records whose footprint was not populated, so it is not a reliable geometry source."
+                  },
+                  "gigaclass": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "WoRMS gigaclass of the taxon, e.g. 'Actinopterygii'."
+                  },
+                  "gigaclassid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "WoRMS AphiaID of that gigaclass, e.g. 10194. The id is what survives a taxonomic rename; the name does not."
+                  },
+                  "locality": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The collector's own description of the place, e.g. 'ORPH 11'. Free text, and often the only clue to a site that the coordinates alone do not name."
+                  },
+                  "modified": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the source dataset last changed the record, e.g. '2022-01-17'."
+                  },
+                  "organismQuantity": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How many organisms were observed, as a STRING, e.g. '38'. Meaningless without organismQuantityType below, and it needs converting before arithmetic."
+                  },
+                  "organismQuantityType": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the quantity counts, e.g. 'detections per day', 'individuals', 'percentage of cover'. A quantity of 38 means different things under different types, so reading the number alone can be badly wrong."
+                  },
+                  "parvphylum": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "WoRMS parvphylum, e.g. 'Osteichthyes'."
+                  },
+                  "parvphylumid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "WoRMS AphiaID of that parvphylum, e.g. 152352."
+                  },
+                  "sss": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Sea surface salinity at the occurrence, e.g. 35.23, from the same climatology."
+                  },
+                  "sst": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Sea surface temperature at the occurrence, in degrees Celsius, e.g. 25.74 - interpolated by OBIS from climatology, not measured by the collector."
+                  },
+                  "suborder": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "WoRMS suborder, e.g. 'Percoidei'."
+                  },
+                  "suborderid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "WoRMS AphiaID of that suborder, e.g. 151751."
+                  },
+                  "vernacularName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The common name for the taxon as the dataset recorded it, e.g. 'Common Coral Trout'. The only non-scientific name in the row."
                   }
                 }
               }

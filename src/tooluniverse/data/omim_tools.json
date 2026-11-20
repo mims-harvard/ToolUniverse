@@ -53,6 +53,13 @@
             "entries": {
               "type": "array",
               "description": "List of matching OMIM entries"
+            },
+            "start": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The 0-based offset this page of search results starts at, e.g. 0. Needed with the total to page through the matches."
             }
           }
         },
@@ -79,7 +86,7 @@
         "domain": "Genomics & Variants",
         "type": "secret",
         "register_url": "https://omim.org/api",
-        "purpose": "Look up Mendelian disease\u2013gene relationships and clinical variant records for interpretation.",
+        "purpose": "Look up Mendelian disease–gene relationships and clinical variant records for interpretation.",
         "without": "OMIM tools return no data without it. Free for academic use."
       }
     },
@@ -134,6 +141,27 @@
             "textSectionList": {
               "type": "array",
               "description": "Text sections with descriptions"
+            },
+            "geneMap": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The gene's map position: {sequenceID, chromosome, chromosomeSymbol, chromosomeSort, chromosomeLocationStart, chromosomeLocationEnd, transcript, cytoLocation}. Present on gene entries; this is where the cytogenetic band and the coordinates live."
+            },
+            "prefix": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "OMIM's entry-type prefix: '*' a gene, '#' a phenotype with a known molecular basis, '+' gene and phenotype, '%' a phenotype of unknown basis, and no prefix for other entries. Measured '#' on cystic fibrosis and '*' on BRAF. This single character decides how the whole entry should be read."
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Record status, e.g. 'live'. A non-live entry has been moved or withdrawn."
             }
           }
         }
@@ -264,6 +292,97 @@
             "cardiovascular": {
               "type": "array",
               "description": "Cardiovascular features"
+            },
+            "abdomenBiliaryTract": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Biliary tract features, e.g. 'Biliary cirrhosis'. One of OMIM's body-system fields. The value is a SINGLE string, not a list: several features are separated by ';\\n', and each carries its ontology codes inline in braces -- {SNOMEDCT:...}, {ICD10CM:...}, {UMLS ...}, {HP:...}. Parse the codes out of the braces rather than expecting separate fields. Which body-system fields appear depends entirely on the disease, so a missing one means the synopsis does not record that system, never that the system is normal."
+            },
+            "abdomenGastrointestinal": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gastrointestinal features, e.g. 'Meconium ileus in neonates (10-15%)'. One of OMIM's body-system fields. The value is a SINGLE string, not a list: several features are separated by ';\\n', and each carries its ontology codes inline in braces -- {SNOMEDCT:...}, {ICD10CM:...}, {UMLS ...}, {HP:...}. Parse the codes out of the braces rather than expecting separate fields. Which body-system fields appear depends entirely on the disease, so a missing one means the synopsis does not record that system, never that the system is normal."
+            },
+            "abdomenPancreas": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Pancreatic features, e.g. 'Pancreatic insufficiency in 80%'. One of OMIM's body-system fields. The value is a SINGLE string, not a list: several features are separated by ';\\n', and each carries its ontology codes inline in braces -- {SNOMEDCT:...}, {ICD10CM:...}, {UMLS ...}, {HP:...}. Parse the codes out of the braces rather than expecting separate fields. Which body-system fields appear depends entirely on the disease, so a missing one means the synopsis does not record that system, never that the system is normal."
+            },
+            "cardiovascularHeart": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cardiac features, e.g. 'Cor pulmonale'. One of OMIM's body-system fields. The value is a SINGLE string, not a list: several features are separated by ';\\n', and each carries its ontology codes inline in braces -- {SNOMEDCT:...}, {ICD10CM:...}, {UMLS ...}, {HP:...}. Parse the codes out of the braces rather than expecting separate fields. Which body-system fields appear depends entirely on the disease, so a missing one means the synopsis does not record that system, never that the system is normal."
+            },
+            "genitourinaryInternalGenitaliaFemale": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Female internal genital features, e.g. decreased fertility from thickened cervical secretions. One of OMIM's body-system fields. The value is a SINGLE string, not a list: several features are separated by ';\\n', and each carries its ontology codes inline in braces -- {SNOMEDCT:...}, {ICD10CM:...}, {UMLS ...}, {HP:...}. Parse the codes out of the braces rather than expecting separate fields. Which body-system fields appear depends entirely on the disease, so a missing one means the synopsis does not record that system, never that the system is normal."
+            },
+            "genitourinaryInternalGenitaliaMale": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Male internal genital features, e.g. 'Male infertility (98%) due to congenital bilateral absence of the vas deferens (CBAVD)'. One of OMIM's body-system fields. The value is a SINGLE string, not a list: several features are separated by ';\\n', and each carries its ontology codes inline in braces -- {SNOMEDCT:...}, {ICD10CM:...}, {UMLS ...}, {HP:...}. Parse the codes out of the braces rather than expecting separate fields. Which body-system fields appear depends entirely on the disease, so a missing one means the synopsis does not record that system, never that the system is normal."
+            },
+            "growthOther": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Growth features, e.g. 'Failure to thrive'. One of OMIM's body-system fields. The value is a SINGLE string, not a list: several features are separated by ';\\n', and each carries its ontology codes inline in braces -- {SNOMEDCT:...}, {ICD10CM:...}, {UMLS ...}, {HP:...}. Parse the codes out of the braces rather than expecting separate fields. Which body-system fields appear depends entirely on the disease, so a missing one means the synopsis does not record that system, never that the system is normal."
+            },
+            "laboratoryAbnormalities": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Laboratory findings, e.g. 'High sweat sodium and chloride {UMLS C1857429}'. One of OMIM's body-system fields. The value is a SINGLE string, not a list: several features are separated by ';\\n', and each carries its ontology codes inline in braces -- {SNOMEDCT:...}, {ICD10CM:...}, {UMLS ...}, {HP:...}. Parse the codes out of the braces rather than expecting separate fields. Which body-system fields appear depends entirely on the disease, so a missing one means the synopsis does not record that system, never that the system is normal."
+            },
+            "miscellaneous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Notes that fit no body system, e.g. 'Delta-F508 present in 70% of alleles'. Carries allele frequencies and population notes."
+            },
+            "molecularBasis": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What causes the phenotype, in OMIM's own words, e.g. 'Caused by mutations in the cystic fibrosis transmembrane conductance regulator gene (CFTR, 602421.0001)'. The gene and the exemplar allele are named inline."
+            },
+            "preferredTitle": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "OMIM's preferred title for the entry, e.g. 'CYSTIC FIBROSIS; CF' -- the full name and its accepted abbreviation, separated by '; '."
+            },
+            "prefix": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "OMIM's entry-type prefix: '*' a gene, '#' a phenotype with a known molecular basis, '+' gene and phenotype, '%' a phenotype of unknown basis, and no prefix for other entries. Measured '#' on cystic fibrosis and '*' on BRAF. This single character decides how the whole entry should be read."
+            },
+            "respiratoryAirways": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Airway features, e.g. 'Chronic bronchopulmonary infection;\\nBronchiectasis'. One of OMIM's body-system fields. The value is a SINGLE string, not a list: several features are separated by ';\\n', and each carries its ontology codes inline in braces -- {SNOMEDCT:...}, {ICD10CM:...}, {UMLS ...}, {HP:...}. Parse the codes out of the braces rather than expecting separate fields. Which body-system fields appear depends entirely on the disease, so a missing one means the synopsis does not record that system, never that the system is normal."
             }
           },
           "description": "Clinical features organized by organ system"

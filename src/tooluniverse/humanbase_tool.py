@@ -13,6 +13,36 @@ from .extras import install_hint
 from .tool_registry import register_tool
 
 
+# An edge can cite hundreds of datasets -- 479 for TP53-MDM2 in the global
+# network -- so the report names this many, strongest posterior first.
+EVIDENCE_DATASETS_NAMED = 8
+
+
+def _top_evidence_datasets(datasets, limit):
+    """The datasets behind one interaction, strongest first.
+
+    Each record says which database it is, what kind of evidence it provides
+    (`etype.title`: "Interaction", "Co-expression") and the posterior it
+    contributed. The report had the count and none of that.
+    """
+    rows = []
+    for dataset in datasets if isinstance(datasets, list) else []:
+        if not isinstance(dataset, dict):
+            continue
+        etype = dataset.get("etype") or {}
+        posterior = dataset.get("posterior")
+        rows.append(
+            {
+                "title": dataset.get("title"),
+                "identifier": dataset.get("identifier"),
+                "evidence_type": etype.get("title") if isinstance(etype, dict) else None,
+                "posterior": posterior if isinstance(posterior, (int, float)) else None,
+            }
+        )
+    rows.sort(key=lambda row: (row["posterior"] is None, -(row["posterior"] or 0.0)))
+    return rows[:limit]
+
+
 def _coerce_gene_list(raw):
     """Turn agent-supplied gene input into a list of symbols.
 
@@ -635,6 +665,27 @@ class HumanBaseTool(BaseTool):
                     output.append(
                         f"    Evidence Datasets: {completeness} {dataset_count}"
                     )
+                    # The datasets were fetched and counted and then thrown
+                    # away: 479 records for TP53-MDM2, each with the database
+                    # it is (IntAct), the kind of evidence it provides and the
+                    # posterior it contributed. "479" does not say which
+                    # experiments support the interaction, which is what
+                    # evidence means. The strongest are named, by posterior.
+                    named = _top_evidence_datasets(
+                        data.get("evidence_datasets"), EVIDENCE_DATASETS_NAMED
+                    )
+                    for dataset in named:
+                        bits = [dataset["title"] or dataset["identifier"] or "?"]
+                        if dataset["evidence_type"]:
+                            bits.append(f"({dataset['evidence_type']})")
+                        if dataset["posterior"] is not None:
+                            bits.append(f"posterior {dataset['posterior']:.3f}")
+                        output.append("      • " + " ".join(bits))
+                    if dataset_count > len(named):
+                        output.append(
+                            f"      ... {dataset_count - len(named)} more, "
+                            "ordered by posterior"
+                        )
                 if evidence_error:
                     output.append(f"    Evidence Retrieval Error: {evidence_error}")
                 output.append("")

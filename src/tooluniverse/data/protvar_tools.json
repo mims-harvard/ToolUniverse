@@ -20,7 +20,9 @@
           "description": "Genome assembly used for genomic input and output coordinates."
         }
       },
-      "required": ["variant"]
+      "required": [
+        "variant"
+      ]
     },
     "return_schema": {
       "type": "object",
@@ -32,10 +34,30 @@
         "genomic_coordinates": {
           "type": "object",
           "properties": {
-            "chr": {"type": ["string", "null"]},
-            "pos": {"type": ["integer", "null"]},
-            "ref": {"type": ["string", "null"]},
-            "alt": {"type": ["string", "null"]}
+            "chr": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pos": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "ref": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "alt": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
           }
         },
         "isoform_mappings": {
@@ -43,21 +65,84 @@
           "items": {
             "type": "object",
             "properties": {
-              "accession": {"type": ["string", "null"]},
-              "canonical": {"type": ["boolean", "null"]},
-              "gene": {"type": ["string", "null"]},
-              "ensg": {"type": ["string", "null"]},
-              "consequence": {"type": ["string", "null"]},
-              "ref_aa": {"type": ["string", "null"]},
-              "alt_aa": {"type": ["string", "null"]},
-              "position": {"type": ["integer", "null"]},
-              "codon_change": {"type": ["string", "null"]},
-              "protein_name": {"type": ["string", "null"]},
+              "accession": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "canonical": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "gene": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ensg": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "consequence": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ref_aa": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "alt_aa": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "position": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "codon_change": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "protein_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "alphamissense": {
-                "type": ["object", "null"],
+                "type": [
+                  "object",
+                  "null"
+                ],
                 "properties": {
-                  "score": {"type": ["number", "null"]},
-                  "class": {"type": ["string", "null"]},
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "class": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
                   "classification_scope": {
                     "type": "string"
                   },
@@ -99,16 +184,38 @@
         "prediction_context": {
           "type": "object",
           "description": "Provenance and non-clinical interpretation warning for computational scores."
+        },
+        "assembly": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which genome assembly the coordinates were interpreted against, e.g. 'GRCh38'. The same position means a different base under GRCh37, so a mapping without this is not reproducible."
         }
       }
     },
     "test_examples": [
-      {"variant": "P04637 R175H"},
-      {"variant": "rs1799966"}
+      {
+        "variant": "P04637 R175H"
+      },
+      {
+        "variant": "rs1799966"
+      }
     ],
-    "label": ["ProtVar", "Variant", "Pathogenicity", "AlphaMissense", "EVE"],
+    "label": [
+      "ProtVar",
+      "Variant",
+      "Pathogenicity",
+      "AlphaMissense",
+      "EVE"
+    ],
     "metadata": {
-      "tags": ["variant", "pathogenicity", "missense", "protein"],
+      "tags": [
+        "variant",
+        "pathogenicity",
+        "missense",
+        "protein"
+      ],
       "estimated_execution_time": "3-5 seconds"
     }
   },
@@ -133,20 +240,38 @@
           "description": "Single-letter code for the variant amino acid (e.g. 'H' for histidine). Supply this to retrieve mutation-specific ESM, EVE, PopEVE, FoldX, and M3D predictions; without it ProtVar returns only position-level context."
         }
       },
-      "required": ["accession", "position"]
+      "required": [
+        "accession",
+        "position"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "accession": {"type": ["string", "null"]},
-        "position": {"type": ["integer", "null"]},
+        "accession": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "position": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
         "variant_aa": {
           "type": [
             "string",
             "null"
           ]
         },
-        "protein_name": {"type": ["string", "null"]},
+        "protein_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "gene_names": {
           "type": "array",
           "items": {
@@ -172,7 +297,12 @@
             ]
           }
         },
-        "protein_existence": {"type": ["string", "null"]},
+        "protein_existence": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "alternative_names": {
           "type": "array",
           "items": {}
@@ -334,11 +464,38 @@
           "items": {
             "type": "object",
             "properties": {
-              "type": {"type": ["string", "null"]},
-              "category": {"type": ["string", "null"]},
-              "description": {"type": ["string", "null"]},
-              "begin": {"type": ["string", "integer", "null"]},
-              "end": {"type": ["string", "integer", "null"]}
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "category": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "begin": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ]
+              },
+              "end": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ]
+              }
             }
           }
         },
@@ -347,20 +504,47 @@
           "items": {
             "type": "object",
             "properties": {
-              "type": {"type": ["string", "null"]},
-              "value": {"type": ["string", "null"]}
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         }
       }
     },
     "test_examples": [
-      {"accession": "P04637", "position": 175, "variant_aa": "H"},
-      {"accession": "P22304", "position": 149}
+      {
+        "accession": "P04637",
+        "position": 175,
+        "variant_aa": "H"
+      },
+      {
+        "accession": "P22304",
+        "position": 149
+      }
     ],
-    "label": ["ProtVar", "Function", "Annotation", "UniProt"],
+    "label": [
+      "ProtVar",
+      "Function",
+      "Annotation",
+      "UniProt"
+    ],
     "metadata": {
-      "tags": ["variant", "function", "annotation", "protein"],
+      "tags": [
+        "variant",
+        "function",
+        "annotation",
+        "protein"
+      ],
       "estimated_execution_time": "2-3 seconds"
     }
   },
@@ -384,44 +568,111 @@
           "description": "Optional genomic coordinate (GRCh38); ProtVar answers for the whole protein position without it."
         }
       },
-      "required": ["accession", "position"]
+      "required": [
+        "accession",
+        "position"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "accession": {"type": "string"},
-        "position": {"type": "integer"},
-        "genomic_location": {"type": ["integer", "null"]},
+        "accession": {
+          "type": "string"
+        },
+        "position": {
+          "type": "integer"
+        },
+        "genomic_location": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
         "colocated_variants": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "source": {"type": ["string", "null"]},
-              "wild_type": {"type": ["string", "null"]},
-              "alt_sequence": {"type": ["string", "null"]},
-              "consequence": {"type": ["string", "null"]},
-              "codon": {"type": ["string", "null"]},
-              "genomic_location": {"type": ["string", "null"]},
-              "genomic_locations": {"type": "array", "items": {"type": "string"}},
-              "cytogenetic_band": {"type": ["string", "null"]},
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "wild_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "alt_sequence": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "consequence": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "codon": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "genomic_location": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "genomic_locations": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "cytogenetic_band": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "clinical_significance": {
                 "type": "array",
-                "items": {"type": "object"}
+                "items": {
+                  "type": "object"
+                }
               },
-              "diseases": {"type": "array", "items": {"type": "string"}},
-              "xref_count": {"type": "integer"},
+              "diseases": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "xref_count": {
+                "type": "integer"
+              },
               "frequencies": {
                 "type": "array",
-                "items": {"type": "object"}
+                "items": {
+                  "type": "object"
+                }
               },
               "predictions": {
                 "type": "array",
-                "items": {"type": "object"}
+                "items": {
+                  "type": "object"
+                }
               },
               "xrefs": {
                 "type": "array",
-                "items": {"type": "object"}
+                "items": {
+                  "type": "object"
+                }
               }
             }
           }
@@ -429,11 +680,26 @@
       }
     },
     "test_examples": [
-      {"accession": "P04637", "position": 175}
+      {
+        "accession": "P04637",
+        "position": 175
+      }
     ],
-    "label": ["ProtVar", "Population", "Frequency", "ClinVar", "SIFT", "PolyPhen"],
+    "label": [
+      "ProtVar",
+      "Population",
+      "Frequency",
+      "ClinVar",
+      "SIFT",
+      "PolyPhen"
+    ],
     "metadata": {
-      "tags": ["variant", "population", "frequency", "clinical"],
+      "tags": [
+        "variant",
+        "population",
+        "frequency",
+        "clinical"
+      ],
       "estimated_execution_time": "2-3 seconds"
     }
   }

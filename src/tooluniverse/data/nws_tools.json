@@ -82,8 +82,114 @@
                 "timeZone": {
                   "type": "string",
                   "description": "IANA time zone"
+                },
+                "@id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Canonical URL of this point resource, e.g. 'https://api.weather.gov/points/38.8894,-77.0352'."
+                },
+                "@type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "JSON-LD class of the record, 'wx:Point'."
+                },
+                "astronomicalData": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Sun times for the point: sunrise, sunset, transit and the civil, nautical and astronomical twilight bounds. What makes a forecast readable as day or night."
+                },
+                "county": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "API URL of the county zone, e.g. '.../zones/county/DCC001'."
+                },
+                "fireWeatherZone": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "API URL of the fire-weather zone, e.g. '.../zones/fire/DCZ001'. Red flag warnings are issued by this zone, not the forecast zone."
+                },
+                "forecastGridData": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "API URL of the raw gridded forecast, e.g. '.../gridpoints/LWX/97,71'. The numeric forecast behind the worded one."
+                },
+                "forecastOffice": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "API URL of the Weather Forecast Office responsible, e.g. '.../offices/LWX'. Who issues the forecasts and alerts for this point."
+                },
+                "forecastZone": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "API URL of the public forecast zone, e.g. '.../zones/forecast/DCZ001'. The zone an alert would be issued against."
+                },
+                "nwr": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "NOAA Weather Radio coverage for the point - transmitter, sameCode, areaBroadcast and pointBroadcast. The SAME code is what a weather radio is programmed with."
+                },
+                "observationStations": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "API URL listing the observing stations for the grid cell. Where actual observations, as opposed to forecasts, come from."
+                },
+                "radarStation": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Nearest radar station id, e.g. 'KLWX'."
+                },
+                "relativeLocation": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The nearest named place, as a GeoJSON feature with its city, state and bearing/distance from the point. How to say where this forecast is in words."
+                },
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What the point sits on, e.g. 'land'. A marine point is served by different products, so this changes which forecasts apply."
                 }
               }
+            },
+            "@context": {
+              "type": [
+                "array",
+                "object",
+                "null"
+              ],
+              "description": "The JSON-LD context the reply declares."
+            },
+            "geometry": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The point as GeoJSON, 'type' and 'coordinates'. NWS snaps the request to its grid, so this is where the answer actually applies rather than where the caller asked."
             }
           },
           "not": {
@@ -203,11 +309,89 @@
                       },
                       "isDaytime": {
                         "type": "boolean"
+                      },
+                      "icon": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "URL of the weather icon for the period, e.g. '.../icons/land/night/skc?size=medium'. The icon path encodes the sky condition, which the short forecast text gives only in words."
+                      },
+                      "probabilityOfPrecipitation": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "Chance of precipitation for the period, as 'unitCode' and 'value'. The value is a bare number and the unit code is what makes it a percentage; it can also be null, which is not zero."
                       }
                     }
                   }
+                },
+                "elevation": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Elevation of the grid cell, as 'unitCode' and 'value'. Temperature follows elevation, so a surprising forecast is often a cell at a different height."
+                },
+                "forecastGenerator": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which NWS generator produced the forecast, e.g. 'BaselineForecastGenerator'."
+                },
+                "generatedAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When this forecast was generated, e.g. '2026-11-11T03:42:21+00:00'."
+                },
+                "units": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which unit system the values are in, e.g. 'us'. 'us' means Fahrenheit and miles per hour; reading those as metric is a large error, and the period values carry no unit of their own."
+                },
+                "updateTime": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When the underlying gridded data was last updated. Earlier than generatedAt, and it is the real age of the forecast."
+                },
+                "validTimes": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The interval the forecast covers, as an ISO 8601 interval with a duration, e.g. '2026-11-10T20:00:00+00:00/P7DT5H'. The part after the '/' is a DURATION, not an end instant, so it has to be added to the start."
                 }
               }
+            },
+            "@context": {
+              "type": [
+                "array",
+                "object",
+                "null"
+              ],
+              "description": "The JSON-LD context the feed declares, e.g. ['https://geojson.org/geojson-ld/geojson-context.jsonld', {...}]. What makes the reply linked data rather than plain GeoJSON."
+            },
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the point sits on, e.g. 'land'. A marine point is served by different products, so this changes which forecasts apply."
+            },
+            "geometry": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The forecast area as GeoJSON ('type' and 'coordinates') - the grid cell, not the requested point."
             }
           },
           "not": {
@@ -344,11 +528,207 @@
                       },
                       "expires": {
                         "type": "string"
+                      },
+                      "@id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The alert's JSON-LD identity, the same URL as the feature's id."
+                      },
+                      "@type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "JSON-LD class of the record, 'wx:Alert'."
+                      },
+                      "affectedZones": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "API URLs of the NWS forecast or county zones the alert covers, e.g. ['https://api.weather.gov/zones/county/TXC465']. For an alert with no polygon this is the only statement of where it applies."
+                      },
+                      "category": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "CAP event category, e.g. 'Met' for meteorological. Separates weather alerts from the geophysical, safety and security categories the same feed can carry."
+                      },
+                      "code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "CAP profile the alert follows, e.g. 'IPAWSv1.0'."
+                      },
+                      "ends": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the hazard is expected to end. Null for an alert with no stated end, which is not the same as one that has already expired."
+                      },
+                      "eventCode": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The event's codes by scheme: 'SAME' (the three-letter radio code, e.g. FFA) and 'NationalWeatherService' (the VTEC phenomenon code). Stable keys for an event type whose headline text is not."
+                      },
+                      "geocode": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The same coverage as codes rather than URLs: 'SAME' (the FIPS codes broadcast on NOAA Weather Radio) and 'UGC' (NWS zone codes). The form an alerting system matches against."
+                      },
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The alert's CAP identifier, e.g. 'urn:oid:2.49.0.1.840.0.c2ff...001.1'. The id NWS's own references list points at, and what ties an Update to the alert it replaces."
+                      },
+                      "instruction": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The protective-action text for the public, e.g. \"Turn around, don't drown when encountering flooded roads...\". Separate from the description and often the part that matters most to a reader."
+                      },
+                      "language": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Language of the alert text, e.g. 'en-US'. NWS also issues Spanish alerts, so the text is not always English."
+                      },
+                      "messageType": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Whether this message is the 'Alert' itself or an 'Update', 'Cancel' or 'Ack' of an earlier one. An Update looks like a fresh alert otherwise, and the measured example is one."
+                      },
+                      "onset": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When the hazard is expected to begin, e.g. '2026-11-10T19:08:00-06:00'. Distinct from 'sent': an alert is normally issued before the hazard starts."
+                      },
+                      "parameters": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "The alert's extra CAP parameters, each a list of values: AWIPSidentifier, WMOidentifier, NWSheadline, BLOCKCHANNEL, 'EAS-ORG', VTEC and eventEndingTime among them. VTEC carries the machine-readable event string, and NWSheadline the headline a broadcaster reads out."
+                      },
+                      "references": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "The earlier alerts this message supersedes, each with its @id, identifier and sent time. The only way to tell which alert an Update is updating."
+                      },
+                      "response": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The action the issuer recommends, e.g. 'Avoid', 'Shelter', 'Evacuate', 'Monitor'. The CAP field a responder acts on."
+                      },
+                      "scope": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Who the alert is addressed to, e.g. 'Public', 'Restricted' or 'Private'."
+                      },
+                      "sender": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Email identity of the issuing office, e.g. 'w-nws.webmaster@noaa.gov'."
+                      },
+                      "senderName": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The issuing office in words, e.g. 'NWS Austin/San Antonio TX'. Which forecast office owns the alert."
+                      },
+                      "sent": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "When this message was issued. For messageType 'Update' it is the time of the revision, not of the original alert."
+                      },
+                      "status": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Whether the message is a real alert ('Actual') or a test, exercise or draft. Treating a 'Test' as 'Actual' is the mistake this field exists to prevent."
+                      },
+                      "web": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "URL with more information about the event, e.g. 'http://www.weather.gov'."
                       }
                     }
+                  },
+                  "geometry": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The alert's own polygon as GeoJSON ('type' plus 'coordinates'). Null for alerts issued by zone rather than by shape, which is why affectedZones exists. Without it an alert cannot be drawn on a map or tested against a point."
+                  },
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Canonical URL of the alert, e.g. 'https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.c2ff...001.1'. The address to re-fetch or cite this alert."
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GeoJSON feature type, 'Feature'."
                   }
                 }
               }
+            },
+            "@context": {
+              "type": [
+                "array",
+                "object",
+                "null"
+              ],
+              "description": "The JSON-LD context the feed declares, e.g. ['https://geojson.org/geojson-ld/geojson-context.jsonld', {...}]. What makes the reply linked data rather than plain GeoJSON."
+            },
+            "updated": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When NWS last rebuilt the active-alert set, e.g. '2026-11-11T01:45:06+00:00'. Alerts are continuously revised, so this is the only field that says how current the answer is."
             }
           },
           "not": {

@@ -1,7 +1,7 @@
 [
   {
     "name": "gProfiler_enrichment",
-    "description": "Perform functional enrichment analysis on a gene list using g:Profiler (g:GOSt) from the University of Tartu. Identifies statistically overrepresented biological functions, pathways, and phenotypes in your gene list. Supports multiple data sources: Gene Ontology (GO:BP, GO:MF, GO:CC), KEGG pathways, Reactome, WikiPathways, Human Phenotype Ontology (HP), miRNA targets (MIRNA), CORUM protein complexes, and Transcription Factor targets (TF). Returns enriched terms with p-values (g:SCS multiple testing correction), term sizes, intersection genes, precision, and recall. Input is a comma-separated string of gene symbols (e.g., 'TP53,BRCA1,EGFR,KRAS,PTEN') -- a JSON array is not accepted. Supports 500+ organisms (use NCBI taxonomy prefix, e.g., 'hsapiens', 'mmusculus', 'dmelanogaster').",
+    "description": "Perform functional enrichment analysis on a gene list using g:Profiler (g:GOSt) from the University of Tartu. Identifies statistically overrepresented biological functions, pathways, and phenotypes in your gene list. Supports multiple data sources: Gene Ontology (GO:BP, GO:MF, GO:CC), KEGG pathways, Reactome, WikiPathways, Human Phenotype Ontology (HP), miRNA targets (MIRNA), CORUM protein complexes, and Transcription Factor targets (TF). Returns enriched terms with p-values (g:SCS multiple testing correction), term sizes, intersection genes, precision, and recall. Input is a comma-separated string of gene symbols (e.g., 'TP53,BRCA1,EGFR,KRAS,PTEN') -- a JSON array is not accepted. Supports 500+ organisms (use NCBI taxonomy prefix, e.g., 'hsapiens', 'mmusculus', 'dmelanogaster'). Reports which submitted identifiers g:Profiler resolved and which it could not: metadata.genes_failed, genes_ambiguous, genes_duplicated, gene_id_mapping, and a gene_resolution_warning when anything failed. An unresolved gene is silently excluded upstream, so the enrichment is computed on the rest. Each term also carries effective_domain_size, the denominator of the hypergeometric test, and intersection_genes, the submitted genes in the term with their evidence codes.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -80,6 +80,53 @@
               "recall": {
                 "type": "number",
                 "description": "intersection_size / term_size"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The term's own definition text, as the ontology states it"
+              },
+              "effective_domain_size": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "N, the denominator of the hypergeometric test: the number of genes annotated in this source for this organism (e.g. 20972 for GO:BP in hsapiens). Required to recompute or check p_value; it is NOT the genome size."
+              },
+              "parents": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Immediate parent term ids, for collapsing redundant descendants"
+              },
+              "intersection_genes": {
+                "type": "array",
+                "description": "The submitted genes annotated to this term, with their annotation evidence codes. Empty when the source carries no per-gene evidence.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "gene": {
+                      "type": "string"
+                    },
+                    "evidence_codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "GO/source evidence codes, e.g. IMP, IEA, IDA"
+                    }
+                  }
+                }
+              },
+              "query": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which submitted query this row belongs to (g:Profiler labels them query_1, query_2, ...)"
               }
             }
           },

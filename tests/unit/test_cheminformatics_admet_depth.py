@@ -332,7 +332,11 @@ class TestEcotoxicityValues(unittest.TestCase):
         data = out["data"]
         self.assertEqual(data["cid"], 241)
         self.assertEqual(data["ecotoxicity_values_count"], 2)
-        self.assertTrue(any("grass shrimp" in v for v in data["ecotoxicity_values"]))
+        # Each value now travels with the source that stated it, so the
+        # statement text is under "value".
+        self.assertTrue(
+            any("grass shrimp" in v["value"] for v in data["ecotoxicity_values"])
+        )
 
     def test_no_id_error(self):
         """Neither cid nor compound_name yields a structured error."""
@@ -383,7 +387,10 @@ class TestHumanToxicityValues(unittest.TestCase):
         data = out["data"]
         self.assertEqual(data["human_toxicity_values_count"], 2)
         self.assertTrue(
-            any("Immediately dangerous" in v for v in data["human_toxicity_values"])
+            any(
+                "Immediately dangerous" in v["value"]
+                for v in data["human_toxicity_values"]
+            )
         )
 
     def test_no_id_error(self):

@@ -8,22 +8,33 @@
     },
     "parameter": {
       "type": "object",
-      "required": ["query"],
+      "required": [
+        "query"
+      ],
       "properties": {
         "query": {
           "type": "string",
           "description": "Free-text search over title, terms, and abstract, e.g. 'CRISPR gene editing'."
         },
         "fiscal_year": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Optional NIH fiscal year filter, e.g. 2024."
         },
         "organization": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Optional grantee institution filter, e.g. 'Broad Institute'."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Max projects to return, 1-100. Default 25."
         }
       }
@@ -35,30 +46,154 @@
           "items": {
             "type": "object",
             "properties": {
-              "project_num": {"type": ["string", "null"]},
-              "appl_id": {"type": ["integer", "null"]},
-              "title": {"type": ["string", "null"]},
-              "principal_investigator": {"type": ["string", "null"]},
-              "organization": {"type": ["string", "null"]},
-              "funding_institute": {"type": ["string", "null"]},
-              "fiscal_year": {"type": ["integer", "null"]},
-              "award_amount": {"type": ["number", "null"]},
-              "project_start_date": {"type": ["string", "null"]},
-              "project_end_date": {"type": ["string", "null"]},
-              "abstract": {"type": ["string", "null"]}
+              "project_num": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "appl_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "principal_investigator": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "organization": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "funding_institute": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "fiscal_year": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "award_amount": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "project_start_date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "project_end_date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "abstract": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "organization_city": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "City of the awardee institution."
+              },
+              "organization_state": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "State or territory code of the awardee institution; null outside the US."
+              },
+              "organization_country": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Country of the awardee institution."
+              },
+              "organization_zipcode": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Postal code of the awardee institution."
+              },
+              "organization_department_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "RePORTER's department category for the awardee unit, e.g. 'ANATOMY/CELL BIOLOGY'. 'NONE' when RePORTER records none."
+              },
+              "organization_uei": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unique Entity Identifier of the awardee institution - the federal identifier that joins it across datasets. 'organization' is a display name and one institution appears under several spellings, so join on this and not on the name."
+              },
+              "organization_duns": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DUNS number of the awardee institution, the identifier UEI replaced; still present on older awards."
+              },
+              "organization_ipf_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "NIH's internal institution profile code for the awardee."
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"query": "CRISPR gene editing", "fiscal_year": 2024, "limit": 5},
-      {"query": "single cell RNA sequencing", "limit": 5}
+      {
+        "query": "CRISPR gene editing",
+        "fiscal_year": 2024,
+        "limit": 5
+      },
+      {
+        "query": "single cell RNA sequencing",
+        "limit": 5
+      }
     ]
   },
   {
@@ -72,11 +207,17 @@
       "type": "object",
       "properties": {
         "project_num": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "NIH project number, e.g. '5R21EB036298-03'."
         },
         "appl_id": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "NIH application id, e.g. 11326711. Alternative to project_num."
         }
       }
@@ -91,29 +232,143 @@
           },
           "type": "object",
           "properties": {
-            "project_num": {"type": ["string", "null"]},
-            "appl_id": {"type": ["integer", "null"]},
-            "title": {"type": ["string", "null"]},
-            "principal_investigator": {"type": ["string", "null"]},
-            "organization": {"type": ["string", "null"]},
-            "funding_institute": {"type": ["string", "null"]},
-            "fiscal_year": {"type": ["integer", "null"]},
-            "award_amount": {"type": ["number", "null"]},
-            "project_start_date": {"type": ["string", "null"]},
-            "project_end_date": {"type": ["string", "null"]},
-            "abstract": {"type": ["string", "null"]}
+            "project_num": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "appl_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "principal_investigator": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "organization": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "funding_institute": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "fiscal_year": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "award_amount": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "project_start_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "project_end_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "abstract": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "organization_city": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "City of the awardee institution."
+            },
+            "organization_country": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Country of the awardee institution."
+            },
+            "organization_duns": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "DUNS number of the awardee institution, the identifier UEI replaced; still present on older awards."
+            },
+            "organization_ipf_code": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "NIH's internal institution profile code for the awardee."
+            },
+            "organization_state": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "State or territory code of the awardee institution; null outside the US."
+            },
+            "organization_uei": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Unique Entity Identifier of the awardee institution - the federal identifier that joins it across datasets. 'organization' is a display name and one institution appears under several spellings, so join on this and not on the name."
+            },
+            "organization_zipcode": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Postal code of the awardee institution."
+            }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"project_num": "5R21EB036298-03"},
-      {"appl_id": 11326711}
+      {
+        "project_num": "5R21EB036298-03"
+      },
+      {
+        "appl_id": 11326711
+      }
     ]
   }
 ]

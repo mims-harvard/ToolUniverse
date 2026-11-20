@@ -875,7 +875,7 @@ async def run(self, arguments, progress=None):
 
 Need help with MCP Tasks or async operations?
 
-- **Slack**: [ToolUniverse Community](https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ)
+- **Slack**: [ToolUniverse Community](https://join.slack.com/t/tooluniversehq/shared_invite/zt-4hbw8ff4y-AaMwpTbkvbjWsnmMqHmQYA)
 - **GitHub Issues**: [Report Issues](https://github.com/mims-harvard/ToolUniverse/issues)
 - **Email**: [Shanghua Gao](mailto:shanghuagao@gmail.com)
 

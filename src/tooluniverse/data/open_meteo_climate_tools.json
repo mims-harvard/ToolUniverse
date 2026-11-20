@@ -22,25 +22,55 @@
           "description": "End date in YYYY-MM-DD format. Examples: '1980-12-31', '2000-06-30', '2023-12-31'"
         },
         "daily": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Comma-separated daily variables. Values: 'temperature_2m_mean', 'temperature_2m_max', 'temperature_2m_min', 'precipitation_sum', 'rain_sum', 'snowfall_sum', 'wind_speed_10m_max', 'et0_fao_evapotranspiration'. Default: temperature_2m_mean,precipitation_sum"
         },
         "models": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Climate model. Values: 'EC_Earth3P_HR' (Europe, high res), 'MPI_ESM1_2_XR', 'FGOALS_f3_H', 'CMCC_CM2_VHR4'. Default: EC_Earth3P_HR"
         }
       },
-      "required": ["latitude", "longitude", "start_date", "end_date"]
+      "required": [
+        "latitude",
+        "longitude",
+        "start_date",
+        "end_date"
+      ]
     },
     "fields": {
       "endpoint": "https://climate-api.open-meteo.com/v1/climate",
-      "params": {"daily": "temperature_2m_mean,precipitation_sum", "models": "EC_Earth3P_HR"}
+      "params": {
+        "daily": "temperature_2m_mean,precipitation_sum",
+        "models": "EC_Earth3P_HR"
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"latitude": 52.52, "longitude": 13.41, "start_date": "1980-01-01", "end_date": "1980-01-07"},
-      {"latitude": 40.71, "longitude": -74.01, "start_date": "2000-06-01", "end_date": "2000-06-07"},
-      {"latitude": 48.85, "longitude": 2.35, "start_date": "1990-01-01", "end_date": "1990-01-07", "daily": "temperature_2m_mean,temperature_2m_max,temperature_2m_min,precipitation_sum"}
+      {
+        "latitude": 52.52,
+        "longitude": 13.41,
+        "start_date": "1980-01-01",
+        "end_date": "1980-01-07"
+      },
+      {
+        "latitude": 40.71,
+        "longitude": -74.01,
+        "start_date": "2000-06-01",
+        "end_date": "2000-06-07"
+      },
+      {
+        "latitude": 48.85,
+        "longitude": 2.35,
+        "start_date": "1990-01-01",
+        "end_date": "1990-01-07",
+        "daily": "temperature_2m_mean,temperature_2m_max,temperature_2m_min,precipitation_sum"
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -53,26 +83,85 @@
           "type": "object",
           "description": "Historical climate data",
           "properties": {
-            "latitude": {"type": "number"},
-            "longitude": {"type": "number"},
-            "elevation": {"type": "number"},
-            "timezone": {"type": "string"},
-            "daily_units": {"type": "object", "description": "Units for each daily variable"},
+            "latitude": {
+              "type": "number"
+            },
+            "longitude": {
+              "type": "number"
+            },
+            "elevation": {
+              "type": "number"
+            },
+            "timezone": {
+              "type": "string"
+            },
+            "daily_units": {
+              "type": "object",
+              "description": "Units for each daily variable"
+            },
             "daily": {
               "type": "object",
               "description": "Daily climate data arrays",
               "properties": {
-                "time": {"type": "array", "items": {"type": "string"}},
-                "temperature_2m_mean": {"type": "array", "items": {"type": ["number", "null"]}},
-                "precipitation_sum": {"type": "array", "items": {"type": ["number", "null"]}}
+                "time": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "temperature_2m_mean": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "precipitation_sum": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
               }
+            },
+            "generationtime_ms": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "How long Open-Meteo took to generate the reply, in milliseconds, e.g. 0.45. A server-side timing, nothing to do with the forecast."
+            },
+            "timezone_abbreviation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Abbreviation of that timezone, e.g. 'GMT'. Abbreviations are ambiguous worldwide -- utc_offset_seconds is the authoritative field."
+            },
+            "utc_offset_seconds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of the returned timestamps from UTC, in seconds, e.g. 0. Every time in the reply is in THIS offset, so reading them as UTC shifts the whole series when it is non-zero."
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

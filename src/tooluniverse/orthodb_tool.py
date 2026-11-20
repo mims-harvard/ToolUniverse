@@ -19,6 +19,14 @@ from .tool_registry import register_tool
 ORTHODB_BASE_URL = "https://data.orthodb.org/v12"
 
 
+def _as_int(value):
+    """OrthoDB serialises its counts as strings: gene_count "37072"."""
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return value if value is None else str(value)
+
+
 @register_tool("OrthoDBTool")
 class OrthoDBTool(BaseTool):
     """
@@ -118,10 +126,33 @@ class OrthoDBTool(BaseTool):
         # group, not just the first -- confirmed live this previously left
         # 9 of 10 results as bare {"group_id": ...} with no way to tell
         # them apart without a follow-up call per group.
+        # OrthoDB answers the same /search call twice over: `data` holds bare
+        # ids and `bigdata` holds the full record for each of them -- name,
+        # level_name, present_in, gene_count, relevance. The bare list was the
+        # only one read, so every attribute of an orthologous group except its
+        # id was dropped from a response that already contained it, and the
+        # /tab fan-out below went and fetched a subset of it back one group at
+        # a time. `level_taxid` is the one field /tab has and `bigdata` does
+        # not, which is why that call stays.
+        bigdata = {
+            row.get("id"): row
+            for row in (data.get("bigdata") or [])
+            if isinstance(row, dict) and row.get("id")
+        }
+
         groups = []
         enrichment_failures = []
         for gid in group_ids:
             group = {"group_id": gid, "enrichment_status": "unavailable"}
+            record = bigdata.get(gid) or {}
+            if record:
+                group["name"] = record.get("name")
+                group["public_id"] = record.get("public_id")
+                group["level_name"] = record.get("level_name")
+                group["gene_count"] = _as_int(record.get("gene_count"))
+                group["species_count"] = _as_int(record.get("present_in"))
+                group["search_relevance"] = record.get("relevance")
+                group["enrichment_status"] = "complete"
             try:
                 tab_resp = requests.get(
                     f"{ORTHODB_BASE_URL}/tab",
@@ -133,7 +164,9 @@ class OrthoDBTool(BaseTool):
                     if len(lines) > 1:
                         cols = lines[1].split("\t")
                         if len(cols) >= 2:
-                            group["name"] = cols[1]
+                            group.setdefault("name", cols[1])
+                            if not group.get("name"):
+                                group["name"] = cols[1]
                             group["level_taxid"] = cols[2] if len(cols) > 2 else None
                             group["enrichment_status"] = "complete"
                         else:

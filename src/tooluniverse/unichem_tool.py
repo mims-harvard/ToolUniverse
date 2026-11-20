@@ -382,7 +382,23 @@ class UniChemTool(BaseTool):
                     "long_name": s.get("nameLong", s.get("nameLabel", "")),
                     "description": s.get("description", None),
                     "compound_count": s.get("UCICount", None),
-                    "last_updated": s.get("lastUpdated", None),
+                    # UniChem answers `srcLastUpdated`, never `lastUpdated`,
+                    # so this field was null for all 25 sources: a source
+                    # that looked un-dated was a key nobody had checked.
+                    "last_updated": s.get("srcLastUpdated"),
+                    # When UniChem last verified the source was reachable,
+                    # which is a different fact from when the source itself
+                    # last changed.
+                    "last_checked": s.get("lastChecked"),
+                    # The two URLs that make a source usable: `base_id_url`
+                    # plus a compound id is the record's page
+                    # ("https://www.surechembl.org/chemical/" + id), and
+                    # `source_url` is the source's own home page. A tool
+                    # whose job is to list the sources returned neither.
+                    "base_id_url": s.get("baseIdUrl"),
+                    "source_url": s.get("srcUrl"),
+                    "update_comments": s.get("updateComments"),
+                    "is_private": s.get("private"),
                 }
             )
 

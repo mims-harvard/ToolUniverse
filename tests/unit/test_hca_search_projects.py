@@ -71,5 +71,15 @@ class TestOrganAndDiseaseExtraction:
             result = tool.search_projects(organ="pancreas", limit=3)
 
         project = result["projects"][0]
-        assert project["organ"] is None
-        assert project["donorDisease"] is None
+        # These were None when the row read `specimens[0].get("organ")` on a
+        # hit with no specimens. They are list-valued facets -- Azul answers
+        # every one as a list and a project can have several specimens -- so
+        # the empty list is now the honest answer and a caller has one falsy
+        # shape to handle instead of two. `return_schema` allows both.
+        assert project["organ"] == []
+        assert project["donorDisease"] == []
+        # The rest of the row is present and empty rather than absent.
+        assert project["genusSpecies"] == []
+        assert project["libraryConstructionApproach"] == []
+        assert project["totalCells"] is None
+        assert project["donorCount"] is None

@@ -22,6 +22,26 @@ NEXTSTRAIN_BASE_URL = "https://nextstrain.org/charon"
 DEFAULT_DATASETS_PER_PATHOGEN = 10
 
 
+# A categorical coloring's scale lists every value the build covers -- 36
+# countries on zika -- paired with the colour used to draw it. The values are
+# reported up to this many; the colours are not.
+COLORING_VALUES_PER_DIMENSION = 50
+
+
+def _coloring_values(coloring: Dict[str, Any]) -> list:
+    """The values a categorical coloring takes, without the display colours."""
+    scale = coloring.get("scale")
+    if not isinstance(scale, list):
+        return []
+    values = []
+    for entry in scale:
+        if isinstance(entry, (list, tuple)) and entry:
+            values.append(entry[0])
+        elif isinstance(entry, dict) and entry.get("value") is not None:
+            values.append(entry["value"])
+    return [v for v in values if v is not None]
+
+
 @register_tool("NextstrainTool")
 class NextstrainTool(BaseTool):
     """
@@ -275,7 +295,7 @@ class NextstrainTool(BaseTool):
             "root_attributes": root_info,
         }
 
-        # Color-by options (complete list — these are short keys, so nothing is
+        # Color-by options (complete list -- these are short keys, so nothing is
         # dropped; the count is reported alongside so callers can verify.)
         colorings = meta.get("colorings", [])
         if colorings:
@@ -285,6 +305,26 @@ class NextstrainTool(BaseTool):
             result["available_colorings"] = coloring_keys
             result["available_colorings_count"] = len(coloring_keys)
             result["available_colorings_complete"] = True
+            # A key on its own is opaque: "gt" is genotype and "num_date" is
+            # date, and each dimension's own `title` and `type` say so in the
+            # same response. `scale` lists the values the build covers for a
+            # categorical dimension -- zika's `country` has 36 -- which is the
+            # question a summary of a phylogeny is usually asked. The colour
+            # hex beside each value is for drawing the tree, so only the
+            # values are reported.
+            result["colorings"] = [
+                {
+                    "key": c.get("key"),
+                    "title": c.get("title"),
+                    "type": c.get("type"),
+                    "values": _coloring_values(c)[:COLORING_VALUES_PER_DIMENSION],
+                    "value_count": len(_coloring_values(c)),
+                    "values_truncated": len(_coloring_values(c))
+                    > COLORING_VALUES_PER_DIMENSION,
+                }
+                for c in colorings
+                if isinstance(c, dict)
+            ]
 
         return {
             "status": "success",

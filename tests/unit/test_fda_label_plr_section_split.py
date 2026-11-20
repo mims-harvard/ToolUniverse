@@ -259,6 +259,10 @@ def test_populated_warnings_return_exactly_what_they_did_before():
             "spl_product_data_elements": ["Low Dose Aspirin Aspirin ASPIRIN"],
             # identity only, carried by every name-based label tool
             "openfda.route": None,
+            # identity too, and carried by every label tool: the date the
+            # label version took effect. None here because the fixture
+            # label has none; real labels all do.
+            "effective_time": None,
         }
     ]
     assert "section_note" not in result
@@ -298,6 +302,7 @@ def test_tools_that_request_no_safety_section_are_untouched():
         "indications_and_usage",
         "spl_product_data_elements",
         "openfda.route",
+        "effective_time",
     }
     assert "section_note" not in result
     # the label's other sections are only named, never attached

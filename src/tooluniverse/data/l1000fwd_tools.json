@@ -55,7 +55,51 @@
         {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "sig_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "LINCS signature identifier, which encodes the cell line, the perturbagen and the time point."
+              },
+              "scores": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The raw similarity score to the query signature."
+              },
+              "combined_scores": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The combined score, which is what the list is ranked on."
+              },
+              "zscores": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "That score standardised. Its SIGN matters: a negative z means the perturbagen REVERSES the query signature, which is the opposite biological claim from a positive one."
+              },
+              "pvals": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Nominal p-value."
+              },
+              "qvals": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The same after multiple-testing correction. With tens of thousands of signatures searched, the nominal p is not usable on its own."
+              }
+            }
           },
           "description": "List of matching L1000 signature hits with sig_id, combined_scores, pvals, qvals, scores, zscores"
         },

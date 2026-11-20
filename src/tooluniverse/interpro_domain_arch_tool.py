@@ -41,6 +41,44 @@ def _json_or_none(response):
     return response.json()
 
 
+def _domain_locations(entry: dict, key: str) -> list:
+    """Where a domain sits, in one of the two coordinate frames InterPro gives.
+
+    `entry_protein_locations` is in UniProt numbering and
+    `entry_structure_locations` in the structure's, with `auth_start` and
+    `auth_end` carrying the PDB author numbering beside it. For PF00870 in
+    1gzh those are 100-288 and 6-194 respectively, and the author numbers are
+    the ones a paper or a mutation name uses -- the same distinction round
+    thirty's PDBe-KB fix turned on.
+
+    `score` is the match e-value, 6.8e-60 here, which is how significant the
+    domain call is.
+    """
+    out = []
+    for location in entry.get(key) or []:
+        if not isinstance(location, dict):
+            continue
+        out.append(
+            {
+                "fragments": [
+                    {
+                        "start": fragment.get("start"),
+                        "end": fragment.get("end"),
+                        "auth_start": fragment.get("auth_start"),
+                        "auth_end": fragment.get("auth_end"),
+                        "status": fragment.get("dc-status"),
+                    }
+                    for fragment in (location.get("fragments") or [])
+                    if isinstance(fragment, dict)
+                ],
+                "model": location.get("model"),
+                "score": location.get("score"),
+                "representative": location.get("representative"),
+            }
+        )
+    return out
+
+
 class InterProDomainArchTool(BaseTool):
     """
     Tool for InterPro domain architecture analysis via the InterPro API.
@@ -133,6 +171,8 @@ class InterProDomainArchTool(BaseTool):
         next_cursor = self._next_cursor(data)
         domains = []
         protein_length = None
+        protein_source_database = None
+        protein_organism = None
 
         for r in results:
             metadata = r.get("metadata", {})
@@ -147,6 +187,16 @@ class InterProDomainArchTool(BaseTool):
             for p in proteins:
                 if protein_length is None:
                     protein_length = p.get("protein_length")
+                # Reviewed (Swiss-Prot) against unreviewed (TrEMBL), and the
+                # organism, for the protein the architecture is OF. Both
+                # sibling endpoints of this family already report the first.
+                # `proteins[].accession` and `metadata.source_database` are
+                # NOT added: they are the queried accession echoed back and
+                # the constant "pfam" from the request path.
+                if protein_source_database is None:
+                    protein_source_database = p.get("source_database")
+                if protein_organism is None:
+                    protein_organism = p.get("organism")
                 for loc in p.get("entry_protein_locations", []):
                     for frag in loc.get("fragments", []):
                         domains.append(
@@ -169,6 +219,8 @@ class InterProDomainArchTool(BaseTool):
             "data": {
                 "accession": accession,
                 "protein_length": protein_length,
+                "protein_source_database": protein_source_database,
+                "protein_organism": protein_organism,
                 "total_entries": data.get("count", len(results)),
                 "returned_entries": len(results),
                 "has_more": next_cursor is not None,
@@ -208,12 +260,43 @@ class InterProDomainArchTool(BaseTool):
         structures = []
         for r in results:
             m = r.get("metadata", {})
+            # Each hit's `entries` block says WHERE in the structure the
+            # domain is -- which chain, which residues in both the UniProt
+            # and the PDB author frames -- and how significant the call is.
+            # The row answered which structures contain the domain and
+            # nothing about the containment, the same gap this sweep closed
+            # for the protein and the domain endpoints of this family.
+            entry_rows = [e for e in (r.get("entries") or []) if isinstance(e, dict)]
+            matched = next(
+                (
+                    e
+                    for e in entry_rows
+                    if str(e.get("accession") or "").upper() == pfam_acc.upper()
+                ),
+                entry_rows[0] if entry_rows else {},
+            )
             structures.append(
                 {
                     "pdb_id": m.get("accession", ""),
                     "name": m.get("name"),
                     "experiment_type": m.get("experiment_type"),
                     "resolution": m.get("resolution"),
+                    "chains": sorted(
+                        {e.get("chain") for e in entry_rows if e.get("chain")}
+                    ),
+                    "entry_type": matched.get("entry_type"),
+                    "entry_source_database": matched.get("source_database"),
+                    "entry_integrated_interpro": matched.get("entry_integrated"),
+                    "protein_length": matched.get("protein_length"),
+                    "protein_locations": _domain_locations(
+                        matched, "entry_protein_locations"
+                    ),
+                    "structure_locations": _domain_locations(
+                        matched, "entry_structure_locations"
+                    ),
+                    "entries_matched": sorted(
+                        {e.get("accession") for e in entry_rows if e.get("accession")}
+                    ),
                 }
             )
 

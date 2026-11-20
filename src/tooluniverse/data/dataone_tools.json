@@ -80,6 +80,13 @@
                 },
                 "params": {
                   "type": "object"
+                },
+                "zkConnected": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when the search index's coordination service was reachable. False means the result may be served from an incomplete set of shards -- a silently partial answer."
                 }
               }
             },
@@ -160,6 +167,13 @@
                       }
                     }
                   }
+                },
+                "numFoundExact": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when the match count is exact rather than a lower bound. False means the total is approximate, so a count read from it is not a count."
                 }
               }
             }

@@ -11,7 +11,9 @@
           "description": "The DOI of the paper to check, e.g. '10.1016/S0140-6736(97)11096-0'. A full https://doi.org/ URL or a 'doi:'-prefixed value is also accepted."
         }
       },
-      "required": ["doi"]
+      "required": [
+        "doi"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -52,9 +54,30 @@
                   },
                   "source": {
                     "type": "string"
+                  },
+                  "record": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The retraction notice as Crossref holds it: {DOI, type, label, source, updated, record-id}. `label` names the kind of notice -- a correction and a retraction both arrive here and mean very different things."
+                  },
+                  "record_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Crossref's id for the notice record as a STRING, e.g. '17269'."
                   }
                 }
               }
+            },
+            "record": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The Crossref work record for the DOI checked, with its full metadata (indexed, publisher, license, published-print and the rest). The retraction verdict is separate; this is the work the verdict is about."
             }
           },
           "required": [
@@ -77,8 +100,12 @@
       ]
     },
     "test_examples": [
-      {"doi": "10.1016/S0140-6736(97)11096-0"},
-      {"doi": "10.1038/nature12968"}
+      {
+        "doi": "10.1016/S0140-6736(97)11096-0"
+      },
+      {
+        "doi": "10.1038/nature12968"
+      }
     ]
   }
 ]

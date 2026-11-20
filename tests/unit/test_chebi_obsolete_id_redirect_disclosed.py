@@ -176,9 +176,21 @@ class TestDirectHitIsUnchanged:
         # secondary_ids, which is provenance only for a substitution.
         assert _DISCLOSURE_KEYS & set(data) == set()
 
-    def test_direct_hit_key_order_is_unchanged(self):
+    def test_direct_hit_leads_with_the_compound_not_a_disclosure(self):
+        """The disclosure keys go first on a redirect, so a direct hit must
+        still start with the compound's own identity.
+
+        This was an exact key-list assertion, which made it a guard against
+        the payload ever growing -- and the field-coverage sweep then added
+        the InChI, the role classification and the CAS numbers the same
+        response had always carried. What it was written to protect is the
+        order: `_redirect_disclosure` is merged in front of the result, so on
+        a direct hit nothing precedes `chebi_id`, and the original keys keep
+        their original relative order.
+        """
         result, _ = _run("get_compound", _PRIMARY_COMPOUND, {"chebi_id": 15377})
-        assert list(result["data"]) == [
+        keys = list(result["data"])
+        original = [
             "chebi_id",
             "chebi_accession",
             "name",
@@ -197,6 +209,9 @@ class TestDirectHitIsUnchanged:
             "synonyms_truncated",
             "next_synonym_offset",
         ]
+        assert keys[0] == "chebi_id"
+        assert [key for key in keys if key in original] == original
+        assert _DISCLOSURE_KEYS & set(keys) == set()
 
     def test_curie_form_of_a_primary_id_adds_nothing(self):
         result, _ = _run("get_compound", _PRIMARY_COMPOUND, {"chebi_id": "CHEBI:15377"})

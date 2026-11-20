@@ -19,7 +19,7 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 120,
-          "description": "Age in years (0\u2013120)"
+          "description": "Age in years (0–120)"
         },
         "sex": {
           "type": "string",
@@ -203,7 +203,10 @@
                                   "type": "object",
                                   "properties": {
                                     "Title": {
-                                      "type": ["string", "null"],
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ],
                                       "description": "Section heading. Measured null for age 35, female, pregnant, where a section is delivered without one."
                                     },
                                     "Content": {
@@ -232,7 +235,10 @@
                               "type": "object",
                               "properties": {
                                 "Title": {
-                                  "type": ["string", "null"],
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
                                   "description": "Section heading in the plain-text rendering. Measured null where a section is delivered without one."
                                 },
                                 "PlainContent": {
@@ -296,11 +302,17 @@
                             "type": "string"
                           },
                           "RelatedItems": {
-                            "type": ["object", "null"],
+                            "type": [
+                              "object",
+                              "null"
+                            ],
                             "description": "Related topics for the resource. Measured for age 35, female, pregnant. Null for resources with none."
                           },
                           "Sections": {
-                            "type": ["object", "null"],
+                            "type": [
+                              "object",
+                              "null"
+                            ],
                             "description": "Body sections of the resource. Measured for age 35, female, pregnant. Null for resources delivered without sections."
                           },
                           "HealthfinderLogo": {
@@ -609,6 +621,13 @@
             },
             "Language": {
               "type": "string"
+            },
+            "Resources": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The wrapper object around the matched health topics, holding a single 'Resource' list. The topics themselves are one level further in than the field name suggests."
             }
           },
           "required": [
@@ -650,7 +669,7 @@
           "items": {
             "type": "string"
           },
-          "description": "1\u20133 absolute URLs from AccessibleVersion or RelatedItems.Url"
+          "description": "1–3 absolute URLs from AccessibleVersion or RelatedItems.Url"
         },
         "max_chars": {
           "type": "integer",

@@ -76,6 +76,23 @@
                   },
                   "evidence": {
                     "type": "array"
+                  },
+                  "evidence_shown": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many pieces of evidence are included for the statement, e.g. 1. INDRA statements can rest on hundreds; this says how many of them came back, which is the weight the caller can actually inspect."
+                  },
+                  "members": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The entities in a multi-entity statement, e.g. ['TP53', ...]. Measured on 1 of 5 statements - complexes and translocations name their members here rather than as subject and object."
                   }
                 }
               }

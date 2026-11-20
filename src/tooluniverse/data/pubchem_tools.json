@@ -130,11 +130,35 @@
                                 "properties": {
                                   "ExternalTableName": {
                                     "type": "string"
+                                  },
+                                  "StringWithMarkup": {
+                                    "type": [
+                                      "array",
+                                      "null"
+                                    ],
+                                    "items": {
+                                      "type": "object"
+                                    },
+                                    "description": "The block's text, each entry with a 'String' and any markup. Where the actual value lives, two levels below the field that names it."
                                   }
                                 }
+                              },
+                              "Name": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "Label of the information block, e.g. 'Co-Occurrence Panel'. PubChem's record is a nested tree of generic Sections and Information entries, and this is the only field that says what a given block holds."
                               }
                             }
                           }
+                        },
+                        "URL": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Link to the external resource for the section, e.g. 'https://www.wipo.int/patentscope/en/'. Measured on 2 of 7 sections."
                         }
                       }
                     }
@@ -496,7 +520,59 @@
         "image_size": "large"
       }
     ],
-    "return_schema": null
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The compound's 2D structure drawing, as a base64 PNG.",
+          "required": [
+            "status",
+            "data"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success' when PubChem returned an image."
+            },
+            "data": {
+              "type": "object",
+              "required": [
+                "image_base64",
+                "encoding",
+                "format"
+              ],
+              "properties": {
+                "image_base64": {
+                  "type": "string",
+                  "description": "The PNG, base64-encoded. Decode it to get the file's bytes; it starts with the PNG signature 89 50 4e 47. NOT a URL and not an SVG -- nothing in this reply names the compound in text, so the image cannot be read without decoding it. PubChem also accepts the keywords PubChem's own API takes rather than only a WxH: measured on CID 2244, image_size 'large' returned 300x300 and the 200x200 default returned 200x200."
+                },
+                "encoding": {
+                  "type": "string",
+                  "description": "Always 'base64'."
+                },
+                "format": {
+                  "type": "string",
+                  "description": "Always 'png'."
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "The request was refused or the call failed.",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "What went wrong, in words."
+            }
+          }
+        }
+      ]
+    }
   },
   {
     "name": "PubChem_get_compound_synonyms_by_CID",
@@ -616,6 +692,13 @@
         },
         "detail": {
           "type": "string"
+        },
+        "InformationList": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "PubChem's wrapper around the result, holding a single 'Information' list. The assay ids are one level further in than the field name suggests."
         }
       }
     }
@@ -710,6 +793,162 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "CIDCountActive": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Distinct compounds called active, e.g. 36."
+                  },
+                  "CIDCountAll": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Distinct compounds tested, e.g. 57. Differs from the SID count when several substance records resolve to one structure."
+                  },
+                  "CIDCountInactive": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Distinct compounds called inactive."
+                  },
+                  "CIDCountInconclusive": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Distinct compounds with an inconclusive result."
+                  },
+                  "CIDCountProbe": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Distinct compounds flagged as probes."
+                  },
+                  "CIDCountUnspecified": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Distinct compounds with no activity call."
+                  },
+                  "Comment": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The depositor's notes, one string per paragraph, e.g. 'Percent inhibition in the single dose assay was determined by comparing...'. Where the caveats on how to read the activity live."
+                  },
+                  "HasScore": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the assay reports an activity score, so results can be ranked rather than only called active or inactive."
+                  },
+                  "LastDataChange": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "When the assay data last changed, as 'Year', 'Month' and 'Day' - a structured date, not a string."
+                  },
+                  "Method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How the assay was run, e.g. 'confirmatory' (dose-response, with potencies) or 'screening' (single concentration). A percent inhibition from a screening run is not a potency, and this is the only field that distinguishes them."
+                  },
+                  "NumberOfTIDs": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many target ids the assay has, e.g. 27. A multi-target panel and a single-target assay read very differently."
+                  },
+                  "Protocol": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The assay protocol, one string per paragraph - 7 on the measured record, starting 'Mevalonate Kinase Protocol for 1 mL cuvet assay'. What was actually done."
+                  },
+                  "Revision": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "PubChem's revision counter for the assay record, e.g. 2."
+                  },
+                  "SIDCountActive": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Substances called active, e.g. 36. The hit rate is this over SIDCountAll, and a 63% hit rate is itself a warning about the assay."
+                  },
+                  "SIDCountAll": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Substances tested in total, e.g. 57."
+                  },
+                  "SIDCountInactive": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Substances called inactive, e.g. 21."
+                  },
+                  "SIDCountInconclusive": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Substances whose result was inconclusive. Counting these as inactive overstates the assay's power."
+                  },
+                  "SIDCountProbe": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Substances flagged as chemical probes."
+                  },
+                  "SIDCountUnspecified": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Substances with no activity call recorded."
+                  },
+                  "Target": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "The assay's targets, each with 'Accession' and 'Name', e.g. {'Accession': 'YP_815859', 'Name': 'mevalonate kinase'}. What the assay measured against."
+                  },
+                  "Version": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Depositor's version of the assay, e.g. 1."
                   }
                 }
               }
@@ -1036,6 +1275,13 @@
               }
             }
           }
+        },
+        "InformationList": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "PubChem's wrapper around the result, holding a single 'Information' list. The assay ids are one level further in than the field name suggests."
         }
       }
     }

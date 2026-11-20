@@ -85,6 +85,27 @@
             "affectedCountries": {
               "type": "integer",
               "description": "Number of countries with reported cases"
+            },
+            "oneCasePerPeople": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many people there are per recorded case - 0 on the measured call, which is a sentinel for 'not computed' rather than a real ratio."
+            },
+            "oneDeathPerPeople": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "People per recorded death. Also 0, with the same caveat."
+            },
+            "oneTestPerPeople": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "People per test performed. Also 0. All three are ratios where a larger number means rarer, which is the opposite direction to a rate per million."
             }
           },
           "not": {
@@ -243,6 +264,27 @@
             },
             "oneTestPerPeople": {
               "type": "integer"
+            },
+            "activePerOneMillion": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Active cases per million population, e.g. 2348.13. The population-normalised figure, which is the only one comparable between countries."
+            },
+            "criticalPerOneMillion": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Critical cases per million, e.g. 2.81."
+            },
+            "recoveredPerOneMillion": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Recoveries per million, e.g. 327994.92."
             }
           },
           "not": {

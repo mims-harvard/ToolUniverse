@@ -233,6 +233,7 @@ class CBioPortalRESTTool(BaseTool):
         study_id: str,
         matches: Callable[[Dict[str, Any]], bool],
         guess_suffix: str,
+        found: Optional[Dict[str, Any]] = None,
     ) -> Optional[str]:
         """Look up a study's molecular-profile ID for a given alteration type.
 
@@ -248,7 +249,19 @@ class CBioPortalRESTTool(BaseTool):
         best-effort naming-convention guess. Shared by
         _get_mutation_profile_id and _get_cna_profile_id, which only differ
         in which profile counts as a match and what suffix to guess.
+
+        The matched profile record carries its own name, datatype and
+        description -- "Mutations" against "Mutations (uncalled)" is the
+        difference between "no mutation was found" and "this profile does not
+        call them -- and only the id was read. `found`, when a dict is passed
+        in, is filled with the record and with how the id was arrived at:
+        matched, or the naming-convention guess this function falls back to.
+        The scalar return is unchanged, because three tests assert on it.
         """
+        if found is not None:
+            found.clear()
+            found["resolution"] = "not_found"
+            found["profile"] = None
         response = self.session.get(
             f"{self.base_url}/studies/{study_id}/molecular-profiles",
             timeout=self.timeout,
@@ -258,16 +271,31 @@ class CBioPortalRESTTool(BaseTool):
         if response.status_code == 200:
             for profile in response.json():
                 if matches(profile):
+                    if found is not None:
+                        found["resolution"] = "matched"
+                        found["profile"] = {
+                            "molecular_profile_id": profile.get("molecularProfileId"),
+                            "name": profile.get("name"),
+                            "description": profile.get("description"),
+                            "datatype": profile.get("datatype"),
+                            "alteration_type": profile.get("molecularAlterationType"),
+                            "patient_level": profile.get("patientLevel"),
+                        }
                     return profile.get("molecularProfileId")
+        if found is not None:
+            found["resolution"] = "guessed"
         return f"{study_id}_{guess_suffix}"
 
-    def _get_mutation_profile_id(self, study_id: str) -> Optional[str]:
+    def _get_mutation_profile_id(
+        self, study_id: str, found: Optional[Dict[str, Any]] = None
+    ) -> Optional[str]:
         """Get the mutation molecular profile ID for a study."""
         return self._resolve_molecular_profile_id(
             study_id,
             lambda profile: profile.get("molecularAlterationType")
             == "MUTATION_EXTENDED",
             "mutations",
+            found=found,
         )
 
     _ALTERATION_LABELS = {
@@ -278,8 +306,17 @@ class CBioPortalRESTTool(BaseTool):
         2: "amplification",
     }
 
-    def _get_cna_profile_id(self, study_id: str) -> Optional[str]:
-        """Get the discrete (GISTIC) copy-number molecular profile ID for a study."""
+    def _get_cna_profile_id(
+        self, study_id: str, found: Optional[Dict[str, Any]] = None
+    ) -> Optional[str]:
+        """Get the discrete (GISTIC) copy-number molecular profile ID for a study.
+
+        `found` is the same out-parameter the mutation resolver takes. Round
+        twenty-six gave the mutations path the chosen profile's own record and
+        how the id was arrived at, and left this path reporting the bare id --
+        so a CNA caller could not tell a GISTIC profile from a log2 one, nor a
+        matched id from a guess at the naming convention.
+        """
         return self._resolve_molecular_profile_id(
             study_id,
             lambda profile: (
@@ -287,6 +324,7 @@ class CBioPortalRESTTool(BaseTool):
                 and profile.get("datatype") == "DISCRETE"
             ),
             "gistic",
+            found=found,
         )
 
     def _fetch_discrete_cna(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -310,8 +348,9 @@ class CBioPortalRESTTool(BaseTool):
             event_type = "ALL"
 
         # Resolve molecular profile (allow explicit override).
+        profile_found: Dict[str, Any] = {}
         profile_id = arguments.get("molecular_profile_id") or self._get_cna_profile_id(
-            study_id
+            study_id, found=profile_found
         )
         if profile_id is None:
             return {
@@ -361,6 +400,12 @@ class CBioPortalRESTTool(BaseTool):
             "url": url,
             "count": len(data),
             "molecular_profile_id": profile_id,
+            # Which profile the calls came from, and whether the id was
+            # matched against the study's profile list or guessed from the
+            # naming convention -- the same two fields the mutations path
+            # reports.
+            "molecular_profile": profile_found.get("profile"),
+            "molecular_profile_resolution": profile_found.get("resolution"),
             "entrez_gene_ids": entrez_ids,
             "alteration_type": event_type,
             "alteration_counts": counts,
@@ -413,8 +458,11 @@ class CBioPortalRESTTool(BaseTool):
                 gene_list = arguments.get("gene_list")
                 sample_list_id = arguments.get("sample_list_id")
 
-                # Get molecular profile ID
-                profile_id = self._get_mutation_profile_id(study_id)
+                # Get molecular profile ID, and what profile it is
+                profile_found: Dict[str, Any] = {}
+                profile_id = self._get_mutation_profile_id(
+                    study_id, found=profile_found
+                )
                 if profile_id is None:
                     return {
                         "status": "error",
@@ -457,6 +505,14 @@ class CBioPortalRESTTool(BaseTool):
                     "url": url,
                     "count": len(data) if isinstance(data, list) else 1,
                     "molecular_profile_id": profile_id,
+                    # Which profile the mutations came from. "Mutations" and
+                    # "Mutations (uncalled)" are different profiles, and an
+                    # empty result means different things in each.
+                    "molecular_profile": profile_found.get("profile"),
+                    # And whether the id was matched against the study's
+                    # profile list or guessed from the naming convention,
+                    # which the caller could not tell before.
+                    "molecular_profile_resolution": profile_found.get("resolution"),
                     "entrez_gene_ids": entrez_ids,
                 }
 

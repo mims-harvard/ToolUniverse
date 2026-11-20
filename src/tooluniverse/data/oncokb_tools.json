@@ -66,7 +66,10 @@
                   "type": "null"
                 },
                 "tumorType": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "description": "The tumour type the annotation was scoped to, echoed back. Null when the call did not supply one."
                 },
                 "consequence": {
@@ -85,7 +88,10 @@
                   "type": "null"
                 },
                 "canonicalTranscript": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "description": "Ensembl transcript id OncoKB annotated against, e.g. 'ENST00000288602'. Null when OncoKB has no canonical transcript for the queried gene."
                 },
                 "germline": {
@@ -125,19 +131,31 @@
               }
             },
             "highestSensitiveLevel": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Highest OncoKB therapeutic sensitivity level, e.g. 'LEVEL_1'. Null when the alteration has no therapeutic evidence for the queried tumour type."
             },
             "highestResistanceLevel": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Highest OncoKB therapeutic resistance level, e.g. 'LEVEL_R2' for ROS1 G2032R in non-small cell lung cancer. Null when the alteration has no resistance evidence for the queried tumour type."
             },
             "highestDiagnosticImplicationLevel": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Highest OncoKB diagnostic level, e.g. 'LEVEL_Dx2'. Null when the alteration has no diagnostic evidence for the queried tumour type."
             },
             "highestPrognosticImplicationLevel": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Highest OncoKB prognostic level, e.g. 'LEVEL_Px1'. Null when the alteration has no prognostic evidence for the queried tumour type."
             },
             "geneSummary": {
@@ -428,7 +446,10 @@
               "type": "boolean"
             },
             "highestFdaLevel": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Highest FDA level of evidence, e.g. 'LEVEL_Fda2'. Null when no FDA level applies."
             },
             "otherSignificantSensitiveLevels": {
@@ -566,7 +587,10 @@
                   "type": "null"
                 },
                 "canonicalTranscript": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "description": "Ensembl transcript id OncoKB annotated against, e.g. 'ENST00000288602'. Null when OncoKB has no canonical transcript for the queried gene."
                 },
                 "germline": {
@@ -606,11 +630,17 @@
               }
             },
             "highestSensitiveLevel": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Highest OncoKB therapeutic sensitivity level, e.g. 'LEVEL_1'. Null when the alteration has no therapeutic evidence for the queried tumour type."
             },
             "highestResistanceLevel": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Highest OncoKB therapeutic resistance level, e.g. 'LEVEL_R2' for ROS1 G2032R in non-small cell lung cancer. Null when the alteration has no resistance evidence for the queried tumour type."
             },
             "highestDiagnosticImplicationLevel": {
@@ -620,7 +650,10 @@
               ]
             },
             "highestPrognosticImplicationLevel": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Highest OncoKB prognostic level, e.g. 'LEVEL_Px1'. Null when the alteration has no prognostic evidence for the queried tumour type."
             },
             "geneSummary": {
@@ -911,7 +944,10 @@
               "type": "boolean"
             },
             "highestFdaLevel": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Highest FDA level of evidence, e.g. 'LEVEL_Fda2'. Null when no FDA level applies."
             },
             "otherSignificantSensitiveLevels": {
@@ -995,7 +1031,7 @@
         },
         "gene_symbol": {
           "type": "string",
-          "description": "Gene symbol alias \u2014 alternative to gene parameter"
+          "description": "Gene symbol alias — alternative to gene parameter"
         }
       },
       "required": []
@@ -1043,6 +1079,13 @@
             },
             "highestResistancLevel": {
               "type": "string"
+            },
+            "setting": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether the gene's annotations are for the 'Somatic' or germline setting. A somatic oncogene annotation says nothing about germline risk, and reading one as the other is a clinically significant error."
             }
           },
           "required": [
@@ -1336,7 +1379,11 @@
                   "type": "string"
                 },
                 "entrezGeneId": {
-                  "type": ["integer", "number", "null"],
+                  "type": [
+                    "integer",
+                    "number",
+                    "null"
+                  ],
                   "description": "Entrez gene id OncoKB resolved the symbol to, echoed back. Null when the gene is not in the OncoKB dataset in use."
                 },
                 "alteration": {
@@ -1349,7 +1396,10 @@
                   "type": "null"
                 },
                 "tumorType": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "description": "The tumour type the annotation was scoped to, echoed back. Null when the call did not supply one."
                 },
                 "consequence": {
@@ -1407,19 +1457,31 @@
               }
             },
             "highestSensitiveLevel": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Highest OncoKB therapeutic sensitivity level, e.g. 'LEVEL_2'. Null when the alteration has no therapeutic evidence. Same IndicatorQueryResp field as on the mutation endpoints."
             },
             "highestResistanceLevel": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Highest OncoKB therapeutic resistance level, e.g. 'LEVEL_R2'. Null when the alteration has no resistance evidence. Same IndicatorQueryResp field as on the mutation endpoints."
             },
             "highestDiagnosticImplicationLevel": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Highest OncoKB diagnostic level. Null when the alteration has no diagnostic evidence. Same IndicatorQueryResp field as on the mutation endpoints."
             },
             "highestPrognosticImplicationLevel": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Highest OncoKB prognostic level, e.g. 'LEVEL_Px1'. Null when the alteration has no prognostic evidence. Same IndicatorQueryResp field as on the mutation endpoints."
             },
             "geneSummary": {
@@ -1462,7 +1524,10 @@
               "type": "boolean"
             },
             "highestFdaLevel": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Highest FDA level of evidence, e.g. 'LEVEL_Fda2'. Null when no FDA level applies. Same IndicatorQueryResp field as on the mutation endpoints."
             },
             "otherSignificantSensitiveLevels": {

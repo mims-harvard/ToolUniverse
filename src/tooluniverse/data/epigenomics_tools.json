@@ -871,6 +871,20 @@
                   },
                   "sourceCount": {
                     "type": "integer"
+                  },
+                  "sourceIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Which ENCODE experiments support the cluster. sourceCount says how many; this says which, so a cluster can be traced to a cell type or assay."
+                  },
+                  "sourceScores": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Each supporting experiment's own score, positionally aligned with sourceIds"
                   }
                 }
               }
@@ -932,7 +946,7 @@
   {
     "name": "GEO_search_methylation_datasets",
     "type": "EpigenomicsTool",
-    "description": "Search NCBI GEO GSE series for DNA methylation datasets with exact offset pagination. Returns GSE accessions and summaries plus the exact series total, candidate/parsed counts, has_more, and next_offset. Continue with offset=next_offset; GSM samples and GPL platforms are excluded upstream so pagination and total describe datasets only.",
+    "description": "Search NCBI GEO GSE series for DNA methylation datasets with exact offset pagination. Returns GSE accessions and summaries plus the exact series total, candidate/parsed counts, has_more, and next_offset. Continue with offset=next_offset; The search is restricted to GSE series upstream, so pagination and total describe datasets only; each series still carries its own GSM samples (accession and title, capped per series with samples_truncated).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1032,6 +1046,47 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "pubmed_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "string",
+                        "integer"
+                      ]
+                    },
+                    "description": "PubMed ids GEO links to this series"
+                  },
+                  "samples": {
+                    "type": "array",
+                    "description": "The series' GSM samples: the accession that identifies each run plus its title. Capped per series on a search; n_samples is the true count and samples_truncated says the list is a prefix. GEO_get_dataset_details returns all of them.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "accession": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "GSM accession, e.g. GSM9369876"
+                        },
+                        "title": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The sample's own title, which is where the antibody/target and replicate usually appear"
+                        }
+                      }
+                    }
+                  },
+                  "samples_returned": {
+                    "type": "integer",
+                    "description": "How many samples this record carries"
+                  },
+                  "samples_truncated": {
+                    "type": "boolean",
+                    "description": "True when `samples` is a prefix of the series' samples"
                   }
                 }
               }
@@ -1090,7 +1145,7 @@
   {
     "name": "GEO_search_chipseq_datasets",
     "type": "EpigenomicsTool",
-    "description": "Search NCBI GEO GSE series for ChIP-seq datasets with exact offset pagination. Returns GSE accessions and summaries plus the exact series total, candidate/parsed counts, has_more, and next_offset. GSM samples and GPL platforms are excluded upstream, keeping returned records and pagination in the same dataset result space.",
+    "description": "Search NCBI GEO GSE series for ChIP-seq datasets with exact offset pagination. Returns GSE accessions and summaries plus the exact series total, candidate/parsed counts, has_more, and next_offset. The search is restricted to GSE series upstream, keeping returned records and pagination in the same dataset result space; each series still carries its own GSM samples (accession and title, capped per series with samples_truncated).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1184,6 +1239,47 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "pubmed_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "string",
+                        "integer"
+                      ]
+                    },
+                    "description": "PubMed ids GEO links to this series"
+                  },
+                  "samples": {
+                    "type": "array",
+                    "description": "The series' GSM samples: the accession that identifies each run plus its title. Capped per series on a search; n_samples is the true count and samples_truncated says the list is a prefix. GEO_get_dataset_details returns all of them.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "accession": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "GSM accession, e.g. GSM9369876"
+                        },
+                        "title": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The sample's own title, which is where the antibody/target and replicate usually appear"
+                        }
+                      }
+                    }
+                  },
+                  "samples_returned": {
+                    "type": "integer",
+                    "description": "How many samples this record carries"
+                  },
+                  "samples_truncated": {
+                    "type": "boolean",
+                    "description": "True when `samples` is a prefix of the series' samples"
                   }
                 }
               }
@@ -1299,6 +1395,47 @@
                 "array",
                 "null"
               ]
+            },
+            "pubmed_ids": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "integer"
+                ]
+              },
+              "description": "PubMed ids GEO links to this series"
+            },
+            "samples": {
+              "type": "array",
+              "description": "Every GSM sample of this series: the accession that identifies each run plus its title.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GSM accession, e.g. GSM9369876"
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The sample's own title, which is where the antibody/target and replicate usually appear"
+                  }
+                }
+              }
+            },
+            "samples_returned": {
+              "type": "integer",
+              "description": "How many samples this record carries"
+            },
+            "samples_truncated": {
+              "type": "boolean",
+              "description": "True when `samples` is a prefix of the series' samples"
             }
           },
           "not": {
@@ -1419,6 +1556,27 @@
                   },
                   "seq_region_name": {
                     "type": "string"
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which build asserted the element, e.g. Ensembl"
+                  },
+                  "extended_start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Start of the element's flanking region. An overlap test against the core start/end is a different question from one against the extended bounds."
+                  },
+                  "extended_end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "End of the flanking region"
                   }
                 }
               }
@@ -1599,7 +1757,7 @@
   {
     "name": "GEO_search_rnaseq_datasets",
     "type": "EpigenomicsTool",
-    "description": "Search NCBI GEO GSE series for RNA-seq datasets with exact offset pagination. Returns GSE accessions and summaries plus the exact series total, candidate/parsed counts, has_more, and next_offset. Continue with offset=next_offset; GSM samples and GPL platforms are excluded upstream.",
+    "description": "Search NCBI GEO GSE series for RNA-seq datasets with exact offset pagination. Returns GSE accessions and summaries plus the exact series total, candidate/parsed counts, has_more, and next_offset. Continue with offset=next_offset; the search is restricted to GSE series upstream, and each series still carries its own GSM samples (accession and title, capped per series with samples_truncated).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1694,6 +1852,47 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "pubmed_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "string",
+                        "integer"
+                      ]
+                    },
+                    "description": "PubMed ids GEO links to this series"
+                  },
+                  "samples": {
+                    "type": "array",
+                    "description": "The series' GSM samples: the accession that identifies each run plus its title. Capped per series on a search; n_samples is the true count and samples_truncated says the list is a prefix. GEO_get_dataset_details returns all of them.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "accession": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "GSM accession, e.g. GSM9369876"
+                        },
+                        "title": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The sample's own title, which is where the antibody/target and replicate usually appear"
+                        }
+                      }
+                    }
+                  },
+                  "samples_returned": {
+                    "type": "integer",
+                    "description": "How many samples this record carries"
+                  },
+                  "samples_truncated": {
+                    "type": "boolean",
+                    "description": "True when `samples` is a prefix of the series' samples"
                   }
                 }
               }
@@ -1749,7 +1948,7 @@
   {
     "name": "GEO_search_atacseq_datasets",
     "type": "EpigenomicsTool",
-    "description": "Search NCBI GEO GSE series for ATAC-seq datasets with exact offset pagination. Returns GSE accessions and summaries plus the exact series total, candidate/parsed counts, has_more, and next_offset. Continue with offset=next_offset; GSM samples and GPL platforms are excluded upstream.",
+    "description": "Search NCBI GEO GSE series for ATAC-seq datasets with exact offset pagination. Returns GSE accessions and summaries plus the exact series total, candidate/parsed counts, has_more, and next_offset. Continue with offset=next_offset; the search is restricted to GSE series upstream, and each series still carries its own GSM samples (accession and title, capped per series with samples_truncated).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1844,6 +2043,47 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "pubmed_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "string",
+                        "integer"
+                      ]
+                    },
+                    "description": "PubMed ids GEO links to this series"
+                  },
+                  "samples": {
+                    "type": "array",
+                    "description": "The series' GSM samples: the accession that identifies each run plus its title. Capped per series on a search; n_samples is the true count and samples_truncated says the list is a prefix. GEO_get_dataset_details returns all of them.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "accession": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "GSM accession, e.g. GSM9369876"
+                        },
+                        "title": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The sample's own title, which is where the antibody/target and replicate usually appear"
+                        }
+                      }
+                    }
+                  },
+                  "samples_returned": {
+                    "type": "integer",
+                    "description": "How many samples this record carries"
+                  },
+                  "samples_truncated": {
+                    "type": "boolean",
+                    "description": "True when `samples` is a prefix of the series' samples"
                   }
                 }
               }

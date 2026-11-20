@@ -256,6 +256,37 @@
                 },
                 "pH_selectivity_verified": {
                   "const": false
+                },
+                "convention": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The SIGN convention used, e.g. 'Association: energy(pH)-energy(reference_ph); ...'. Which direction a positive number means. Reading it backwards inverts every conclusion, and no other field says which way round it is."
+                },
+                "limitations": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "What the calculation does not account for - 6 entries, starting with 'Caller-declared inventory closure...'. Without them the numbers read as a complete thermodynamic treatment."
+                },
+                "reference_ph": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "The pH the energies are measured against, e.g. 6.0. A linkage energy is a difference from this reference, so the value is meaningless without it."
+                },
+                "temperature_kelvin": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Temperature assumed, e.g. 298.15 K. The conversion from equilibrium constants to energies depends on it."
                 }
               },
               "required": [

@@ -32,6 +32,19 @@ def _summarize_dataset(dataset: Dict[str, Any]) -> Dict[str, Any]:
         "diseases": dataset.get("diseases") or [],
         "is_collection": bool(dataset.get("isCollection")),
         "dataset_count": dataset.get("datasetCount"),
+        # How many cells the dataset has, which is the first thing a
+        # single-cell dataset is chosen by. 138 of the catalogue's 329 entries
+        # state it and the row did not.
+        "sample_count": dataset.get("sampleCount"),
+        "collection_count": dataset.get("collectionCount"),
+        # Which downloadable files exist for it, so a caller can tell a
+        # browsable dataset from one with an expression matrix to fetch.
+        "has_files": dataset.get("hasFiles") or [],
+        "assays": dataset.get("assays") or [],
+        "life_stages": dataset.get("life_stages") or [],
+        "projects": dataset.get("projects") or [],
+        "domains": dataset.get("domains") or [],
+        "tags": dataset.get("tags") or [],
         "browser_url": f"{UCSC_CB_BASE_URL}/?ds={name}" if name else None,
     }
 

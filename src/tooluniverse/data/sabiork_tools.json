@@ -200,6 +200,83 @@
               },
               "source_record_complete": {
                 "type": "boolean"
+              },
+              "sabio_reaction_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SABIO-RK's own id for the reaction, e.g. '7124'. The handle for fetching the rest of the entry."
+              },
+              "reaction_equation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The reaction as SABIO-RK writes it, e.g. 'NAD+ + 1-Pentanol = NADH + Pentanal + H+'. Without it a kinetic law is a number with no reaction attached."
+              },
+              "enzyme_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Enzyme the law was measured for, e.g. 'ADH'."
+              },
+              "organism": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Species the enzyme came from, e.g. 'Saimiri sciureus'. A Km from a squirrel monkey is not a human Km."
+              },
+              "tissue": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Tissue the preparation came from, e.g. 'liver'."
+              },
+              "mechanism_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Kinetic mechanism the law assumes, e.g. 'Michaelis-Menten'. The parameters only mean what the mechanism says they mean."
+              },
+              "catalysts": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "What catalysed the reaction, e.g. ['Enzyme']."
+              },
+              "parameter_types": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Which kinds of parameter this law reports, e.g. ['concentration', 'Km', 'Vmax']."
+              },
+              "parameter_units": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Units for those parameters, e.g. ['mM']. A parameter value without its unit is unusable."
+              },
+              "pubmed_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PubMed id of the paper the law was taken from."
+              },
+              "insert_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When SABIO-RK added the entry, ISO 8601."
               }
             }
           }

@@ -295,6 +295,65 @@
                 "string",
                 "null"
               ]
+            },
+            "annotations": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "The library annotations for the spectrum, each with its Compound_Name and adduct, e.g. 'Lovastatin M+H'. The adduct is part of the annotation - the same compound as M+H and M+Na are different spectra."
+            },
+            "cas_number": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "CAS registry number. Measured as a single SPACE ' ' rather than an empty string or null, so an emptiness test must strip it first."
+            },
+            "charge": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Charge state of the precursor, e.g. '1'. A string."
+            },
+            "compound_source": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Where the reference compound came from, e.g. 'Commercial', 'Isolated', 'Crude'. A spectrum from a crude extract is a weaker reference than one from a commercial standard."
+            },
+            "data_collector": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Who collected the spectrum, e.g. 'lfnothias'. The provenance of a community-contributed library entry."
+            },
+            "inchi_key": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChIKey for the annotated compound, e.g. 'PCZOHLXUXFIOCF-BXMDZJJMSA-N'. The only structure key here."
+            },
+            "ms_level": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "MS level of the spectrum, e.g. '2'. An MS1 and an MS2 spectrum are not interchangeable; a string, not a number."
+            },
+            "pubmed_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "PubMed id for the entry. Also measured as a single SPACE when absent."
             }
           },
           "required": [

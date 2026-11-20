@@ -118,6 +118,79 @@
                     },
                     "isMostAccurate": {
                       "type": "boolean"
+                    },
+                    "enlilList": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "items": {
+                        "type": "object"
+                      },
+                      "description": "ENLIL model runs for the event, each with its completion time and predicted arrival. Measured on 18 of 40 analyses - the actual forecast, as distinct from the observation."
+                    },
+                    "featureCode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Which feature was tracked, e.g. 'LE' for leading edge. Speeds measured on different features differ systematically."
+                    },
+                    "imageType": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The image product measured, e.g. 'running difference'."
+                    },
+                    "levelOfData": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Data level, e.g. 0 for real-time and higher for reprocessed. A level-0 speed is provisional."
+                    },
+                    "link": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The event's page in DONKI, e.g. 'https://ccmc.gsfc.nasa.gov/DONKI/view/CME/28...'."
+                    },
+                    "measurementTechnique": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "How the CME was measured, e.g. 'Plane-of-sky'. A plane-of-sky speed is a projection and so a LOWER BOUND on the true speed; a 3D fit is not. Reading the two alike understates fast Earth-directed events."
+                    },
+                    "note": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Why the analysis is limited, e.g. '3D measurement not possible because the source...'. Present on all 40 measured analyses, and it is what explains a plane-of-sky-only figure."
+                    },
+                    "speedMeasuredAtHeight": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Solar radii at which the speed was measured, e.g. 16.7. Measured on 35 of 40 analyses. CMEs accelerate, so a speed without its height is not comparable."
+                    },
+                    "submissionTime": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "When the record was submitted, e.g. '2025-02-06T17:44Z' - over a year after the event. The analysis is often revised long afterwards."
+                    },
+                    "time21_5": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "When the CME reached 21.5 solar radii, e.g. '2024-01-02T01:01Z'. The standard reference surface for arrival-time models."
                     }
                   }
                 }
@@ -128,6 +201,44 @@
                   "null"
                 ],
                 "description": "Related flares, shocks, storms"
+              },
+              "catalog": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which DONKI catalog the event is from, e.g. 'M2M_CATALOG'. Catalogs use different measurement conventions, so speeds are not comparable across them."
+              },
+              "link": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The event's page in DONKI, e.g. 'https://ccmc.gsfc.nasa.gov/DONKI/view/CME/28...'."
+              },
+              "sentNotifications": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "object"
+                },
+                "description": "Space-weather notifications issued for the event, each with its messageID. Measured on 5 of 36 events. Whether anyone was actually warned."
+              },
+              "submissionTime": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the record was submitted, e.g. '2025-02-06T17:44Z' - over a year after the event. The analysis is often revised long afterwards."
+              },
+              "versionId": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Which revision of the record this is, e.g. 2. An earlier version may have reported a different speed."
               }
             }
           }
@@ -242,6 +353,41 @@
                   "null"
                 ],
                 "description": "Related CMEs, storms, etc."
+              },
+              "catalog": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which DONKI catalog the event is from, e.g. 'M2M_CATALOG'. Catalogs use different measurement conventions, so speeds are not comparable across them."
+              },
+              "link": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The event's page in DONKI, e.g. 'https://ccmc.gsfc.nasa.gov/DONKI/view/CME/28...'."
+              },
+              "note": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Why the analysis is limited, e.g. '3D measurement not possible because the source...'. Present on all 40 measured analyses, and it is what explains a plane-of-sky-only figure."
+              },
+              "submissionTime": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the record was submitted, e.g. '2025-02-06T17:44Z' - over a year after the event. The analysis is often revised long afterwards."
+              },
+              "versionId": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Which revision of the record this is, e.g. 2. An earlier version may have reported a different speed."
               }
             }
           }
@@ -427,6 +573,37 @@
                   "null"
                 ],
                 "description": "Related flares and CMEs"
+              },
+              "link": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The event's page in DONKI, e.g. 'https://ccmc.gsfc.nasa.gov/DONKI/view/CME/28...'."
+              },
+              "sentNotifications": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "object"
+                },
+                "description": "Space-weather notifications issued for the event, each with its messageID. Measured on 5 of 36 events. Whether anyone was actually warned."
+              },
+              "submissionTime": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the record was submitted, e.g. '2025-02-06T17:44Z' - over a year after the event. The analysis is often revised long afterwards."
+              },
+              "versionId": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Which revision of the record this is, e.g. 2. An earlier version may have reported a different speed."
               }
             }
           }
@@ -527,6 +704,37 @@
                   "null"
                 ],
                 "description": "Related CMEs and storms"
+              },
+              "link": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The event's page in DONKI, e.g. 'https://ccmc.gsfc.nasa.gov/DONKI/view/CME/28...'."
+              },
+              "sentNotifications": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "object"
+                },
+                "description": "Space-weather notifications issued for the event, each with its messageID. Measured on 5 of 36 events. Whether anyone was actually warned."
+              },
+              "submissionTime": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the record was submitted, e.g. '2025-02-06T17:44Z' - over a year after the event. The analysis is often revised long afterwards."
+              },
+              "versionId": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Which revision of the record this is, e.g. 2. An earlier version may have reported a different speed."
               }
             }
           }
@@ -612,6 +820,27 @@
                   "null"
                 ],
                 "description": "Related events"
+              },
+              "link": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The event's page in DONKI, e.g. 'https://ccmc.gsfc.nasa.gov/DONKI/view/CME/28...'."
+              },
+              "submissionTime": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the record was submitted, e.g. '2025-02-06T17:44Z' - over a year after the event. The analysis is often revised long afterwards."
+              },
+              "versionId": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Which revision of the record this is, e.g. 2. An earlier version may have reported a different speed."
               }
             }
           }

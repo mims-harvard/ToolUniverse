@@ -14,29 +14,56 @@
           "description": "Location longitude (-180 to 180). Examples: 13.41 (Berlin), -74.01 (NYC), 2.35 (Paris), 139.69 (Tokyo)"
         },
         "hourly": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Comma-separated air quality variables. Values: 'pm10', 'pm2_5', 'carbon_monoxide', 'nitrogen_dioxide', 'sulphur_dioxide', 'ozone', 'aerosol_optical_depth', 'european_aqi', 'us_aqi'. Default: pm10,pm2_5,european_aqi"
         },
         "forecast_days": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Number of forecast days (1-7). Default: 5"
         },
         "past_days": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Include past days in response (0-92). Examples: 1, 7"
         }
       },
-      "required": ["latitude", "longitude"]
+      "required": [
+        "latitude",
+        "longitude"
+      ]
     },
     "fields": {
       "endpoint": "https://air-quality-api.open-meteo.com/v1/air-quality",
-      "params": {"hourly": "pm10,pm2_5,european_aqi"}
+      "params": {
+        "hourly": "pm10,pm2_5,european_aqi"
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"latitude": 52.52, "longitude": 13.41, "forecast_days": 1},
-      {"latitude": 40.71, "longitude": -74.01, "hourly": "pm2_5,ozone,us_aqi", "forecast_days": 2},
-      {"latitude": 48.85, "longitude": 2.35, "hourly": "pm10,pm2_5,nitrogen_dioxide,european_aqi"}
+      {
+        "latitude": 52.52,
+        "longitude": 13.41,
+        "forecast_days": 1
+      },
+      {
+        "latitude": 40.71,
+        "longitude": -74.01,
+        "hourly": "pm2_5,ozone,us_aqi",
+        "forecast_days": 2
+      },
+      {
+        "latitude": 48.85,
+        "longitude": 2.35,
+        "hourly": "pm10,pm2_5,nitrogen_dioxide,european_aqi"
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -49,27 +76,94 @@
           "type": "object",
           "description": "Air quality forecast data",
           "properties": {
-            "latitude": {"type": "number"},
-            "longitude": {"type": "number"},
-            "elevation": {"type": "number"},
-            "timezone": {"type": "string"},
-            "hourly_units": {"type": "object", "description": "Units for each variable (e.g. μg/m³)"},
+            "latitude": {
+              "type": "number"
+            },
+            "longitude": {
+              "type": "number"
+            },
+            "elevation": {
+              "type": "number"
+            },
+            "timezone": {
+              "type": "string"
+            },
+            "hourly_units": {
+              "type": "object",
+              "description": "Units for each variable (e.g. μg/m³)"
+            },
             "hourly": {
               "type": "object",
               "description": "Hourly air quality data arrays",
               "properties": {
-                "time": {"type": "array", "items": {"type": "string"}},
-                "pm10": {"type": "array", "items": {"type": ["number", "null"]}},
-                "pm2_5": {"type": "array", "items": {"type": ["number", "null"]}},
-                "european_aqi": {"type": "array", "items": {"type": ["number", "null"]}}
+                "time": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "pm10": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "pm2_5": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "european_aqi": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
               }
+            },
+            "generationtime_ms": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "How long Open-Meteo took to generate the reply, in milliseconds, e.g. 0.45. A server-side timing, nothing to do with the forecast."
+            },
+            "timezone_abbreviation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Abbreviation of that timezone, e.g. 'GMT'. Abbreviations are ambiguous worldwide -- utc_offset_seconds is the authoritative field."
+            },
+            "utc_offset_seconds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of the returned timestamps from UTC, in seconds, e.g. 0. Every time in the reply is in THIS offset, so reading them as UTC shifts the whole series when it is non-zero."
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

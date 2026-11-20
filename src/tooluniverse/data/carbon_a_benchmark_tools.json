@@ -103,6 +103,13 @@
                   }
                 }
               }
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "A caveat about the listing passed through from the benchmark publisher, beginning 'split is the publisher's own label for the eval/ subdirectory a genome sits in'. It says the split labels are directory names, not a guarantee about how the genomes were partitioned."
             }
           }
         }

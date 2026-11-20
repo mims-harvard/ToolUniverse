@@ -18,6 +18,11 @@ ENSEMBL_REST_BASE_URL = "https://rest.ensembl.org"
 ENSEMBL_HEADERS = {"User-Agent": "ToolUniverse/1.0", "Accept": "application/json"}
 
 
+# Non-chromosomal top-level regions returned per assembly. GRCh38 has 169
+# scaffolds; the cap guards an assembly with thousands of contigs.
+OTHER_REGIONS_PER_ASSEMBLY = 200
+
+
 class EnsemblInfoTool(BaseTool):
     """
     Tool for Ensembl info endpoints providing genome assembly metadata
@@ -95,17 +100,30 @@ class EnsemblInfoTool(BaseTool):
         karyotype = data.get("karyotype", [])
         karyotype_names = {str(name) for name in karyotype}
         chromosomes = []
+        other_regions = []
         for region in top_level:
+            row = {
+                "name": region.get("name"),
+                "length": region.get("length"),
+                # Which kind of region it is. The filter below reads this and
+                # the row did not report it, so a region admitted through the
+                # karyotype branch rather than the coord_system one looked
+                # like any other chromosome.
+                "coord_system": region.get("coord_system"),
+            }
             if (
                 region.get("coord_system") == "chromosome"
                 or str(region.get("name")) in karyotype_names
             ):
-                chromosomes.append(
-                    {
-                        "name": region.get("name"),
-                        "length": region.get("length"),
-                    }
-                )
+                chromosomes.append(row)
+            else:
+                other_regions.append(row)
+        # GRCh38's 194 top-level regions are 25 chromosomes and 169
+        # scaffolds. The counts already said 194 and 25, so the cut was
+        # disclosed -- but no tool in this family returned the other 169, so a
+        # caller needing a scaffold's length had no route to it.
+        other_regions.sort(key=lambda r: -(r.get("length") or 0))
+        other_regions_returned = other_regions[:OTHER_REGIONS_PER_ASSEMBLY]
 
         # Sort chromosomes (numeric then alphabetic)
         def chrom_sort_key(c):
@@ -129,6 +147,13 @@ class EnsemblInfoTool(BaseTool):
                 "golden_path_length": data.get("golden_path"),
                 "karyotype": karyotype,
                 "coordinate_system_versions": data.get("coord_system_versions", []),
+                # Scaffolds and other non-chromosomal top-level regions,
+                # longest first, capped with the total beside them.
+                "other_regions": other_regions_returned,
+                "other_regions_returned": len(other_regions_returned),
+                "total_other_regions": len(other_regions),
+                "other_regions_truncated": len(other_regions)
+                > len(other_regions_returned),
                 "total_regions": len(top_level),
                 "total_chromosomes": len(chromosomes),
                 "chromosomes": chromosomes,
@@ -189,6 +214,15 @@ class EnsemblInfoTool(BaseTool):
                     "division": s.get("division"),
                     "strain": s.get("strain"),
                     "strain_collection": s.get("strain_collection"),
+                    # Which Ensembl data sets exist for the species -- core,
+                    # variation, regulation, compara -- 985 group entries
+                    # across the listing, and the row said only which division
+                    # the species is in. A caller asking "can I get variation
+                    # data for this species" had to try it and see.
+                    "groups": s.get("groups") or [],
+                    # The Ensembl release the entry is from, so an assembly can
+                    # be pinned to a version.
+                    "release": s.get("release"),
                 }
             )
 

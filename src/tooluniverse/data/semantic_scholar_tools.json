@@ -160,6 +160,13 @@
                   "null"
                 ],
                 "description": "Open access PDF URL (if provided)"
+              },
+              "data_quality": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Which fields the record actually has, as has_abstract, has_tldr, has_journal, has_year and the rest. A paper whose abstract is missing looks the same as one with an empty abstract, and this is what separates them."
               }
             }
           }
@@ -309,7 +316,10 @@
     "test_examples": [
       {
         "open_access_pdf_url": "https://genomebiology.biomedcentral.com/counter/pdf/10.1186/s13059-014-0550-8",
-        "terms": ["dispersion", "negative binomial"],
+        "terms": [
+          "dispersion",
+          "negative binomial"
+        ],
         "max_snippets_per_term": 1,
         "window_chars": 140
       }

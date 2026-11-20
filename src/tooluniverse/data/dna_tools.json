@@ -253,7 +253,7 @@
   {
     "name": "DNA_reverse_complement",
     "type": "DNATool",
-    "description": "Generate the reverse complement of a DNA sequence. Complements each base (A\u2194T, G\u2194C) then reverses the sequence. Essential for: designing reverse primers, understanding antisense strand, converting sequences between conventions. N bases are preserved as N in the reverse complement.",
+    "description": "Generate the reverse complement of a DNA sequence. Complements each base (A↔T, G↔C) then reverses the sequence. Essential for: designing reverse primers, understanding antisense strand, converting sequences between conventions. N bases are preserved as N in the reverse complement.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -440,6 +440,13 @@
             },
             "length_bp": {
               "type": "integer"
+            },
+            "cai_note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Why the Codon Adaptation Index in this result is not a quality score. Measured value begins: 'CAI = 1.0 is expected: this tool selects the highest-frequency codon for each amino acid'. The CAI is 1.0 by construction, so it must not be reported as evidence that the optimisation worked."
             }
           },
           "required": [
@@ -608,7 +615,7 @@
   {
     "name": "DNA_primer_design",
     "type": "DNATool",
-    "description": "Design forward and reverse PCR primers for a target DNA region using the SantaLucia 1998 nearest-neighbor thermodynamic model. Selects primers with Tm closest to the target (default 60\u00b0C), GC content 40-60%, length 18-25 bp, and no 3'-end repeats. Use for: PCR amplification, genotyping, diagnostic assay design, amplicon sequencing.",
+    "description": "Design forward and reverse PCR primers for a target DNA region using the SantaLucia 1998 nearest-neighbor thermodynamic model. Selects primers with Tm closest to the target (default 60°C), GC content 40-60%, length 18-25 bp, and no 3'-end repeats. Use for: PCR amplification, genotyping, diagnostic assay design, amplicon sequencing.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -644,7 +651,7 @@
             "null"
           ],
           "default": 60.0,
-          "description": "Target melting temperature in Celsius (default: 60.0\u00b0C)."
+          "description": "Target melting temperature in Celsius (default: 60.0°C)."
         },
         "product_size_min": {
           "type": [
@@ -816,6 +823,13 @@
             },
             "overlap_length": {
               "type": "integer"
+            },
+            "topology": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether the assembled product is 'circular' or 'linear', e.g. 'circular'. A linear result where a plasmid was wanted means a junction is missing."
             }
           },
           "required": [
@@ -974,7 +988,7 @@
     "fields": {
       "operation": "golden_gate_assemble"
     },
-    "description": "Work out the product of a Golden Gate reaction that has already been performed: given the plasmids/parts that were combined and the Type IIS enzyme used (BsaI, BbsI, Esp3I/BsmBI, SapI), digest each input, discard fragments that keep a recognition site (they are re-cut in the reaction), and ligate the rest by matching 4-bp overhangs into the circular product. Returns the assembled sequence, its length, and the fragment order with the overhang at each junction. Use to answer 'I combined these plasmids with <enzyme> \u2014 what does the resulting plasmid contain/express?'. This is the reverse of DNA_golden_gate_design, which designs parts rather than analysing a finished reaction.",
+    "description": "Work out the product of a Golden Gate reaction that has already been performed: given the plasmids/parts that were combined and the Type IIS enzyme used (BsaI, BbsI, Esp3I/BsmBI, SapI), digest each input, discard fragments that keep a recognition site (they are re-cut in the reaction), and ligate the rest by matching 4-bp overhangs into the circular product. Returns the assembled sequence, its length, and the fragment order with the overhang at each junction. Use to answer 'I combined these plasmids with <enzyme> — what does the resulting plasmid contain/express?'. This is the reverse of DNA_golden_gate_design, which designs parts rather than analysing a finished reaction.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1049,6 +1063,34 @@
             },
             "product_sequence": {
               "type": "string"
+            },
+            "inputs": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "What the planner did with each input fragment: {label, length, cut_sites, released_fragment, ...}. cut_sites gives the positions the enzyme cuts at, so a fragment with an unexpected number of sites shows up here."
+            },
+            "is_circular": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the assembled product closes into a circle, e.g. true. False means the fragments assembled into a linear piece, which usually indicates a missing or mismatched junction."
+            },
+            "overhang_length": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Length of the sticky overhang in bases, e.g. 4. Determines how many distinct junctions can be made orthogonal."
+            },
+            "recognition_site": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The Type IIS enzyme's recognition sequence used for the digest, e.g. 'GGTCTC' (BsaI). Says which enzyme the design assumes; a part containing this site internally will be cut."
             }
           },
           "required": [
@@ -1105,22 +1147,33 @@
           "description": "DNA target sequence (A, T, G, C only; no N), at least 23 bp."
         },
         "gc_min": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "default": 30.0,
           "description": "Minimum acceptable protospacer GC%, 0-100 (default 30)."
         },
         "gc_max": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "default": 70.0,
           "description": "Maximum acceptable protospacer GC%, 0-100 (default 70)."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "default": 10,
           "description": "Max candidate guides to return, 1-100 (default 10)."
         }
       },
-      "required": ["sequence"]
+      "required": [
+        "sequence"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -1129,22 +1182,46 @@
           "items": {
             "type": "object",
             "properties": {
-              "protospacer": {"type": "string"},
-              "pam": {"type": "string"},
-              "strand": {"type": "string"},
-              "start": {"type": "integer"},
-              "end": {"type": "integer"},
-              "gc_content_percent": {"type": "number"},
-              "has_pol3_terminator": {"type": "boolean"},
-              "has_homopolymer_run": {"type": "boolean"},
-              "heuristic_score": {"type": "number"}
+              "protospacer": {
+                "type": "string"
+              },
+              "pam": {
+                "type": "string"
+              },
+              "strand": {
+                "type": "string"
+              },
+              "start": {
+                "type": "integer"
+              },
+              "end": {
+                "type": "integer"
+              },
+              "gc_content_percent": {
+                "type": "number"
+              },
+              "has_pol3_terminator": {
+                "type": "boolean"
+              },
+              "has_homopolymer_run": {
+                "type": "boolean"
+              },
+              "heuristic_score": {
+                "type": "number"
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

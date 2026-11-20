@@ -107,6 +107,144 @@
           "description": "Give up after this many seconds, from 1 to 1800 (default 600)."
         }
       }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "One finished Monte Carlo depth-dose run.",
+          "required": [
+            "status",
+            "data"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success' when the simulation ran and scored."
+            },
+            "data": {
+              "type": "object",
+              "required": [
+                "material",
+                "particle",
+                "energy_mev",
+                "events",
+                "thickness_cm",
+                "bin_width_cm",
+                "total_edep_mev",
+                "edep_mev_per_bin"
+              ],
+              "properties": {
+                "material": {
+                  "type": "string",
+                  "description": "The NIST material the beam was fired into, echoing the request, e.g. 'G4_WATER'."
+                },
+                "particle": {
+                  "type": "string",
+                  "description": "The beam particle, echoing the request, e.g. 'proton'."
+                },
+                "energy_mev": {
+                  "type": "number",
+                  "description": "Kinetic energy of each primary particle, in MeV."
+                },
+                "events": {
+                  "type": "integer",
+                  "description": "How many primary particles were fired. The curve is a sum over all of them, and its statistical noise falls with this number, so two runs at different `events` are not comparable bin by bin."
+                },
+                "thickness_cm": {
+                  "type": "number",
+                  "description": "Depth of the slab, in cm. A beam whose range exceeds it leaves through the far face and its dose is not scored."
+                },
+                "bin_width_cm": {
+                  "type": "number",
+                  "description": "Depth of each bin, in cm: thickness_cm divided by the number of bins. Every depth in this reply is a multiple of it, so it is also the resolution of the peak position."
+                },
+                "total_edep_mev": {
+                  "type": "number",
+                  "description": "Energy deposited in the whole slab, in MeV, summed over all events. Less than events x energy_mev whenever anything escaped."
+                },
+                "edep_mev_per_bin": {
+                  "type": "array",
+                  "description": "Energy deposited in each depth bin, in MeV, ordered from the entrance face. This is the depth-dose curve itself; bin i spans depths i*bin_width_cm to (i+1)*bin_width_cm.",
+                  "items": {
+                    "type": "number",
+                    "description": "Energy deposited in one bin, in MeV."
+                  }
+                },
+                "geant4_version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The GEANT4 the application was compiled against, as geant4-config reports it. Physics models change between versions, so a curve is only reproducible with it."
+                },
+                "summary": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "What a depth-dose curve is usually read for. EVERY KEY HERE IS CONDITIONAL: the peak keys are present only when the run returned bins and a bin width, last_depth_with_dose_cm only when some bin is non-zero, and edep_mev_per_event only when events is non-zero -- so an absent key means the curve could not support it, not a value of zero.",
+                  "properties": {
+                    "peak_bin": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Index of the bin holding the most energy. For an ion beam this is the Bragg peak."
+                    },
+                    "peak_depth_cm": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Depth of the CENTRE of that bin, in cm. Resolved only to bin_width_cm, so a peak depth quoted more precisely than that is spurious."
+                    },
+                    "peak_edep_mev": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Energy deposited in the peak bin, in MeV."
+                    },
+                    "last_depth_with_dose_cm": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "The far edge of the deepest bin with any dose: the practical range in this material. Equal to thickness_cm means the beam was not stopped by the slab, so the real range is greater and this run does not measure it."
+                    },
+                    "edep_mev_per_event": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "total_edep_mev divided by events: the energy one primary particle leaves behind on average, which is the figure that compares across runs of different size."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "The simulation did not run or did not finish.",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'error'."
+            },
+            "error": {
+              "type": "string",
+              "description": "Why there is no curve: a rejected argument, a missing GEANT4 installation or physics data, a build failure, or the timeout."
+            }
+          }
+        }
+      ]
     }
   }
 ]

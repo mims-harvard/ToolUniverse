@@ -5,56 +5,82 @@
         "parameter": {
             "type": "object",
             "properties": {
-                "gene": {"type": ["string", "null"], "description": "HGNC gene symbol, e.g. 'BRCA2', 'CFTR'."},
-                "ensembl_id": {"type": ["string", "null"], "description": "Ensembl transcript id, e.g. 'ENST00000380152' (version optional)."},
-                "refseq_id": {"type": ["string", "null"], "description": "RefSeq transcript id, e.g. 'NM_000059' (version optional)."}
+                "gene": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "HGNC gene symbol, e.g. 'BRCA2', 'CFTR'."
+                },
+                "ensembl_id": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Ensembl transcript id, e.g. 'ENST00000380152' (version optional)."
+                },
+                "refseq_id": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "RefSeq transcript id, e.g. 'NM_000059' (version optional)."
+                }
             },
             "required": []
         },
-        "fields": {"timeout": 30},
+        "fields": {
+            "timeout": 30
+        },
         "type": "TarkManeTranscriptsTool",
         "test_examples": [
-            {"gene": "BRCA2"},
-            {"gene": "CFTR"},
-            {"refseq_id": "NM_000059"}
-        ],
-        "return_schema": {
-          "oneOf": [
             {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "gene": {
-                    "type": "string"
-                  },
-                  "mane_type": {
-                    "type": "string",
-                    "description": "MANE SELECT or MANE PLUS CLINICAL"
-                  },
-                  "ensembl_transcript": {
-                    "type": "string",
-                    "description": "Versioned ENST id"
-                  },
-                  "refseq_transcript": {
-                    "type": "string",
-                    "description": "Versioned RefSeq NM id"
-                  }
-                }
-              }
+                "gene": "BRCA2"
             },
             {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
+                "gene": "CFTR"
+            },
+            {
+                "refseq_id": "NM_000059"
             }
-          ]
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "gene": {
+                                "type": "string"
+                            },
+                            "mane_type": {
+                                "type": "string",
+                                "description": "MANE SELECT or MANE PLUS CLINICAL"
+                            },
+                            "ensembl_transcript": {
+                                "type": "string",
+                                "description": "Versioned ENST id"
+                            },
+                            "refseq_transcript": {
+                                "type": "string",
+                                "description": "Versioned RefSeq NM id"
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
         }
     },
     {
@@ -63,37 +89,451 @@
         "parameter": {
             "type": "object",
             "properties": {
-                "stable_id": {"type": "string", "description": "Ensembl transcript stable id, e.g. 'ENST00000380152' (version optional)."}
+                "stable_id": {
+                    "type": "string",
+                    "description": "Ensembl transcript stable id, e.g. 'ENST00000380152' (version optional)."
+                }
             },
-            "required": ["stable_id"]
+            "required": [
+                "stable_id"
+            ]
         },
-        "fields": {"timeout": 30},
+        "fields": {
+            "timeout": 30
+        },
         "type": "TarkTranscriptTool",
         "test_examples": [
-            {"stable_id": "ENST00000380152"},
-            {"stable_id": "ENST00000357654"},
-            {"stable_id": "ENST00000003084"}
-        ],
-        "return_schema": {
-          "oneOf": [
             {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
+                "stable_id": "ENST00000380152"
             },
             {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
+                "stable_id": "ENST00000357654"
+            },
+            {
+                "stable_id": "ENST00000003084"
             }
-          ]
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "stable_id": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Ensembl transcript id with version, e.g. 'ENST00000380152.4'."
+                            },
+                            "assembly": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Genome assembly the coordinates are on, e.g. 'GRCh38'. Coordinates from GRCh37 do not line up."
+                            },
+                            "record": {
+                                "type": [
+                                    "object",
+                                    "null"
+                                ],
+                                "description": "The transcript record in full, with the same facts under Tark's own field names -- loc_start/loc_end/loc_region rather than start/end/region, stable_id and stable_id_version separately, and the UTRs flattened into *_checksum/_start/_end/_seq. The fields above it are a flattened view of this.",
+                                "properties": {
+                                    "stable_id": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Transcript id WITHOUT its version, e.g. 'ENST00000380152'."
+                                    },
+                                    "stable_id_version": {
+                                        "type": [
+                                            "integer",
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "The version, e.g. 4. The flattened stable_id above joins the two."
+                                    },
+                                    "assembly": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Genome assembly."
+                                    },
+                                    "biotype": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Transcript biotype."
+                                    },
+                                    "loc_region": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Chromosome or region."
+                                    },
+                                    "loc_start": {
+                                        "type": [
+                                            "integer",
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Start coordinate."
+                                    },
+                                    "loc_end": {
+                                        "type": [
+                                            "integer",
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "End coordinate."
+                                    },
+                                    "loc_strand": {
+                                        "type": [
+                                            "integer",
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Strand, 1 or -1."
+                                    },
+                                    "loc_checksum": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Checksum over the location."
+                                    },
+                                    "sequence": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Checksum of the transcript sequence."
+                                    },
+                                    "transcript_checksum": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Checksum over the whole transcript."
+                                    },
+                                    "exon_set_checksum": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Checksum over the exon structure."
+                                    },
+                                    "five_prime_utr_checksum": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Checksum of the 5' UTR."
+                                    },
+                                    "five_prime_utr_start": {
+                                        "type": [
+                                            "integer",
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Its start coordinate."
+                                    },
+                                    "five_prime_utr_end": {
+                                        "type": [
+                                            "integer",
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Its end coordinate."
+                                    },
+                                    "five_prime_utr_seq": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Its sequence, in full."
+                                    },
+                                    "three_prime_utr_checksum": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Checksum of the 3' UTR."
+                                    },
+                                    "three_prime_utr_start": {
+                                        "type": [
+                                            "integer",
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Its start coordinate."
+                                    },
+                                    "three_prime_utr_end": {
+                                        "type": [
+                                            "integer",
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Its end coordinate."
+                                    },
+                                    "three_prime_utr_seq": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Its sequence, in full."
+                                    },
+                                    "mane_transcript": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "The matching MANE transcript."
+                                    },
+                                    "mane_transcript_type": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Which MANE set."
+                                    },
+                                    "transcript_release_set": {
+                                        "type": "array",
+                                        "description": "Every release this exact transcript appeared in. 42 entries on the measured transcript -- a long run means stable annotation.",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "shortname": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "The release, e.g. '76'."
+                                                },
+                                                "description": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "What it is, e.g. 'Ensembl release'."
+                                                },
+                                                "release_date": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "When it was released."
+                                                },
+                                                "source": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "Which source, e.g. 'Ensembl' or 'RefSeq'."
+                                                },
+                                                "assembly": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "The assembly that release was on."
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "biotype": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Transcript biotype, e.g. 'protein_coding'. A non-coding transcript has no CDS, so its 'protein' fields are empty by definition."
+                            },
+                            "region": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Chromosome or region, e.g. '13' -- no 'chr' prefix."
+                            },
+                            "start": {
+                                "type": [
+                                    "integer",
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Start coordinate, 1-based."
+                            },
+                            "end": {
+                                "type": [
+                                    "integer",
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "End coordinate, 1-based inclusive."
+                            },
+                            "strand": {
+                                "type": [
+                                    "integer",
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Strand as 1 or -1."
+                            },
+                            "mane_transcript": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The matching MANE transcript, e.g. 'NM_000059.4'. Measured on 1 of 6 transcripts -- only one per gene is MANE, which is the point of it."
+                            },
+                            "mane_transcript_type": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Which MANE set, 'MANE SELECT' or 'MANE PLUS CLINICAL'. Plus Clinical transcripts exist because the Select one misses clinically reported variants."
+                            },
+                            "sequence": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "CHECKSUM of the transcript sequence, not the sequence itself -- a 40-character SHA-1 such as 'D2C34F22...'. Tark identifies sequences by digest so that two releases can be compared without transferring them."
+                            },
+                            "transcript_checksum": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Checksum over the whole transcript definition. Two transcripts with the same checksum are identical even if their ids differ."
+                            },
+                            "exon_set_checksum": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Checksum over the exon structure alone. Equal checksums here with different sequence checksums means the same exons on a changed assembly."
+                            },
+                            "location_checksum": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "Checksum over the genomic location."
+                            },
+                            "five_prime_utr": {
+                                "type": [
+                                    "string",
+                                    "object",
+                                    "null"
+                                ],
+                                "description": "The 5' UTR: {checksum, start, end, seq}. The `seq` is the actual sequence, not a digest -- unlike the transcript `sequence` field above.",
+                                "properties": {
+                                    "checksum": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "SHA-1 digest of the UTR sequence."
+                                    },
+                                    "start": {
+                                        "type": [
+                                            "integer",
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Its start coordinate."
+                                    },
+                                    "end": {
+                                        "type": [
+                                            "integer",
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Its end coordinate."
+                                    },
+                                    "seq": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "The UTR sequence in full."
+                                    }
+                                }
+                            },
+                            "three_prime_utr": {
+                                "type": [
+                                    "string",
+                                    "object",
+                                    "null"
+                                ],
+                                "description": "The 3' UTR, same shape. Its length is what a 3' UTR variant's effect depends on.",
+                                "properties": {
+                                    "checksum": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "SHA-1 digest of the UTR sequence."
+                                    },
+                                    "start": {
+                                        "type": [
+                                            "integer",
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Its start coordinate."
+                                    },
+                                    "end": {
+                                        "type": [
+                                            "integer",
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Its end coordinate."
+                                    },
+                                    "seq": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "The UTR sequence in full."
+                                    }
+                                }
+                            },
+                            "releases": {
+                                "type": "array",
+                                "description": "Ensembl releases this exact transcript appears in, e.g. [76, 77, ...]. A transcript present in few releases is unstable annotation.",
+                                "items": {
+                                    "type": [
+                                        "integer",
+                                        "string"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
         }
     }
 ]

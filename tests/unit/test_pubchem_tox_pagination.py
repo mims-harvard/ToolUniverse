@@ -62,7 +62,13 @@ def test_toxicity_value_endpoints_support_offset(
 
     result = getattr(tool, method_name)({"cid": 241, "limit": 3, "offset": 3})
 
-    assert result["data"][result_key] == ["value-3", "value-4", "value-5"]
+    # The page is the same three statements it always was; each one now
+    # carries the source that stated it, so the text is under "value".
+    assert [row["value"] for row in result["data"][result_key]] == [
+        "value-3",
+        "value-4",
+        "value-5",
+    ]
     # Counts describe the returned page; the full size sits beside it.
     assert result["data"][count_key] == 3
     assert result["data"]["total_" + result_key] == 7

@@ -107,6 +107,34 @@
                   "null"
                 ],
                 "description": "How the match was found (name, description, etc.)"
+              },
+              "matched_text": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The string that matched the query. match_source says a hit matched a SYNONYM; this says which text it was."
+              },
+              "synonyms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Every synonym Bgee records for the gene"
+              },
+              "cross_references": {
+                "type": "array",
+                "description": "Cross-references Bgee holds for the gene, as upstream sends them",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "genes_mapped_to_same_gene_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many Bgee genes share this gene id (>1 when an id maps to several genes)"
               }
             }
           }
@@ -228,6 +256,21 @@
                   "type": "string"
                 },
                 "description": "Data types supporting expression call"
+              },
+              "fdr": {
+                "type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "description": "False-discovery rate of the expression call, as the string Bgee sends (e.g. '<= 1.00e-14'). This is the statistic behind expression_state and quality."
+              },
+              "cluster_index": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Bgee's expression-level cluster for this condition; its own display groups tissues by this index."
               }
             }
           }
@@ -309,6 +352,27 @@
                   "null"
                 ],
                 "description": "Full binomial name"
+              },
+              "genome_assembly_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Link to the Ensembl (or Ensembl Metazoa) assembly the calls were made against"
+              },
+              "parent_taxon_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "NCBI taxon id of the parent taxon"
+              },
+              "genome_species_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Species whose genome was used; differs from species_id when Bgee maps a species onto a close relative's assembly"
               }
             }
           }

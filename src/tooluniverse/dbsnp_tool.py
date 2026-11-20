@@ -222,6 +222,7 @@ class dbSNPGetFrequencies(dbSNPRESTTool):
                 if isinstance(variant_data, dict) and "error" not in variant_data:
                     # Extract allele frequency data
                     frequencies = []
+                    unparsed = []
                     global_mafs = variant_data.get("global_mafs", [])
 
                     for maf in global_mafs:
@@ -263,12 +264,28 @@ class dbSNPGetFrequencies(dbSNPRESTTool):
                                     }
                                 )
                             except (ValueError, IndexError):
-                                # Skip malformed frequency entries
-                                continue
+                                unparsed.append(
+                                    {"study": study, "raw": freq_str}
+                                )
+                        else:
+                            # A freq string without both "=" and "/" fell
+                            # through the `if` with no else, so the study
+                            # vanished and `total_studies` -- which counts the
+                            # PARSED rows -- shrank to match. All 22 of
+                            # rs429358's studies parse, so this is a latent
+                            # drop rather than a measured one; it is reported
+                            # instead of skipped, and the upstream count is
+                            # now beside the parsed one so the two can be
+                            # compared.
+                            unparsed.append({"study": study, "raw": freq_str})
 
                     parsed_data = {
                         "frequencies": frequencies,
                         "total_studies": len(frequencies),
+                        "studies_reported": len(global_mafs),
+                        "studies_parsed": len(frequencies),
+                        "studies_unparsed": unparsed,
+                        "all_studies_parsed": len(frequencies) == len(global_mafs),
                     }
 
                     result["data"] = parsed_data

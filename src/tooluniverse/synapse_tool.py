@@ -211,6 +211,12 @@ class SynapseTool(BaseTool):
                     "created_on": child.get("createdOn"),
                     "modified_on": child.get("modifiedOn"),
                     "created_by": child.get("createdBy"),
+                    # Which ancestor's access rules govern this child. The
+                    # tool already explains that a restricted container
+                    # answers "not public"; this says where the restriction
+                    # would come from, and a benefactorId differing from the
+                    # parent is how a locally-restricted child shows up.
+                    "benefactor_id": child.get("benefactorId"),
                 }
             )
         return {

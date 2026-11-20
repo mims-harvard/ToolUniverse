@@ -22,6 +22,51 @@ from .tool_registry import register_tool
 UNIPROT_BASE_URL = "https://rest.uniprot.org"
 
 
+def _entry_summary(entry: Dict[str, Any]) -> Dict[str, Any]:
+    """What the mapped-to UniProtKB entry is, when the response carries it.
+
+    `to` is a bare accession for most target databases and the whole entry
+    for UniProtKB, where these are the fields that let a caller pick between
+    several accessions for one gene name.
+    """
+    # The keys are always present so the row shape does not change with the
+    # endpoint: /idmapping/results/{job} answers a bare accession string while
+    # /idmapping/uniprotkb/results/{job} answers the entry, and UniProt
+    # redirects between them.
+    if not isinstance(entry, dict):
+        entry = {}
+    protein = entry.get("proteinDescription") or {}
+    recommended = (protein.get("recommendedName") or {}).get("fullName") or {}
+    submitted = protein.get("submissionNames") or []
+    if not recommended and submitted:
+        recommended = (submitted[0].get("fullName") or {}) if isinstance(
+            submitted[0], dict
+        ) else {}
+    organism = entry.get("organism") or {}
+    entry_type = entry.get("entryType")
+    return {
+        "entry_type": entry_type,
+        # "unreviewed" contains "reviewed": the substring test calls every
+        # TrEMBL entry reviewed, so test for the negative string.
+        "reviewed": ("unreviewed" not in entry_type.lower())
+        if isinstance(entry_type, str) and entry_type
+        else None,
+        "protein_name": recommended.get("value")
+        if isinstance(recommended, dict)
+        else None,
+        "gene_names": [
+            (gene.get("geneName") or {}).get("value")
+            for gene in (entry.get("genes") or [])
+            if isinstance(gene, dict) and (gene.get("geneName") or {}).get("value")
+        ],
+        "organism": organism.get("scientificName"),
+        "organism_taxon_id": organism.get("taxonId"),
+        "sequence_length": (entry.get("sequence") or {}).get("length"),
+        "protein_existence": entry.get("proteinExistence"),
+        "annotation_score": entry.get("annotationScore"),
+    }
+
+
 @register_tool("UniProtIDMappingTool")
 class UniProtIDMappingTool(BaseTool):
     """
@@ -153,7 +198,9 @@ class UniProtIDMappingTool(BaseTool):
                 "error": "UniProt ID mapping job did not complete within timeout",
             }
 
-        results, failed_ids = self._fetch_all_results(job_id)
+        # A UniProtKB target has a richer result view; anything else does not.
+        stream = "uniprotkb" if str(to_db).startswith("UniProtKB") else ""
+        results, failed_ids = self._fetch_all_results(job_id, stream=stream)
         return {
             "status": "success",
             "results": results,
@@ -161,14 +208,22 @@ class UniProtIDMappingTool(BaseTool):
             "failed_ids": failed_ids,
         }
 
-    def _fetch_all_results(self, job_id: str, max_pages: int = 20):
+    def _fetch_all_results(self, job_id: str, max_pages: int = 20, stream: str = ""):
         """Fetch every page of a completed mapping job's results, following
         the Link header's rel="next" URL so large result sets (e.g. a
         heavily-studied protein with hundreds of PDB structures) aren't
-        silently truncated to a single page."""
+        silently truncated to a single page.
+
+        `stream` selects the result view. `/idmapping/results/{job}` answers
+        each mapping as a bare target id; `/idmapping/uniprotkb/results/{job}`
+        answers the whole UniProtKB entry, which is what tells two accessions
+        for one gene name apart. Measured on Gene_Name TP53 -> UniProtKB: the
+        first returns "P04637", the second the entry it belongs to.
+        """
         results = []
         failed_ids = []
-        url = f"{UNIPROT_BASE_URL}/idmapping/results/{job_id}"
+        path = f"{stream}/results" if stream else "results"
+        url = f"{UNIPROT_BASE_URL}/idmapping/{path}/{job_id}"
         params = {"size": 500}
         for _ in range(max_pages):
             resp = requests.get(url, params=params, timeout=self.timeout)
@@ -317,9 +372,20 @@ class UniProtIDMappingTool(BaseTool):
         parsed = []
         for r in raw_results:
             to_val = r.get("to", "")
+            entry = to_val if isinstance(to_val, dict) else {}
             if isinstance(to_val, dict):
                 to_val = to_val.get("primaryAccession", str(to_val))
-            parsed.append({"from": r.get("from", ""), "to": str(to_val)})
+            # A gene name resolves to several accessions and the row was the
+            # accession string alone, so nothing distinguished the reviewed
+            # human entry from an unreviewed isoform of it. The entry that
+            # answered the mapping is already in the response.
+            parsed.append(
+                {
+                    "from": r.get("from", ""),
+                    "to": str(to_val),
+                    **_entry_summary(entry),
+                }
+            )
 
         page_data = self._paginate_parsed_results(parsed, arguments)
 
@@ -354,6 +420,15 @@ class UniProtIDMappingTool(BaseTool):
                         "name": item.get("name", ""),
                         "display_name": item.get("displayName", ""),
                         "from_supported": item.get("from", False),
+                        # Mapping has two directions and only one was
+                        # reported: 95 databases each say whether they can be
+                        # mapped *from* and *to*, and a caller choosing a
+                        # target database had nothing to choose on.
+                        "to_supported": item.get("to", False),
+                        # How to resolve an id in that database, which is what
+                        # a mapped id is for. 90 of the 95 carry one.
+                        "uri_template": item.get("uriLink"),
+                        "rule_id": item.get("ruleId"),
                     }
                 )
             groups.append(

@@ -88,7 +88,39 @@ class EBIProteinsFeaturesTool(BaseTool):
                 "position_start": f.get("begin"),
                 "position_end": f.get("end"),
                 "description": f.get("description"),
+                "category": f.get("category"),
+                # The UniProt feature id: PRO_0000015819 is the insulin B
+                # chain, and it is how a processed chain is cited.
+                "feature_id": f.get("ftId"),
+                # Which isoform the feature applies to; empty on the canonical.
+                "molecule": f.get("molecule"),
             }
+
+            # A BINDING feature without its ligand is a position and nothing
+            # else: EGFR's 718-726 binds ATP (CHEBI:30616), and the whole of
+            # that was dropped from a category whose description is "binding
+            # sites". Four of P00533's 11 domain/site features carry one.
+            ligand = f.get("ligand")
+            if isinstance(ligand, dict):
+                reference = ligand.get("dbReference") or {}
+                feature["ligand"] = {
+                    "name": ligand.get("name"),
+                    "part": (ligand.get("part") or {}).get("name")
+                    if isinstance(ligand.get("part"), dict)
+                    else ligand.get("part"),
+                    "label": ligand.get("label"),
+                    "note": ligand.get("note"),
+                    "database": reference.get("name"),
+                    "database_id": reference.get("id"),
+                }
+            ligand_part = f.get("ligandPart")
+            if isinstance(ligand_part, dict):
+                reference = ligand_part.get("dbReference") or {}
+                feature["ligand_part"] = {
+                    "name": ligand_part.get("name"),
+                    "database": reference.get("name"),
+                    "database_id": reference.get("id"),
+                }
 
             # Include evidences (compact) — API may return a dict for single evidence
             raw_evidences = f.get("evidences", [])
@@ -131,6 +163,8 @@ class EBIProteinsFeaturesTool(BaseTool):
                 "accession": data.get("accession"),
                 "entry_name": data.get("entryName"),
                 "sequence_length": len(data.get("sequence", "")),
+                "taxid": data.get("taxid"),
+                "sequence_checksum": data.get("sequenceChecksum"),
                 "features": feature_page,
                 "total_features": len(data.get("features", [])),
                 "returned": len(feature_page),

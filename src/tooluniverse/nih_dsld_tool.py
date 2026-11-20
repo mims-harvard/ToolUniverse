@@ -54,6 +54,86 @@ def _flatten_ingredients(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return flat
 
 
+# Label statements and other ingredients per product. The audited gummy label
+# carries 23 statements and 9 other ingredients, so the caps guard an
+# outlier rather than cutting a normal label.
+STATEMENTS_PER_LABEL = 60
+OTHER_INGREDIENTS_PER_LABEL = 60
+
+
+def _statements(payload: dict) -> list:
+    """The text printed on the label, under the type that says what it is.
+
+    A tool that promises "one dietary supplement's full label" returned the
+    ingredient table and none of the statements. The audited label's 23
+    include "Precautions re: Pregnant or Nursing or Prescription
+    Medications", "Precautions re: Children", "Suggested/Recommended/Usage/
+    Directions", "Storage" and the FDA disclaimer. Without `type`, a
+    precaution reads like a marketing line.
+    """
+    out = []
+    for statement in payload.get("statements") or []:
+        if not isinstance(statement, dict):
+            continue
+        text = (statement.get("notes") or "").strip()
+        if not text and not statement.get("type"):
+            continue
+        out.append({"type": statement.get("type"), "text": text or None})
+        if len(out) >= STATEMENTS_PER_LABEL:
+            break
+    return out
+
+
+def _other_ingredients(payload: dict) -> dict:
+    """The inactive ingredients, which are half of "every ingredient"."""
+    block = payload.get("otheringredients") or {}
+    if not isinstance(block, dict):
+        return {"text": None, "ingredients": [], "ingredient_count": 0}
+    rows = []
+    for ingredient in block.get("ingredients") or []:
+        if not isinstance(ingredient, dict):
+            continue
+        rows.append(
+            {
+                "name": ingredient.get("name"),
+                "category": ingredient.get("category"),
+                "ingredient_group": ingredient.get("ingredientGroup"),
+                "unii_code": ingredient.get("uniiCode"),
+                "alternate_names": [
+                    n for n in (ingredient.get("alternateNames") or []) if n
+                ],
+            }
+        )
+        if len(rows) >= OTHER_INGREDIENTS_PER_LABEL:
+            break
+    return {
+        "text": (block.get("text") or None),
+        "ingredients": rows,
+        "ingredient_count": len(block.get("ingredients") or []),
+    }
+
+
+def _contacts(payload: dict) -> list:
+    """Who makes or distributes the product, as printed on the label."""
+    out = []
+    for contact in payload.get("contacts") or []:
+        if not isinstance(contact, dict):
+            continue
+        details = contact.get("contactDetails") or {}
+        out.append(
+            {
+                "role": contact.get("text"),
+                "types": [t for t in (contact.get("types") or []) if t],
+                "name": details.get("name"),
+                "city": details.get("city") or None,
+                "state": details.get("state") or None,
+                "country": details.get("country") or None,
+                "web_address": details.get("webAddress") or None,
+            }
+        )
+    return out
+
+
 @register_tool("NIHDSLDTool")
 class NIHDSLDTool(BaseTool):
     """
@@ -206,13 +286,46 @@ class NIHDSLDTool(BaseTool):
                 "ingredients": _flatten_ingredients(
                     payload.get("ingredientRows") or []
                 ),
+                # The other half of "every ingredient": the inactive ones.
+                "other_ingredients": _other_ingredients(payload),
+                # What the package says, with the type that says what kind of
+                # statement it is -- precaution, directions, storage.
+                "statements": _statements(payload),
+                "net_contents": [
+                    {
+                        "quantity": entry.get("quantity"),
+                        "unit": entry.get("unit"),
+                        "display": entry.get("display"),
+                    }
+                    for entry in (payload.get("netContents") or [])
+                    if isinstance(entry, dict)
+                ],
+                # What the percent_daily_value above is a percentage OF.
+                "percent_dv_footnote": payload.get("percentDvFootnote") or None,
+                "claim_types": [
+                    claim.get("langualCodeDescription")
+                    for claim in (payload.get("claims") or [])
+                    if isinstance(claim, dict) and claim.get("langualCodeDescription")
+                ],
+                "contacts": _contacts(payload),
                 "off_market": bool(payload.get("offMarket")),
+                # off_market says whether; the events say when.
+                "events": [
+                    {"date": event.get("date"), "type": event.get("type")}
+                    for event in (payload.get("events") or [])
+                    if isinstance(event, dict)
+                ],
+                "pdf_url": payload.get("pdf") or None,
             },
             "metadata": {
                 "product_id": product_id,
                 "ingredient_count": len(payload.get("ingredientRows") or []),
+                "statement_count": len(payload.get("statements") or []),
+                "statements_per_label": STATEMENTS_PER_LABEL,
+                "other_ingredients_per_label": OTHER_INGREDIENTS_PER_LABEL,
                 "note": "percent_daily_value is null where no daily value is "
-                "established for that ingredient.",
+                "established for that ingredient; percent_dv_footnote says "
+                "what the percentages are based on.",
                 "source": "NIH Dietary Supplement Label Database (DSLD)",
             },
         }

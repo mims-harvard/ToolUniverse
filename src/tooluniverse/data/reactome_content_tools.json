@@ -121,9 +121,91 @@
                   "is_disease": {
                     "type": "boolean",
                     "description": "Whether this is a disease-related pathway"
+                  },
+                  "summation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The paragraph describing the pathway or reaction, which Reactome answers for all 30 entries of a search while the row carried a name"
+                  },
+                  "db_id": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "compartment_accessions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "exact_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "compartments": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Cellular compartments the entry is annotated to, e.g. ['cytosol']. Present on 6 of the 30 results -- pathways often have none."
                   }
                 }
               }
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The page size applied, e.g. 30."
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset to pass to get the next page, e.g. 30. Null or absent when there is no next page."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset this page started at, e.g. 0."
+            },
+            "result_groups": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Per-type totals for the whole search, each {type, total, returned}, e.g. {'type': 'Pathway', 'total': 192, 'returned': 30}. This is where the TRUE hit count lives."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many results this reply contains, e.g. 30."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more results exist than were returned, e.g. true. The measured search found 192 pathways and returned 30 -- so this flag, not the result count, is what says the answer is partial."
+            },
+            "types_searched": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which Reactome object types the search covered, e.g. 'Pathway'. A hit missing from the results may simply be of a type that was not searched."
             }
           },
           "not": {
@@ -232,6 +314,33 @@
                       "null"
                     ],
                     "description": "Schema class (Pathway)"
+                  },
+                  "orthologous_events": {
+                    "type": "array",
+                    "description": "The same event inferred in other species. \"This reaction exists in mouse as R-MMU-...\" is the answer to half the questions asked of a pathway.",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "species": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "db_id": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "is_disease": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the event is a disease variant of a normal process. A disease reaction mixed into a normal pathway silently changes what the pathway describes."
                   }
                 }
               }
@@ -261,9 +370,72 @@
                       "null"
                     ],
                     "description": "Schema class (Reaction, BlackBoxEvent, etc.)"
+                  },
+                  "db_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Reactome's internal numeric id for the event, e.g. 141159. Distinct from the stable 'R-HSA-' identifier, and the one some Reactome endpoints require."
+                  },
+                  "is_disease": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the event is a disease variant of a normal process. A disease reaction mixed into a normal pathway silently changes what the pathway describes."
                   }
                 }
               }
+            },
+            "has_more_reactions": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when reactions remain beyond this page."
+            },
+            "next_reaction_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "The offset to pass for the next page, e.g. 50."
+            },
+            "reaction_limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to the reactions, e.g. 50."
+            },
+            "reaction_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many reactions were skipped before this page, e.g. 0."
+            },
+            "reactions_returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many came back, e.g. 50."
+            },
+            "reactions_truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the reaction list was cut - true on the measured call, where 50 of 142 came back."
+            },
+            "total_reactions": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many reactions the pathway contains in total, e.g. 142."
             }
           },
           "not": {
@@ -367,6 +539,27 @@
             "literature": {
               "type": "array",
               "description": "Key literature references with PubMed IDs"
+            },
+            "is_disease": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the event is a disease variant of a normal process. A disease reaction mixed into a normal pathway silently changes what the pathway describes."
+            },
+            "literature_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many references the pathway cites, e.g. 7. The weight of curation behind it."
+            },
+            "summation_characters": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Length of the pathway's prose summary in characters, e.g. 2415. Says whether the summary is a sentence or an essay before it is fetched."
             }
           },
           "not": {

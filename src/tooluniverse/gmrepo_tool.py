@@ -15,6 +15,7 @@ to the bulk listing endpoints (get_all_gut_microbes, get_all_phenotypes).
 Reference: Wu et al., Nucl. Acids Res. 2020
 """
 
+import json
 import requests
 from typing import Dict, Any, List
 from .base_tool import BaseTool
@@ -22,6 +23,28 @@ from .tool_registry import register_tool
 
 
 GMREPO_BASE = "https://gmrepo.humangut.info/api"
+
+
+def _dblinks(species: dict) -> list:
+    """The species' links to other resources.
+
+    GMrepo answers `dblinks` as a JSON string rather than an array -- "[]"
+    for a species with none, otherwise records like {"db": "MVP", "url":
+    "http://mvp.medgenius.info/...", "anno": "assoc w/ 8 phage clusters"}.
+    Of 50 microbes sampled, 25 carry at least one link. Handed over as the
+    raw string it is unusable, so it is parsed; a string that will not parse
+    is reported under `raw` rather than dropped.
+    """
+    value = species.get("dblinks")
+    if isinstance(value, list):
+        return value
+    if not isinstance(value, str) or not value.strip():
+        return []
+    try:
+        parsed = json.loads(value)
+    except (TypeError, ValueError):
+        return [{"raw": value}]
+    return parsed if isinstance(parsed, list) else [parsed]
 
 
 @register_tool("GmrepoTool")
@@ -107,6 +130,11 @@ class GmrepoTool(BaseTool):
                     "presented_samples": sp.get("presented_samples"),
                     "nr_phenotypes": sp.get("nr_phenotypes"),
                     "pct_of_all_samples": sp.get("pct_of_all_samples"),
+                    # GMrepo marks the species it treats as phenotype
+                    # markers; that flag is why a species is interesting
+                    # here and it travels with every row.
+                    "is_marker": bool(sp.get("ismarker")),
+                    "database_links": _dblinks(sp),
                 }
             )
 

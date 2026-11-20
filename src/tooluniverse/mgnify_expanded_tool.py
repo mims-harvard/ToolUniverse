@@ -209,6 +209,37 @@ class MGnifyExpandedTool(BaseTool):
                     "length": attrs.get("length"),
                     "num_proteins": attrs.get("num-proteins"),
                     "gc_content": attrs.get("gc-content"),
+                    # Where the genome came from, and under which accessions
+                    # elsewhere. A MAG with a completeness and no ENA or NCBI
+                    # accession cannot be fetched from anywhere else, and the
+                    # geography is how an environmental genome is interpreted.
+                    "accession": attrs.get("accession"),
+                    "ena_genome_accession": attrs.get("ena-genome-accession"),
+                    "ena_sample_accession": attrs.get("ena-sample-accession"),
+                    "ena_study_accession": attrs.get("ena-study-accession"),
+                    "ncbi_genome_accession": attrs.get("ncbi-genome-accession"),
+                    "geographic_origin": attrs.get("geographic-origin"),
+                    "geographic_range": attrs.get("geographic-range"),
+                    # Assembly quality beside completeness: a 90%-complete
+                    # genome in 900 contigs is not the same object as one in 9.
+                    "num_contigs": attrs.get("num-contigs"),
+                    "n_50": attrs.get("n-50"),
+                    "busco_completeness": attrs.get("busco-completeness"),
+                    # The MIMAG quality criteria: a "high-quality" MAG needs
+                    # the 5S, 16S and 23S rRNAs and at least 18 tRNAs, and the
+                    # row carried completeness and contamination without them.
+                    "rna_5s": attrs.get("rna-5s"),
+                    "rna_16s": attrs.get("rna-16s"),
+                    "rna_23s": attrs.get("rna-23s"),
+                    "trnas": attrs.get("trnas"),
+                    # How much of the genome is functionally annotated, which
+                    # is what makes num_proteins interpretable.
+                    "eggnog_coverage": attrs.get("eggnog-coverage"),
+                    "ipr_coverage": attrs.get("ipr-coverage"),
+                    "first_created": attrs.get("first-created"),
+                    "num_genomes_total": attrs.get("num-genomes-total"),
+                    "pangenome_size": attrs.get("pangenome-size"),
+                    "last_update": attrs.get("last-update"),
                 }
             )
 
@@ -451,6 +482,14 @@ class MGnifyExpandedTool(BaseTool):
             "environment_feature": attrs.get("environment-feature"),
             "environment_material": attrs.get("environment-material"),
             "last_update": attrs.get("last-update"),
+            # The submitter's own per-sample metadata. pH, temperature, depth
+            # and host details live here and nowhere else in the record, and
+            # the fixed environment-* fields are null for most samples.
+            "sample_metadata": {
+                str(entry.get("key")): entry.get("value")
+                for entry in (attrs.get("sample-metadata") or [])
+                if isinstance(entry, dict) and entry.get("key")
+            },
         }
 
     def _analysis_downloads(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -489,6 +528,11 @@ class MGnifyExpandedTool(BaseTool):
                 {
                     "file_id": item.get("id"),
                     "alias": attrs.get("alias"),
+                    # The file's extension. A download row that names a format
+                    # ("GFF") and not the extension does not say what will
+                    # arrive -- gff, gff.gz or gff.bgz are different files.
+                    # `compression` was already carried further down.
+                    "extension": fmt.get("extension"),
                     "label": desc.get("label"),
                     "description": desc.get("description"),
                     "file_format": fmt.get("name"),
@@ -629,6 +673,11 @@ class MGnifyExpandedTool(BaseTool):
                     "domain": attrs.get("domain"),
                     "count": attrs.get("count"),
                     "lineage": attrs.get("lineage"),
+                    # Which MGnify pipeline version produced the assignment.
+                    # Counts from different pipeline versions are not
+                    # comparable, and the row did not say which it was.
+                    "pipeline_version": attrs.get("pipeline-version"),
+                    "hierarchy": attrs.get("hierarchy"),
                 }
             )
 

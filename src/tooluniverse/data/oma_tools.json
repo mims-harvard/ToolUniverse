@@ -213,6 +213,60 @@
               },
               "chromosome": {
                 "type": "string"
+              },
+              "entry_nr": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "oma_hog_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "oma_group": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "entry_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "genome_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "locus_start": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "locus_end": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "locus_strand": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "sequence_md5": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -299,6 +353,13 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "alternative_levels_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "The same count for a child HOG, e.g. 24."
                     }
                   }
                 }
@@ -308,6 +369,20 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "alternative_levels_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many other taxonomic levels this HOG is also defined at, e.g. 41. An orthologous group is level-dependent, so the same genes form different groups at different levels."
+              },
+              "children_hogs_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many sub-HOGs it contains, e.g. 36 - the duplications inside the group."
               }
             }
           }
@@ -414,6 +489,54 @@
                   },
                   "chromosome": {
                     "type": "string"
+                  },
+                  "entry_nr": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "oma_hog_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "entry_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "genome_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "locus_start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "locus_end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "locus_strand": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "sequence_md5": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -694,6 +817,36 @@
                 "type": "string"
               },
               "reference": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "entry_nr": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "annotation_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "with_from": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "assigned_by": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "date": {
                 "type": [
                   "string",
                   "null"

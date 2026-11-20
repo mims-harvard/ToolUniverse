@@ -16,7 +16,7 @@ def UnifiedToolGenerator(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str | dict[str, Any]:
+) -> dict[str, Any]:
     """
     Generates complete ToolUniverse tools using simplified XML format that simultaneously creates bot...
 
@@ -37,7 +37,7 @@ def UnifiedToolGenerator(
 
     Returns
     -------
-    str | dict[str, Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

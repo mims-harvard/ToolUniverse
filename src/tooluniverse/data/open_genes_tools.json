@@ -1,80 +1,476 @@
 [
-    {
-        "name": "OpenGenes_get_gene",
-        "description": "Get the aging/longevity profile of a human gene by symbol from Open Genes, a manually-curated aging-gene database. Returns the gene's aging mechanisms (e.g. INS/IGF-1 pathway dysregulation), functional clusters, associated disease categories, curator confidence level, expression change with age, and an evidence-count summary across study types (lifespan-increase studies, longevity associations, age-related changes, progeria associations, interventions). Use to assess whether and how a gene is implicated in aging. No API key required.",
-        "parameter": {"type": "object", "properties": {
-            "symbol": {"type": "string", "description": "Human gene symbol, e.g. 'GHR', 'FOXO3', 'TP53', 'SIRT1'."}
-        }, "required": ["symbol"]},
-        "fields": {"timeout": 30},
-        "type": "OpenGenesGeneTool",
-        "test_examples": [{"symbol": "GHR"}, {"symbol": "FOXO3"}, {"symbol": "TP53"}],
-        "return_schema": {
-          "oneOf": [
-            {
-              "not": {
-                "required": [
-                  "error"
-                ]
-              },
-              "type": "object"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+  {
+    "name": "OpenGenes_get_gene",
+    "description": "Get the aging/longevity profile of a human gene by symbol from Open Genes, a manually-curated aging-gene database. Returns the gene's aging mechanisms (e.g. INS/IGF-1 pathway dysregulation), functional clusters, associated disease categories, curator confidence level, expression change with age, and an evidence-count summary across study types (lifespan-increase studies, longevity associations, age-related changes, progeria associations, interventions). Use to assess whether and how a gene is implicated in aging. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "description": "Human gene symbol, e.g. 'GHR', 'FOXO3', 'TP53', 'SIRT1'."
         }
+      },
+      "required": [
+        "symbol"
+      ]
     },
-    {
-        "name": "OpenGenes_search_genes",
-        "description": "Browse the complete Open Genes catalog of human aging/longevity genes with one-based page pagination and pages up to 1000 records. Metadata reports the exact gene count, total_pages, has_more, and next_page. Returns gene summaries with aging mechanisms, functional clusters, confidence level, and expression change. No API key required.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "limit": {
-                    "type": ["integer", "null"],
-                    "minimum": 1,
-                    "maximum": 1000,
-                    "description": "Genes per page (default 20, max 1000)."
-                },
-                "page": {
-                    "type": ["integer", "null"],
-                    "minimum": 1,
-                    "description": "One-based page number (default 1). Continue with metadata.next_page."
-                }
+    "fields": {
+      "timeout": 30
+    },
+    "type": "OpenGenesGeneTool",
+    "test_examples": [
+      {
+        "symbol": "GHR"
+      },
+      {
+        "symbol": "FOXO3"
+      },
+      {
+        "symbol": "TP53"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
+          "type": "object",
+          "description": "The gene's aging profile. This branch declared no properties at all, so none of the fourteen fields the tool returns was discoverable from the schema.",
+          "properties": {
+            "symbol": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "required": []
-        },
-        "fields": {"timeout": 30},
-        "type": "OpenGenesSearchTool",
-        "test_examples": [{"limit": 5}, {"limit": 3, "page": 2}, {"limit": 10}],
-        "return_schema": {
-          "oneOf": [
-            {
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ncbi_id": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ]
+            },
+            "uniprot": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ensembl": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "aging_mechanisms": {
               "type": "array",
               "items": {
-                "type": "object"
+                "type": "string"
+              },
+              "description": "e.g. 'INS/IGF-1 pathway dysregulation'"
+            },
+            "functional_clusters": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
+            "disease_categories": {
+              "type": "array",
+              "items": {
+                "type": "string"
               },
-              "required": [
-                "error"
+              "description": "Broad ICD chapter groupings"
+            },
+            "diseases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Specific named disease associations"
+            },
+            "confidence_level": {
+              "type": [
+                "string",
+                "null"
               ]
+            },
+            "expression_change": {
+              "type": [
+                "string",
+                "number",
+                "null"
+              ]
+            },
+            "protein_description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "evidence_counts": {
+              "type": "object",
+              "description": "How many records of each evidence type; see evidence_summary for what they say"
+            },
+            "evidence_summary": {
+              "type": "object",
+              "description": "Per evidence type, what the records actually say: the distinct longevity effects, intervention results, change types, model organisms and ethnicities, plus the DOIs. GHR has 57 longevity associations and 14 lifespan studies, and the tool reported '57' and '14' -- counts, for a tool whose description says to use it to assess whether and HOW a gene is implicated in aging, with no other tool in the family returning the records.",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "count": {
+                    "type": "integer"
+                  },
+                  "dois": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "doi_count": {
+                    "type": "integer"
+                  },
+                  "dois_truncated": {
+                    "type": "boolean"
+                  },
+                  "studyType": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The distinct kinds of study behind this evidence type, e.g. 'GWAS', 'meta-analysis of GWAS', 'candidate genes study'. Filled on 98% of association records measured across ten genes, and a GWAS hit is not the same claim as a candidate-gene result."
+                  },
+                  "polymorphismType": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The distinct variant classes, e.g. 'SNP', 'VNTR', 'indel'."
+                  },
+                  "associations": {
+                    "type": "array",
+                    "description": "The individual longevity-association records, for the one evidence type whose claim is statistical. The rest of this block reports DISTINCT values per field, which is right for categories and useless for a p-value - a list of distinct p-values is detached from the associations they belong to. Without these, an association reported as 'longevity' could be a significant GWAS hit or APOE's p=0.065 in 74 cases against 320 controls, and the two read identically.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "longevityEffect": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "What the association is with, e.g. 'longevity', 'longevity-related phenotype'."
+                        },
+                        "polymorphismId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The variant's identifier, usually an rsID. This is how the association is looked up anywhere else."
+                        },
+                        "polymorphismType": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Variant class, e.g. 'SNP', 'VNTR'."
+                        },
+                        "studyType": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The kind of study, e.g. 'GWAS', 'candidate genes study'."
+                        },
+                        "significance": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Whether OpenGenes records the association as significant, e.g. 'Significant', 'Non-significant'."
+                        },
+                        "pValue": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The reported p-value, as OpenGenes stores it (a string)."
+                        },
+                        "associatedAllele": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The allele associated with the effect, e.g. 'E2'."
+                        },
+                        "nonAssociatedAllele": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The comparison allele, e.g. 'E4'."
+                        },
+                        "nOfExperiment": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Size of the case/experiment group."
+                        },
+                        "nOfControls": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Size of the control group."
+                        },
+                        "ethnicity": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The cohort's ethnicity, e.g. 'Ashkenazi Jewish'. An association found in one population is not evidence in another."
+                        },
+                        "sex": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Which sex the association was found in, or 'not specified'."
+                        },
+                        "doi": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "DOI of the paper."
+                        },
+                        "pmid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "PubMed id of the paper."
+                        }
+                      }
+                    }
+                  },
+                  "associations_returned": {
+                    "type": "integer",
+                    "description": "How many association records are in 'associations'."
+                  },
+                  "associations_truncated": {
+                    "type": "boolean",
+                    "description": "True when the gene has more association records than the cap of 25 returns. 'count' is the full number."
+                  }
+                }
+              }
             }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
           ]
         }
+      ]
     }
+  },
+  {
+    "name": "OpenGenes_search_genes",
+    "description": "Browse the complete Open Genes catalog of human aging/longevity genes with one-based page pagination and pages up to 1000 records. Metadata reports the exact gene count, total_pages, has_more, and next_page. Returns gene summaries with aging mechanisms, functional clusters, confidence level, and expression change. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Genes per page (default 20, max 1000)."
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "description": "One-based page number (default 1). Continue with metadata.next_page."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "timeout": 30
+    },
+    "type": "OpenGenesSearchTool",
+    "test_examples": [
+      {
+        "limit": 5
+      },
+      {
+        "limit": 3,
+        "page": 2
+      },
+      {
+        "limit": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Gene symbol."
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Gene name."
+              },
+              "ncbi_id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "NCBI Gene id."
+              },
+              "uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt accession."
+              },
+              "ensembl": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ensembl gene id."
+              },
+              "aging_mechanisms": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "description": "The aging mechanisms the gene is implicated in.",
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "null"
+                  ],
+                  "description": "One aging mechanism."
+                }
+              },
+              "functional_clusters": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "description": "The functional clusters it belongs to.",
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "null"
+                  ],
+                  "description": "One functional cluster."
+                }
+              },
+              "disease_categories": {
+                "type": [
+                  "array",
+                  "object",
+                  "string",
+                  "null"
+                ],
+                "description": "Disease categories linked to it.",
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "null"
+                  ],
+                  "description": "One disease category."
+                }
+              },
+              "diseases": {
+                "type": [
+                  "array",
+                  "object",
+                  "string",
+                  "null"
+                ],
+                "description": "The individual diseases.",
+                "items": {
+                  "type": [
+                    "string",
+                    "object",
+                    "null"
+                  ],
+                  "description": "One disease."
+                }
+              },
+              "confidence_level": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How strongly the gene is linked to aging. The field that separates a well-established longevity gene from a single-study claim."
+              },
+              "expression_change": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ],
+                "description": "How its expression changes with age -- up, down or unchanged."
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
 ]

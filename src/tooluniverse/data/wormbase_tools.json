@@ -69,6 +69,59 @@
                 "string",
                 "null"
               ]
+            },
+            "cross_references": {
+              "type": "array",
+              "description": "The gene in other databases, from the record the overview already fetched",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "referenced_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "resource": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "reference_curies": {
+              "type": "array",
+              "description": "Papers Alliance has for the gene",
+              "items": {
+                "type": "string"
+              }
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "notes": {
+              "type": "array",
+              "description": "Every related note, where `description` takes only the first",
+              "items": {
+                "type": "string"
+              }
+            },
+            "taxon_id": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
           "not": {
@@ -157,6 +210,211 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "reference_details": {
+                    "type": "array",
+                    "description": "Each reference with the identifiers it can be cited by. The curie alone is Alliance's own key (AGRKB:101000000617864) and nothing outside Alliance takes it; the cross-references hold PMID:10931870, the DOI and WBPaper00004275.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "curie": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "short_citation": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "identifiers": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "pmid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "doi": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "pmcid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "wb": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "pubmed_ids": {
+                    "type": "array",
+                    "description": "PubMed ids Alliance lists for the row",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "annotation_types": {
+                    "type": "array",
+                    "description": "e.g. AllelePhenotypeAnnotation. An allele phenotype is a different weight of evidence from an RNAi or a transgene one, and the statement alone does not say which.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "annotation_count": {
+                    "type": "integer"
+                  },
+                  "annotation_references": {
+                    "type": "array",
+                    "description": "Each reference with the identifiers it can be cited by. The curie alone is Alliance's own key (AGRKB:101000000617864) and nothing outside Alliance takes it; the cross-references hold PMID:10931870, the DOI and WBPaper00004275.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "curie": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "short_citation": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "identifiers": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "pmid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "doi": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "pmcid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "wb": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "annotation_relations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "date_created": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data_provider": {
+                    "type": "array",
+                    "description": "Which database curated it; Alliance aggregates several",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "subjects": {
+                    "type": "array",
+                    "description": "WHICH ALLELE. The annotation's subject is not the gene: for an AllelePhenotypeAnnotation it is the specific allele -- m2 (WB:WBVar00088530) for unc-26's \"aldicarb resistant\" -- and inferred_gene is the gene it maps back to. Two alleles with different phenotypes used to arrive as one undifferentiated list.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "symbol": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "external_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "curie": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "synonyms": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "inferred_gene": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "inferred_gene_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "references": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Identifiers of the papers reporting the phenotype, e.g. ['AGRKB:101000000617864'] - present on all 49 phenotypes. The citation; a phenotype without one cannot be followed up."
                   }
                 }
               }
@@ -183,6 +441,31 @@
                   }
                 }
               }
+            },
+            "subject_curie": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Alliance curie of the gene the rows are grouped under"
+            },
+            "subject_taxon_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_taxon_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "gene_full_name": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
           "not": {
@@ -331,6 +614,168 @@
                   }
                 }
               }
+            },
+            "subject_curie": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Alliance curie of the gene the rows are grouped under"
+            },
+            "subject_taxon_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_taxon_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "annotation_count": {
+              "type": "integer"
+            },
+            "annotations": {
+              "type": "array",
+              "description": "Each annotation whole. expressed_in, expressed_during and expression_assays are deduplicated sets, so they say WHAT was seen and lose which went with which: \"AIYL\", \"L1 larva\" and \"reporter gene\" arrive as three unrelated sets even though one annotation named them together, with the paper that reported them.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "expressed_in": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "expressed_during": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "assay": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "assay_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "term_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "anatomy_term_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The anatomical structure's own curie, where expressed_in is a display string"
+                  },
+                  "stage_term_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "references": {
+                    "type": "array",
+                    "description": "Each reference with the identifiers it can be cited by. The curie alone is Alliance's own key (AGRKB:101000000617864) and nothing outside Alliance takes it; the cross-references hold PMID:10931870, the DOI and WBPaper00004275.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "curie": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "short_citation": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "identifiers": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "pmid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "doi": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "pmcid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "wb": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "reference_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "annotation_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data_provider": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cross_references": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "expression_assays": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The assay types the expression evidence comes from, e.g. ['in situ reporter']. A reporter construct and an antibody stain support very different claims, so this qualifies every pattern in the reply."
             }
           },
           "not": {
@@ -420,6 +865,62 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "methods_not_called": {
+                    "type": "array",
+                    "description": "The prediction methods that ran and did NOT call this ortholog. Four of six agreeing is a different claim from four of four, and `methods` alone cannot tell them apart.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "method_count": {
+                    "type": "integer"
+                  },
+                  "method_not_called_count": {
+                    "type": "integer"
+                  },
+                  "confidence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Alliance's own confidence label for the pair"
+                  },
+                  "stringency_filter": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "is_best_score": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "is_best_reverse_score": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species_taxon_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ortholog_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -441,6 +942,48 @@
               "items": {
                 "type": "object"
               }
+            },
+            "subject_gene_curie": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_gene_external_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_gene_symbol": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_gene_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_taxon_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_taxon_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_species": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
           "not": {
@@ -545,6 +1088,193 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "references": {
+                    "type": "array",
+                    "description": "Each reference with the identifiers it can be cited by. The curie alone is Alliance's own key (AGRKB:101000000617864) and nothing outside Alliance takes it; the cross-references hold PMID:10931870, the DOI and WBPaper00004275.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "curie": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "short_citation": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "identifiers": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "pmid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "doi": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "pmcid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "wb": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "detection_method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How the interaction was detected. \"a interacts with b\" without the method is not a result anyone can weigh."
+                  },
+                  "detection_method_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interaction_type_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_1_role": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_1_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2_role": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_1_role_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2_role_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_1_type_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2_type_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "aggregation_database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interaction_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2_species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "relation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Alliance's relation for the pair, which is not the MI interaction type"
+                  },
+                  "interaction_source_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "phenotypes_or_traits": {
+                    "type": "array",
+                    "description": "For a GENETIC interaction the phenotype it was scored by -- \"synthetic lethal\" and the like -- which is the result",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "interactor_1_perturbation": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The allele or construct used on this gene: a specific allele is not an RNAi knockdown"
+                  },
+                  "interactor_2_perturbation": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -555,8 +1285,289 @@
             "genetic_interactions": {
               "type": "array",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "references": {
+                    "type": "array",
+                    "description": "Each reference with the identifiers it can be cited by. The curie alone is Alliance's own key (AGRKB:101000000617864) and nothing outside Alliance takes it; the cross-references hold PMID:10931870, the DOI and WBPaper00004275.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "curie": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "short_citation": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "identifiers": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "pmid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "doi": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "pmcid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "wb": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "detection_method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How the interaction was detected. \"a interacts with b\" without the method is not a result anyone can weigh."
+                  },
+                  "detection_method_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interaction_type_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_1_role": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_1_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2_role": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_1_role_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2_role_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_1_type_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2_type_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "aggregation_database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interaction_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2_species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "relation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Alliance's relation for the pair, which is not the MI interaction type"
+                  },
+                  "interaction_source_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "phenotypes_or_traits": {
+                    "type": "array",
+                    "description": "For a GENETIC interaction the phenotype it was scored by -- \"synthetic lethal\" and the like -- which is the result",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "interactor_1_perturbation": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The allele or construct used on this gene: a specific allele is not an RNAi knockdown"
+                  },
+                  "interactor_2_perturbation": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "interactor_1": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_1_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_2_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interaction_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "citation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
               }
+            },
+            "subject_gene_curie": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_gene_external_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_gene_symbol": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_gene_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_taxon_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_taxon_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject_species": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "total_genetic_interactions": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many genetic interactions WormBase holds for the gene, e.g. 10."
+            },
+            "total_physical_interactions": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many physical interactions, e.g. 84. Genetic and physical interaction are different claims, and the totals say which kind the returned list is mostly made of."
             }
           },
           "not": {
@@ -655,9 +1666,117 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the Disease Ontology category is"
+                  },
+                  "annotation_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many annotations THIS gene has in the category. Without it every category read as a finding."
+                  },
+                  "disease_class_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "has_annotations": {
+                    "type": "boolean"
+                  },
+                  "groups": {
+                    "type": "array",
+                    "description": "The subcategories under it, each with this gene's counts",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "annotation_count": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "disease_class_count": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
                   }
                 }
               }
+            },
+            "annotated_disease_count": {
+              "type": "integer",
+              "description": "This gene's own count. disease_count is the number of ribbon CATEGORIES, which is the same for every gene."
+            },
+            "annotated_diseases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "total_annotations": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "total_disease_classes": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "gene_label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "taxon_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "taxon_label": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
           "not": {

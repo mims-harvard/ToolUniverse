@@ -127,6 +127,16 @@ def _record_organism(raw: Dict[str, Any]) -> Dict[str, Any]:
     return organism
 
 
+def _xref_type_counts(xrefs) -> dict:
+    """How many linked records of each type, e.g. {"biosample": 4, "run": 12}."""
+    counts: dict = {}
+    for xref in xrefs if isinstance(xrefs, list) else []:
+        if isinstance(xref, dict):
+            key = xref.get("type") or "unknown"
+            counts[key] = counts.get(key, 0) + 1
+    return dict(sorted(counts.items()))
+
+
 def _summarize_xrefs(xrefs: Any, limit: int = 25) -> List[Dict[str, Any]]:
     """Trim cross-references, which can run to thousands of runs per study."""
     items = xrefs if isinstance(xrefs, list) else []
@@ -265,6 +275,14 @@ class DDBJTool(BaseTool):
                 "platform": _as_list(raw.get("platform")),
                 "url": raw.get("url"),
                 "cross_reference_count": len(raw.get("dbXrefs") or []),
+                # A count on its own does not say what was counted. The types
+                # are short, so they are summarised here; the records
+                # themselves belong to the sibling tool, which is now named.
+                "cross_reference_types": _xref_type_counts(raw.get("dbXrefs")),
+                "cross_references_tool": (
+                    "DDBJ_get_cross_references returns the linked records "
+                    "themselves for this accession"
+                ),
             },
             "metadata": {
                 "accession": accession,

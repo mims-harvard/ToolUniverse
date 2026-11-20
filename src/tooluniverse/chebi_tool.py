@@ -20,6 +20,82 @@ from .tool_registry import register_tool
 
 CHEBI_BASE_URL = "https://www.ebi.ac.uk/chebi/backend/api/public"
 
+# Aspirin carries 68 PubMed citations, 36 registry numbers and 24 roles. Each
+# list is capped at this and the count and the cut are reported beside it.
+ACCESSIONS_PER_TYPE = 50
+ROLES_PER_COMPOUND = 50
+
+# `database_accessions` is keyed by the kind of accession. CAS and
+# REGISTRY_NUMBER are identifiers, CITATION is literature, MANUAL_X_REF is a
+# link to another resource -- different things, and all four were dropped.
+_ACCESSION_SECTIONS = {
+    "CAS": "cas_numbers",
+    "REGISTRY_NUMBER": "registry_numbers",
+    "CITATION": "citations",
+    "MANUAL_X_REF": "cross_references",
+}
+
+
+def _accession_rows(records):
+    """One accession: its number, who assigned it and where it points."""
+    rows = []
+    for rec in records if isinstance(records, list) else []:
+        if not isinstance(rec, dict):
+            continue
+        rows.append(
+            {
+                "accession": rec.get("accession_number"),
+                "source": rec.get("source_name"),
+                "prefix": rec.get("prefix"),
+                "url": rec.get("url"),
+            }
+        )
+    return rows
+
+
+def _accessions(raw):
+    """The four accession sections, each capped and each counted."""
+    node = raw.get("database_accessions")
+    if not isinstance(node, dict):
+        node = {}
+    out = {}
+    for key, name in _ACCESSION_SECTIONS.items():
+        rows = _accession_rows(node.get(key))
+        out[name] = rows[:ACCESSIONS_PER_TYPE]
+        out[f"{name}_total"] = len(rows)
+        out[f"{name}_truncated"] = len(rows) > ACCESSIONS_PER_TYPE
+    other = {
+        key: len(_accession_rows(value))
+        for key, value in node.items()
+        if key not in _ACCESSION_SECTIONS
+    }
+    out["other_accession_counts"] = other
+    return out
+
+
+def _roles(raw):
+    """ChEBI's role classification, which is half of what ChEBI is for.
+
+    Each entry says whether the role is an application (what the compound is
+    used for), a chemical role or a biological role -- aspirin is classified
+    under 24 of them, including "non-steroidal anti-inflammatory drug".
+    """
+    rows = []
+    for rec in raw.get("roles_classification") or []:
+        if not isinstance(rec, dict):
+            continue
+        rows.append(
+            {
+                "chebi_accession": rec.get("chebi_accession"),
+                "name": _strip_html(rec.get("name") or ""),
+                "definition": _strip_html(rec.get("definition") or ""),
+                "is_application": rec.get("application"),
+                "is_chemical_role": rec.get("chemical_role"),
+                "is_biological_role": rec.get("biological_role"),
+            }
+        )
+    return rows
+
 # advanced_search is server-side paginated at 15 hits per page and exposes the
 # page number as a 1-indexed query-string parameter (`?page=1` is the first
 # page and is byte-identical to omitting the parameter; `?page=0` and any page
@@ -224,6 +300,11 @@ class ChEBITool(BaseTool):
 
         # Extract synonyms
         synonyms = []
+        # A brand name, an IUPAC name and a KEGG synonym are not the same kind
+        # of name, and the kind was dropped: "8-hour bayer" (BRAND NAME, from
+        # ChEMBL) and "2-(acetyloxy)benzoic acid" (IUPAC NAME) arrived in one
+        # undifferentiated list. These rows run in parallel with `synonyms`.
+        synonym_details = []
         names_dict = raw.get("names", {})
         for name_type, name_list in names_dict.items():
             if isinstance(name_list, list):
@@ -232,9 +313,21 @@ class ChEBITool(BaseTool):
                         syn = _strip_html(entry.get("name", ""))
                         if syn and syn not in synonyms:
                             synonyms.append(syn)
+                            synonym_details.append(
+                                {
+                                    "name": syn,
+                                    "type": entry.get("type") or name_type,
+                                    "source": entry.get("source"),
+                                    "status": entry.get("status"),
+                                    "language_code": entry.get("language_code"),
+                                }
+                            )
         synonym_offset = max(int(arguments.get("synonym_offset") or 0), 0)
         synonym_limit = min(max(int(arguments.get("synonym_limit") or 20), 1), 500)
         synonym_page = synonyms[synonym_offset : synonym_offset + synonym_limit]
+        synonym_detail_page = synonym_details[
+            synonym_offset : synonym_offset + synonym_limit
+        ]
         synonyms_truncated = synonym_offset + len(synonym_page) < len(synonyms)
 
         # Chemical data is nested under 'chemical_data'
@@ -274,7 +367,34 @@ class ChEBITool(BaseTool):
             "charge": chem_data.get("charge", None),
             "smiles": struct_data.get("smiles", None),
             "inchikey": struct_data.get("standard_inchi_key", None),
+            # The InChIKey is a hash; the InChI is the structure it hashes.
+            "inchi": struct_data.get("standard_inchi", None),
+            "wurcs": struct_data.get("wurcs", None),
+            "ascii_name": raw.get("ascii_name"),
+            # `secondary_ids` is deliberately NOT added here: the redirect
+            # disclosure emits it on a substitution, which is where it is the
+            # evidence for a claim, and test_chebi_obsolete_id_redirect_
+            # disclosed asserts a direct hit carries no disclosure key.
+            "roles": _roles(raw)[:ROLES_PER_COMPOUND],
+            "role_count": len(_roles(raw)),
+            "roles_truncated": len(_roles(raw)) > ROLES_PER_COMPOUND,
+            "compound_origins": raw.get("compound_origins") or [],
+            "modified_on": raw.get("modified_on"),
+            "is_released": raw.get("is_released"),
+            "created_by": raw.get("created_by") or [],
+            "relation_counts": {
+                "incoming": len(
+                    (raw.get("ontology_relations") or {}).get("incoming_relations")
+                    or []
+                ),
+                "outgoing": len(
+                    (raw.get("ontology_relations") or {}).get("outgoing_relations")
+                    or []
+                ),
+            },
+            **_accessions(raw),
             "synonyms": synonym_page,
+            "synonym_details": synonym_detail_page,
             "synonyms_total": len(synonyms),
             "synonym_offset": synonym_offset,
             "synonyms_returned": len(synonym_page),
@@ -390,6 +510,20 @@ class ChEBITool(BaseTool):
                         "formula": source.get("formula", None),
                         "mass": source.get("mass", None),
                         "stars": source.get("stars", None),
+                        # The hit already carries the structure and the
+                        # definition; a chemical search that answers a name and
+                        # a mass and not a SMILES sends the caller back for a
+                        # second call per hit.
+                        "ascii_name": source.get("ascii_name", None),
+                        "definition": _strip_html(source.get("definition", "") or ""),
+                        "smiles": source.get("smiles", None),
+                        "inchi": source.get("inchi", None),
+                        "inchikey": source.get("inchikey", None),
+                        "monoisotopic_mass": source.get("monoisotopicmass", None),
+                        "charge": source.get("charge", None),
+                        "relevance_score": hit.get("_score")
+                        if isinstance(hit, dict)
+                        else None,
                     }
                 )
 
@@ -477,6 +611,12 @@ class ChEBITool(BaseTool):
         result = {
             "chebi_id": raw.get("id", chebi_id),
             "chebi_accession": raw.get("chebi_accession", f"CHEBI:{chebi_id}"),
+            # The response names the compound these relations belong to -- on
+            # the relation rows as `final_name` -- and the result did not.
+            "name": _strip_html(
+                raw.get("name")
+                or (incoming[0].get("final_name", "") if incoming else "")
+            ),
             "relation_count": len(relations),
             "relations": relations,
         }
@@ -532,6 +672,12 @@ class ChEBITool(BaseTool):
         result = {
             "chebi_id": raw.get("id", chebi_id),
             "chebi_accession": raw.get("chebi_accession", f"CHEBI:{chebi_id}"),
+            # `init_name` on every outgoing relation is this compound's own
+            # name, and the result never said whose parents these are.
+            "name": _strip_html(
+                raw.get("name")
+                or (outgoing[0].get("init_name", "") if outgoing else "")
+            ),
             "relation_count": len(relations),
             "relations": relations,
         }

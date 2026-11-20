@@ -90,6 +90,69 @@
               "deprecated": {
                 "type": "boolean",
                 "description": "True if this Mondo term is obsolete. Obsolete terms still match searches but carry no annotations."
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Monarch's relevance score, which is the order the rows are in. 'breast cancer' scores 287.25 and 'sporadic breast cancer' 51.77 for the query 'breast cancer'"
+              },
+              "match_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the hit matched on the name, a synonym or the description"
+              },
+              "synonyms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The disease's other names, which is often what the query actually matched"
+              },
+              "namespace": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ontology namespace of the id, e.g. MONDO"
+              },
+              "provided_by": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which Monarch source asserted the record"
+              },
+              "xrefs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Cross-references; the same list as `xref`, under the name the general search uses"
+              },
+              "symbol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Symbol, for a hit that has one"
+              },
+              "taxon": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Taxon curie, null for a disease"
+              },
+              "taxon_label": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Taxon name, null for a disease"
               }
             }
           }
@@ -411,6 +474,90 @@
                   "null"
                 ],
                 "description": "Primary data source for this association"
+              },
+              "frequency_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "HPO frequency term for how often this phenotype occurs in the disease, e.g. 'HP:0040280' (Obligate, 100%) through 'HP:0040285' (Excluded). The single most important qualifier of an HPO annotation."
+              },
+              "frequency": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "That frequency term by name, e.g. 'Obligate', 'Very frequent', 'Occasional'. Null where the source recorded no frequency, which is not the same as 'rare'."
+              },
+              "observed_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many patients in the source cohort showed the phenotype, where the source gave a count."
+              },
+              "observed_total": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many were examined, i.e. the denominator for observed_count. A count without this says nothing."
+              },
+              "observed_percentage": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The observed frequency as a percentage, where the source gave one directly."
+              },
+              "onset_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "HPO onset term, e.g. 'HP:0003577' (Congenital onset). A phenotype that appears in adulthood and one present at birth are different claims about the same disease."
+              },
+              "onset": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "That onset term by name, e.g. 'Congenital onset'."
+              },
+              "sex": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Sex the annotation is limited to, where the source limited it. Null means not sex-specific as recorded, not that both sexes were checked."
+              },
+              "evidence": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "ECO evidence codes behind the association, e.g. ['ECO:0000304'] (author statement). An author statement and an experimental observation are not the same support."
+              },
+              "knowledge_level": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Biolink knowledge level, e.g. 'knowledge_assertion' -- a curated claim -- as opposed to a prediction or a statistical association."
+              },
+              "agent_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who produced the claim, e.g. 'manual_agent' (a human curator) rather than an automated or text-mining agent."
+              },
+              "publications": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Publication curies supporting the association, where the source recorded them."
               }
             }
           }

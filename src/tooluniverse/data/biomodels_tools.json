@@ -39,15 +39,73 @@
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": "string", "description": "Model identifier (e.g., BIOMD0000000469)"},
-              "name": {"type": "string", "description": "Model name/title"},
-              "format": {"type": "string", "description": "Model format (usually SBML)"},
-              "publicationId": {"type": "string"},
-              "submissionId": {"type": "string"}
+              "id": {
+                "type": "string",
+                "description": "Model identifier (e.g., BIOMD0000000469)"
+              },
+              "name": {
+                "type": "string",
+                "description": "Model name/title"
+              },
+              "format": {
+                "type": "string",
+                "description": "Model format (usually SBML)"
+              },
+              "publicationId": {
+                "type": "string"
+              },
+              "submissionId": {
+                "type": "string"
+              },
+              "submissionDate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the model was submitted, ISO-8601 UTC, e.g. '2020-05-05T00:00:00Z'."
+              },
+              "submitter": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Name of the person who submitted the model, e.g. 'Ahmad Zyoud'."
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Canonical BioModels page for the model, e.g. 'https://www.biomodels.org/BIOMD0000000944'."
+              }
             }
           }
         },
-        "matches": {"type": "integer", "description": "Total number of matching models"}
+        "matches": {
+          "type": "integer",
+          "description": "Total number of matching models"
+        },
+        "facetStats": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The same facet breakdown as a JSON STRING, not a parsed object -- it must be json.loads()'d again before use. Redundant with `facets`."
+        },
+        "facets": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "EBI search facet blocks for the whole result set, 9 entries, each with its facetValues and counts. This is where the breakdown by curation status, format and organism lives."
+        },
+        "queryParameters": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The query as it was actually executed: {numResults, offset, sortBy, sortDirection}. Check numResults against the models returned to see whether the list was cut."
+        }
       }
     },
     "test_examples": [
@@ -106,7 +164,10 @@
           "type": "string"
         },
         "format": {
-          "type": ["object", "string"],
+          "type": [
+            "object",
+            "string"
+          ],
           "description": "Model format - can be a string or object with name, identifier, and version"
         },
         "publication": {
@@ -120,6 +181,76 @@
         },
         "modified": {
           "type": "string"
+        },
+        "contributors": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Who worked on the model, keyed by role -- {Curator, Modeller} on the measured model."
+        },
+        "curationStatus": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Whether BioModels curated the model, e.g. 'CURATED'. A non-curated model has not been checked to reproduce its paper's figures."
+        },
+        "files": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The model's files as {main, additional}: `main` holds the SBML itself, `additional` the supplementary files. Use BioModels_list_files for the per-file detail."
+        },
+        "firstPublished": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "When the model was first published, as a UNIX epoch SECOND count, e.g. 1725285210 -- not an ISO date string."
+        },
+        "history": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Revision history as {revisions}, one entry per submitted version. Which revision a simulation used matters for reproducing it."
+        },
+        "modelLevelAnnotations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Model-level annotations, each {qualifier, accession, resource, ...} with a BioModels qualifier such as 'bqmodel:is' or 'bqmodel:isDescribedBy', 7 entries on the measured model. The 'isDescribedBy' entries are the publications the model came from."
+        },
+        "modellingApproach": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The modelling formalism, as {accession, name, resource} against an ontology term, e.g. an ODE-based deterministic model. Decides what a simulator can do with the file."
+        },
+        "publicationId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The curated BioModels accession, e.g. 'BIOMD0000000469'. This is the citable id; submissionId is the pre-curation one, and they differ."
+        },
+        "submissionId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The id the model was submitted under, e.g. 'MODEL1302140001'. Kept so links from before curation still resolve."
+        },
+        "vcsIdentifier": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "BioModels' internal version-control identifier for the record, e.g. 'aaa'. Opaque; not a version number."
         }
       }
     },
@@ -165,10 +296,39 @@
           "items": {
             "type": "object",
             "properties": {
-              "name": {"type": "string"},
-              "description": {"type": "string"},
-              "fileSize": {"type": "string"},
-              "mimeType": {"type": "string"}
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "fileSize": {
+                "type": "string"
+              },
+              "mimeType": {
+                "type": "string"
+              },
+              "md5sum": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "MD5 of the main model file, e.g. 'd33645d3142b3db02cf909acea37d741'."
+              },
+              "sha1sum": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SHA-1 of the main model file."
+              },
+              "sha256sum": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SHA-256 of the main model file -- the one to verify a download against; MD5 and SHA-1 are kept for older tooling."
+              }
             }
           }
         },
@@ -177,11 +337,35 @@
           "items": {
             "type": "object",
             "properties": {
-              "name": {"type": "string"},
-              "description": {"type": "string"},
-              "fileSize": {"type": "string"},
-              "mimeType": {"type": "string"},
-              "md5sum": {"type": "string"}
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "fileSize": {
+                "type": "string"
+              },
+              "mimeType": {
+                "type": "string"
+              },
+              "md5sum": {
+                "type": "string"
+              },
+              "sha1sum": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SHA-1 of this additional file."
+              },
+              "sha256sum": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "SHA-256 of this additional file."
+              }
             }
           }
         }
@@ -349,12 +533,19 @@
           "items": {
             "type": "object",
             "properties": {
-              "fields": {"type": "object", "additionalProperties": true}
+              "fields": {
+                "type": "object",
+                "additionalProperties": true
+              }
             }
           }
         },
-        "recordsFiltered": {"type": "integer"},
-        "recordsTotal": {"type": "integer"}
+        "recordsFiltered": {
+          "type": "integer"
+        },
+        "recordsTotal": {
+          "type": "integer"
+        }
       }
     },
     "test_examples": [

@@ -57,6 +57,20 @@
                   "null"
                 ],
                 "description": "Kingdom classification"
+              },
+              "name_parts": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The name split into its ranked parts, which is how a subspecies or variety is told from a species"
+              },
+              "name_indicators": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "ITIS's rank indicators between the name parts, e.g. 'var.' or 'ssp.'"
               }
             }
           }
@@ -205,6 +219,20 @@
                   "null"
                 ],
                 "description": "Parent TSN"
+              },
+              "parent_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Name of the parent rank, so the chain reads without looking up every parent_tsn"
+              },
+              "author": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Naming authority for this rank, e.g. 'Linnaeus, 1758'"
               }
             }
           }
@@ -321,6 +349,431 @@
                 "null"
               ],
               "description": "Taxonomic rank"
+            },
+            "parent_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "rank_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ITIS numeric rank id, e.g. 220 for species"
+            },
+            "accepted_names": {
+              "type": "array",
+              "description": "When usage_rating is 'invalid' or 'not accepted', the name that replaced this one. TSN 944513 is invalid and is a junior synonym of Homo sapiens, TSN 180092 -- and neither the accepted name nor the reason was reported.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tsn": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "scientific_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "author": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "unaccept_reason": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Why the name is not accepted, e.g. 'junior synonym'"
+            },
+            "credibility_rating": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The Taxonomic Work Group's verdict on the record, e.g. 'TWG standards met'"
+            },
+            "taxon_currency": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "completeness": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ITIS global species completeness rating for the taxon"
+            },
+            "update_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "initial_timestamp": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "geographic_divisions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Where the taxon occurs, as ITIS's geographic divisions"
+            },
+            "jurisdictional_origins": {
+              "type": "array",
+              "description": "Per jurisdiction, whether the taxon is Native or Introduced. Capped at 50.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "jurisdiction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "origin": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "update_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "jurisdictional_origin_count": {
+              "type": "integer"
+            },
+            "jurisdictional_origins_truncated": {
+              "type": "boolean"
+            },
+            "synonyms": {
+              "type": "array",
+              "description": "Other names for this taxon, each with its own TSN. Homo sapiens has 29; the tool reported none. Capped at 50.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tsn": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "scientific_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "author": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "synonym_count": {
+              "type": "integer"
+            },
+            "synonyms_truncated": {
+              "type": "boolean"
+            },
+            "publications": {
+              "type": "array",
+              "description": "The published sources for the name -- the 'authority references' the tool's own docstring promises. Capped at 25.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "authors": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "publication": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "publisher": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "place": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pages": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "isbn": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "issn": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "comment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference_for": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "tsn": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "language": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
+                    "description": "The taxa this reference is a reference for"
+                  }
+                }
+              }
+            },
+            "publication_count": {
+              "type": "integer"
+            },
+            "publications_truncated": {
+              "type": "boolean"
+            },
+            "experts": {
+              "type": "array",
+              "description": "Taxonomic experts ITIS credits for the record. Capped at 25.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "expert": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "comment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "update_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference_for": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "tsn": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "language": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
+                    "description": "The taxa this reference is a reference for"
+                  }
+                }
+              }
+            },
+            "expert_count": {
+              "type": "integer"
+            },
+            "experts_truncated": {
+              "type": "boolean"
+            },
+            "other_sources": {
+              "type": "array",
+              "description": "Databases the record draws on, with the version used. Capped at 25.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "acquisition_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "comment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference_for": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "tsn": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "language": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
+                    "description": "The taxa this reference is a reference for"
+                  }
+                }
+              }
+            },
+            "other_source_count": {
+              "type": "integer"
+            },
+            "other_sources_truncated": {
+              "type": "boolean"
+            },
+            "comments": {
+              "type": "array",
+              "description": "Curator comments on the taxon. Capped at 25.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "comment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "commentator": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "comment_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "update_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "comment_count": {
+              "type": "integer"
+            },
+            "comments_truncated": {
+              "type": "boolean"
             }
           },
           "not": {

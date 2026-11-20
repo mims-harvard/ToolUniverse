@@ -227,6 +227,23 @@
                                 },
                                 "accession": {
                                   "type": "string"
+                                },
+                                "age_display": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "description": "The animals' age as prose, e.g. '8-10 weeks'. A range in free text, so it cannot be compared numerically without parsing."
+                                },
+                                "treatments": {
+                                  "type": [
+                                    "array",
+                                    "null"
+                                  ],
+                                  "items": {
+                                    "type": "object"
+                                  },
+                                  "description": "Treatments applied to the biosample, each with its duration and treatment term. A treated animal's phenotype must not be pooled with untreated controls, and nothing else in the row reveals the treatment."
                                 }
                               }
                             }

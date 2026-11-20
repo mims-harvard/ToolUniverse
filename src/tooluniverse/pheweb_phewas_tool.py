@@ -93,22 +93,41 @@ _VARIANT_RE = re.compile(
 
 def _resolve_rsid(
     rsid: str, server: str, build: str, timeout: int
-) -> Tuple[List[str], Optional[str]]:
+) -> Tuple[List[str], Optional[str], Dict[str, Any]]:
     """Resolve an rsID to candidate chr:pos-ref-alt variants in the requested build.
 
-    Returns (candidates, error_message). Multi-allelic SNPs (e.g. allele_string
-    "C/G/T") yield one candidate per alternate allele, since the caller cannot
-    know which alt the biobank recorded; the caller tries each in turn.
+    Returns (candidates, error_message, variant_record). Multi-allelic SNPs
+    (e.g. allele_string "C/G/T") yield one candidate per alternate allele,
+    since the caller cannot know which alt the biobank recorded; the caller
+    tries each in turn.
+
+    The third value is what the Ensembl call already answered and the tool
+    used to throw away: the variant's other names, the evidence attributes
+    that say how it is supported, its most severe consequence and its MAF.
+    Resolving an rsID costs a full variation record; reporting one line of it
+    costs nothing.
     """
     url = f"{server}/variation/human/{rsid}"
     resp = requests.get(
         url, headers={"Content-Type": "application/json"}, timeout=timeout
     )
     if resp.status_code == 404:
-        return [], f"rsID '{rsid}' not found in Ensembl ({build})"
+        return [], f"rsID '{rsid}' not found in Ensembl ({build})", {}
     resp.raise_for_status()
+    payload = resp.json()
+    record = {
+        "rsid": payload.get("name") or rsid,
+        "synonyms": payload.get("synonyms") or [],
+        "evidence": payload.get("evidence") or [],
+        "most_severe_consequence": payload.get("most_severe_consequence"),
+        "minor_allele": payload.get("minor_allele"),
+        "minor_allele_frequency": payload.get("MAF"),
+        "ambiguity": payload.get("ambiguity"),
+        "var_class": payload.get("var_class"),
+        "source": payload.get("source"),
+    }
     candidates: List[str] = []
-    for m in resp.json().get("mappings", []):
+    for m in payload.get("mappings", []):
         if m.get("assembly_name") != build:
             continue
         alleles = (m.get("allele_string") or "").split("/")
@@ -122,8 +141,12 @@ def _resolve_rsid(
             if cand not in candidates:
                 candidates.append(cand)
     if not candidates:
-        return [], f"rsID '{rsid}' has no {build} mapping with a clear ref/alt allele"
-    return candidates, None
+        return (
+            [],
+            f"rsID '{rsid}' has no {build} mapping with a clear ref/alt allele",
+            record,
+        )
+    return candidates, None, record
 
 
 def _filter_and_sort_by_pval(
@@ -198,7 +221,8 @@ class PheWebPheWASTool(BaseTool):
 
     def _run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         warnings: List[str] = []
-        candidates, err = self._resolve_input(arguments, warnings)
+        resolved_variant: Dict[str, Any] = {}
+        candidates, err = self._resolve_input(arguments, warnings, resolved_variant)
         if err:
             return {"status": "error", "error": err}
 
@@ -254,6 +278,7 @@ class PheWebPheWASTool(BaseTool):
                     "build": self.cfg["build"],
                     "total_associations": 0,
                     "note": f"Variant not present in {self.cfg['label']} ({self.cfg['build']}); tried {tried}",
+                    "resolved_variant": resolved_variant or None,
                     "warnings": warnings,
                 },
             }
@@ -271,6 +296,21 @@ class PheWebPheWASTool(BaseTool):
                 "af": p.get("af"),
                 "num_cases": p.get("num_cases"),
                 "num_controls": p.get("num_controls"),
+                # The n for a QUANTITATIVE trait. These PheWeb instances
+                # differ: BioBank Japan and UKB-TOPMed answer `num_samples`
+                # where there are no cases and controls to count, so a
+                # quantitative association came back with a p-value and no
+                # sample size at all -- 1,419 of them on one UKB-TOPMed
+                # variant.
+                "num_samples": p.get("num_samples"),
+                # Allele count and number, where the instance reports them
+                # instead of a frequency.
+                "ac": p.get("ac"),
+                "an": p.get("an"),
+                # What to cite, and the instance's own link for the
+                # association. BioBank Japan answers both on all 321 rows.
+                "citation": p.get("citation"),
+                "alternative_link": p.get("alternative_link"),
             }
             for p in phenos
         ]
@@ -299,6 +339,11 @@ class PheWebPheWASTool(BaseTool):
                 "truncated": len(page) < total,
                 "next_offset": offset + len(page) if has_more else None,
                 "variant_url": f"{self.cfg['base_url']}/variant/{canonical}",
+                # What the rsID resolved to, from the Ensembl record the
+                # resolution already fetched: the variant's other names, the
+                # evidence attributes that say how it is supported, its class
+                # and its minor allele frequency.
+                "resolved_variant": resolved_variant or None,
                 "warnings": warnings,
             },
         }
@@ -316,9 +361,14 @@ class PheWebPheWASTool(BaseTool):
         return self._session().get(url, headers=_JSON_HEADERS, timeout=self.timeout)
 
     def _resolve_input(
-        self, arguments: Dict[str, Any], warnings: List[str]
+        self, arguments: Dict[str, Any], warnings: List[str], resolved=None
     ) -> Tuple[List[str], Optional[str]]:
-        """Return (candidate_variants, error). Handles rsID and explicit variant input."""
+        """Return (candidate_variants, error). Handles rsID and explicit variant input.
+
+        `resolved`, when given a dict, is filled with the Ensembl variation
+        record the rsID lookup answered, so the caller can report what the
+        rsID resolved to instead of only which coordinates it tried.
+        """
         rsid = (arguments.get("rsid") or "").strip()
         variant = (arguments.get("variant") or "").strip()
 
@@ -329,9 +379,11 @@ class PheWebPheWASTool(BaseTool):
         if rsid:
             if not _RSID_RE.match(rsid):
                 return [], f"Invalid rsID '{rsid}' (expected e.g. rs7903146)"
-            candidates, err = _resolve_rsid(
+            candidates, err, record = _resolve_rsid(
                 rsid, self.cfg["ensembl_server"], self.cfg["build"], self.timeout
             )
+            if resolved is not None and record:
+                resolved.update(record)
             if err:
                 return [], err
             warnings.append(
@@ -397,15 +449,23 @@ class GenebassTool(BaseTool):
         self.timeout = tool_config.get("timeout", 30)
         self._desc_cache: Optional[Dict[str, str]] = None
 
-    def _phenotype_descriptions(self) -> Dict[str, str]:
-        """Map the composite phenotype key to its human-readable description (cached).
+    def _phenotype_descriptions(self) -> Dict[str, Dict[str, Any]]:
+        """Map the composite phenotype key to the catalogue record (cached).
 
         Keyed by _genebass_pheno_key (trait_type-phenocode-pheno_sex-coding-modifier),
-        matching the key built from each /phewas row so descriptions can be joined.
+        matching the key built from each /phewas row so the catalogue can be
+        joined.
+
+        It used to keep only the description, and the rest of each record went
+        with the response: the case and control counts the burden p-value was
+        computed from, the trait's heritability, whether the phenotype was
+        inverse-normalised before testing, and the SAIGE version. A burden
+        p-value with no n cannot be read, and 4,529 of them came back without
+        one on a single gene's PheWAS.
         """
         if self._desc_cache is not None:
             return self._desc_cache
-        cache: Dict[str, str] = {}
+        cache: Dict[str, Dict[str, Any]] = {}
         try:
             resp = requests.get(
                 f"{self.BASE_URL}/phenotypes",
@@ -414,8 +474,21 @@ class GenebassTool(BaseTool):
             )
             resp.raise_for_status()
             for p in resp.json():
-                if p.get("description"):
-                    cache[_genebass_pheno_key(p)] = p["description"]
+                if not isinstance(p, dict):
+                    continue
+                cache[_genebass_pheno_key(p)] = {
+                    "description": p.get("description"),
+                    "n_cases": p.get("n_cases"),
+                    "n_controls": p.get("n_controls"),
+                    "n_cases_defined": p.get("n_cases_defined"),
+                    "n_cases_both_sexes": p.get("n_cases_both_sexes"),
+                    "heritability": p.get("heritability"),
+                    "saige_version": p.get("saige_version"),
+                    "inv_normalized": p.get("inv_normalized"),
+                    "pheno_sex": p.get("pheno_sex"),
+                    "category": p.get("category"),
+                    "analysis_id": p.get("analysis_id"),
+                }
         except (requests.RequestException, ValueError):
             # Descriptions are a nicety; absence must not fail the main lookup.
             pass
@@ -487,6 +560,22 @@ class GenebassTool(BaseTool):
                 "pval_skat": r.get("Pvalue_SKAT"),
                 "beta": r.get("BETA_Burden"),
                 "total_variants": r.get("total_variants"),
+                # How many cases the burden test was run on, which a p-value
+                # cannot be read without -- 4,529 rows of one gene's PheWAS
+                # answered it and none of them said so. With it: the trait's
+                # heritability, whether the phenotype was inverse-normalised
+                # before testing, which sex stratum it is, and the SAIGE
+                # version, because a burden p-value is a property of the
+                # pipeline that produced it.
+                # Genebass reports a third p-value beside Burden and SKAT --
+                # the SKAT-O combination -- and only two were returned.
+                "pval_skato": r.get("Pvalue"),
+                "annotation": r.get("annotation"),
+                "chrom": r.get("chrom"),
+                "coding": r.get("coding"),
+                "modifier": r.get("modifier"),
+                "pheno_sex": r.get("pheno_sex"),
+                "start": r.get("start"),
                 "_key": _genebass_pheno_key(r),
             }
             for r in rows
@@ -498,7 +587,28 @@ class GenebassTool(BaseTool):
         page = associations[offset : offset + limit]
         desc_map = self._phenotype_descriptions()
         for a in page:
-            a["description"] = desc_map.get(a.pop("_key"))
+            record = desc_map.get(a.pop("_key")) or {}
+            # The cache held a bare description string before it held the
+            # whole catalogue record; tolerate either so a caller or a test
+            # holding the old shape still joins.
+            if isinstance(record, str):
+                record = {"description": record}
+            a["description"] = record.get("description")
+            # The catalogue's own numbers for this phenotype, joined on the
+            # same key the description is. The cohort a burden test ran on is
+            # a property of the phenotype, not of the gene.
+            for field in (
+                "n_cases",
+                "n_controls",
+                "n_cases_defined",
+                "n_cases_both_sexes",
+                "heritability",
+                "saige_version",
+                "inv_normalized",
+                "analysis_id",
+                "category",
+            ):
+                a[field] = record.get(field)
         has_more = offset + len(page) < total
 
         return {

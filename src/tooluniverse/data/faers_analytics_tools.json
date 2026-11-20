@@ -2,7 +2,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_calculate_disproportionality",
-    "description": "Calculate statistical disproportionality measures (ROR, PRR, IC) with 95% CI for drug-event pairs. Returns signal strength classification. Example: drug='ibuprofen', event='hepatotoxicity' \u2192 ROR=2.3 [1.8-2.9]. Use for pharmacovigilance signal detection. WHICH REPORTS THE STATISTIC IS COMPUTED OVER: the drug arm of the 2x2 table searches the reported product name AND openFDA's SPL annotation, which tags a report with EVERY brand and generic name registered for the active ingredient of a product the report named. A query therefore collects the whole active-ingredient population, not one product. That is correct for a generic name (TOFACITINIB's 186,783 reports include the 173,708 that named XELJANZ, which are genuinely tofacitinib exposure) and wrong for a brand name whose ingredient has unrelated products (CYANOKIT, a cyanide antidote, has 4,119 reports of which only 238 named it; the rest are vitamin B12 supplementation). The share does NOT distinguish the two -- both examples are ~93% -- so the response measures it per call rather than guessing. Read `cohort_scope` before acting on the headline metrics: it carries `reports_naming_queried_drug`, `reports_matched_by_name_resolution_only`, `percent_matched_by_name_resolution_only` and a `note`. When those differ it also carries `reported_name_only_analysis`, the same 2x2 and ROR restricted to reports that named the drug -- consult it, because the two can reach OPPOSITE verdicts: for CYANOKIT + DEATH the headline ROR is 0.287 [0.217-0.379], entirely below 1 and reported as 'disproportionately LESS often', while restricted to the 238 reports naming CYANOKIT it is 1.24 [0.694-2.216], i.e. inconclusive. `cohort_scope` is null when the split could not be established, including when the two measurements straddled an openFDA refresh and disagreed; null means unknown, never zero.",
+    "description": "Calculate statistical disproportionality measures (ROR, PRR, IC) with 95% CI for drug-event pairs. Returns signal strength classification. Example: drug='ibuprofen', event='hepatotoxicity' → ROR=2.3 [1.8-2.9]. Use for pharmacovigilance signal detection. WHICH REPORTS THE STATISTIC IS COMPUTED OVER: the drug arm of the 2x2 table searches the reported product name AND openFDA's SPL annotation, which tags a report with EVERY brand and generic name registered for the active ingredient of a product the report named. A query therefore collects the whole active-ingredient population, not one product. That is correct for a generic name (TOFACITINIB's 186,783 reports include the 173,708 that named XELJANZ, which are genuinely tofacitinib exposure) and wrong for a brand name whose ingredient has unrelated products (CYANOKIT, a cyanide antidote, has 4,119 reports of which only 238 named it; the rest are vitamin B12 supplementation). The share does NOT distinguish the two -- both examples are ~93% -- so the response measures it per call rather than guessing. Read `cohort_scope` before acting on the headline metrics: it carries `reports_naming_queried_drug`, `reports_matched_by_name_resolution_only`, `percent_matched_by_name_resolution_only` and a `note`. When those differ it also carries `reported_name_only_analysis`, the same 2x2 and ROR restricted to reports that named the drug -- consult it, because the two can reach OPPOSITE verdicts: for CYANOKIT + DEATH the headline ROR is 0.287 [0.217-0.379], entirely below 1 and reported as 'disproportionately LESS often', while restricted to the 238 reports naming CYANOKIT it is 1.24 [0.694-2.216], i.e. inconclusive. `cohort_scope` is null when the split could not be established, including when the two measurements straddled an openFDA refresh and disagreed; null means unknown, never zero.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -34,11 +34,17 @@
       "type": "object",
       "properties": {
         "cohort_scope": {
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "description": "How much of the cohort the metrics were computed over actually named the queried drug. Read it before acting on the metrics: the two cohorts can reach opposite verdicts. Null means the split could not be established -- unknown, never zero. Only this key is declared here; the rest of the tool's output is documented in the description.",
           "properties": {
             "reports_naming_queried_drug": {
-              "type": ["integer", "null"],
+              "type": [
+                "integer",
+                "null"
+              ],
               "description": "Reports whose reported product name was the queried drug. Null when the measurement failed."
             },
             "reports_matched_by_name_resolution_only": {
@@ -58,6 +64,66 @@
               "description": "Which of those situations this call is in, in prose."
             }
           }
+        },
+        "adverse_event": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "MedDRA Preferred Term the query was narrowed to, or null when the drug alone was queried."
+        },
+        "contingency_table": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The 2x2 case counts this arm's ROR/PRR/IC were computed from, using the same key names as FAERS_calculate_disproportionality. Null only if the underlying analysis omitted them.",
+          "properties": {
+            "a_drug_and_event": {
+              "type": "integer",
+              "description": "Reports naming both this drug and this adverse event."
+            },
+            "b_drug_no_event": {
+              "type": "integer",
+              "description": "Reports naming this drug but not this adverse event."
+            },
+            "c_no_drug_event": {
+              "type": "integer",
+              "description": "Reports naming this adverse event but not this drug."
+            },
+            "d_no_drug_no_event": {
+              "type": "integer",
+              "description": "Reports naming neither this drug nor this adverse event."
+            }
+          }
+        },
+        "drug_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The drug the rollup is for, normalised to upper case, e.g. 'IBUPROFEN'. What the query actually resolved to."
+        },
+        "metrics": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "ROR, PRR and IC with 95% confidence intervals."
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the rollup stops at Preferred Term level: 'Full MedDRA hierarchy (HLT, SOC) requires MedDRA license. Showing Preferred Term (PT) level...'. Without it, the absence of System Organ Class looks like an absence of data rather than a licensing limit."
+        },
+        "signal_detection": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Whether this arm alone crosses the signal-detection threshold, and how strongly."
         }
       }
     },
@@ -74,7 +140,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_stratify_by_demographics",
-    "description": "Stratify adverse event reports by demographics (sex, age group, country). Returns counts and percentages by demographic group. Example: ibuprofen + GI bleeding stratified by sex \u2192 Female: 60%, Male: 40%. Use for subpopulation risk assessment. IMPORTANT -- the stratification covers only a SUBSET of the matching reports: FAERS records demographics inconsistently, and openFDA computes a count facet solely over records that populate the counted field, so reports missing the demographic are absent from the groups entirely rather than bucketed as unknown. The response therefore reports two figures side by side: `total_reports_matching_query` (every report matching the drug/event query, from openFDA's own meta.results.total) and `stratified_report_count` (the subset where the demographic is recorded, which the groups sum to) -- for ondansetron stratified by age these are ~136,000 and ~25,000 respectively. A `coverage_note` names both figures and the coverage fraction. Each group `percentage` is a share of `stratified_report_count`, which is the correct denominator for a stratification. The legacy `total_reports` key repeats `stratified_report_count` for backward compatibility and is NOT the drug's report count -- read `total_reports_matching_query` for that. If the extra total request fails, `total_reports_matching_query` is null and `coverage_note` says so; everything else is still returned.",
+    "description": "Stratify adverse event reports by demographics (sex, age group, country). Returns counts and percentages by demographic group. Example: ibuprofen + GI bleeding stratified by sex → Female: 60%, Male: 40%. Use for subpopulation risk assessment. IMPORTANT -- the stratification covers only a SUBSET of the matching reports: FAERS records demographics inconsistently, and openFDA computes a count facet solely over records that populate the counted field, so reports missing the demographic are absent from the groups entirely rather than bucketed as unknown. The response therefore reports two figures side by side: `total_reports_matching_query` (every report matching the drug/event query, from openFDA's own meta.results.total) and `stratified_report_count` (the subset where the demographic is recorded, which the groups sum to) -- for ondansetron stratified by age these are ~136,000 and ~25,000 respectively. A `coverage_note` names both figures and the coverage fraction. Each group `percentage` is a share of `stratified_report_count`, which is the correct denominator for a stratification. The legacy `total_reports` key repeats `stratified_report_count` for backward compatibility and is NOT the drug's report count -- read `total_reports_matching_query` for that. If the extra total request fails, `total_reports_matching_query` is null and `coverage_note` says so; everything else is still returned.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -129,7 +195,10 @@
           "description": "Drug the reports were matched on."
         },
         "adverse_event": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "MedDRA Preferred Term the query was narrowed to, or null when the drug alone was queried."
         },
         "stratified_by": {
@@ -137,7 +206,10 @@
           "description": "Demographic dimension used: sex, age, or country."
         },
         "total_reports_matching_query": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Every report matching the drug/event query, from openFDA's meta.results.total. This is the drug's report count. Null when the extra total request failed -- coverage_note then says the total was unavailable."
         },
         "stratified_report_count": {
@@ -155,7 +227,10 @@
             "type": "object",
             "properties": {
               "group": {
-                "type": ["string", "integer"],
+                "type": [
+                  "string",
+                  "integer"
+                ],
                 "description": "Demographic group label (sex and age codes are decoded; country stays an ISO code)."
               },
               "count": {
@@ -300,6 +375,90 @@
               "description": "Which cohort was measured and what the split means for these figures, in prose."
             }
           }
+        },
+        "coverage_note": {
+          "type": "string",
+          "description": "Explains that the stratification covers only reports where the demographic is recorded, naming stratified_report_count, total_reports_matching_query and the coverage fraction."
+        },
+        "drug_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The drug the rollup is for, normalised to upper case, e.g. 'IBUPROFEN'. What the query actually resolved to."
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the rollup stops at Preferred Term level: 'Full MedDRA hierarchy (HLT, SOC) requires MedDRA license. Showing Preferred Term (PT) level...'. Without it, the absence of System Organ Class looks like an absence of data rather than a licensing limit."
+        },
+        "has_more": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when events remain beyond this page."
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The offset to pass for the next page, e.g. 20."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many were skipped before this page."
+        },
+        "returned": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many rows came back, e.g. 20."
+        },
+        "seriousness_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which seriousness criterion was applied, e.g. 'all', 'death', 'hospitalization', 'life-threatening'. A count of 'serious' events means something different under each, and the number alone does not say which."
+        },
+        "top_serious_reactions": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "The most-reported reactions, each {reaction, count}, e.g. {'reaction': 'PAIN', 'count': 16119} - 20 of them."
+        },
+        "top_serious_reactions_truncated": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when that list is a prefix - true on the measured call."
+        },
+        "top_serious_reactions_truncation_note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why it is a prefix: openFDA returns only the 20 most-reported serious reactions for a query. A rate computed over these 20 as if they were all reactions is wrong, and this sentence is what says so."
+        },
+        "total_serious_events": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many serious events match the filter in total, e.g. 192245 - against the 20 rows returned. The single most important number here, and it was declared nowhere."
         }
       }
     },
@@ -368,7 +527,10 @@
               "type": "string"
             },
             "contingency_table": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "The 2x2 case counts this arm's ROR/PRR/IC were computed from, using the same key names as FAERS_calculate_disproportionality. Null only if the underlying analysis omitted them.",
               "properties": {
                 "a_drug_and_event": {
@@ -390,15 +552,24 @@
               }
             },
             "metrics": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "ROR, PRR and IC with 95% confidence intervals."
             },
             "signal_detection": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "Whether this arm alone crosses the signal-detection threshold, and how strongly."
             },
             "cohort_scope": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "How much of THIS arm's cohort actually named this drug. The drug arm searches openFDA's SPL annotation as well as the reported product name, so it collects every product sharing the active ingredient -- right for a generic name, wrong for a brand whose ingredient has unrelated products. Carries reports_naming_queried_drug, reports_matched_by_name_resolution_only, percent_matched_by_name_resolution_only and a note, plus reported_name_only_analysis (the same 2x2 and ROR restricted to reports that named the drug) when the two differ. Same keys and meaning as FAERS_calculate_disproportionality's. This matters MORE in a comparison than in a single analysis: the verdict is a ratio of the two arms, so one arm describing an active-ingredient population while the other describes a single product moves the comparison itself. Check both arms before reading `comparison`. Null when the split could not be established; null means unknown, never zero."
             }
           }
@@ -411,7 +582,10 @@
               "type": "string"
             },
             "contingency_table": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "The 2x2 case counts this arm's ROR/PRR/IC were computed from, using the same key names as FAERS_calculate_disproportionality. Null only if the underlying analysis omitted them.",
               "properties": {
                 "a_drug_and_event": {
@@ -433,15 +607,24 @@
               }
             },
             "metrics": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "ROR, PRR and IC with 95% confidence intervals."
             },
             "signal_detection": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "Whether this arm alone crosses the signal-detection threshold, and how strongly."
             },
             "cohort_scope": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "How much of THIS arm's cohort actually named this drug. The drug arm searches openFDA's SPL annotation as well as the reported product name, so it collects every product sharing the active ingredient -- right for a generic name, wrong for a brand whose ingredient has unrelated products. Carries reports_naming_queried_drug, reports_matched_by_name_resolution_only, percent_matched_by_name_resolution_only and a note, plus reported_name_only_analysis (the same 2x2 and ROR restricted to reports that named the drug) when the two differ. Same keys and meaning as FAERS_calculate_disproportionality's. This matters MORE in a comparison than in a single analysis: the verdict is a ratio of the two arms, so one arm describing an active-ingredient population while the other describes a single product moves the comparison itself. Check both arms before reading `comparison`. Null when the split could not be established; null means unknown, never zero."
             }
           }
@@ -451,7 +634,10 @@
           "description": "Plain-language verdict comparing the two arms. Always read alongside comparison_caveat."
         },
         "comparison_caveat": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Set when either arm's a_drug_and_event is below 25, naming the arm and its count and warning that comparison is not an equal-confidence statement. Null when both arms clear the threshold, and also when an arm's count is unavailable -- check contingency_table to tell those two cases apart."
         },
         "note": {
@@ -474,7 +660,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_analyze_temporal_trends",
-    "description": "Analyze temporal trends in adverse event reporting by year. Returns yearly counts and trend direction (increasing/decreasing/stable). Example: ibuprofen GI bleeding reports 2015-2025 \u2192 +25% increase. Use for signal evolution monitoring.",
+    "description": "Analyze temporal trends in adverse event reporting by year. Returns yearly counts and trend direction (increasing/decreasing/stable). Example: ibuprofen GI bleeding reports 2015-2025 → +25% increase. Use for signal evolution monitoring.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -532,6 +718,41 @@
               "description": "Which cohort was measured and what the split means for these figures, in prose."
             }
           }
+        },
+        "adverse_event": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "MedDRA Preferred Term the query was narrowed to, or null when the drug alone was queried."
+        },
+        "drug_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The drug the rollup is for, normalised to upper case, e.g. 'IBUPROFEN'. What the query actually resolved to."
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the rollup stops at Preferred Term level: 'Full MedDRA hierarchy (HLT, SOC) requires MedDRA license. Showing Preferred Term (PT) level...'. Without it, the absence of System Organ Class looks like an absence of data rather than a licensing limit."
+        },
+        "temporal_data": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The yearly series the trend was computed from, each {year, count}, e.g. {'year': '2004', 'count': 65} -- 23 years on the measured call. The year is a STRING. Raw FAERS report counts, which rise with total reporting volume, so a rising count is not by itself a rising rate."
+        },
+        "trend_analysis": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The summary of that series: {trend, percent_change, years_analyzed}. percent_change is computed across years_analyzed only, so it says nothing about years outside the window."
         }
       }
     },
@@ -610,6 +831,34 @@
               "description": "Which cohort was measured and what the split means for these figures, in prose."
             }
           }
+        },
+        "drug_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The drug the rollup is for, normalised to upper case, e.g. 'IBUPROFEN'. What the query actually resolved to."
+        },
+        "meddra_hierarchy": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The rollup itself: 'PT_level' with the Preferred Term counts, plus 'unique_PTs_returned', 'returned', 'limit', 'offset', 'truncated' and 'has_more'. The truncation flags matter because a rollup read as complete when it is a page gives wrong proportions."
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the rollup stops at Preferred Term level: 'Full MedDRA hierarchy (HLT, SOC) requires MedDRA license. Showing Preferred Term (PT) level...'. Without it, the absence of System Organ Class looks like an absence of data rather than a licensing limit."
+        },
+        "recommendation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "What to do about that limit - map the PTs to higher levels using a licensed MedDRA dictionary."
         }
       }
     },

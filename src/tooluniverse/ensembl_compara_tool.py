@@ -242,19 +242,29 @@ class EnsemblComparaTool(BaseTool):
 
         # Ensembl's JSON genetree response never embeds a "newick" field
         # regardless of nh_format -- Newick text is only served as a
-        # separate plain-text response via the "text/x-nh" content type.
-        # Fetch it as a best-effort second call; a failure here shouldn't
-        # fail the whole tool.
+        # separate plain-text response. Fetch it as a best-effort second
+        # call; a failure here shouldn't fail the whole tool.
+        #
+        # It was asked for with a `Content-Type: text/x-nh` request header,
+        # which describes a request BODY and not the format wanted back, so
+        # Ensembl went on answering JSON and `newick` was null on every call
+        # this tool has ever made. `Accept` is the header that asks, and
+        # Ensembl also honours a `content-type` query parameter; both are
+        # sent, which is what the live check confirmed returns the tree:
+        # (((((((((((ENSSSCP00000014538:0.030995,...
         newick = None
         try:
             nh_resp = requests.get(
                 url,
-                params=params,
-                headers={**ENSEMBL_HEADERS, "Content-Type": "text/x-nh"},
+                params={**params, "content-type": "text/x-nh"},
+                headers={**ENSEMBL_HEADERS, "Accept": "text/x-nh"},
                 timeout=self.timeout,
             )
             if nh_resp.status_code == 200 and nh_resp.text.strip():
-                newick = nh_resp.text.strip()
+                text = nh_resp.text.strip()
+                # Guard against a JSON body arriving under a text Accept.
+                if not text.startswith("{"):
+                    newick = text
         except requests.exceptions.RequestException:
             pass
 
@@ -298,12 +308,34 @@ class EnsemblComparaTool(BaseTool):
                 if isinstance(gene_id, dict):
                     gene_id = gene_id.get("accession", "")
                 taxonomy = node.get("taxonomy", {})
+                if not isinstance(taxonomy, dict):
+                    taxonomy = {}
+                sequence = node.get("sequence")
+                if not isinstance(sequence, dict):
+                    sequence = {}
+                protein_ids = [
+                    entry.get("accession")
+                    for entry in (sequence.get("id") or [])
+                    if isinstance(entry, dict) and entry.get("accession")
+                ]
                 members.append(
                     {
                         "gene_id": str(gene_id),
                         "species": taxonomy.get("scientific_name", "")
-                        if isinstance(taxonomy, dict)
-                        else str(taxonomy),
+                        if taxonomy
+                        else str(node.get("taxonomy") or ""),
+                        # A gene tree without branch lengths is a list of
+                        # names. Every node in Ensembl's response carries
+                        # one and the flattening dropped them all.
+                        "branch_length": node.get("branch_length"),
+                        "common_name": taxonomy.get("common_name"),
+                        "taxon_id": taxonomy.get("id"),
+                        # The protein the tree was actually built from --
+                        # the Newick leaves are these accessions, not the
+                        # gene ids, so without them the two cannot be
+                        # matched up.
+                        "protein_ids": protein_ids,
+                        "location": sequence.get("location"),
                     }
                 )
             # Traverse children
