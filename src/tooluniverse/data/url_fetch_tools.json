@@ -77,9 +77,39 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. The key holding the text is `fields.return_key` from this tool's own config, which is `text`.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The page was fetched and its text extracted. The only key is the one named by fields.return_key.",
+          "properties": {
+            "text": {
+              "type": "string",
+              "description": "The extracted text, stripped. Empty when the page carried no text."
+            }
+          },
+          "required": [
+            "text"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The fetch or the render failed: a missing or non-http(s) url, a timeout, a non-200 status, a response that is not HTML, or no renderer installed. Measured in an environment without one: {'status': 'error', 'error': \"rendering this page needs a browser. Install with: pip install 'tooluniverse[browser]' ...\"}.",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string",
+              "description": "Why it failed."
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
     },
     "test_examples": [
       {
