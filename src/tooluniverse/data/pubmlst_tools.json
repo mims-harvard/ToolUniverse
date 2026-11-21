@@ -185,7 +185,7 @@
   {
     "name": "PubMLST_get_profile",
     "type": "PubMLSTTool",
-    "description": "Get the allelic profile of one sequence type (ST) from a PubMLST typing scheme: the allele number at each locus, plus the scheme's extra fields such as clonal complex, and the date the ST was defined. Example: database='pubmlst_neisseria_seqdef', scheme_id=1, st=11 gives ST-11 (ST-11 complex) with abcZ 2, adk 3, aroE 4, fumC 3, gdh 8, pdhC 4, pgm 6. Without a PubMLST login, only data submitted up to a public cutoff date (2024-12-31 on 2026-11-18) is served: a newer ST returns an error that quotes PubMLST's notice. An unknown ST returns 'does not exist'.",
+    "description": "Get the allelic profile of one sequence type (ST) from a PubMLST typing scheme: the allele number at each locus, plus the scheme's extra fields such as clonal complex, and the date the ST was defined. The curator and sender records that PubMLST attaches to the profile are not returned. Example: database='pubmlst_neisseria_seqdef', scheme_id=1, st=11 gives ST-11 (ST-11 complex) with abcZ 2, adk 3, aroE 4, fumC 3, gdh 8, pdhC 4, pgm 6. Without a PubMLST login, only data submitted up to a public cutoff date (2024-12-31 on 2026-11-18) is served: a newer ST returns an error that quotes PubMLST's notice. An unknown ST returns 'does not exist'.",
     "fields": {
       "operation": "get_profile"
     },
