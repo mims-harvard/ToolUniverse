@@ -701,7 +701,7 @@ General Purpose
       :class-card: hover-lift
       :shadow: md
 
-      "ToolUniverse plugin router. STEP 1 BEFORE ANY ANALYSIS: if the data folder contains `*_executed.ipynb`, run `tu run read_executed_notebook '{\"dat...
+      "ToolUniverse plugin router. Compute every answer from the data yourself; never take it from a pre-run notebook, cached result table or shipped script output in the...
 
       +++
 
