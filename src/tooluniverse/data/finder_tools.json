@@ -55,9 +55,74 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. find_tools has exactly two returns, and which one you get depends on `return_call_result`. Note that the list is NOT a formatted string: prepare_tool_prompts returns a list of trimmed tool configs, which the find_tools docstring still calls \"a formatted string\".",
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "return_call_result absent or false: the matching tools' specifications, already cut to `limit` and with the finders themselves and the Finish/CallAgent markers filtered out by configs.exclude_tools. Empty when nothing matched.",
+          "items": {
+            "type": "object",
+            "description": "One tool's specification, cut by prepare_tool_prompts(mode='prompt') to the keys an agent needs to call it.",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "parameter": {
+                "type": "object",
+                "description": "The tool's JSON Schema for its arguments."
+              },
+              "required": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "array",
+          "description": "return_call_result=true: a two-element pair of the same specifications and the bare tool names, in that order. It is a Python tuple, which serialises as this array.",
+          "prefixItems": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "description": "One tool's specification, cut by prepare_tool_prompts(mode='prompt') to the keys an agent needs to call it.",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "parameter": {
+                    "type": "object",
+                    "description": "The tool's JSON Schema for its arguments."
+                  },
+                  "required": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        }
+      ]
     }
   },
   {
@@ -137,9 +202,74 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. find_tools has exactly two returns, and which one you get depends on `return_call_result`. Note that the list is NOT a formatted string: prepare_tool_prompts returns a list of trimmed tool configs, which the find_tools docstring still calls \"a formatted string\".",
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "return_call_result absent or false: the matching tools' specifications, already cut to `limit` and with the finders themselves and the Finish/CallAgent markers filtered out by configs.exclude_tools. Empty when nothing matched.",
+          "items": {
+            "type": "object",
+            "description": "One tool's specification, cut by prepare_tool_prompts(mode='prompt') to the keys an agent needs to call it.",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "parameter": {
+                "type": "object",
+                "description": "The tool's JSON Schema for its arguments."
+              },
+              "required": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "array",
+          "description": "return_call_result=true: a two-element pair of the same specifications and the bare tool names, in that order. It is a Python tuple, which serialises as this array.",
+          "prefixItems": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "description": "One tool's specification, cut by prepare_tool_prompts(mode='prompt') to the keys an agent needs to call it.",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "parameter": {
+                    "type": "object",
+                    "description": "The tool's JSON Schema for its arguments."
+                  },
+                  "required": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        }
+      ]
     }
   },
   {
@@ -202,9 +332,52 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. ToolFinderLLM asks a model to pick the tools, so unlike the embedding finders it has a failure return of its own.",
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "The model picked tools: their specifications, cut to `limit`. With return_list_only=true this is the list of specifications; empty when the model picked nothing. Empty also when no tool was available to pick from.",
+          "items": {
+            "type": "object",
+            "description": "One tool's specification, cut by prepare_tool_prompts(mode='prompt') to the keys an agent needs to call it.",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "parameter": {
+                "type": "object",
+                "description": "The tool's JSON Schema for its arguments."
+              },
+              "required": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "The selection failed: no tools available, none in the requested categories, the model's reply was not valid JSON, or the call raised.",
+          "properties": {
+            "success": {
+              "const": false
+            },
+            "error": {
+              "type": "string",
+              "description": "Why the selection failed."
+            }
+          },
+          "required": [
+            "success",
+            "error"
+          ]
+        }
+      ]
     }
   },
   {
