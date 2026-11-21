@@ -162,7 +162,7 @@
             "boolean",
             "null"
           ],
-          "description": "Keep only products with status Marketed (default false: all statuses)."
+          "description": "Keep only products with status Marketed (default false: all statuses). With true, limit can go up to 100 instead of 25."
         },
         "limit": {
           "type": [
