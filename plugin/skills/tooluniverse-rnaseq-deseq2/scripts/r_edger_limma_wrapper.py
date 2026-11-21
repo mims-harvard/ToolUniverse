@@ -23,7 +23,7 @@ This script PREFLIGHTS its external dependencies before doing any work:
 If anything is missing it prints a clear, copy-pasteable install plan and
 exits 0 WITHOUT producing a results table. It never invents numbers. The
 agent reading this output knows to either install the packages or fall back
-to the DESeq2 route / `read_executed_notebook`.
+to the DESeq2 route.
 
 Methods
 -------
@@ -113,8 +113,7 @@ def emit_install_plan(missing_rscript: bool, missing_pkgs: list[str], method: st
               f'BiocManager::install(c({pkg_vec}))\'')
     print("# NEXT STEPS: install the above, then re-run this command. "
           "If installation is not possible in this environment, fall back to "
-          "the DESeq2 route (r_deseq2_wrapper.py) or read the executed notebook "
-          "(read_executed_notebook) for the published DE result.")
+          "the DESeq2 route (r_deseq2_wrapper.py).")
     print("# PREFLIGHT_RESULT: install_plan_emitted (exit 0, no fabricated results)")
 
 

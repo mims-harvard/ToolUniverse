@@ -1,7 +1,7 @@
 """
 read_executed_notebook
 
-Read a pre-executed Jupyter notebook (.ipynb, often named '*_executed.ipynb') and return its cell...
+Read a Jupyter notebook (.ipynb) that the user has named and asked you to explain, review, debug ...
 """
 
 from typing import Any, Optional, Callable
@@ -9,8 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def read_executed_notebook(
-    data_folder: Optional[str] = None,
-    notebook_path: Optional[str] = None,
+    notebook_path: str,
     search: Optional[str] = None,
     regex: Optional[bool] = None,
     max_output_chars: Optional[int] = None,
@@ -21,14 +20,12 @@ def read_executed_notebook(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Read a pre-executed Jupyter notebook (.ipynb, often named '*_executed.ipynb') and return its cell...
+    Read a Jupyter notebook (.ipynb) that the user has named and asked you to explain, review, debug ...
 
     Parameters
     ----------
-    data_folder : str
-        Directory to search (recursively) for a .ipynb file. Prefers *_executed.ipynb...
     notebook_path : str
-        Direct path to a specific .ipynb file. Provide either this OR data_folder.
+        Path to the .ipynb file the user asked you to review.
     search : str
         Optional: comma-separated terms (or regex if regex=true). Cells whose source ...
     regex : bool
@@ -54,7 +51,6 @@ def read_executed_notebook(
     _args = {
         k: v
         for k, v in {
-            "data_folder": data_folder,
             "notebook_path": notebook_path,
             "search": search,
             "regex": regex,

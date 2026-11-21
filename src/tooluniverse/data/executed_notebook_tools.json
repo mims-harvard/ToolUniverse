@@ -2,23 +2,13 @@
   {
     "type": "ExecutedNotebookTool",
     "name": "read_executed_notebook",
-    "description": "Read a pre-executed Jupyter notebook (.ipynb, often named '*_executed.ipynb') and return its cells with printed outputs as structured JSON. Use this BEFORE reimplementing an analysis when the data folder ships with an executed notebook \u2014 the notebook already ran the authoritative pipeline with the exact package versions, filters, and thresholds that match the reference answers. Reimplementing with pydeseq2/scanpy/etc. produces different numbers. Accepts either a folder (auto-discovers the notebook) or a direct path. Optionally filters cells by a comma-separated search term list or a regex so the agent sees only the cells relevant to its question.",
+    "description": "Read a Jupyter notebook (.ipynb) that the user has named and asked you to explain, review, debug or port, and return its cells (source and printed outputs) as structured JSON, with the cells that drop samples or filter rows flagged for review. Not a source of answers: do not use it to read the result of an analysis you were asked to perform from a pre-run notebook found next to the data; compute that result from the raw data yourself. Takes an explicit notebook path only (it does not search folders). Optionally filters cells by a comma-separated search term list or a regex.",
     "parameter": {
       "type": "object",
       "properties": {
-        "data_folder": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Directory to search (recursively) for a .ipynb file. Prefers *_executed.ipynb over regular .ipynb. Provide either this OR notebook_path."
-        },
         "notebook_path": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Direct path to a specific .ipynb file. Provide either this OR data_folder."
+          "type": "string",
+          "description": "Path to the .ipynb file the user asked you to review."
         },
         "search": {
           "type": "string",
@@ -36,7 +26,10 @@
           "type": "boolean",
           "description": "Include cell source code in the response (default true). Set false to halve response size when you only need outputs."
         }
-      }
+      },
+      "required": [
+        "notebook_path"
+      ]
     },
     "return_schema": {
       "oneOf": [
