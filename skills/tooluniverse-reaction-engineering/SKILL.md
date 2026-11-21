@@ -89,7 +89,7 @@ Input (reaction, kinetics, target conversion or volume)
 | Reactor | Design Equation | Variables |
 |---------|----------------|-----------|
 | CSTR | `V = F_A0 * X / (-r_A)` | V = volume, F_A0 = molar feed rate, X = conversion, -r_A = rate of disappearance |
-| PFR | `V = F_A0 * ∫(0→X) dX / (-r_A)` | integral form; for first-order: `V = (F_A0 / k) * ln(1 / (1 - X))` |
+| PFR | `V = F_A0 * ∫(0→X) dX / (-r_A)` | integral form; for first-order: `V = F_A0 / (k·C_A0) · ln(1/(1−X))` |
 | Batch | `t = ∫(0→X) dX / (-r_A)` | t = reaction time; for first-order: `t = (1 / k) * ln(1 / (1 - X))` |
 | Space time (CSTR/PFR) | `τ = V / v_0` | v_0 = volumetric feed rate |
 | Residence time (PFR) | `θ = V / v_0` | same as space time for constant density |

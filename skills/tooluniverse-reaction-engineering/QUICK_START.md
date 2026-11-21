@@ -59,7 +59,7 @@ import math
 V_cstr = F_A0 * X / (k * C_A0 * (1 - X))
 
 # PFR (first-order analytic)
-V_pfr = (F_A0 / k) * math.log(1 / (1 - X))
+V_pfr = (F_A0 / (k * C_A0)) * math.log(1 / (1 - X))
 
 print(f"CSTR: {V_cstr:.1f} L")
 print(f"PFR:  {V_pfr:.1f} L")
