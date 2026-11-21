@@ -26,7 +26,7 @@ def HealthCanadaDPD_search_by_ingredient(
     ingredient : str
         Active ingredient name or part of it, e.g. 'imatinib', 'acetaminophen'.
     marketed_only : bool
-        Keep only products with status Marketed (default false: all statuses).
+        Keep only products with status Marketed (default false: all statuses). With t...
     limit : int
         Products to return (default 10; at most 25, or 100 with marketed_only).
     offset : int
