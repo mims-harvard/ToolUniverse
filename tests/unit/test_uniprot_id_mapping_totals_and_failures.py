@@ -216,3 +216,42 @@ def test_every_linked_page_is_fetched_and_windowed_locally():
     assert data["truncated"] is True
     assert "truncation_note" not in data
     assert data["failed_ids"] == ["NOTAREALACC99"]
+
+
+def test_uniprotkb_rows_carry_the_gene_name():
+    """`to_db=UniProtKB` rows are full entries, and their gene sits in
+    `genes[].geneName.value`. The tool read a `geneNames` key that UniProt
+    does not send, so `gene_name` was always "". Confirmed live: P04637 came
+    back with gene_name "" instead of TP53.
+    """
+    entry = {
+        "primaryAccession": "P04637",
+        "uniProtkbId": "P53_HUMAN",
+        "genes": [{"geneName": {"value": "TP53"}, "synonyms": [{"value": "P53"}]}],
+    }
+
+    def fake_get(url, **kwargs):
+        if "/status/" in url:
+            return _resp({"jobStatus": "FINISHED"})
+        return _resp(
+            {"results": [{"from": "P04637", "to": entry}]},
+            {"x-total-results": "1"},
+        )
+
+    with (
+        patch(
+            "tooluniverse.uniprot_tool.requests.post",
+            return_value=_resp({"jobId": "JOB1"}),
+        ),
+        patch("tooluniverse.uniprot_tool.requests.get", side_effect=fake_get),
+    ):
+        result = _tool().run(
+            {"ids": ["P04637"], "from_db": "UniProtKB_AC-ID", "to_db": "UniProtKB"}
+        )
+
+    assert result["data"]["results"] == [
+        {
+            "from": "P04637",
+            "to": {"accession": "P04637", "id": "P53_HUMAN", "gene_name": "TP53"},
+        }
+    ]
