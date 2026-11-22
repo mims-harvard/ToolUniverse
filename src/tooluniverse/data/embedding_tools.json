@@ -105,9 +105,69 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. EmbeddingDatabase._create_from_documents returns the whole payload -- there is no `data` envelope -- so this schema is a contract on the entire return.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The collection was created and every document embedded.",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "database_name": {
+              "type": "string",
+              "description": "The collection that was created."
+            },
+            "documents_added": {
+              "type": "integer",
+              "description": "How many documents were embedded. Equals the length of the `documents` argument."
+            },
+            "embedding_model": {
+              "type": "string",
+              "description": "The embedding model actually used, after the provider default was resolved."
+            },
+            "dimensions": {
+              "type": "integer",
+              "description": "Width of one embedding vector, read from the vectors themselves rather than from the model's declared size."
+            },
+            "db_path": {
+              "type": "string",
+              "description": "Filesystem path of the SQLite store, <name>.db."
+            },
+            "index_path": {
+              "type": "string",
+              "description": "Filesystem path of the FAISS index, <name>.faiss."
+            }
+          },
+          "required": [
+            "status",
+            "database_name",
+            "documents_added",
+            "embedding_model",
+            "dimensions",
+            "db_path",
+            "index_path"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The request was refused or the step failed. A bare `error` with no `status`, which is what tells this branch apart from the success one.",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Why the request was refused or the step failed."
+            }
+          },
+          "required": [
+            "error"
+          ],
+          "not": {
+            "required": [
+              "status"
+            ]
+          }
+        }
+      ]
     }
   },
   {
@@ -187,9 +247,69 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. EmbeddingDatabase._add_documents returns the whole payload -- there is no `data` envelope.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The documents were appended to an existing collection.",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "database_name": {
+              "type": "string",
+              "description": "The collection that was appended to."
+            },
+            "documents_added": {
+              "type": "integer",
+              "description": "How many documents were newly embedded."
+            },
+            "skipped_existing": {
+              "type": "integer",
+              "description": "How many of the submitted documents were already in the collection and so were not embedded again. `documents_added + skipped_existing` is the number submitted."
+            },
+            "total_vectors": {
+              "type": "integer",
+              "description": "Vectors in the collection after the append."
+            },
+            "db_path": {
+              "type": "string",
+              "description": "Filesystem path of the SQLite store, <name>.db."
+            },
+            "index_path": {
+              "type": "string",
+              "description": "Filesystem path of the FAISS index, <name>.faiss."
+            }
+          },
+          "required": [
+            "status",
+            "database_name",
+            "documents_added",
+            "skipped_existing",
+            "total_vectors",
+            "db_path",
+            "index_path"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The request was refused or the step failed. A bare `error` with no `status`, which is what tells this branch apart from the success one.",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Why the request was refused or the step failed."
+            }
+          },
+          "required": [
+            "error"
+          ],
+          "not": {
+            "required": [
+              "status"
+            ]
+          }
+        }
+      ]
     }
   },
   {
@@ -268,9 +388,76 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. EmbeddingDatabase._search returns the whole payload -- there is no `data` envelope.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The search ran. `results` is empty when nothing passed the metadata filters.",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "database_name": {
+              "type": "string",
+              "description": "The collection that was searched."
+            },
+            "query": {
+              "type": "string",
+              "description": "The query as it was received."
+            },
+            "results": {
+              "type": "array",
+              "description": "One entry per hit, already cut to `top_k`, in descending similarity.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "description": "The stored document text."
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "description": "Whatever metadata was stored with the document; {} when none was."
+                  },
+                  "similarity_score": {
+                    "type": "number",
+                    "description": "Cosine similarity, from the L2-normalised vectors."
+                  }
+                }
+              }
+            },
+            "total_found": {
+              "type": "integer",
+              "description": "Hits that passed the metadata filters BEFORE `results` was cut to top_k, so it can exceed len(results)."
+            }
+          },
+          "required": [
+            "status",
+            "database_name",
+            "query",
+            "results",
+            "total_found"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The request was refused or the step failed. A bare `error` with no `status`, which is what tells this branch apart from the success one.",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Why the request was refused or the step failed."
+            }
+          },
+          "required": [
+            "error"
+          ],
+          "not": {
+            "required": [
+              "status"
+            ]
+          }
+        }
+      ]
     }
   },
   {
@@ -337,9 +524,88 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. EmbeddingSync returns the whole payload -- there is no `data` envelope.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Both artefacts reached the Hugging Face dataset repository.",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "database_name": {
+              "type": "string",
+              "description": "The local collection that was uploaded."
+            },
+            "repository": {
+              "type": "string",
+              "description": "The destination repository, username/repo-name."
+            },
+            "document_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Read back from the local store; null when the store does not record it."
+            },
+            "embedding_model": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Read back from the local store."
+            },
+            "embedding_dimensions": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Read back from the local store."
+            },
+            "description": {
+              "type": "string",
+              "description": "The description sent with the upload, or the store's own when none was given."
+            },
+            "upload_url": {
+              "type": "string",
+              "description": "Browser URL of the dataset repository."
+            },
+            "uploaded_at": {
+              "type": "string",
+              "description": "ISO-8601 UTC, suffixed Z."
+            }
+          },
+          "required": [
+            "status",
+            "database_name",
+            "repository",
+            "document_count",
+            "embedding_model",
+            "embedding_dimensions",
+            "description",
+            "upload_url",
+            "uploaded_at"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The request was refused or the step failed. A bare `error` with no `status`, which is what tells this branch apart from the success one.",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Why the request was refused or the step failed."
+            }
+          },
+          "required": [
+            "error"
+          ],
+          "not": {
+            "required": [
+              "status"
+            ]
+          }
+        }
+      ]
     }
   },
   {
@@ -393,9 +659,99 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. EmbeddingSync returns the whole payload -- there is no `data` envelope.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Both artefacts were downloaded and found on disk under `local_name`.",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "repository": {
+              "type": "string",
+              "description": "The source repository."
+            },
+            "local_name": {
+              "type": "string",
+              "description": "The collection name the artefacts were renamed to locally."
+            },
+            "db_path": {
+              "type": "string",
+              "description": "Filesystem path of the SQLite store, <name>.db."
+            },
+            "index_path": {
+              "type": "string",
+              "description": "Filesystem path of the FAISS index, <name>.faiss."
+            },
+            "document_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Read back from the downloaded store."
+            },
+            "embedding_model": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Read back from the downloaded store."
+            },
+            "embedding_dimensions": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Read back from the downloaded store."
+            },
+            "downloaded_at": {
+              "type": "string",
+              "description": "ISO-8601 UTC, suffixed Z."
+            }
+          },
+          "required": [
+            "status",
+            "repository",
+            "local_name",
+            "db_path",
+            "index_path",
+            "document_count",
+            "embedding_model",
+            "embedding_dimensions",
+            "downloaded_at"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The request was refused, the transfer failed, or it finished without leaving both artefacts on disk -- that last case is the one that carries `missing` and `hint`.",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Why the request was refused or the step failed."
+            },
+            "missing": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Paths that were expected after the download and are not there."
+            },
+            "hint": {
+              "type": "string",
+              "description": "What to check in the repository."
+            }
+          },
+          "required": [
+            "error"
+          ],
+          "not": {
+            "required": [
+              "status"
+            ]
+          }
+        }
+      ]
     }
   }
 ]

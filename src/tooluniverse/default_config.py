@@ -671,6 +671,8 @@ default_tool_files = {
     "health_canada_dpd": os.path.join(
         current_dir, "data", "health_canada_dpd_tools.json"
     ),
+    # PubMLST - MLST/cgMLST schemes, sequence-type profiles and sequence typing
+    "pubmlst": os.path.join(current_dir, "data", "pubmlst_tools.json"),
     # Orphadata - Orphanet rare disease cross-references, epidemiology, phenotypes
     "orphadata": os.path.join(current_dir, "data", "orphadata_tools.json"),
     # SCXA - EBI Single Cell Expression Atlas (scRNA-seq experiments, gene expression)

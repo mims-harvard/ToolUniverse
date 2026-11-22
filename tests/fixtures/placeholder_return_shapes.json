@@ -1,0 +1,645 @@
+{
+  "derived_on": "2026-11-21",
+  "derived_from": [
+    "src/tooluniverse/database_setup/embedding_database.py -- three handlers, each with one success return and bare {'error': ...} refusals.",
+    "src/tooluniverse/database_setup/embedding_sync.py -- two handlers, same shape; the download handler adds {'error', 'missing', 'hint'} when the transfer leaves an artefact behind.",
+    "src/tooluniverse/url_tool.py -- URLToPDFTextTool returns {fields.return_key: text} on success and {'status': 'error', 'error': ...} on every failure; this tool's config sets return_key to 'text'.",
+    "src/tooluniverse/tool_finder_embedding.py -- find_tools has exactly two returns, picked by return_call_result.",
+    "src/tooluniverse/tool_finder_llm.py -- same two, plus failure dicts of its own carrying success=False.",
+    "src/tooluniverse/smolagent_tool.py -- run returns {'output', 'success': True, 'execution_time'} or {'output': None, 'success': False, 'error', 'error_type'}.",
+    "src/tooluniverse/execute_function.py:prepare_tool_prompts -- returns a LIST of trimmed tool configs (name, description, parameter, required), which is why the finders answer an array."
+  ],
+  "how": "Derived from source, with one live reading. These classes each have a small enumerable set of returns, so the derivation is exhaustive where a live pass would be a lower bound. What could not be run here: the embedding stores and both tool finders need the `embedding`/`ml` extras, which this environment does not have -- Tool_RAG answered the framework's ToolServerError envelope instead; the two SmolAgent tools need smolagents and a model. get_webpage_text_from_url WAS run, on its own test example, and its error branch is the measured row below.",
+  "the_stale_docstring": "ToolFinderEmbedding.find_tools documents its return as \"Tool prompts as a formatted string\". It is not a string: prepare_tool_prompts returns a list of dicts cut to name/description/parameter/required. A schema written from that docstring would have declared the wrong root type, which is why these were read from the code instead.",
+  "invariant": "every payload under reachable validates against its tool's return_schema and exactly one oneOf branch matches it; every payload under unreachable validates against none",
+  "tools": {
+    "embedding_database_create": {
+      "reachable": [
+        {
+          "branch": "success",
+          "payload": {
+            "status": "success",
+            "database_name": "aging_papers",
+            "documents_added": 128,
+            "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+            "dimensions": 384,
+            "db_path": "./data/embeddings/aging_papers.db",
+            "index_path": "./data/embeddings/aging_papers.faiss"
+          }
+        },
+        {
+          "branch": "error",
+          "note": "collection already exists",
+          "payload": {
+            "error": "Database 'aging_papers' already exists. Use 'add_docs' to add more documents."
+          }
+        },
+        {
+          "branch": "error",
+          "note": "argument validation, from _validate_doc_args",
+          "payload": {
+            "error": "documents list cannot be empty"
+          }
+        },
+        {
+          "branch": "error",
+          "note": "unknown action",
+          "payload": {
+            "error": "Unknown action: frobnicate"
+          }
+        }
+      ],
+      "unreachable": [
+        {
+          "why": "the placeholder accepted this and asserted nothing; no handler returns a bare object",
+          "payload": {
+            "anything": 1
+          }
+        },
+        {
+          "why": "a success return always carries status",
+          "payload": {
+            "database_name": "x",
+            "documents_added": 1
+          }
+        },
+        {
+          "why": "an error return carries no status, so it cannot also be a success",
+          "payload": {
+            "status": "success",
+            "error": "boom"
+          }
+        }
+      ]
+    },
+    "embedding_database_add": {
+      "reachable": [
+        {
+          "branch": "success",
+          "payload": {
+            "status": "success",
+            "database_name": "aging_papers",
+            "documents_added": 12,
+            "skipped_existing": 3,
+            "total_vectors": 140,
+            "db_path": "./data/embeddings/aging_papers.db",
+            "index_path": "./data/embeddings/aging_papers.faiss"
+          }
+        },
+        {
+          "branch": "success",
+          "note": "every document was already present",
+          "payload": {
+            "status": "success",
+            "database_name": "aging_papers",
+            "documents_added": 0,
+            "skipped_existing": 15,
+            "total_vectors": 128,
+            "db_path": "./data/embeddings/aging_papers.db",
+            "index_path": "./data/embeddings/aging_papers.faiss"
+          }
+        },
+        {
+          "branch": "error",
+          "payload": {
+            "error": "Database 'nope' does not exist. Use 'create_from_docs' first."
+          }
+        },
+        {
+          "branch": "error",
+          "note": "the collection's model and the request's disagree",
+          "payload": {
+            "error": "Embedding model mismatch: collection uses 'a', request uses 'b'"
+          }
+        }
+      ],
+      "unreachable": [
+        {
+          "why": "no handler returns a bare object",
+          "payload": {
+            "documents_added": 1
+          }
+        }
+      ]
+    },
+    "embedding_database_search": {
+      "reachable": [
+        {
+          "branch": "success",
+          "payload": {
+            "status": "success",
+            "database_name": "aging_papers",
+            "query": "rapamycin lifespan",
+            "results": [
+              {
+                "text": "Rapamycin extends lifespan in mice.",
+                "metadata": {
+                  "pmid": "12345678",
+                  "year": 2009
+                },
+                "similarity_score": 0.8123
+              }
+            ],
+            "total_found": 1
+          }
+        },
+        {
+          "branch": "success",
+          "note": "nothing passed the metadata filters",
+          "payload": {
+            "status": "success",
+            "database_name": "aging_papers",
+            "query": "rapamycin lifespan",
+            "results": [],
+            "total_found": 0
+          }
+        },
+        {
+          "branch": "success",
+          "note": "total_found exceeds len(results): the page was cut to top_k",
+          "payload": {
+            "status": "success",
+            "database_name": "aging_papers",
+            "query": "aging",
+            "results": [
+              {
+                "text": "a",
+                "metadata": {},
+                "similarity_score": 0.5
+              }
+            ],
+            "total_found": 41
+          }
+        },
+        {
+          "branch": "error",
+          "payload": {
+            "error": "query is required"
+          }
+        }
+      ],
+      "unreachable": [
+        {
+          "why": "results is always present on the success branch, even when empty",
+          "payload": {
+            "status": "success",
+            "database_name": "x",
+            "query": "y"
+          }
+        }
+      ]
+    },
+    "embedding_sync_upload": {
+      "reachable": [
+        {
+          "branch": "success",
+          "payload": {
+            "status": "success",
+            "database_name": "aging_papers",
+            "repository": "someone/aging-papers",
+            "document_count": 128,
+            "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+            "embedding_dimensions": 384,
+            "description": "Aging literature embeddings",
+            "upload_url": "https://huggingface.co/datasets/someone/aging-papers",
+            "uploaded_at": "2026-11-21T11:00:00.000000Z"
+          }
+        },
+        {
+          "branch": "success",
+          "note": "the local store records no counts",
+          "payload": {
+            "status": "success",
+            "database_name": "aging_papers",
+            "repository": "someone/aging-papers",
+            "document_count": null,
+            "embedding_model": null,
+            "embedding_dimensions": null,
+            "description": "",
+            "upload_url": "https://huggingface.co/datasets/someone/aging-papers",
+            "uploaded_at": "2026-11-21T11:00:00.000000Z"
+          }
+        },
+        {
+          "branch": "error",
+          "payload": {
+            "error": "HF_TOKEN is required in env or tool config"
+          }
+        },
+        {
+          "branch": "error",
+          "payload": {
+            "error": "Local DB not found: ./data/embeddings/nope.db"
+          }
+        }
+      ],
+      "unreachable": [
+        {
+          "why": "no handler returns a bare object",
+          "payload": {
+            "repository": "a/b"
+          }
+        }
+      ]
+    },
+    "embedding_sync_download": {
+      "reachable": [
+        {
+          "branch": "success",
+          "payload": {
+            "status": "success",
+            "repository": "someone/aging-papers",
+            "local_name": "aging_papers",
+            "db_path": "./data/embeddings/aging_papers.db",
+            "index_path": "./data/embeddings/aging_papers.faiss",
+            "document_count": 128,
+            "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+            "embedding_dimensions": 384,
+            "downloaded_at": "2026-11-21T11:00:00.000000Z"
+          }
+        },
+        {
+          "branch": "error",
+          "payload": {
+            "error": "repository is required (format: username/repo-name)"
+          }
+        },
+        {
+          "branch": "error",
+          "note": "the one error that carries more than a message",
+          "payload": {
+            "error": "Download completed but expected artifacts were not found locally",
+            "missing": [
+              "./data/embeddings/aging_papers.faiss"
+            ],
+            "hint": "Ensure the HF repo contains '<original>.db' and '<original>.faiss'. The downloader copies/renames them to match 'local_name'."
+          }
+        }
+      ],
+      "unreachable": [
+        {
+          "why": "no handler returns a bare object",
+          "payload": {
+            "missing": [
+              "x"
+            ]
+          }
+        }
+      ]
+    },
+    "get_webpage_text_from_url": {
+      "reachable": [
+        {
+          "branch": "success",
+          "payload": {
+            "text": "Wikipedia\nThe Free Encyclopedia"
+          }
+        },
+        {
+          "branch": "success",
+          "note": "the page carried no text",
+          "payload": {
+            "text": ""
+          }
+        },
+        {
+          "branch": "error",
+          "note": "MEASURED 2026-11-21 by running this tool's own test example (url=https://www.wikipedia.org, timeout=30) in an environment with no renderer installed",
+          "payload": {
+            "status": "error",
+            "error": "rendering this page needs a browser. Install with: pip install 'tooluniverse[browser]' (or: pip install playwright) Then: python -m playwright install chromium"
+          }
+        },
+        {
+          "branch": "error",
+          "payload": {
+            "status": "error",
+            "error": "Parameter 'url' is required."
+          }
+        },
+        {
+          "branch": "error",
+          "payload": {
+            "status": "error",
+            "error": "HTTP 404"
+          }
+        }
+      ],
+      "unreachable": [
+        {
+          "why": "the placeholder accepted this; the success branch's only key is the one fields.return_key names",
+          "payload": {
+            "content": "some text"
+          }
+        },
+        {
+          "why": "an error always carries both status and error",
+          "payload": {
+            "status": "error"
+          }
+        }
+      ]
+    },
+    "Tool_RAG": {
+      "reachable": [
+        {
+          "branch": "specs",
+          "payload": [
+            {
+              "name": "UniProt_get_function_by_accession",
+              "description": "Return the function of a protein.",
+              "parameter": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "accession"
+                ]
+              },
+              "required": [
+                "accession"
+              ]
+            }
+          ]
+        },
+        {
+          "branch": "specs",
+          "note": "nothing matched",
+          "payload": []
+        },
+        {
+          "branch": "pair",
+          "note": "return_call_result=true",
+          "payload": [
+            [
+              {
+                "name": "UniProt_get_function_by_accession",
+                "description": "Return the function of a protein.",
+                "parameter": {
+                  "type": "object",
+                  "properties": {
+                    "accession": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "accession"
+                  ]
+                },
+                "required": [
+                  "accession"
+                ]
+              }
+            ],
+            [
+              "UniProt_get_function_by_accession"
+            ]
+          ]
+        }
+      ],
+      "unreachable": [
+        {
+          "why": "the placeholder declared an object; find_tools returns a list on both branches",
+          "payload": {
+            "tools": []
+          }
+        },
+        {
+          "why": "the pair branch is exactly two elements",
+          "payload": [
+            [
+              {
+                "name": "UniProt_get_function_by_accession",
+                "description": "Return the function of a protein.",
+                "parameter": {
+                  "type": "object",
+                  "properties": {
+                    "accession": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "accession"
+                  ]
+                },
+                "required": [
+                  "accession"
+                ]
+              }
+            ],
+            [
+              "a"
+            ],
+            [
+              "b"
+            ]
+          ]
+        }
+      ]
+    },
+    "Tool_Finder": {
+      "reachable": [
+        {
+          "branch": "specs",
+          "payload": [
+            {
+              "name": "UniProt_get_function_by_accession",
+              "description": "Return the function of a protein.",
+              "parameter": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "accession"
+                ]
+              },
+              "required": [
+                "accession"
+              ]
+            }
+          ]
+        },
+        {
+          "branch": "specs",
+          "note": "nothing matched",
+          "payload": []
+        },
+        {
+          "branch": "pair",
+          "note": "return_call_result=true",
+          "payload": [
+            [
+              {
+                "name": "UniProt_get_function_by_accession",
+                "description": "Return the function of a protein.",
+                "parameter": {
+                  "type": "object",
+                  "properties": {
+                    "accession": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "accession"
+                  ]
+                },
+                "required": [
+                  "accession"
+                ]
+              }
+            ],
+            [
+              "UniProt_get_function_by_accession"
+            ]
+          ]
+        }
+      ],
+      "unreachable": [
+        {
+          "why": "find_tools returns a list on both branches",
+          "payload": {
+            "tools": []
+          }
+        }
+      ]
+    },
+    "Tool_Finder_LLM": {
+      "reachable": [
+        {
+          "branch": "specs",
+          "payload": [
+            {
+              "name": "UniProt_get_function_by_accession",
+              "description": "Return the function of a protein.",
+              "parameter": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "accession"
+                ]
+              },
+              "required": [
+                "accession"
+              ]
+            }
+          ]
+        },
+        {
+          "branch": "specs",
+          "note": "the model picked nothing",
+          "payload": []
+        },
+        {
+          "branch": "failure",
+          "payload": {
+            "success": false,
+            "error": "No tools available for selection"
+          }
+        },
+        {
+          "branch": "failure",
+          "payload": {
+            "success": false,
+            "error": "Invalid JSON response from LLM: Expecting value: line 1 column 1 (char 0)"
+          }
+        }
+      ],
+      "unreachable": [
+        {
+          "why": "a failure always carries success=False and error",
+          "payload": {
+            "error": "boom"
+          }
+        }
+      ]
+    },
+    "advanced_literature_search_agent": {
+      "reachable": [
+        {
+          "branch": "success",
+          "payload": {
+            "output": "Three trials report a lifespan effect.",
+            "success": true,
+            "execution_time": 42.7
+          }
+        },
+        {
+          "branch": "success",
+          "note": "the agent returned a structure rather than text",
+          "payload": {
+            "output": {
+              "answer": "x",
+              "sources": []
+            },
+            "success": true,
+            "execution_time": 1.0
+          }
+        },
+        {
+          "branch": "failure",
+          "payload": {
+            "output": null,
+            "success": false,
+            "error": "Agent execution timed out after 600s",
+            "error_type": "TimeoutError"
+          }
+        }
+      ],
+      "unreachable": [
+        {
+          "why": "execution_time is only on the success branch, and error only on the failure one",
+          "payload": {
+            "output": null,
+            "success": false,
+            "execution_time": 1.0
+          }
+        },
+        {
+          "why": "the placeholder accepted this; run() always reports success",
+          "payload": {
+            "output": "x"
+          }
+        }
+      ]
+    },
+    "open_deep_research_agent": {
+      "reachable": [
+        {
+          "branch": "success",
+          "payload": {
+            "output": "A report.",
+            "success": true,
+            "execution_time": 12.5
+          }
+        },
+        {
+          "branch": "failure",
+          "payload": {
+            "output": null,
+            "success": false,
+            "error": "boom",
+            "error_type": "RuntimeError"
+          }
+        }
+      ],
+      "unreachable": [
+        {
+          "why": "run() always reports success",
+          "payload": {
+            "output": "x"
+          }
+        }
+      ]
+    }
+  }
+}

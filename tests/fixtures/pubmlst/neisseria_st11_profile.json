@@ -1,0 +1,17 @@
+{
+ "ST": 11,
+ "alleles": [
+  "https://rest.pubmlst.org/db/pubmlst_neisseria_seqdef/loci/abcZ/alleles/2",
+  "https://rest.pubmlst.org/db/pubmlst_neisseria_seqdef/loci/adk/alleles/3",
+  "https://rest.pubmlst.org/db/pubmlst_neisseria_seqdef/loci/aroE/alleles/4",
+  "https://rest.pubmlst.org/db/pubmlst_neisseria_seqdef/loci/fumC/alleles/3",
+  "https://rest.pubmlst.org/db/pubmlst_neisseria_seqdef/loci/gdh/alleles/8",
+  "https://rest.pubmlst.org/db/pubmlst_neisseria_seqdef/loci/pdhC/alleles/4",
+  "https://rest.pubmlst.org/db/pubmlst_neisseria_seqdef/loci/pgm/alleles/6"
+ ],
+ "clonal_complex": "ST-11 complex",
+ "curator": "https://rest.pubmlst.org/db/pubmlst_neisseria_seqdef/users/2",
+ "date_entered": "2001-02-07",
+ "datestamp": "2009-11-11",
+ "sender": "https://rest.pubmlst.org/db/pubmlst_neisseria_seqdef/users/5"
+}

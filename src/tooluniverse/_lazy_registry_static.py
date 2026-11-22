@@ -630,6 +630,7 @@ STATIC_LAZY_REGISTRY = {
     "PubChemBioAssayTool": "pubchem_bioassay_tool",
     "PubChemRESTTool": "pubchem_tool",
     "PubChemToxTool": "pubchem_tox_tool",
+    "PubMLSTTool": "pubmlst_tool",
     "PubMedCitationLookupTool": "pubmed_utils_tool",
     "PubMedConvertIDsTool": "pubmed_utils_tool",
     "PubMedGuidelinesTool": "unified_guideline_tools",
