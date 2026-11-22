@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 
 from tooluniverse.default_config import default_tool_files
@@ -90,3 +91,67 @@ def test_folklore_loader_copy_preserves_clinical_and_data_boundaries():
     assert "not diagnoses" in copy
     assert "treatment recommendation" in copy
     assert "ambiguous" in copy
+
+
+def _pinned_contract_versions():
+    """The `contract_version` const each reviewed tool's own outputSchema declares.
+
+    Only the root of the schema is read: `anyOf` branches each carry their own
+    copy, and nested definitions carry a different field -- search_variant_literature's
+    $defs/LiteratureAuthorityResponse pins contract_version "1.0", and every tool's
+    result.search_contract_version is "1.0" as well. Neither is the envelope version
+    this looks for.
+    """
+    lock = json.loads(
+        (
+            Path(__file__).resolve().parents[2]
+            / "src"
+            / "tooluniverse"
+            / "data"
+            / "mcp_contracts.lock.json"
+        ).read_text()
+    )
+    tools = lock["loaders"]["mcp_auto_loader_folklore"]["tools"]
+    found = {}
+    for name, entry in tools.items():
+        schema = entry["contract"]["outputSchema"]
+        roots = schema.get("anyOf") or [schema]
+        versions = {
+            root["properties"]["contract_version"]["const"]
+            for root in roots
+            if "const" in (root.get("properties", {}).get("contract_version") or {})
+        }
+        if versions:
+            found[name] = versions
+    return found
+
+
+def test_the_live_test_asserts_the_envelope_version_the_lockfile_pins():
+    """Tie the live test to the pin, which is what nothing did before.
+
+    The live test is marked `network` and CI deselects it, so when Folklore moved
+    its envelope from 1 to 2 the stale assertion sat there unnoticed: the pinned
+    contract said "2" while the test still demanded "1", and the first thing to
+    notice was a hand-run of the test months later. This check runs offline, in
+    CI, on every push.
+    """
+    pinned = _pinned_contract_versions()
+    assert pinned, "no tool's pinned outputSchema declares a contract_version const"
+    declared = {v for versions in pinned.values() for v in versions}
+    assert len(declared) == 1, (
+        f"the reviewed tools pin disagreeing envelope versions: {pinned}"
+    )
+
+    live_test = (
+        Path(__file__).resolve().parents[1]
+        / "integration"
+        / "test_mcp_auto_loader_folklore_live.py"
+    ).read_text()
+    asserted = set(
+        re.findall(r'structured\["contract_version"\] == "([^"]+)"', live_test)
+    )
+    assert asserted == declared, (
+        f"the live test asserts contract_version {asserted} but the lockfile pins "
+        f"{declared}; one of the two is describing a server that no longer answers "
+        "that way"
+    )
