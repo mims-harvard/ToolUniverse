@@ -667,6 +667,8 @@ default_tool_files = {
     "ddbj": os.path.join(current_dir, "data", "ddbj_tools.json"),
     # BacDive - DSMZ bacterial strain phenotype and growth conditions
     "bacdive": os.path.join(current_dir, "data", "bacdive_tools.json"),
+    # PubMLST - MLST/cgMLST schemes, sequence-type profiles and sequence typing
+    "pubmlst": os.path.join(current_dir, "data", "pubmlst_tools.json"),
     # Orphadata - Orphanet rare disease cross-references, epidemiology, phenotypes
     "orphadata": os.path.join(current_dir, "data", "orphadata_tools.json"),
     # SCXA - EBI Single Cell Expression Atlas (scRNA-seq experiments, gene expression)
