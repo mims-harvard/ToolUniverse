@@ -17,12 +17,251 @@
       }
     },
     "test_examples": [
-      {}
+      {
+        "operation": "discover"
+      }
     ],
     "return_schema": {
+      "description": "What run() hands back. It branches on `operation` and has exactly three success shapes -- see MCPAutoLoaderTool.run in mcp_client_tool.py. There is no error branch: _run_with_cleanup has no except clause, so a failure leaves run() as an exception and the dispatch layer, not this schema, is what turns it into a value. The three branches share no required key, so exactly one of them matches any real return.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "operation=\"discover\": everything the server's tools/list reported. All three keys are set unconditionally, so all three are required. Note that discovery does not honour `selected_tools` -- that filter applies only to generate_configs -- so this lists the whole server.",
+          "properties": {
+            "discovered_count": {
+              "type": "integer",
+              "description": "len(tool_details). Zero when the server offers nothing."
+            },
+            "tools": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The names only, in the order the server listed them."
+            },
+            "tool_details": {
+              "type": "object",
+              "description": "Each name mapped to its full descriptor.",
+              "additionalProperties": {
+                "$ref": "#/$defs/mcp_tool"
+              }
+            }
+          },
+          "required": [
+            "discovered_count",
+            "tools",
+            "tool_details"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "operation=\"generate_configs\": the discovered tools rendered as MCPProxyTool configurations, after `selected_tools` filtering. Both keys are set unconditionally and count == len(configs). Discovery runs first if it has not already.",
+          "properties": {
+            "configs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/proxy_config"
+              }
+            },
+            "count": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "configs",
+            "count"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "operation=\"call_tool\": what the USPTO server answered, passed through untouched -- mcp.types.CallToolResult rendered by model_dump(mode=\"json\"). `isError` true means the server reported a tool-level failure; the call itself still succeeded, which is why that case arrives here and not as an exception. Only `content` is required: the SDK makes it the one mandatory field, and although model_dump emits `isError` for every http call, the websocket branch of _make_mcp_request hands back the raw JSON-RPC result, where it may be absent.",
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Content blocks; each carries its own `type`."
+            },
+            "isError": {
+              "type": "boolean"
+            },
+            "structuredContent": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "meta": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "content"
+          ]
+        }
+      ],
+      "$defs": {
+        "mcp_tool": {
+          "type": "object",
+          "description": "One mcp.types.Tool, as model_dump(mode=\"json\") renders it. `name` and `inputSchema` are the SDK's only required fields; the rest are emitted with a null default. Not closed to further keys: the project pins mcp>=1.29.0,<2.0.0, so a minor release may add some.",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "inputSchema": {
+              "type": "object",
+              "description": "JSON Schema for the tool's arguments."
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "outputSchema": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "icons": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "annotations": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "meta": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "execution": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "name",
+            "inputSchema"
+          ]
+        },
+        "proxy_config": {
+          "type": "object",
+          "description": "One MCPProxyTool configuration, as generate_proxy_tool_configs builds it (mcp_client_tool.py line 1082). The first eight keys are set unconditionally; every other key is set only when the loader's own config asked for it, or when the server's descriptor carried it.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "tool_prefix + the server-side tool name."
+            },
+            "description": {
+              "type": "string"
+            },
+            "type": {
+              "const": "MCPProxyTool"
+            },
+            "server_url": {
+              "type": "string"
+            },
+            "transport": {
+              "type": "string"
+            },
+            "timeout": {
+              "type": "number"
+            },
+            "target_tool_name": {
+              "type": "string",
+              "description": "The server-side name, unprefixed."
+            },
+            "parameter": {
+              "type": "object",
+              "description": "The server's inputSchema for this tool, or {\"type\": \"object\", \"properties\": {}, \"required\": []} when it published none."
+            },
+            "return_schema": {
+              "type": "object",
+              "description": "Present only when the server published an outputSchema."
+            },
+            "annotations": {
+              "type": "object"
+            },
+            "http_headers_from_env": {
+              "type": "object"
+            },
+            "normalize_mcp_result": {
+              "const": true
+            },
+            "require_structured_content": {
+              "const": true
+            },
+            "mcp_structured_error_field": {
+              "type": "string"
+            },
+            "mcp_contract_sha256": {
+              "type": "string",
+              "description": "Present only when the loader sets strict_tool_contracts."
+            },
+            "headers": {
+              "type": "object"
+            },
+            "auth_env": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "description",
+            "type",
+            "server_url",
+            "transport",
+            "timeout",
+            "target_tool_name",
+            "parameter"
+          ]
+        }
+      }
+    },
+    "parameter": {
       "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "discover",
+            "generate_configs",
+            "call_tool"
+          ],
+          "description": "Which of run()'s three branches to take: list the tools this USPTO server offers, turn that list into MCPProxyTool configurations, or call one of those tools. Required: run() raises ValueError('Unsupported operation: None') when it is left out."
+        },
+        "tool_name": {
+          "type": "string",
+          "description": "Name of the server-side tool to call, as `discover` reports it. Required when operation is call_tool -- run() raises ValueError without it -- and ignored otherwise."
+        },
+        "tool_arguments": {
+          "type": "object",
+          "description": "Arguments for that tool, matching the inputSchema `discover` returned for it. Defaults to {} and is ignored unless operation is call_tool."
+        }
+      },
+      "required": [
+        "operation"
+      ]
     }
   }
 ]

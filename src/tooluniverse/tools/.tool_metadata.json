@@ -2679,7 +2679,7 @@
   "kegg_search_pathway": "b834932611b6c1a0a979cc5649d0c08a",
   "list_tools": "b69097415365f11780f9d5d72b6c44fe",
   "loinc_search_codes": "95ccefb6e0e0a750944754aefdb961fb",
-  "mcp_auto_loader_rfdiffusion2": "0f243b4ac45f9a4db8e78701813a4994",
+  "mcp_auto_loader_rfdiffusion2": "da740d09b771e4a4821c03e2f3b0035c",
   "mesh_get_subjects_by_pharmacological_action": "2811d1b13de020b254b83b41500cefd2",
   "mesh_get_subjects_by_subject_id": "653010811e03f51f63328c552c79a4df",
   "mesh_get_subjects_by_subject_name": "e4ebb0362e750eece94c6fab4f816554",
