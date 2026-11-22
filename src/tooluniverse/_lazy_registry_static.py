@@ -707,6 +707,7 @@ STATIC_LAZY_REGISTRY = {
     "SingleCellPortalTool": "single_cell_portal_tool",
     "SmartAPITool": "smartapi_tool",
     "SmolAgentTool": "smolagent_tool",
+    "SpecialTool": "special_tool",
     "SpliceAITool": "spliceai_tool",
     "StatPearlsChapterSectionTool": "ncbi_bookshelf_reference_tool",
     "StatPearlsManagementTool": "ncbi_bookshelf_reference_tool",

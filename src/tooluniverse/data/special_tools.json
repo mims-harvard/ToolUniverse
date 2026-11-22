@@ -2,7 +2,7 @@
   {
     "type": "SpecialTool",
     "name": "Finish",
-    "description": "Indicate the end of multi-step reasoning.",
+    "description": "Control signal, not an executable tool: raise it to tell your own multi-step reasoning loop that the chain is complete. ToolUniverse queries nothing and returns no data -- it echoes the signal back for your loop to act on.",
     "parameter": {
       "type": "object",
       "properties": {},
@@ -10,10 +10,36 @@
     },
     "return_schema": {
       "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "The control signal, echoed back for the calling loop to act on. Nothing is executed and no data is retrieved.",
+      "properties": {
+        "control_signal": {
+          "type": "string",
+          "description": "Name of the signal that was raised."
+        },
+        "performed_work": {
+          "type": "boolean",
+          "description": "Always false. ToolUniverse executes nothing for a control signal, so a caller cannot mistake this result for data."
+        },
+        "arguments": {
+          "type": "object",
+          "description": "The arguments the caller passed, echoed back unchanged.",
+          "additionalProperties": true
+        },
+        "message": {
+          "type": "string",
+          "description": "What the calling agent loop is expected to do with the signal."
+        }
+      },
+      "required": [
+        "control_signal",
+        "performed_work",
+        "arguments",
+        "message"
+      ]
     },
-    "test_examples": []
+    "test_examples": [
+      {}
+    ]
   },
   {
     "type": "UsageTipsTool",
@@ -72,7 +98,7 @@
   {
     "type": "SpecialTool",
     "name": "CallAgent",
-    "description": "Give a solution plan to the agent and let it solve the problem. Solution plan should reflect a distinct method, approach, or viewpoint to solve the given question. Call these function multiple times, and each solution plan should start with different aspects of the question, for example, genes, phenotypes, diseases, or drugs, etc. The CallAgent will achieve the task based on the plan, so only give the plan instead of unverified information.",
+    "description": "Control signal, not an executable tool: raise it to hand a solution plan back to your own agent loop, which is responsible for executing it. ToolUniverse does not run a sub-agent and does not act on the plan -- it echoes it back. Each plan should reflect a distinct method, approach, or viewpoint; raise the signal several times with plans that start from different aspects of the question, for example genes, phenotypes, diseases, or drugs. Give only the plan, not unverified information.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -87,9 +113,37 @@
     },
     "return_schema": {
       "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "The control signal, echoed back for the calling loop to act on. Nothing is executed and no data is retrieved.",
+      "properties": {
+        "control_signal": {
+          "type": "string",
+          "description": "Name of the signal that was raised."
+        },
+        "performed_work": {
+          "type": "boolean",
+          "description": "Always false. ToolUniverse executes nothing for a control signal, so a caller cannot mistake this result for data."
+        },
+        "arguments": {
+          "type": "object",
+          "description": "The arguments the caller passed, echoed back unchanged.",
+          "additionalProperties": true
+        },
+        "message": {
+          "type": "string",
+          "description": "What the calling agent loop is expected to do with the signal."
+        }
+      },
+      "required": [
+        "control_signal",
+        "performed_work",
+        "arguments",
+        "message"
+      ]
     },
-    "test_examples": []
+    "test_examples": [
+      {
+        "solution": "Start from the genes implicated in the disease, then check each one for a drug with a known mechanism against it."
+      }
+    ]
   }
 ]
