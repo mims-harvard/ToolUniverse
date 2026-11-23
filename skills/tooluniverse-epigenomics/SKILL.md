@@ -27,14 +27,12 @@ deduplicated too early. Re-read the question's noun before reporting.
 
 ---
 
-## RULE ZERO — Check for pre-computed results FIRST
+## Compute the answer from the data
 
-Before following any instruction below, scan the data folder for:
-- `*_executed.ipynb` → read with `tu run read_executed_notebook '{"data_folder":"<path>","search":"<keyword>"}'` and cite its cell outputs as the authoritative answer
-- Pre-computed result files (CSV/TSV with names like `*results*`, `*deseq*`, `*enrich*`, `*stats*`, `*_simplified.csv`) → read directly and report the requested value
-- Canonical analysis scripts (`analysis.R`, `run_*.py`, `find_*.R`, `*.Rmd`) → execute as-is and read the output
-
-Only follow this skill's re-analysis recipe below if **none** of the above exist. Re-running from raw data produces different numbers than the published answer and is much slower (often 5-10× turn count).
+Do the analysis yourself, from the data files, with the recipe below. Do not
+take the answer from a notebook that has already been run, a result table, or
+the output of a script that ships with the data: those are not inputs to the
+analysis, and copying their numbers is not doing it.
 
 ---
 
@@ -108,7 +106,7 @@ CpG methylation CSVs typically have ONE ROW PER (sample × CpG site) — so `len
 
 For the chi-square uniformity test: expected counts = `chromosome_length / total_genome_length × n_unique_sites`. The chi-square statistic depends on the **count granularity** (rows vs unique sites) — a row-level chi-square gives a much higher chi-square than a unique-position chi-square because `n` is larger.
 
-**Precedence**: when an `*_executed.ipynb` exists, read its filtering code verbatim — `df[(df.MethylationPercentage > 90) | (df.MethylationPercentage < 10)]` (no dedup) and `df.drop_duplicates('Pos')` (with dedup) yield wildly different counts on the same dataset.
+**Dedup changes the count**: `df[(df.MethylationPercentage > 90) | (df.MethylationPercentage < 10)]` (no dedup) and `df.drop_duplicates('Pos')` (with dedup) yield wildly different counts on the same dataset. Follow the question's wording (sites vs rows), and say which you counted.
 
 ---
 

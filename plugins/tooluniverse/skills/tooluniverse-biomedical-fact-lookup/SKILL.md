@@ -39,7 +39,7 @@ answering; the detail for each is further down.
    and 0.402 in r2.1 — an 8.5x difference for the same gene. Set the release the
    question names and say which you used.
 
-## RULE ZERO: Look it up, never guess
+## First rule: look it up, never guess
 
 If a question names a database, a gene set, or any annotation that lives in a database, you MUST query the tool before answering. Answering a "according to <database>" question from memory is a failure mode — these annotations (predicted miRNA targets, ChIP-seq binding, curated gene sets, disease associations) are exactly what models hallucinate. A tool-verified answer beats any recalled fact.
 

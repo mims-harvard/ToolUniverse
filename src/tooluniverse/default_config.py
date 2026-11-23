@@ -334,7 +334,7 @@ default_tool_files = {
     "variant_fraction": os.path.join(
         current_dir, "data", "variant_fraction_tools.json"
     ),
-    # Executed notebook reader — surface authoritative analysis outputs
+    # Notebook reader — review a notebook the user names (not a source of answers)
     "executed_notebook": os.path.join(
         current_dir, "data", "executed_notebook_tools.json"
     ),

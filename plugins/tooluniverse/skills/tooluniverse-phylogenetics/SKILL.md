@@ -45,15 +45,20 @@ was already present further down this file*. Check them before you answer.
    turns mid-way, producing no answer at all. It also selects the right column
    for every function, which removes trap 1 entirely.
 
-## RULE ZERO — Check for pre-computed results FIRST
+## Compute the answer from the data
 
-Before following any instruction below, scan the data folder for:
-- **`scogs_fungi.zip` / `scogs_animals.zip`** (BUSCO single-copy ortholog phylogenetics) → these contain the pre-computed alignments (`*.faa.mafft.clipkit`) and trees (`*.faa.mafft.clipkit.treefile`) from the original analysis. **Use these directly with PhyKIT** (see "BUSCO scogs questions" below). Re-running BUSCO → MAFFT → IQ-TREE from `*.busco.zip` files takes 1–6 hours AND produces slightly different numbers due to seed/version drift.
-- `*_executed.ipynb` → read with `tu run read_executed_notebook '{"data_folder":"<path>","search":"<keyword>"}'` and cite its cell outputs as the authoritative answer
-- Pre-computed result files (CSV/TSV with names like `*results*`, `*tree*`, `*phykit*`, `*saturation*`, `*treeness*`) → read directly and report the requested value
-- Canonical analysis scripts (`analysis.R`, `run_*.py`, `find_*.R`, `*.Rmd`) → execute as-is and read the output
+Do the analysis yourself, from the data files, with the recipe below. Do not
+take the answer from a notebook that has already been run, a result table
+(`*results*`, `*phykit*`, `*saturation*`, `*treeness*`), or the output of a
+script that ships with the data: those are not inputs to the analysis, and
+copying their numbers is not doing it.
 
-Only follow this skill's re-analysis recipe below if **none** of the above exist. Re-running from raw data produces different numbers than the published answer and is much slower (often 5–10× turn count).
+Alignments and trees that ship with the data are inputs, not answers. When the
+folder has **`scogs_fungi.zip` / `scogs_animals.zip`** (BUSCO single-copy
+orthologs, with per-ortholog alignments `*.faa.mafft.clipkit` and trees
+`*.faa.mafft.clipkit.treefile`), run PhyKIT on them yourself (see "BUSCO scogs
+questions" below) rather than rebuilding them from `*.busco.zip`, which takes
+1–6 hours.
 
 ---
 
