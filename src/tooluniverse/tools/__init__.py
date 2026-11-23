@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2893 scientific tools.
+Type-safe Python interface to 2900 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -1312,6 +1312,9 @@ from .Harmonizome_get_gene_set_members import Harmonizome_get_gene_set_members
 from .Harmonizome_list_datasets import Harmonizome_list_datasets
 from .Harmonizome_search import Harmonizome_search
 from .Harmonizome_search_genes import Harmonizome_search_genes
+from .HealthCanadaDPD_get_product import HealthCanadaDPD_get_product
+from .HealthCanadaDPD_search_by_ingredient import HealthCanadaDPD_search_by_ingredient
+from .HealthCanadaDPD_search_products import HealthCanadaDPD_search_products
 from .HealthConditions_search import HealthConditions_search
 from .Hemolytik2_search_peptides import Hemolytik2_search_peptides
 from .HuBMAP_get_dataset import HuBMAP_get_dataset
@@ -2318,6 +2321,10 @@ from .PubChem_search_compounds_by_similarity import (
 from .PubChem_search_compounds_by_substructure import (
     PubChem_search_compounds_by_substructure,
 )
+from .PubMLST_get_profile import PubMLST_get_profile
+from .PubMLST_list_databases import PubMLST_list_databases
+from .PubMLST_list_schemes import PubMLST_list_schemes
+from .PubMLST_type_sequence import PubMLST_type_sequence
 from .PubMed_Guidelines_Search import PubMed_Guidelines_Search
 from .PubMed_convert_article_ids import PubMed_convert_article_ids
 from .PubMed_get_article import PubMed_get_article
@@ -4501,6 +4508,9 @@ __all__ = [
     "Harmonizome_list_datasets",
     "Harmonizome_search",
     "Harmonizome_search_genes",
+    "HealthCanadaDPD_get_product",
+    "HealthCanadaDPD_search_by_ingredient",
+    "HealthCanadaDPD_search_products",
     "HealthConditions_search",
     "Hemolytik2_search_peptides",
     "HuBMAP_get_dataset",
@@ -5327,6 +5337,10 @@ __all__ = [
     "PubChem_search_assays_by_type",
     "PubChem_search_compounds_by_similarity",
     "PubChem_search_compounds_by_substructure",
+    "PubMLST_get_profile",
+    "PubMLST_list_databases",
+    "PubMLST_list_schemes",
+    "PubMLST_type_sequence",
     "PubMed_Guidelines_Search",
     "PubMed_convert_article_ids",
     "PubMed_get_article",

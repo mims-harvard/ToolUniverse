@@ -16,7 +16,7 @@ def Tool_RAG(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieve related tools from the toolbox based on the provided description
 
@@ -37,7 +37,7 @@ def Tool_RAG(
 
     Returns
     -------
-    dict[str, Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

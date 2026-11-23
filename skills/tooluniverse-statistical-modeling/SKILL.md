@@ -6,14 +6,12 @@ disable-model-invocation: true
 
 # Statistical Modeling for Biomedical Data Analysis
 
-## RULE ZERO — Check for pre-computed results FIRST
+## Compute the answer from the data
 
-Before following any instruction below, scan the data folder for:
-- `*_executed.ipynb` → read with `tu run read_executed_notebook '{"data_folder":"<path>","search":"<keyword>"}'` and cite its cell outputs as the authoritative answer
-- Pre-computed result files (CSV/TSV with names like `*results*`, `*deseq*`, `*enrich*`, `*stats*`, `*_simplified.csv`) → read directly and report the requested value
-- Canonical analysis scripts (`analysis.R`, `run_*.py`, `find_*.R`, `*.Rmd`) → execute as-is and read the output
-
-Only follow this skill's re-analysis recipe below if **none** of the above exist. Re-running from raw data produces different numbers than the published answer and is much slower (often 5-10× turn count).
+Do the analysis yourself, from the data files, with the recipe below. Do not
+take the answer from a notebook that has already been run, a result table, or
+the output of a script that ships with the data: those are not inputs to the
+analysis, and copying their numbers is not doing it.
 
 ---
 

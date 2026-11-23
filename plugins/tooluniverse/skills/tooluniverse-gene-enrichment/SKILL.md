@@ -9,14 +9,12 @@ When analysis requires computation (statistics, data processing, scoring, enrich
 
 # Gene Enrichment and Pathway Analysis
 
-## RULE ZERO — Check for pre-computed results FIRST
+## Compute the answer from the data
 
-Before following any instruction below, scan the data folder for:
-- `*_executed.ipynb` → read with `tu run read_executed_notebook '{"data_folder":"<path>","search":"<keyword>"}'` and cite its cell outputs as the authoritative answer
-- Pre-computed enrichment files (CSV/TSV named `*enrich*`, `*go*`, `*kegg*`, `*reactome*`, `*ego*`, `*_simplified.csv`) → read directly
-- Canonical analysis scripts (`analysis.R`, `run_*.py`, `find_*.R`, `*.Rmd`) → execute as-is and read the output
-
-Only follow this skill's re-analysis recipe below if **none** of the above exist. Re-running enrichment from raw DEG lists produces different numbers than the published answer due to subtle filter differences upstream, and is much slower.
+Do the analysis yourself, from the data files, with the recipe below. Do not
+take the answer from a notebook that has already been run, a result table, or
+the output of a script that ships with the data: those are not inputs to the
+analysis, and copying their numbers is not doing it.
 
 ---
 
@@ -480,10 +478,8 @@ If the question asks about a specific term (e.g., "neutrophil activation") and i
 ### Background universe matters
 Some datasets provide an explicit background (e.g., `bg_ensembl.txt`, `gencode.v31.primary_assembly.genes.csv`). Use it as `universe=` to `enrichGO` — **do not substitute the DEG-tested genes as background**. Different backgrounds produce meaningfully different adjusted p-values.
 
-### Pre-existing result CSVs vs executed notebooks
-Dataset folders may contain pre-computed enrichment-result CSVs alongside the executed notebook. **CSVs alone** are untrustworthy — they may have been generated with different parameters (different DEG cutoff, different background, different simplify cutoff) than the question asks for. Treat plain CSVs as advisory.
-
-**Executed notebooks are different**: an `*_executed.ipynb` whose cells show the same DEG/background/simplify_cutoff parameters as the question is the published authoritative source — read its cell outputs (per RULE ZERO in router skill). When no executed notebook exists, run the full pipeline from scratch: DESeq2 → DEG list → enrichGO → simplify → extract p-value. Use pre-existing `.R` scripts for their parameter choices, not their cached outputs.
+### Pre-existing results in the data folder
+Dataset folders may contain pre-computed enrichment-result CSVs or a notebook that has already been run. Do not take the answer from them: they may have been generated with different parameters (different DEG cutoff, different background, different simplify cutoff) than the question asks for, and copying them is not doing the analysis. Run the pipeline yourself: DESeq2 → DEG list → enrichGO → simplify → extract p-value, with the parameters the question states.
 
 ---
 

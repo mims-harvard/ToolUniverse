@@ -7,14 +7,14 @@ Usage:
     python scogs_phykit_pipeline.py --data-folder /path/to/data \\
         --metric long_branch_score --group fungi --extra "-v"
 
-Why this exists (RULE ZERO for BUSCO-orthology phylogenetics questions):
+Why this exists (BUSCO-orthology phylogenetics questions):
     Some phylogenetics datasets ship with `scogs_fungi.zip` and
-    `scogs_animals.zip`, which contain the pre-computed alignments
-    (`*.faa.mafft.clipkit`) AND trees (`*.faa.mafft.clipkit.treefile`)
-    from the original analysis. The reference answers come from running
-    PhyKIT on THESE files. Re-running BUSCO → MAFFT → IQ-TREE from scratch
-    produces slightly different numbers (different IQ-TREE seed, ClipKit
-    decisions, MAFFT version) AND takes hours.
+    `scogs_animals.zip`, which contain per-ortholog alignments
+    (`*.faa.mafft.clipkit`) and trees (`*.faa.mafft.clipkit.treefile`).
+    These are inputs to the analysis: the metrics are computed here, by
+    running PhyKIT on them. Rebuilding them with BUSCO → MAFFT → IQ-TREE
+    from `*.busco.zip` takes hours and is not needed to answer a
+    per-ortholog metric question.
 
     This script:
       1. Auto-extracts scogs_<group>.zip into a workspace tmpdir if not
@@ -25,8 +25,7 @@ Why this exists (RULE ZERO for BUSCO-orthology phylogenetics questions):
 
     The agent then reads the TSV and computes whatever aggregate the
     question asks for (median, mean, max, percentage above threshold,
-    Mann-Whitney between groups, etc.) — but the per-gene metrics are
-    canonical because they came from the original alignments+trees.
+    Mann-Whitney between groups, etc.).
 
 Supported metrics (PhyKIT functions):
     treeness, dvmc, long_branch_score, total_tree_length,

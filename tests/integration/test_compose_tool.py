@@ -15,11 +15,14 @@ ComposeTool is a composable tool that supports:
 import sys
 import os
 import json
+from pathlib import Path
+
 import pytest
 
 # Add src directory to Python path to import tooluniverse modules
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
+from tooluniverse.default_config import default_tool_files
 from tooluniverse.execute_function import ToolUniverse
 
 
@@ -190,64 +193,79 @@ def test_simple_math(tooluni):
 
 
 def test_config_file_tools(tooluni):
+    """Every ComposeTool in compose_tools.json loads and keeps its type.
+
+    No network here. This test used to run DrugSafetyAnalyzer, which reaches
+    openFDA, and it did so in a try/except whose result was only printed -- so it
+    reported success whether that call worked or not, while a slow answer failed
+    it on pytest.ini's 60-second default. Its two neighbours in this file already
+    carry timeout(180); this one, the only one that went to the network, did not,
+    and it is unmarked, so CI's core step (-m "not network") ran it on every push.
+    It also asserted nothing at all: the list it printed intersects
+    callable_functions, which is empty until a tool is instantiated, so it printed
+    an empty list whenever the live call failed and nobody noticed.
+
+    The live end-to-end run is now test_config_file_tool_runs_end_to_end, marked
+    `network` like every other live test in this repository.
     """
-    Test ComposeTool loaded from configuration files
-
-    This test verifies:
-    1. Loading ComposeTool from JSON configuration files
-    2. Configuration file defined tools can run normally
-    3. Demonstrate how to use predefined composite tools
-
-    Configuration file location: src/tooluniverse/data/compose_tools.json
-    """
-    print("\nTesting ComposeTool from configuration files")
-    print("=" * 40)
-
-    # Initialize ToolUniverse engine
     engine = ToolUniverse()
     try:
-        # Load compose type tools from configuration files
-        # This automatically loads tools defined in src/tooluniverse/data/compose_tools.json
-        engine.load_tools(tool_type=["compose"])
+        engine.load_tools(categories=["compose"])
 
-        # Test DrugSafetyAnalyzer tool from configuration file
-        print("Running DrugSafetyAnalyzer tool from configuration file:")
-        try:
-            result = engine.run_one_function(
-                {
-                    "name": "DrugSafetyAnalyzer",
-                    "arguments": {"drug_name": "aspirin", "serious_events_only": False},
-                }
+        declared = {
+            tool["name"]
+            for tool in json.loads(
+                Path(default_tool_files["compose"]).read_text(encoding="utf-8")
             )
+        }
+        loaded = {
+            tool["name"]
+            for tool in engine.all_tools
+            if tool.get("type") == "ComposeTool"
+        }
+        # Compared against the config file rather than a hard-coded list, so
+        # adding a ComposeTool does not make this stale.
+        assert loaded == declared, (
+            f"loading the compose category gave {sorted(loaded)}, but "
+            f"compose_tools.json declares {sorted(declared)}"
+        )
+        assert "DrugSafetyAnalyzer" in loaded
+        # Checked per entry rather than over all_tools: load_tools appends the
+        # machine's remote-tool connection configs to all_tools whatever
+        # categories were asked for (execute_function.py:1561), so on a host with
+        # remote providers registered that list legitimately holds non-compose
+        # entries. Asserting otherwise passes when this file is run alone and
+        # fails in the full suite.
+        for name in declared:
+            assert engine.all_tool_dict[name]["type"] == "ComposeTool"
+    finally:
+        engine.close()
 
-            print("DrugSafetyAnalyzer tool result:")
-            print(json.dumps(result, indent=2, ensure_ascii=False))
-        except Exception as e:
-            print(f"DrugSafetyAnalyzer test failed: {e}")
-            print("This is expected if the required atomic tools are not loaded.")
 
-        print(f"\nTotal tools loaded: {len(engine.callable_functions)}")
-        compose_tools = [
-            name
-            for name in engine.callable_functions.keys()
-            if any(
-                tool.get("name") == name and tool.get("type") == "ComposeTool"
-                for tool in engine.all_tools
-            )
-        ]
-        print(f"ComposeTool instances: {compose_tools}")
+@pytest.mark.network
+@pytest.mark.timeout(180)
+def test_config_file_tool_runs_end_to_end(tooluni):
+    """Run a config-file ComposeTool for real. Marked `network`: it reaches openFDA.
 
-        # Check available composite tools and test them
-        print(f"\nTotal tools loaded: {len(engine.all_tools)}")
-        compose_tools = [
-            name
-            for name in engine.callable_functions.keys()
-            if any(
-                tool.get("name") == name and tool.get("type") == "ComposeTool"
-                for tool in engine.all_tools
-            )
-        ]
-        print(f"ComposeTool instances available: {compose_tools}")
+    Unlike the printing it replaces, this asserts. run_one_function returns its
+    errors as values rather than raising, so a failure arrives as the result.
+    """
+    engine = ToolUniverse()
+    try:
+        engine.load_tools(categories=["compose"])
+        result = engine.run_one_function(
+            {
+                "name": "DrugSafetyAnalyzer",
+                "arguments": {"drug_name": "aspirin", "serious_events_only": False},
+            }
+        )
+
+        assert result is not None
+        # callable_functions is populated lazily, so a real run is what proves
+        # the config-file tool was instantiated and not merely declared.
+        assert "DrugSafetyAnalyzer" in engine.callable_functions
+        if isinstance(result, dict):
+            assert not result.get("error"), f"DrugSafetyAnalyzer returned {result}"
     finally:
         engine.close()
 
@@ -289,13 +307,16 @@ def test_external_file_tools(tooluni):
         # Test each available composite tool
         for tool in compose_tools:
             tool_name = tool["name"]
-            if tool_name in [
-                "DrugSafetyAnalyzer",
-                "SimpleExample",
-                "TestDependencyLoading",
-                "ToolDiscover",  # Skip ToolDiscover as it requires LLM calls and may timeout
-                "ToolDescriptionOptimizer",  # Skip ToolDescriptionOptimizer as it requires LLM calls and may timeout
-            ]:
+            if (
+                tool_name
+                in [
+                    "DrugSafetyAnalyzer",
+                    "SimpleExample",
+                    "TestDependencyLoading",
+                    "ToolDiscover",  # Skip ToolDiscover as it requires LLM calls and may timeout
+                    "ToolDescriptionOptimizer",  # Skip ToolDescriptionOptimizer as it requires LLM calls and may timeout
+                ]
+            ):
                 # Skip these as they are tested in other functions or may timeout
                 continue
 
@@ -304,7 +325,9 @@ def test_external_file_tools(tooluni):
                 # Create generic test arguments based on tool requirements
                 test_args = {}
                 if "parameter" in tool and "properties" in tool["parameter"]:
-                    for param_name, param_info in tool["parameter"]["properties"].items():
+                    for param_name, param_info in tool["parameter"][
+                        "properties"
+                    ].items():
                         if param_name == "tool_config":
                             # Special handling for ToolDescriptionOptimizer
                             test_args[param_name] = {
@@ -314,9 +337,12 @@ def test_external_file_tools(tooluni):
                                 "parameter": {
                                     "type": "object",
                                     "properties": {
-                                        "query": {"type": "string", "description": "Search query"}
-                                    }
-                                }
+                                        "query": {
+                                            "type": "string",
+                                            "description": "Search query",
+                                        }
+                                    },
+                                },
                             }
                         elif param_info["type"] == "string":
                             test_args[param_name] = "test_input"

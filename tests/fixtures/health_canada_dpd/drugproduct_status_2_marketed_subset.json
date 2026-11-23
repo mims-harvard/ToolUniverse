@@ -1,0 +1,79 @@
+[
+ {
+  "ai_group_no": "0145503002",
+  "brand_name": "GLEEVEC",
+  "class_name": "Human",
+  "company_name": "NOVARTIS PHARMACEUTICALS CANADA INC",
+  "descriptor": "",
+  "drug_code": 73824,
+  "drug_identification_number": "02253275",
+  "last_update_date": "2026-06-17",
+  "number_of_ais": "1"
+ },
+ {
+  "ai_group_no": "0145503003",
+  "brand_name": "GLEEVEC",
+  "class_name": "Human",
+  "company_name": "NOVARTIS PHARMACEUTICALS CANADA INC",
+  "descriptor": "",
+  "drug_code": 73825,
+  "drug_identification_number": "02253283",
+  "last_update_date": "2026-06-17",
+  "number_of_ais": "1"
+ },
+ {
+  "ai_group_no": "0145503002",
+  "brand_name": "TEVA-IMATINIB",
+  "class_name": "Human",
+  "company_name": "TEVA CANADA LIMITED",
+  "descriptor": "",
+  "drug_code": 88465,
+  "drug_identification_number": "02399806",
+  "last_update_date": "2026-11-04",
+  "number_of_ais": "1"
+ },
+ {
+  "ai_group_no": "0108634001",
+  "brand_name": "ALCON TEARS 0.5%",
+  "class_name": "Human",
+  "company_name": "ALCON CANADA INC",
+  "descriptor": "",
+  "drug_code": 793,
+  "drug_identification_number": "00000809",
+  "last_update_date": "2025-03-22",
+  "number_of_ais": "1"
+ },
+ {
+  "ai_group_no": "0108634002",
+  "brand_name": "ALCON TEARS 1%",
+  "class_name": "Human",
+  "company_name": "ALCON CANADA INC",
+  "descriptor": "",
+  "drug_code": 794,
+  "drug_identification_number": "00000817",
+  "last_update_date": "2025-03-22",
+  "number_of_ais": "1"
+ },
+ {
+  "ai_group_no": "0107358003",
+  "brand_name": "ISOPTO CARPINE",
+  "class_name": "Human",
+  "company_name": "NOVARTIS PHARMACEUTICALS CANADA INC",
+  "descriptor": "2%",
+  "drug_code": 2375,
+  "drug_identification_number": "00000868",
+  "last_update_date": "2026-08-21",
+  "number_of_ais": "1"
+ },
+ {
+  "ai_group_no": "0107663002",
+  "brand_name": "MYDRIACYL",
+  "class_name": "Human",
+  "company_name": "ALCON CANADA INC",
+  "descriptor": "",
+  "drug_code": 260,
+  "drug_identification_number": "00000981",
+  "last_update_date": "2025-03-22",
+  "number_of_ais": "1"
+ }
+]
