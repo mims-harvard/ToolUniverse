@@ -695,6 +695,30 @@
     ]
   },
   {
+    "name": "SOFYA_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Other",
+    "register_url": "https://sofya.co/dashboard",
+    "purpose": "Authenticate the backend='sofya' option (Sofya Search, https://sofya.co/v1/search). Searches are billed against the account's credits (pay as you go; failed requests are not charged).",
+    "without": "web_search still works via DDGS/Parallel/DuckDuckGo-HTML/Wikipedia; backend='sofya' falls back to the normal DDGS chain without it.",
+    "used_by": [
+      "web_search_tools.json"
+    ]
+  },
+  {
+    "name": "SPECSTREAM_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Other",
+    "register_url": "https://specstream.ai/signup",
+    "purpose": "Authenticate the backend='specstream' option (SpecStream Search API, https://api.specstream.ai/v1/web-search). Searches are billed against the account's balance.",
+    "without": "web_search still works via DDGS/Parallel/DuckDuckGo-HTML/Wikipedia; backend='specstream' falls back to the normal DDGS chain without it.",
+    "used_by": [
+      "web_search_tools.json"
+    ]
+  },
+  {
     "name": "TXAGENT_MCP_SERVER_HOST",
     "requirement": "required",
     "type": "endpoint",

@@ -231,9 +231,56 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. SmolAgentTool.run wraps the agent run in a result envelope of its own; `output` holds whatever the agent returned, which is the agent's own shape and not constrained here.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The agent run finished.",
+          "properties": {
+            "output": {
+              "description": "Whatever the agent returned -- usually its final answer as text. Not narrowed, because the agent decides it."
+            },
+            "success": {
+              "const": true
+            },
+            "execution_time": {
+              "type": "number",
+              "description": "Wall-clock seconds for the run."
+            }
+          },
+          "required": [
+            "output",
+            "success",
+            "execution_time"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The agent run raised or hit its timeout. `output` is null on this branch and `execution_time` is not reported.",
+          "properties": {
+            "output": {
+              "type": "null"
+            },
+            "success": {
+              "const": false
+            },
+            "error": {
+              "type": "string",
+              "description": "The exception's message."
+            },
+            "error_type": {
+              "type": "string",
+              "description": "The exception class name."
+            }
+          },
+          "required": [
+            "output",
+            "success",
+            "error",
+            "error_type"
+          ]
+        }
+      ]
     }
   },
   {
@@ -337,9 +384,56 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "description": "What the caller receives. SmolAgentTool.run wraps the agent run in a result envelope of its own; `output` holds whatever the agent returned, which is the agent's own shape and not constrained here.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The agent run finished.",
+          "properties": {
+            "output": {
+              "description": "Whatever the agent returned -- usually its final answer as text. Not narrowed, because the agent decides it."
+            },
+            "success": {
+              "const": true
+            },
+            "execution_time": {
+              "type": "number",
+              "description": "Wall-clock seconds for the run."
+            }
+          },
+          "required": [
+            "output",
+            "success",
+            "execution_time"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The agent run raised or hit its timeout. `output` is null on this branch and `execution_time` is not reported.",
+          "properties": {
+            "output": {
+              "type": "null"
+            },
+            "success": {
+              "const": false
+            },
+            "error": {
+              "type": "string",
+              "description": "The exception's message."
+            },
+            "error_type": {
+              "type": "string",
+              "description": "The exception class name."
+            }
+          },
+          "required": [
+            "output",
+            "success",
+            "error",
+            "error_type"
+          ]
+        }
+      ]
     }
   }
 ]
