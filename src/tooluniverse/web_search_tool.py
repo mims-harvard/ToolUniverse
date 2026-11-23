@@ -1,6 +1,6 @@
 """Web search tools for ToolUniverse using DDGS plus opt-in hosted backends
-(Parallel Search MCP, SerpBase, Firecrawl Search, Outcrawl Search, Keenable Search,
-SpecStream Search API)."""
+(Parallel Search MCP, SerpBase, Firecrawl Search, Outcrawl Search, Sofya Search,
+Keenable Search, SpecStream Search API)."""
 
 import importlib.util
 import json
@@ -66,6 +66,16 @@ OUTCRAWL_PROVIDER_NOTICE = (
 )
 # Outcrawl returns at most 20 hits per request.
 _OUTCRAWL_MAX_LIMIT = 20
+
+SOFYA_SEARCH_URL = "https://sofya.co/v1/search"
+SOFYA_PROVIDER_NOTICE = (
+    "Query sent to Sofya's hosted third-party Search API at "
+    f"{SOFYA_SEARCH_URL} (billed in credits against the account). "
+    "ToolUniverse region and safesearch controls are not applied by this "
+    "backend; do not submit sensitive or patient-identifying information."
+)
+# Sofya accepts max_results from 1 to 20.
+_SOFYA_MAX_RESULTS = 20
 
 SPECSTREAM_SEARCH_URL = "https://api.specstream.ai/v1/web-search"
 SPECSTREAM_PROVIDER_NOTICE = (
@@ -527,6 +537,103 @@ print(json.dumps(results))
 
         return results
 
+    def _search_with_sofya(self, query: str, max_results: int) -> List[Dict[str, Any]]:
+        """Search with Sofya's Search API and normalize its results.
+
+        Requires SOFYA_API_KEY, resolved per call from the request's
+        credential scope when one is active, otherwise from the environment.
+        Sofya accepts ``max_results`` from 1 to 20, so it is capped there.
+        ``search_depth`` is ``snippets``: result snippets are returned without
+        reading the pages. Failures come back as a non-2xx status with a JSON
+        body of ``error`` (a code) and ``detail`` (a message); the body is read
+        first to keep its message, then the status is enforced.
+        """
+        api_key = (self.credential("SOFYA_API_KEY") or "").strip()
+        if not api_key:
+            raise RuntimeError(
+                "SOFYA_API_KEY environment variable is not set. "
+                "Create a key at https://sofya.co/dashboard."
+            )
+
+        response = requests.post(
+            SOFYA_SEARCH_URL,
+            json={
+                "query": query,
+                "max_results": min(max_results, _SOFYA_MAX_RESULTS),
+                "search_depth": "snippets",
+            },
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "User-Agent": "ToolUniverse/1.0",
+            },
+            timeout=30,
+        )
+
+        try:
+            data = response.json()
+        except ValueError:
+            data = None
+        error_code = None
+        body_error = None
+        if isinstance(data, dict):
+            error_code = data.get("error")
+            if not isinstance(error_code, str):
+                error_code = None
+            body_error = data.get("detail")
+            if not isinstance(body_error, str) or not body_error:
+                body_error = error_code
+
+        if response.status_code == 401:
+            raise RuntimeError("Sofya Search rejected SOFYA_API_KEY (HTTP 401).")
+        if response.status_code == 402:
+            detail = f" {body_error}" if body_error else ""
+            if error_code == "key_cap_reached":
+                raise RuntimeError(
+                    "Sofya Search key reached the spending limit set by its "
+                    f"owner (HTTP 402).{detail}"
+                )
+            raise RuntimeError(
+                f"Sofya Search account is out of credits (HTTP 402).{detail}"
+            )
+        if response.status_code == 429:
+            detail = f" {body_error}" if body_error else ""
+            raise RuntimeError(f"Sofya Search rate limit reached (HTTP 429).{detail}")
+        if response.status_code >= 400:
+            message = body_error or response.reason or "request failed"
+            raise RuntimeError(
+                f"Sofya Search API error (HTTP {response.status_code}): {message}"
+            )
+
+        if not isinstance(data, dict):
+            raise RuntimeError("Sofya Search response was not a JSON object")
+        raw_results = data.get("results")
+        if not isinstance(raw_results, list):
+            raise RuntimeError("Sofya Search response did not include results")
+
+        results = []
+        for item in raw_results:
+            if not isinstance(item, dict):
+                continue
+            url = item.get("url")
+            if not isinstance(url, str) or not url:
+                continue
+            title = item.get("title")
+            snippet = item.get("description")
+            if not isinstance(snippet, str) or not snippet:
+                snippet = item.get("content")
+            results.append(
+                {
+                    "title": title if isinstance(title, str) else "",
+                    "url": url,
+                    "snippet": snippet if isinstance(snippet, str) else "",
+                    "rank": len(results) + 1,
+                }
+            )
+            if len(results) >= max_results:
+                break
+
+        return results
+
     def _search_with_keenable(
         self, query: str, max_results: int
     ) -> List[Dict[str, Any]]:
@@ -817,6 +924,26 @@ print(json.dumps(results))
             # Explicit providers fall back to DDGS auto today. Preserve that
             # contract without adding Outcrawl to the default provider chain.
             backends_to_try = ["auto"]
+        elif backend == "sofya":
+            attempted_backends.append("sofya")
+            try:
+                results = self._search_with_sofya(query=query, max_results=max_results)
+                if results:
+                    return (
+                        results,
+                        "sofya",
+                        attempted_backends,
+                        None,
+                        provider_errors,
+                    )
+                had_empty_success = True
+            except Exception as error:
+                last_error = str(error)
+                provider_errors["sofya"] = str(error)
+
+            # Explicit providers fall back to DDGS auto today. Preserve that
+            # contract without adding Sofya to the default provider chain.
+            backends_to_try = ["auto"]
         elif backend == "keenable":
             attempted_backends.append("keenable")
             try:
@@ -1090,7 +1217,7 @@ print(json.dumps(results))
                     },
                 }
 
-            if backend in ("parallel", "outcrawl", "keenable"):
+            if backend in ("parallel", "outcrawl", "sofya", "keenable"):
                 unsupported_controls = []
                 if region != "us-en":
                     unsupported_controls.append("region")
@@ -1183,6 +1310,8 @@ print(json.dumps(results))
                     response["data"]["provider_notice"] = FIRECRAWL_PROVIDER_NOTICE
                 if "outcrawl" in attempted_backends:
                     response["data"]["provider_notice"] = OUTCRAWL_PROVIDER_NOTICE
+                if "sofya" in attempted_backends:
+                    response["data"]["provider_notice"] = SOFYA_PROVIDER_NOTICE
                 if "keenable" in attempted_backends:
                     response["data"]["provider_notice"] = KEENABLE_PROVIDER_NOTICE
                 if "specstream" in attempted_backends:
@@ -1211,6 +1340,8 @@ print(json.dumps(results))
                 result_data["provider_notice"] = FIRECRAWL_PROVIDER_NOTICE
             if "outcrawl" in attempted_backends:
                 result_data["provider_notice"] = OUTCRAWL_PROVIDER_NOTICE
+            if "sofya" in attempted_backends:
+                result_data["provider_notice"] = SOFYA_PROVIDER_NOTICE
             if "keenable" in attempted_backends:
                 result_data["provider_notice"] = KEENABLE_PROVIDER_NOTICE
             if "specstream" in attempted_backends:
