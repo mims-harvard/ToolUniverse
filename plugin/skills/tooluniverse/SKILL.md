@@ -1,6 +1,6 @@
 ---
 name: tooluniverse
-description: "ToolUniverse plugin router. STEP 1 BEFORE ANY ANALYSIS: if the data folder contains `*_executed.ipynb`, run `tu run read_executed_notebook '{\"data_folder\":\"<path>\",\"search\":\"<keyword>\"}'` to extract its cell outputs and apply EVERY filter/sample-exclusion the notebook used — even when the question says 'Using DESeq2/Run X/Compute Y' (this describes the METHOD the notebook used, not a request to rerun). The notebook's cell outputs are the only published authoritative answers; reimplementing or reading stale pre-computed CSVs in the data folder produces different numbers because of outlier-sample removal, library version, and filter steps you don't see by skimming. STEP 2 routing — pick a sub-skill name from this exact list (never invent): tooluniverse-rnaseq-deseq2 (RNA/miRNA-seq DE, correlation, PCA, clustering, dispersion), tooluniverse-gene-enrichment (GO/KEGG/Reactome/GSEA/pathway enrichment), tooluniverse-statistical-modeling (regression, ANOVA, ordinal/logistic, chi-square, correlation, power), tooluniverse-image-analysis (microscopy, colony, fluorescence, dose-response, .tif — including ANOVA / Dunnett / power-analysis on image-derived measurements), tooluniverse-epigenomics (DNA methylation, CpG, m6A, MeRIP-seq, bisulfite, ChIP-seq, chromatin), tooluniverse-sequence-analysis (FASTQ, Trimmomatic, BWA, samtools, coverage), tooluniverse-variant-analysis (VCF, VAF, SNP, mutation), tooluniverse-phylogenetics (treeness, PhyKIT, parsimony), tooluniverse-single-cell (scRNA, h5ad, scanpy), tooluniverse-crispr-screen-analysis (MAGeCK, sgRNA), tooluniverse-proteomics-analysis (mass spec, TMT). Use for CSV/Excel/VCF/FASTA/h5ad and any biology/chemistry/medicine analysis question."
+description: "ToolUniverse plugin router. Compute every answer from the data yourself; never take it from a pre-run notebook, cached result table or shipped script output in the data folder. Routing — pick a sub-skill name from this exact list (never invent): tooluniverse-rnaseq-deseq2 (RNA/miRNA-seq DE, correlation, PCA, clustering, dispersion), tooluniverse-gene-enrichment (GO/KEGG/Reactome/GSEA/pathway enrichment), tooluniverse-statistical-modeling (regression, ANOVA, ordinal/logistic, chi-square, correlation, power), tooluniverse-image-analysis (microscopy, colony, fluorescence, dose-response, .tif — including ANOVA / Dunnett / power-analysis on image-derived measurements), tooluniverse-epigenomics (DNA methylation, CpG, m6A, MeRIP-seq, bisulfite, ChIP-seq, chromatin), tooluniverse-sequence-analysis (FASTQ, Trimmomatic, BWA, samtools, coverage), tooluniverse-variant-analysis (VCF, VAF, SNP, mutation), tooluniverse-phylogenetics (treeness, PhyKIT, parsimony), tooluniverse-single-cell (scRNA, h5ad, scanpy), tooluniverse-crispr-screen-analysis (MAGeCK, sgRNA), tooluniverse-proteomics-analysis (mass spec, TMT). Use for CSV/Excel/VCF/FASTA/h5ad and any biology/chemistry/medicine analysis question."
 when_to_use: "Activate when the user provides data files to analyze, asks about differential expression, runs statistical tests on clinical data, performs variant analysis, does pathway enrichment, builds phylogenetic trees, or asks any scientific research question."
 paths: "*.csv,*.xlsx,*.tsv,*.vcf,*.fa,*.fasta,*.faa,*.h5ad,*.rds,*.bam"
 ---
@@ -12,7 +12,7 @@ paths: "*.csv,*.xlsx,*.tsv,*.vcf,*.fa,*.fasta,*.faa,*.h5ad,*.rds,*.bam"
 **BEFORE doing anything else** — before reading data, before writing code, before answering — scan the routing table below and invoke the matching skill. The specialized skill contains critical domain conventions that you will get wrong without loading.
 
 **How to route:**
-1. Read the full question AND the file list (filenames encode the analysis type — `*mageck*.xlsx` → CRISPR screen, `*DM.csv`/`*AE.csv` → clinical trial AE, `*.vcf` → variant, `*.h5ad` → single-cell, `*_counts.csv`+`*meta*.csv` → RNA-seq DE, `*.faa`+`*.treefile` → phylogenetics, `*_executed.ipynb` → authoritative analysis already ran)
+1. Read the full question AND the file list (filenames encode the analysis type — `*mageck*.xlsx` → CRISPR screen, `*DM.csv`/`*AE.csv` → clinical trial AE, `*.vcf` → variant, `*.h5ad` → single-cell, `*_counts.csv`+`*meta*.csv` → RNA-seq DE, `*.faa`+`*.treefile` → phylogenetics)
 2. Find the matching keyword row in the Routing Table
 3. Call `Skill(skill="<skill-name>")` immediately
 4. Follow the loaded skill's instructions to answer the question
@@ -25,30 +25,9 @@ paths: "*.csv,*.xlsx,*.tsv,*.vcf,*.fa,*.fasta,*.faa,*.h5ad,*.rds,*.bam"
 
 ## Critical Analysis Conventions
 
-### RULE ZERO: Use the authoritative pipeline if one ships with the data
+### Compute the answer from the data
 
-Before writing ANY analysis code, check whether the data folder contains the published analysis. Two common forms:
-
-1. **Executed notebook** (`*_executed.ipynb`, `*.ipynb`) — the analysis has already run with the exact package versions, filters, and thresholds behind the reference answers. Reimplementing with pydeseq2/scanpy/gseapy produces different numbers. Read the outputs directly:
-
-   ```bash
-   tu run read_executed_notebook '{"data_folder":"/path/to/data","search":"<keyword>"}'
-   ```
-
-   `search` can be comma-separated terms (e.g., `"upregulated,log2FoldChange"`) or a regex. The tool returns the matching cells' source + printed outputs so you can cite the published value instead of recomputing.
-
-2. **Executable script** (`run_*.py`, `analysis.R`, `find_*.R`, `*.Rmd`) — execute and report:
-
-   ```bash
-   ls /path/to/data/folder
-   cd /path/to/data && python3 run_*.py      # or Rscript analysis.R
-   ```
-
-   **Canonical vs scratch scripts**: when a folder has many `.R`/`.py` files, prefer ones with canonical names (`analysis.R`, `main.R`, `run.R`, `run_<question_topic>.R`) over scratch-named ones (`try_*.R`, `check_*.R`, `inspect_*.R`, `verify_*.R`, `*_v2.R`, `*2.R`, `*3.R`). Scratch-named scripts are usually leftovers from prior agent attempts that may not have converged on the published answer — treat their outputs as advisory, not authoritative.
-
-Only write your own analysis code when no authoritative pipeline exists in the data folder. When one does exist, your job is to execute/read it and report — not to reimplement.
-
-**RULE ZERO sub-rule — Cite-the-cell-output**: If the notebook has a cell whose output IS the answer to the question (e.g., `len(sigs) = 197`, `mean p-value: 0.0254`, `top hit: GENE_X`), copy that output value directly. Do NOT recompute with your own filters. The notebook may apply slightly-different filters than the question text describes (e.g., the question lists `padj<0.05, |LFC|>0.5, baseMean>10` but the notebook's filter line has `& (baseMean>=10)` commented out). The published answer is the notebook's output — even if the question's filter list slightly differs from what the notebook actually applied. The benchmark's GT comes from the notebook's actual computation, not from re-applying the question's literal filter list. Trust the notebook's published number when it directly answers the question.
+Do the analysis yourself, from the data files, with the method the question describes and the conventions of the matching sub-skill. Do not take the answer from a notebook that has already been run, a result table, or the output of a script that ships with the data: those are not inputs to the analysis, and copying their numbers is not doing it. When the question states filters or thresholds, apply exactly those.
 
 ### RULE ONE: Use the bundled skill scripts for recurring analysis patterns
 
@@ -58,7 +37,6 @@ Prefer ToolUniverse tools (callable via `tu run <name>` or MCP `execute_tool`) f
 
 | Task | ToolUniverse tool | One-liner |
 |------|------|-----------|
-| Read outputs of an authoritative executed notebook | `read_executed_notebook` | `tu run read_executed_notebook '{"data_folder":"/path","search":"upregulated"}'` |
 | Clinical trial AE severity (chi-square, ordinal) | `clinical_trial_ae_severity_test` | `tu run clinical_trial_ae_severity_test '{"dm_file":"DM.csv","ae_file":"AE.csv","test":"chi-square","group_col":"TRTGRP"}'` |
 | Per-gene ANOVA / fold change (gene × sample matrix) | `expression_anova_per_gene` | `tu run expression_anova_per_gene '{"counts_file":"counts.csv","meta_file":"meta.csv","group_col":"cell_type","mode":"anova"}'` |
 | Coding-variant fraction in a VCF/Excel | `coding_variant_fraction` | `tu run coding_variant_fraction '{"file":"variants.xlsx","vaf_threshold":0.3,"annotation":"synonymous_variant","header_rows":2}'` |
@@ -73,7 +51,7 @@ These are short pointers. The full conventions, anti-pattern examples, and code 
 
 1. **Clinical trial AE severity** (chi-square OR ordinal/logistic regression): use ALL AE records, `max(AESEV)` per subject, do NOT filter by AEPT — even when the question names a specific condition like "COVID-19 severity" or "infection severity", AESEV IS the universal outcome, not a subset filter. See `tooluniverse-statistical-modeling`.
 2. **Variant counting / fractions** (synonymous %, missense %, "fraction of X variants", etc.): denominator is the CODING subset only (synonymous + missense + splice_region + stop_gained/lost + start_lost + frameshift + inframe_ins/del). EXCLUDE intron, intergenic, UTR, splice_donor/acceptor, regulatory, non_coding. The CODING-only denominator applies even when the question doesn't say "coding" explicitly — use `coding_variant_fraction` tool. See `tooluniverse-variant-analysis`.
-3. **DESeq2 library**: match the authoritative script if present; otherwise prefer R DESeq2 — see `tooluniverse-rnaseq-deseq2`. When reading the analyst's filter line, only apply filters BEFORE the `#` comment — do NOT add filters from commented-out code (e.g., `# & (baseMean>=10)` is OFF, do not include).
+3. **DESeq2 library**: prefer R DESeq2 — see `tooluniverse-rnaseq-deseq2`.
 4. **Per-feature stat (ANOVA F, median LFC)**: run per-gene then summarize, NEVER pool/sum-then-ratio — see `tooluniverse-statistical-modeling`.
 5. **Spline models**: use R `ns()` via Rscript — see `tooluniverse-statistical-modeling`.
 6. **PhyKIT saturation**: use column 2 (`1-slope`), not column 1 (`slope`) — see `tooluniverse-phylogenetics`.

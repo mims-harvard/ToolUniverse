@@ -115,13 +115,13 @@ Two settings to make deliberately:
 
 ## Working with the capsules
 
-- **Use the pre-computed files.** `scogs_*.zip` contains the alignments and trees
-  from the original analysis (`*.faa.mafft`, `*.faa.mafft.clipkit`,
-  `*.faa.mafft.clipkit.treefile`). Re-running MAFFT/ClipKit/IQ-TREE takes hours
-  and yields different numbers from the published answers.
-- **`*_executed.ipynb` holds the authoritative outputs.** Where a capsule ships
-  one, its cell outputs are the published answers, including filtering and
-  sample exclusions that are not obvious from the data files alone.
+- **Alignments and trees are inputs.** `scogs_*.zip` contains per-ortholog
+  alignments and trees (`*.faa.mafft`, `*.faa.mafft.clipkit`,
+  `*.faa.mafft.clipkit.treefile`); run PhyKIT on them rather than re-running
+  MAFFT/ClipKit/IQ-TREE, which takes hours.
+- **A capsule's pre-run notebook is not a source of answers.** Where a capsule
+  ships one, the agent must not read its outputs to answer: it computes the
+  answer from the data files.
 
 ## PhyKIT conventions
 

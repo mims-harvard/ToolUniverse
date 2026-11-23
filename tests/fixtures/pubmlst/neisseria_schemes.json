@@ -1,0 +1,21 @@
+{
+ "records": 93,
+ "schemes": [
+  {
+   "description": "MLST",
+   "scheme": "https://rest.pubmlst.org/db/pubmlst_neisseria_seqdef/schemes/1"
+  },
+  {
+   "description": "Finetyping antigens",
+   "scheme": "https://rest.pubmlst.org/db/pubmlst_neisseria_seqdef/schemes/2"
+  },
+  {
+   "description": "rplF species",
+   "scheme": "https://rest.pubmlst.org/db/pubmlst_neisseria_seqdef/schemes/42"
+  },
+  {
+   "description": "N. meningitidis cgMLST v3",
+   "scheme": "https://rest.pubmlst.org/db/pubmlst_neisseria_seqdef/schemes/88"
+  }
+ ]
+}

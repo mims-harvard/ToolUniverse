@@ -101,11 +101,11 @@
               "additionalProperties": false,
               "properties": {
                 "id": {
-                  "description": "Paper id (MED-42823970), or the paper's DOI (10.1038/\u2026, doi:10.1038/\u2026, https://doi.org/10.1038/\u2026), PMID (42823970, PMID:42823970), PMCID (PMC1234567), arXiv id (2610.02175), or a link to it on AgingResearch.News, PubMed, PMC, Europe PMC, arXiv, bioRxiv or a publisher's page with its DOI.",
+                  "description": "Paper id (MED-26463117), or the paper's DOI (10.1038/\u2026, doi:10.1038/\u2026, https://doi.org/10.1038/\u2026), PMID (26463117, PMID:26463117), PMCID (PMC1234567), arXiv id (2610.02175), or a link to it on AgingResearch.News, PubMed, PMC, Europe PMC, arXiv, bioRxiv or a publisher's page with its DOI.",
                   "examples": [
-                    "MED-42823970"
+                    "MED-26463117"
                   ],
-                  "maxLength": 200,
+                  "maxLength": 1000,
                   "type": "string"
                 }
               },
@@ -225,7 +225,7 @@
                   "type": "string"
                 },
                 "stage": {
-                  "description": "Stage: with `indication`, the stage for that indication; otherwise the asset's furthest stage.",
+                  "description": "Stage: with `indication`, the stage for that indication; otherwise the asset's furthest stage. `discontinued` takes programs whose development status is discontinued, whatever stage they reached; a phase leaves them out.",
                   "enum": [
                     "approved",
                     "phase3",
@@ -289,7 +289,7 @@
                 },
                 "paper_id": {
                   "description": "Only claims from this paper.",
-                  "maxLength": 80,
+                  "maxLength": 1000,
                   "type": "string"
                 },
                 "relation": {
@@ -327,12 +327,11 @@
                   "type": "string"
                 },
                 "entity": {
-                  "description": "Only grants whose titles name this entity, as `type:key` (see /entities), e.g. `intervention:rapamycin` or `disease:sarcopenia`.",
+                  "description": "Only grants whose titles name this entity, as `type:key` (from find_entities), e.g. `intervention:rapamycin` or `disease:sarcopenia`. A bare key works too.",
                   "examples": [
                     "intervention:rapamycin"
                   ],
                   "maxLength": 200,
-                  "pattern": "^[a-z]+:.+$",
                   "type": "string"
                 },
                 "funder": {
@@ -658,7 +657,7 @@
                   "type": "string"
                 },
                 "since": {
-                  "description": "Only papers added on or after this UTC date (YYYY-MM-DD; a full ISO timestamp is cut to its date).",
+                  "description": "Only papers added on or after this date (YYYY-MM-DD).",
                   "examples": [
                     "2026-09-28"
                   ],
@@ -912,7 +911,7 @@
               "additionalProperties": false,
               "properties": {
                 "pmid": {
-                  "description": "One PubMed identifier to look up in Folklore's current corpus, as 1 to 12 digits without a PMID prefix.",
+                  "description": "One PMID returned by Folklore literature search, as a JSON string of 1 to 12 ASCII digits. Do not send a number, PMID prefix, URL or DOI. The current corpus does not contain every PubMed record.",
                   "pattern": "^[0-9]{1,12}$",
                   "title": "Pmid",
                   "type": "string"

@@ -1,5 +1,6 @@
 from importlib.metadata import version, PackageNotFoundError
 import importlib
+import importlib.util
 import os
 from typing import Any, Optional, List
 
@@ -119,6 +120,31 @@ else:
     _HTTP_CLIENT_AVAILABLE = False
 
 
+def _import_own_submodule(name: str) -> Any:
+    """
+    Resolve ``name`` as a submodule of this package, or return None.
+
+    ``importlib.util.find_spec`` is consulted first so that a module which
+    exists but fails to import is told apart from a name that is not a module
+    at all: the first re-raises, matching what Python's own import machinery
+    would report, and only the second falls through to the tool registry.
+    ``find_spec`` searches ``__path__``, so modules contributed by installed
+    sub-packages resolve here too.
+    """
+    if name.startswith("_"):
+        return None
+    qualified = f"{__name__}.{name}"
+    try:
+        spec = importlib.util.find_spec(qualified)
+    except (ImportError, AttributeError, ValueError):
+        return None
+    if spec is None:
+        return None
+    module = importlib.import_module(f".{name}", __name__)
+    globals()[name] = module
+    return module
+
+
 def __getattr__(name: str) -> Any:
     """
     Dynamic dispatch for tool classes.
@@ -156,13 +182,26 @@ def __getattr__(name: str) -> Any:
             globals()[name] = value
             return value
 
-    # 1. Try to get it from the tool registry (lazy or eager)
+    # 1. A submodule of this package is a module, not a scientific tool.
+    # Resolve it as one before consulting the tool registry. Looking a module
+    # name up as a tool name always misses, and the miss in
+    # get_tool_class_lazy falls back to a full, eager discovery of every tool
+    # module before Python imports the submodule anyway -- measured at ~3.3 s
+    # of pure waste per process. No registered tool name is also a submodule
+    # name (tool names are class names, submodules are snake_case), which
+    # tests/unit/test_a_submodule_name_is_never_a_tool_name.py asserts, so
+    # this cannot shadow a tool.
+    module = _import_own_submodule(name)
+    if module is not None:
+        return module
+
+    # 2. Try to get it from the tool registry (lazy or eager)
     # The registry knows about all tools via AST discovery or manual registration
     tool_class = get_tool_class_lazy(name)
     if tool_class:
         return tool_class
 
-    # 2. If not found, raise AttributeError standard behavior
+    # 3. If not found, raise AttributeError standard behavior
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 

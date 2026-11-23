@@ -1,7 +1,7 @@
 """
 Finish
 
-Indicate the end of multi-step reasoning.
+Control signal, not an executable tool: raise it to tell your own multi-step reasoning loop that ...
 """
 
 from typing import Any, Optional, Callable
@@ -15,7 +15,7 @@ def Finish(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Indicate the end of multi-step reasoning.
+    Control signal, not an executable tool: raise it to tell your own multi-step reasoning loop that ...
 
     Parameters
     ----------

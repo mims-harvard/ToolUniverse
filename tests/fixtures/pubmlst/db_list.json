@@ -1,0 +1,132 @@
+[
+ {
+  "databases": [
+   {
+    "description": "Achromobacter spp. isolates",
+    "href": "https://rest.pubmlst.org/db/pubmlst_achromobacter_isolates",
+    "name": "pubmlst_achromobacter_isolates"
+   },
+   {
+    "description": "Achromobacter spp. sequence/profile definitions",
+    "href": "https://rest.pubmlst.org/db/pubmlst_achromobacter_seqdef",
+    "name": "pubmlst_achromobacter_seqdef"
+   }
+  ],
+  "description": "Achromobacter spp.",
+  "name": "achromobacter"
+ },
+ {
+  "databases": [
+   {
+    "description": "Neisseria spp. isolates",
+    "href": "https://rest.pubmlst.org/db/pubmlst_neisseria_isolates",
+    "name": "pubmlst_neisseria_isolates"
+   },
+   {
+    "description": "Neisseria spp. sequence/profile definitions",
+    "href": "https://rest.pubmlst.org/db/pubmlst_neisseria_seqdef",
+    "name": "pubmlst_neisseria_seqdef"
+   }
+  ],
+  "description": "Neisseria spp.",
+  "name": "neisseria"
+ },
+ {
+  "databases": [
+   {
+    "description": "Ribosomal MLST isolates",
+    "href": "https://rest.pubmlst.org/db/pubmlst_rmlst_isolates",
+    "name": "pubmlst_rmlst_isolates"
+   },
+   {
+    "description": "Ribosomal MLST sequence/profile definitions",
+    "href": "https://rest.pubmlst.org/db/pubmlst_rmlst_seqdef",
+    "name": "pubmlst_rmlst_seqdef"
+   },
+   {
+    "description": "Ribosomal MLST sequence/profile definitions (public kiosk mode: limited to sequence querying)",
+    "href": "https://rest.pubmlst.org/db/pubmlst_rmlst_seqdef_kiosk",
+    "name": "pubmlst_rmlst_seqdef_kiosk"
+   }
+  ],
+  "description": "Ribosomal MLST",
+  "long_description": "Ribosomal MLST sequence definition and genome databases.  Authenticated access only - requires registration (see http://rmlst.org/ for details).",
+  "name": "rMLST"
+ },
+ {
+  "databases": [
+   {
+    "description": "Staphylococcus aureus isolates",
+    "href": "https://rest.pubmlst.org/db/pubmlst_saureus_isolates",
+    "name": "pubmlst_saureus_isolates"
+   },
+   {
+    "description": "Staphylococcus aureus sequence/profile definitions",
+    "href": "https://rest.pubmlst.org/db/pubmlst_saureus_seqdef",
+    "name": "pubmlst_saureus_seqdef"
+   },
+   {
+    "description": "Staphylococcus capitis isolates",
+    "href": "https://rest.pubmlst.org/db/pubmlst_scapitis_isolates",
+    "name": "pubmlst_scapitis_isolates"
+   },
+   {
+    "description": "Staphylococcus capitis sequence/profile definitions",
+    "href": "https://rest.pubmlst.org/db/pubmlst_scapitis_seqdef",
+    "name": "pubmlst_scapitis_seqdef"
+   },
+   {
+    "description": "Staphylococcus chromogenes isolates",
+    "href": "https://rest.pubmlst.org/db/pubmlst_schromogenes_isolates",
+    "name": "pubmlst_schromogenes_isolates"
+   },
+   {
+    "description": "Staphylococcus chromogenes sequence/profile definitions",
+    "href": "https://rest.pubmlst.org/db/pubmlst_schromogenes_seqdef",
+    "name": "pubmlst_schromogenes_seqdef"
+   },
+   {
+    "description": "Staphylococcus epidermidis isolates",
+    "href": "https://rest.pubmlst.org/db/pubmlst_sepidermidis_isolates",
+    "name": "pubmlst_sepidermidis_isolates"
+   },
+   {
+    "description": "Staphylococcus epidermidis sequence/profile definitions",
+    "href": "https://rest.pubmlst.org/db/pubmlst_sepidermidis_seqdef",
+    "name": "pubmlst_sepidermidis_seqdef"
+   },
+   {
+    "description": "Staphylococcus haemolyticus isolates",
+    "href": "https://rest.pubmlst.org/db/pubmlst_shaemolyticus_isolates",
+    "name": "pubmlst_shaemolyticus_isolates"
+   },
+   {
+    "description": "Staphylococcus haemolyticus sequence/profile definitions",
+    "href": "https://rest.pubmlst.org/db/pubmlst_shaemolyticus_seqdef",
+    "name": "pubmlst_shaemolyticus_seqdef"
+   },
+   {
+    "description": "Staphylococcus hominis isolates",
+    "href": "https://rest.pubmlst.org/db/pubmlst_shominis_isolates",
+    "name": "pubmlst_shominis_isolates"
+   },
+   {
+    "description": "Staphylococcus hominis sequence/profile definitions",
+    "href": "https://rest.pubmlst.org/db/pubmlst_shominis_seqdef",
+    "name": "pubmlst_shominis_seqdef"
+   },
+   {
+    "description": "Staphylococcus pseudintermedius isolates",
+    "href": "https://rest.pubmlst.org/db/pubmlst_spseudintermedius_isolates",
+    "name": "pubmlst_spseudintermedius_isolates"
+   },
+   {
+    "description": "Staphylococcus pseudintermedius sequence/profile definitions",
+    "href": "https://rest.pubmlst.org/db/pubmlst_spseudintermedius_seqdef",
+    "name": "pubmlst_spseudintermedius_seqdef"
+   }
+  ],
+  "description": "Staphylococcus spp.",
+  "name": "staphylococcus"
+ }
+]
