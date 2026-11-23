@@ -50,12 +50,12 @@ msgstr "如果您更喜欢其他沟通渠道："
 #: ../../wechat_community.rst:13 b28b123a9da64926803a07096cba35f9
 msgid ""
 "**Slack**: `Join our Slack community "
-"<https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-"
-"5xxoJch7TLNibNQn5_AREQ>`_"
+"<https://join.slack.com/t/tooluniversehq/shared_invite/zt-4hbw8ff4y-"
+"AaMwpTbkvbjWsnmMqHmQYA>`_"
 msgstr ""
 "**Slack**：`加入我们的Slack社区 "
-"<https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-"
-"5xxoJch7TLNibNQn5_AREQ>`_"
+"<https://join.slack.com/t/tooluniversehq/shared_invite/zt-4hbw8ff4y-"
+"AaMwpTbkvbjWsnmMqHmQYA>`_"
 
 #: ../../wechat_community.rst:14 ccba65c808ee4681a4fc16997efc1dc0
 msgid ""

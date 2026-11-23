@@ -205,10 +205,10 @@ msgstr ""
 #: ../../index.rst:90 5fc653c3278e4ce09bc2683b3a541367
 msgid ""
 "**Discussions**: `Join our Slack community "
-"<https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ>`_"
+"<https://join.slack.com/t/tooluniversehq/shared_invite/zt-4hbw8ff4y-AaMwpTbkvbjWsnmMqHmQYA>`_"
 msgstr ""
 "**讨论**：`加入我们的 Slack 社区 "
-"<https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ>`_"
+"<https://join.slack.com/t/tooluniversehq/shared_invite/zt-4hbw8ff4y-AaMwpTbkvbjWsnmMqHmQYA>`_"
 
 #: ../../index.rst:93 8ecca50594c64ea4b77f5f3fa168f2d2
 msgid "📚 Documentation Structure"

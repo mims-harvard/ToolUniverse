@@ -5,9 +5,9 @@ from tooluniverse.default_config import default_tool_files
 
 EXPECTED_HASHES = {
     "search_papers": (
-        "732f06115e7d0ab47875a73c396241a60cde0835c83b989888ca8240fe2c3a79"
+        "f6513ebc66f1782538c832553cdd12e11a7451a60e5202c67ae9047cccc65425"
     ),
-    "get_paper": ("ecc1046c974a86bc0bfaf65c74c1292e058a62d9685209b24461e124bdf5a9ca"),
+    "get_paper": ("82a8d636bf37353c187ed8d1b3b25eec2fccc63fbc47020dfec7879888e3f6a7"),
     "list_stories": (
         "cff4c45648b6eebe2f8250e99ef19204a42d8f945b819035facbb5772306d471"
     ),
@@ -15,10 +15,10 @@ EXPECTED_HASHES = {
         "a3364a8905c6c3f0ba0e0a6e3034ad679059cdc2f4ceac34dc956b0872bb1f27"
     ),
     "get_entity": ("bc530f71bfdcef8fc0907129c266d8bead18b17bd98afa3b01c689bef3f467a9"),
-    "list_claims": ("13442c354494c6e6c43017a277ccf3c04d14e828ca23672c2c7c719e35d4ccd9"),
+    "list_claims": ("02d89349b20cd93065af22e75be77326afb9220e7483a9be6cc1583824c20f81"),
     "list_trials": ("145be7b1695ebe65fc6c4ccf16ee555db00a0f09a673ff12b2c439a654f10817"),
-    "list_grants": ("f508b96b6f90e053cb677cf5f1bbf0afdef4237cb1d523ac9ccf945bc47bb24e"),
-    "list_assets": ("9d8307cfaf5f5ff3297e1db3212dce611173bc4910455676e89bb416b18a614f"),
+    "list_grants": ("5728b9e49f29039ae230d50c629d232cc33c7d838ca75b72ea1b881d027a3400"),
+    "list_assets": ("cc20889b812294ba5e023a5c6dec53702226493c38a428788f76f75771492e64"),
 }
 
 

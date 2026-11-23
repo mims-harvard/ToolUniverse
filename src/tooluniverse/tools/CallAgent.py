@@ -1,7 +1,7 @@
 """
 CallAgent
 
-Give a solution plan to the agent and let it solve the problem. Solution plan should reflect a di...
+Control signal, not an executable tool: raise it to hand a solution plan back to your own agent l...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def CallAgent(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Give a solution plan to the agent and let it solve the problem. Solution plan should reflect a di...
+    Control signal, not an executable tool: raise it to hand a solution plan back to your own agent l...
 
     Parameters
     ----------

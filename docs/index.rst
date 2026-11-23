@@ -19,7 +19,7 @@ ToolUniverse Documentation
 
 .. image:: https://img.shields.io/badge/Slack-Join_Community-purple.svg?logo=slack
    :alt: Slack
-   :target: https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ
+   :target: https://join.slack.com/t/tooluniversehq/shared_invite/zt-4hbw8ff4y-AaMwpTbkvbjWsnmMqHmQYA
 
 .. raw:: html
 
@@ -171,7 +171,7 @@ Community & Support
    :gutter: 3
 
    .. grid-item-card:: Join Slack
-      :link: https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ
+      :link: https://join.slack.com/t/tooluniversehq/shared_invite/zt-4hbw8ff4y-AaMwpTbkvbjWsnmMqHmQYA
       :class-card: hover-lift
       :shadow: md
       
