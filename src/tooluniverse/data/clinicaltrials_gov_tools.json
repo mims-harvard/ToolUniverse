@@ -1339,10 +1339,10 @@
                       "outcome_measure_results": {
                         "type": "integer"
                       },
-                      "serious_adverse_events": {
+                      "serious_adverse_event_terms": {
                         "type": "integer"
                       },
-                      "other_adverse_events": {
+                      "other_adverse_event_terms": {
                         "type": "integer"
                       },
                       "adverse_event_groups": {
@@ -2046,10 +2046,10 @@
                 "outcome_measure_results": {
                   "type": "integer"
                 },
-                "serious_adverse_events": {
+                "serious_adverse_event_terms": {
                   "type": "integer"
                 },
-                "other_adverse_events": {
+                "other_adverse_event_terms": {
                   "type": "integer"
                 },
                 "adverse_event_groups": {
@@ -2274,11 +2274,11 @@
                         "type": "integer",
                         "description": "Outcome measures with posted results."
                       },
-                      "serious_adverse_events": {
+                      "serious_adverse_event_terms": {
                         "type": "integer",
                         "description": "Serious adverse event terms reported."
                       },
-                      "other_adverse_events": {
+                      "other_adverse_event_terms": {
                         "type": "integer",
                         "description": "Other adverse event terms reported."
                       },
@@ -2760,11 +2760,11 @@
                         "type": "integer",
                         "description": "Outcome measures with posted results."
                       },
-                      "serious_adverse_events": {
+                      "serious_adverse_event_terms": {
                         "type": "integer",
                         "description": "Serious adverse event terms reported."
                       },
-                      "other_adverse_events": {
+                      "other_adverse_event_terms": {
                         "type": "integer",
                         "description": "Other adverse event terms reported."
                       },

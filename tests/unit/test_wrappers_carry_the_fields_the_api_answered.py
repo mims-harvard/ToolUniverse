@@ -3885,7 +3885,7 @@ def test_a_trial_with_posted_results_says_so():
     """
     source = _source("ctg_tool.py")
     assert "def _results_summary" in source
-    assert '"serious_adverse_events"' in source
+    assert '"serious_adverse_event_terms"' in source
     assert "extract_clinical_trial_adverse_events" in source
     schema = json.dumps(_config("ClinicalTrials_get_study").get("return_schema") or {})
     assert '"adverse_event_frequency_threshold"' in schema
@@ -5197,7 +5197,8 @@ def test_a_trial_search_says_which_trials_reported_results():
         "properties"
     ]
     assert "hasResults" in rows["has_results"]["description"]
-    assert "serious_adverse_events" in rows["results_summary"]["properties"]
+    assert "serious_adverse_event_terms" in rows["results_summary"]["properties"]
+    assert "serious_adverse_events" not in rows["results_summary"]["properties"]
 
 
 def test_an_evidence_count_of_zero_was_a_misread_key():
@@ -11902,3 +11903,44 @@ def test_the_count_of_associations_is_not_the_count_on_the_page():
         "not the number of associations for the term"
         in (props["association_count"]["description"])
     )
+
+
+def test_results_summary_counts_are_named_as_term_counts_not_event_counts():
+    """`count()` returns len(list), so these are counts of distinct adverse-
+    event TERMS, not events or affected participants. A reader given
+    "serious_adverse_events: 5" read it as five events, when the value is
+    len(seriousEvents) -- the number of distinct serious adverse-event terms.
+    The summary key now says what the number is. The sibling extract_* arrays,
+    which carry the full per-term records rather than a count, keep the plain
+    name, so the two shapes no longer share one name.
+    """
+    source = _source("ctg_tool.py")
+    # Region A -- the per-study / per-row summary -- renamed to say "terms".
+    assert '"serious_adverse_event_terms": count(adverse, "seriousEvents")' in source
+    assert '"other_adverse_event_terms": count(adverse, "otherEvents")' in source
+    assert '"serious_adverse_events": count(' not in source
+    assert '"other_adverse_events": count(' not in source
+    # Region B -- the detail-extractor arrays of full records -- left as they were.
+    assert 'new_study["serious_adverse_events"] = serious_aes' in source
+    assert 'new_study["other_adverse_events"] = other_aes' in source
+    # Schema: the renamed keys reach the per-row summary, old names gone.
+    schema = _config("ClinicalTrials_search_by_intervention")["return_schema"]
+    rows = (schema.get("oneOf") or [schema])[0]["properties"]["studies"]["items"][
+        "properties"
+    ]
+    rs = rows["results_summary"]["properties"]
+    assert "serious_adverse_event_terms" in rs
+    assert "other_adverse_event_terms" in rs
+    assert "serious_adverse_events" not in rs
+    assert "other_adverse_events" not in rs
+
+
+def test_other_events_percentage_fallback_reads_numEvents_not_a_typo():
+    """The otherEvents fallback gated on `numEvents` but divided by
+    `numeEvents` (an extra e), which `.get` read as 0, so that percentage was
+    always 0% when numAffected was absent. The serious-events path spelled it
+    right; only the otherEvents fallback carried the typo.
+    """
+    source = _source("ctg_tool.py")
+    assert "numeEvents" not in source
+    assert 'group_stats.get("numEvents", 0)' in source
