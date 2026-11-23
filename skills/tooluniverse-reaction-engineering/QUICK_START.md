@@ -93,7 +93,7 @@ To identify reacting species before sizing:
 # Predict product from reactants (requires RXN4CHEMISTRY_API_KEY)
 result = tu.run({
     "name": "RXNChemistry_predict_reaction",
-    "arguments": {"reactants": "CC(=O)O.CCO", "reagents": ""}
+    "arguments": {"reactants": "CC(=O)O.CCO"}
 })
 
 # Resolve compound name to CID
