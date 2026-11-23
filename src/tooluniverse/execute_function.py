@@ -4465,12 +4465,17 @@ class ToolUniverse:
         disk with no expiry, and a version upgrade does not clear them -- the
         cache version comes from the tool class. A cached error is treated as
         a miss, and the next good result overwrites it.
+
+        A non-success status that carries an error counts as well. The
+        HuggingFace inference tools answer a cold model's 503 with
+        ``{"status": "loading", "error": "... Retry shortly ..."}``; cached,
+        that retry never reached the model again.
         """
         if isinstance(result, dict):
             status = result.get("status")
             if status == "error":
                 return True
-            return status is None and bool(result.get("error"))
+            return status != "success" and bool(result.get("error"))
         # Same rule as _tool_error_message in cli.py: an openFDA count row has
         # "term" next to "error", a failure sentinel does not.
         return (

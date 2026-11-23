@@ -67,6 +67,7 @@ def _call_async(tu):
         {"status": "error", "error": "Request to upstream API timed out"},
         {"error": "HTTP 429 Too Many Requests"},
         [{"error": "API request failed: 429 Client Error"}],
+        {"status": "loading", "error": "Model is loading. Retry shortly."},
     ],
 )
 def test_error_result_is_not_cached(cache_env, failure):
