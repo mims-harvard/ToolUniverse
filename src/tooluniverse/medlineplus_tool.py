@@ -640,16 +640,33 @@ class MedlinePlusRESTTool(BaseTool):
             }
 
         elif tool_name == "MedlinePlus_get_genetics_index":
-            topics = response.get("genetics_home_reference_topic_list", {}).get(
-                "topic", []
-            )
+            # The index nests its pages one level down: four section topics
+            # (Conditions, Genes, Chromosomes, Handbook) each hold their pages
+            # under <topics><topic>, and a page's name is its <title>. Reading
+            # only the top level returned the 4 sections with an empty name.
+            def as_list(node):
+                if node is None:
+                    return []
+                return node if isinstance(node, list) else [node]
+
+            index = response.get("genetics_home_reference_topic_list") or {}
+            topics = []
+            for section in as_list(index.get("topic")):
+                if not isinstance(section, dict):
+                    continue
+                category = section.get("@id") or section.get("title") or ""
+                pages = (section.get("topics") or {}).get("topic")
+                for page in as_list(pages):
+                    if isinstance(page, dict):
+                        topics.append(
+                            {
+                                "name": page.get("title") or "",
+                                "url": page.get("url") or "",
+                                "category": category,
+                            }
+                        )
             return (
-                {
-                    "topics": [
-                        {"name": t.get("name", ""), "url": t.get("url", "")}
-                        for t in topics
-                    ]
-                }
+                {"topics": topics, "count": len(topics)}
                 if topics
                 else {"error": "No genetics topics found"}
             )

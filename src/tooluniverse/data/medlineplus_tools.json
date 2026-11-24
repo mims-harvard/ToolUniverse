@@ -605,17 +605,28 @@
       "properties": {
         "topics": {
           "type": "array",
+          "description": "Every page in the index, across all sections.",
           "items": {
             "type": "object",
             "properties": {
               "name": {
-                "type": "string"
+                "type": "string",
+                "description": "Page title, e.g. 'Alport syndrome' or 'FBN1: fibrillin 1'."
               },
               "url": {
-                "type": "string"
+                "type": "string",
+                "description": "MedlinePlus Genetics page URL."
+              },
+              "category": {
+                "type": "string",
+                "description": "Index section the page belongs to: Conditions, Genes, Chromosomes or Handbook."
               }
             }
           }
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of pages in topics."
         }
       }
     }
