@@ -21,7 +21,7 @@ def ICD10_get_code_info(
     Parameters
     ----------
     code : str
-        ICD-10-CM code (e.g., 'E11.9', 'I10', 'J44.0')
+        ICD-10-CM code (e.g., 'E11.9', 'I10', 'J44.0'). The dotless form used in clai...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
