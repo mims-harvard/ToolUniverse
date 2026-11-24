@@ -15,6 +15,8 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  # Reading this run's own artifact listing, for the wait below.
+  actions: read
 
 concurrency:
   group: "pages"
@@ -124,7 +126,41 @@ jobs:
       uses: actions/upload-pages-artifact@v3
       with:
         path: './docs/_build/html'
-        
+
+    # actions/deploy-pages@v4 asks the artifact API for `github-pages` and
+    # fails outright on "Found 0 artifact(s)". It does not retry. The upload
+    # returns before that API is consistent, and the two calls are a fraction
+    # of a second apart, so the step is a coin flip. Measured 2026-11-24 across
+    # three attempts, upload finalized -> metadata queried:
+    #
+    #   08:52:38.472 -> 08:52:38.861  (0.39 s)  Found 0  failed
+    #   11:55:56.601 -> 11:55:57.052  (0.45 s)  Found 1  passed
+    #   12:33:35.573 -> 12:33:35.831  (0.26 s)  Found 0  failed
+    #
+    # Two earlier runs failed identically on 2026-11-22 (df5ee941a, 209bac034).
+    # Each failure left the published site a release behind until someone
+    # noticed and re-ran the job by hand.
+    #
+    # Waiting until the artifact is actually listed makes the deploy wait for
+    # the condition it already requires instead of racing it.
+    - name: Wait until the uploaded artifact is listed
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        for attempt in $(seq 1 30); do
+          listed=$(gh api \
+            "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts" \
+            --jq '[.artifacts[] | select(.name == "github-pages")] | length')
+          if [ "${listed:-0}" -gt 0 ]; then
+            echo "github-pages is listed (attempt ${attempt})."
+            exit 0
+          fi
+          echo "attempt ${attempt}: github-pages not listed yet"
+          sleep 5
+        done
+        echo "::error::The github-pages artifact never appeared in this run's listing."
+        exit 1
+
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
