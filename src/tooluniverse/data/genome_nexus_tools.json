@@ -1976,10 +1976,6 @@
                 "items": {
                   "type": [
                     "object",
-                    "null",
-                    "boolean",
-                    "array",
-                    "object",
                     "null"
                   ],
                   "properties": {
