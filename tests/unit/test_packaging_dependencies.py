@@ -25,6 +25,7 @@ reaches PyPI.
 import ast
 import json
 import re
+import runpy
 import sys
 from importlib.metadata import packages_distributions
 from pathlib import Path
@@ -40,6 +41,7 @@ ROOT_PYPROJECT = REPO_ROOT / "pyproject.toml"
 MCPB_PYPROJECT = REPO_ROOT / "mcpb" / "pyproject.toml"
 MCPB_MANIFEST = REPO_ROOT / "mcpb" / "manifest.json"
 UV_LOCK = REPO_ROOT / "uv.lock"
+DOCS_CONF = REPO_ROOT / "docs" / "conf.py"
 SRC_ROOT = REPO_ROOT / "src" / "tooluniverse"
 
 # PyPI projects that must never appear in dependencies, mapped to what to use
@@ -356,6 +358,51 @@ def test_release_versions_move_together():
     assert lock_match.group(1) == root_version, (
         f"uv.lock records tooluniverse {lock_match.group(1)} but pyproject.toml "
         f"declares {root_version}; run `uv lock` after bumping the version."
+    )
+
+
+def test_the_published_docs_name_the_version_that_was_released():
+    """The docs site must not advertise a version the project left behind.
+
+    `docs/conf.py` held `release = "1.4.0"` from 2026-07-24 (#385) through the
+    1.5.11 release: thirteen releases, each bumping eight version strings that
+    two tests hold equal to each other, and none of them this ninth one. The
+    published site told every reader it documented 1.4.0.
+
+    The fix was to derive the value, so this test asserts two things: that the
+    value Sphinx will see equals pyproject's, and that it is still derived. A
+    literal that happens to be right today would pass the first check and rot
+    the same way.
+    """
+    source = DOCS_CONF.read_text(encoding="utf-8")
+
+    literal = re.search(r'^\s*release\s*=\s*["\']', source, re.MULTILINE)
+    assert literal is None, (
+        "docs/conf.py assigns `release` a hardcoded string. Derive it from "
+        "pyproject.toml instead: a literal here is a ninth version string that "
+        "no release checklist covers, and it sat at 1.4.0 for thirteen releases."
+    )
+
+    # conf.py is pure configuration -- `os`, `sys` and `pathlib` imports, plain
+    # assignments, and a `setup()` that is defined but not called -- so running
+    # it the way Sphinx does gives exactly the values Sphinx reads. Its one side
+    # effect is a sys.path insert, which is undone afterwards.
+    saved_path = list(sys.path)
+    try:
+        namespace = runpy.run_path(str(DOCS_CONF), run_name="docs_conf_under_test")
+    finally:
+        sys.path[:] = saved_path
+
+    root_version = _project_version(ROOT_PYPROJECT)
+    assert namespace.get("release") == root_version, (
+        f"docs/conf.py builds the site as release "
+        f"{namespace.get('release')!r} but pyproject.toml declares "
+        f"{root_version!r}; the published docs would name the wrong version."
+    )
+    assert namespace.get("version") == root_version, (
+        f"docs/conf.py sets version={namespace.get('version')!r}, expected "
+        f"{root_version!r}. Sphinx uses `version` for the short form shown in "
+        "the sidebar and in _static/documentation_options.js."
     )
 
 

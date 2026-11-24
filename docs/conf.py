@@ -3,14 +3,53 @@
 
 import os
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath("../src"))
+
+
+def _released_version() -> str:
+    """The version these docs document, read rather than written.
+
+    This used to be a literal. It said "1.4.0" from 2026-07-24 (#385) until
+    1.5.11, so the published site advertised a version thirteen releases old.
+    Nothing caught it: a release bumps eight version strings, two tests hold
+    those eight equal to each other, and this ninth one was in neither set.
+
+    pyproject.toml is the source of truth -- it is what publish-pypi.yml
+    compares against PyPI to decide whether to publish. Installed metadata is
+    only the fallback, because an editable install records the version it was
+    installed at, which can lag the checkout being documented.
+    """
+    pyproject = Path(__file__).resolve().parent.parent / "pyproject.toml"
+    if pyproject.is_file():
+        try:
+            import tomllib
+        except ModuleNotFoundError:  # Python < 3.11
+            import re
+
+            match = re.search(
+                r'^version\s*=\s*"([^"]+)"',
+                pyproject.read_text(encoding="utf-8"),
+                re.MULTILINE,
+            )
+            if match:
+                return match.group(1)
+        else:
+            with pyproject.open("rb") as handle:
+                return tomllib.load(handle)["project"]["version"]
+
+    from importlib.metadata import version as _installed_version
+
+    return _installed_version("tooluniverse")
+
 
 # -- Project information -----------------------------------------------------
 project = "ToolUniverse"
 copyright = "2025, Shanghua Gao"
 author = "Shanghua Gao"
-release = "1.4.0"
+release = _released_version()
+version = release
 
 # -- General configuration ---------------------------------------------------
 extensions = [
