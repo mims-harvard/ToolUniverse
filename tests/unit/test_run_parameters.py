@@ -6,6 +6,8 @@ This module tests that run_one_function parameters (stream_callback, use_cache, 
 are correctly passed to tool instances.
 """
 
+import asyncio
+import importlib
 import json
 import threading
 
@@ -13,6 +15,9 @@ import pytest
 from unittest.mock import Mock, MagicMock
 from tooluniverse import ToolUniverse
 from tooluniverse.base_tool import BaseTool
+
+
+execute_function_module = importlib.import_module("tooluniverse.execute_function")
 
 
 @pytest.mark.unit
@@ -149,6 +154,90 @@ class TestRunParameterPassing:
         # Tool should receive stream_callback but not use_cache/validate
         assert tool_instance.received_stream_callback == callback
         assert result == {"result": "partial"}
+
+    @pytest.mark.parametrize("exception_type", [ValueError, TypeError])
+    @pytest.mark.parametrize("runner", ["sync", "async"])
+    def test_tool_value_and_type_errors_are_not_retried(self, exception_type, runner):
+        """Tool exceptions should be classified without invoking the tool again."""
+
+        class RaisingTool(BaseTool):
+            def __init__(self, tool_config):
+                super().__init__(tool_config)
+                self.call_count = 0
+
+            def run(
+                self,
+                arguments=None,
+                stream_callback=None,
+                use_cache=False,
+                validate=True,
+            ):
+                self.call_count += 1
+                raise exception_type("tool failure")
+
+        tool_config = {
+            "name": "raising_tool",
+            "type": "RaisingTool",
+            "description": "Tool that raises",
+            "cacheable": False,
+            "parameter": {"type": "object", "properties": {}},
+        }
+        tool_instance = RaisingTool(tool_config)
+        self.tu.callable_functions["raising_tool"] = tool_instance
+        self.tu.all_tool_dict["raising_tool"] = tool_config
+        function_call = {"name": "raising_tool", "arguments": {}}
+
+        if runner == "sync":
+            result = self.tu.run_one_function(function_call)
+        else:
+            result = asyncio.run(self.tu.run_one_function_async(function_call))
+
+        assert tool_instance.call_count == 1
+        assert result["status"] == "error"
+
+    @pytest.mark.parametrize("runner", ["sync", "async"])
+    def test_signature_failure_falls_back_to_arguments_only(self, monkeypatch, runner):
+        """A signature inspection failure should retain the legacy fallback."""
+
+        class SignatureFailureTool(BaseTool):
+            def __init__(self, tool_config):
+                super().__init__(tool_config)
+                self.calls = []
+
+            def run(self, arguments=None):
+                self.calls.append(arguments)
+                return {"result": "fallback"}
+
+        tool_config = {
+            "name": "signature_failure_tool",
+            "type": "SignatureFailureTool",
+            "description": "Tool whose signature cannot be inspected",
+            "cacheable": False,
+            "parameter": {"type": "object", "properties": {}},
+        }
+        tool_instance = SignatureFailureTool(tool_config)
+        self.tu.callable_functions["signature_failure_tool"] = tool_instance
+        self.tu.all_tool_dict["signature_failure_tool"] = tool_config
+        original_signature = execute_function_module.inspect.signature
+
+        def fail_for_tool(callable_object):
+            if getattr(callable_object, "__self__", None) is tool_instance:
+                raise ValueError("signature unavailable")
+            return original_signature(callable_object)
+
+        monkeypatch.setattr(execute_function_module.inspect, "signature", fail_for_tool)
+
+        function_call = {"name": "signature_failure_tool", "arguments": {"value": 1}}
+        options = {"stream_callback": Mock(), "use_cache": True, "validate": False}
+        if runner == "sync":
+            result = self.tu.run_one_function(function_call, **options)
+        else:
+            result = asyncio.run(
+                self.tu.run_one_function_async(function_call, **options)
+            )
+
+        assert tool_instance.calls == [{"value": 1}]
+        assert result == {"result": "fallback"}
 
     def test_use_cache_parameter_awareness(self):
         """Test that tools can optimize based on use_cache parameter."""

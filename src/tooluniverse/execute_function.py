@@ -4141,30 +4141,8 @@ class ToolUniverse:
         # Try to pass all available parameters to the tool
         try:
             signature = inspect.signature(tool_instance.run)
-            params = signature.parameters
-
-            # Build kwargs based on what the tool accepts
-            kwargs = {}
-
-            # Always include arguments as first positional argument
-            if stream_callback is not None and "stream_callback" in params:
-                kwargs["stream_callback"] = stream_callback
-            if "use_cache" in params:
-                kwargs["use_cache"] = use_cache
-            if "validate" in params:
-                kwargs["validate"] = validate
-
-            # Call with all supported parameters
-            result = tool_instance.run(tool_arguments, **kwargs)
-            if inspect.iscoroutine(result):
-                import asyncio
-
-                result = asyncio.run(result)
-            return result, tool_arguments
-
         except (ValueError, TypeError) as e:
-            # If inspection fails or tool doesn't accept extra params,
-            # fall back to simple execution with just arguments
+            # If inspection fails, fall back to simple execution with just arguments
             self.logger.debug(f"Falling back to simple run() call: {e}")
             result = tool_instance.run(tool_arguments)
             if inspect.iscoroutine(result):
@@ -4172,6 +4150,27 @@ class ToolUniverse:
 
                 result = asyncio.run(result)
             return result, tool_arguments
+
+        params = signature.parameters
+
+        # Build kwargs based on what the tool accepts
+        kwargs = {}
+
+        # Always include arguments as first positional argument
+        if stream_callback is not None and "stream_callback" in params:
+            kwargs["stream_callback"] = stream_callback
+        if "use_cache" in params:
+            kwargs["use_cache"] = use_cache
+        if "validate" in params:
+            kwargs["validate"] = validate
+
+        # Call with all supported parameters
+        result = tool_instance.run(tool_arguments, **kwargs)
+        if inspect.iscoroutine(result):
+            import asyncio
+
+            result = asyncio.run(result)
+        return result, tool_arguments
 
     async def _invoke_tool_async(self, tool_instance, tool_arguments, **kwargs):
         """Invoke tool.run, using await for async tools or a thread pool for sync tools."""
@@ -4209,25 +4208,23 @@ class ToolUniverse:
 
         try:
             signature = inspect.signature(tool_instance.run)
-            params = signature.parameters
-
-            kwargs = {}
-            if stream_callback is not None and "stream_callback" in params:
-                kwargs["stream_callback"] = stream_callback
-            if "use_cache" in params:
-                kwargs["use_cache"] = use_cache
-            if "validate" in params:
-                kwargs["validate"] = validate
-
-            result = await self._invoke_tool_async(
-                tool_instance, tool_arguments, **kwargs
-            )
-            return result, tool_arguments
-
         except (ValueError, TypeError) as e:
             self.logger.debug(f"Falling back to simple run() call: {e}")
             result = await self._invoke_tool_async(tool_instance, tool_arguments)
             return result, tool_arguments
+
+        params = signature.parameters
+
+        kwargs = {}
+        if stream_callback is not None and "stream_callback" in params:
+            kwargs["stream_callback"] = stream_callback
+        if "use_cache" in params:
+            kwargs["use_cache"] = use_cache
+        if "validate" in params:
+            kwargs["validate"] = validate
+
+        result = await self._invoke_tool_async(tool_instance, tool_arguments, **kwargs)
+        return result, tool_arguments
 
     def toggle_hooks(self, enabled: bool):
         """
