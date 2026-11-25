@@ -1,0 +1,45 @@
+{
+    "title": "CodeIgniter\\Exceptions\\PageNotFoundException",
+    "type": "CodeIgniter\\Exceptions\\PageNotFoundException",
+    "code": 404,
+    "message": "Motif atlas release not found",
+    "file": "/var/www/rna3dhub/system/CodeIgniter.php",
+    "line": 981,
+    "trace": [
+        {
+            "file": "/var/www/rna3dhub/system/CodeIgniter.php",
+            "line": 981,
+            "function": "forPageNotFound",
+            "class": "CodeIgniter\\Exceptions\\PageNotFoundException",
+            "type": "::"
+        },
+        {
+            "file": "/var/www/rna3dhub/system/CodeIgniter.php",
+            "line": 364,
+            "function": "display404errors",
+            "class": "CodeIgniter\\CodeIgniter",
+            "type": "->"
+        },
+        {
+            "file": "/var/www/rna3dhub/system/Boot.php",
+            "line": 312,
+            "function": "run",
+            "class": "CodeIgniter\\CodeIgniter",
+            "type": "->"
+        },
+        {
+            "file": "/var/www/rna3dhub/system/Boot.php",
+            "line": 67,
+            "function": "runCodeIgniter",
+            "class": "CodeIgniter\\Boot",
+            "type": "::"
+        },
+        {
+            "file": "/var/www/rna3dhub/public/index.php",
+            "line": 56,
+            "function": "bootWeb",
+            "class": "CodeIgniter\\Boot",
+            "type": "::"
+        }
+    ]
+}
