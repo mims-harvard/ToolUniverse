@@ -165,7 +165,9 @@ def test_paging_walks_the_sorted_scores(api):
     assert both == _run({"gene_symbol": "KRAS"})["data"]["scores"]
 
 
-@pytest.mark.parametrize("model", ["SIDM00903", "sidm00903", "A549", "nci-a549", " a549 "])
+@pytest.mark.parametrize(
+    "model", ["SIDM00903", "sidm00903", "A549", "nci-a549", " a549 "]
+)
 def test_model_id_is_applied_by_id_or_by_any_model_name(api, model):
     """model_id was read and dropped: every call returned the same answer."""
     api(KRAS_SCORES, _load("crispr_ko_KRAS_5_models.json"))
