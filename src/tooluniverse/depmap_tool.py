@@ -15,6 +15,8 @@ API Documentation: https://depmap.sanger.ac.uk/documentation/api/
 Base URL: https://api.cellmodelpassports.sanger.ac.uk
 """
 
+import re
+
 import requests
 from typing import Dict, Any, List, Optional
 from .base_tool import BaseTool
@@ -22,6 +24,11 @@ from .tool_registry import register_tool
 
 # Base URL for Sanger Cell Model Passports API
 DEPMAP_BASE_URL = "https://api.cellmodelpassports.sanger.ac.uk"
+
+# One request returns every CRISPR knockout record of a gene at this page
+# size. _CRISPR_MAX_PAGES stops the loop if the API ever pages without end.
+_CRISPR_PAGE_SIZE = 2000
+_CRISPR_MAX_PAGES = 10
 
 
 def _gene_symbol(item: Dict[str, Any]) -> str:
@@ -430,18 +437,151 @@ class DepMapTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
+    def _fetch_crispr_ko(self, gene_id: str) -> Dict[str, Any]:
+        """All CRISPR knockout records of one gene, with their models.
+
+        ``/genes/{id}/datasets/crispr_ko`` holds one record per screen of a
+        model (cell line or organoid). The model name, tissue and cancer type
+        come in the same response through ``include``. One page of 2000
+        covers every gene today (KRAS has 1,269 records); the loop reads
+        further pages if a gene ever has more, and ``reported`` lets the
+        caller see a short read.
+        """
+        url = f"{DEPMAP_BASE_URL}/genes/{gene_id}/datasets/crispr_ko"
+        params: Dict[str, Any] = {
+            "page[size]": _CRISPR_PAGE_SIZE,
+            "page[number]": 1,
+            "include": "model,model.sample.tissue,model.sample.cancer_type",
+            "fields[model]": "names,model_type,sample",
+            "fields[sample]": "tissue,cancer_type",
+            "fields[tissue]": "name",
+            "fields[cancer_type]": "name",
+        }
+        records: List[Dict[str, Any]] = []
+        included: Dict[tuple, Dict[str, Any]] = {}
+        reported: Optional[int] = None
+        while True:
+            response = requests.get(url, params=params, timeout=self.timeout)
+            response.raise_for_status()
+            payload = response.json()
+            page = payload.get("data") or []
+            records.extend(page)
+            for inc in payload.get("included") or []:
+                included[(inc.get("type"), str(inc.get("id")))] = inc
+            count = (payload.get("meta") or {}).get("count")
+            if isinstance(count, int):
+                reported = count
+            if reported is not None:
+                complete = len(records) >= reported
+            else:
+                complete = len(page) < _CRISPR_PAGE_SIZE
+            if not page or complete or params["page[number]"] >= _CRISPR_MAX_PAGES:
+                break
+            params["page[number]"] += 1
+        return {"records": records, "included": included, "reported": reported}
+
+    @staticmethod
+    def _crispr_rows(fetched: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Flatten CRISPR knockout records into rows, most dependent first."""
+        included = fetched["included"]
+
+        def _linked(node: Dict[str, Any], rel_name: str) -> Dict[str, Any]:
+            rel = ((node.get("relationships") or {}).get(rel_name) or {}).get("data")
+            if not isinstance(rel, dict):
+                return {}
+            return included.get((rel.get("type"), str(rel.get("id"))), {})
+
+        rows = []
+        for record in fetched["records"]:
+            attrs = record.get("attributes") or {}
+            model_ref = ((record.get("relationships") or {}).get("model") or {}).get(
+                "data"
+            ) or {}
+            model = _linked(record, "model")
+            sample = _linked(model, "sample")
+            names = (model.get("attributes") or {}).get("names") or []
+            bf_scaled = attrs.get("bf_scaled")
+            rows.append(
+                {
+                    "model_id": model_ref.get("id"),
+                    "model_name": names[0] if names else None,
+                    "model_names": names,
+                    "model_type": (model.get("attributes") or {}).get("model_type"),
+                    "tissue": (_linked(sample, "tissue").get("attributes") or {}).get(
+                        "name"
+                    ),
+                    "cancer_type": (
+                        _linked(sample, "cancer_type").get("attributes") or {}
+                    ).get("name"),
+                    "source": attrs.get("source"),
+                    "bf_scaled": bf_scaled,
+                    "bf": attrs.get("bf"),
+                    "fc_clean_qn": attrs.get("fc_clean_qn"),
+                    "qc_pass": attrs.get("qc_pass"),
+                    "loss_of_fitness": (bf_scaled < 0)
+                    if isinstance(bf_scaled, (int, float))
+                    else None,
+                }
+            )
+        rows.sort(
+            key=lambda r: (
+                r["bf_scaled"] is None,
+                r["bf_scaled"] if r["bf_scaled"] is not None else 0,
+                str(r["model_id"]),
+                str(r["source"]),
+            )
+        )
+        return rows
+
+    @staticmethod
+    def _crispr_summary(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Counts over every screen of the gene, before any model filter."""
+
+        def _count(part: List[Dict[str, Any]]) -> Dict[str, Any]:
+            scored = [r for r in part if r["loss_of_fitness"] is not None]
+            hits = sum(1 for r in scored if r["loss_of_fitness"])
+            return {
+                "screens": len(part),
+                "loss_of_fitness_screens": hits,
+                "loss_of_fitness_fraction": round(hits / len(scored), 3)
+                if scored
+                else None,
+            }
+
+        summary = _count(rows)
+        summary["models"] = len({r["model_id"] for r in rows})
+        summary["by_source"] = {
+            source: _count([r for r in rows if r["source"] == source])
+            for source in sorted({str(r["source"]) for r in rows})
+        }
+        return summary
+
     def _get_gene_dependencies(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Get CRISPR gene dependency data.
+        Get the CRISPR knockout fitness scores of a gene, one row per screen.
 
-        Returns gene effect scores indicating essentiality in cancer cell lines.
-        Negative scores indicate the gene is essential (cell death upon knockout).
+        The scores come from /genes/{id}/datasets/crispr_ko: Sanger (Project
+        Score) and Broad screens processed by the Sanger pipeline. bf_scaled
+        is the scaled Bayes factor of the screen; below 0 the knockout causes
+        a significant loss of fitness in that model. This is not the Chronos
+        gene effect of depmap.org, and -0.5 is not its threshold.
         """
         gene_symbol = arguments.get("gene_symbol")
-        arguments.get("model_id")
+        model_filter = str(arguments.get("model_id") or "").strip()
 
         if not gene_symbol:
             return {"status": "error", "error": "gene_symbol parameter is required"}
+
+        try:
+            limit = arguments.get("limit")
+            limit = 50 if limit is None else int(limit)
+            offset = int(arguments.get("offset") or 0)
+        except (TypeError, ValueError):
+            return {"status": "error", "error": "limit and offset must be integers"}
+        if not 1 <= limit <= 500:
+            return {"status": "error", "error": "limit must be between 1 and 500"}
+        if offset < 0:
+            return {"status": "error", "error": "offset must be 0 or more"}
 
         try:
             # Use DepMap_search_genes internally for reliable matching
@@ -484,19 +624,73 @@ class DepMapTool(BaseTool):
                     },
                 }
 
-            return {
-                "status": "success",
-                "data": {
-                    "gene_symbol": gene_symbol,
-                    "matched_gene": matched_gene,
-                    "note": (
-                        "Gene effect scores: negative = essential "
-                        "(cell death upon knockout), zero = no effect, "
-                        "positive = growth advantage. "
-                        "Full dependency profiles at depmap.org."
-                    ),
-                },
+            fetched = self._fetch_crispr_ko(matched_gene["gene_id"])
+            rows = self._crispr_rows(fetched)
+            symbol = matched_gene.get("symbol") or gene_symbol
+            data: Dict[str, Any] = {
+                "gene_symbol": gene_symbol,
+                "matched_gene": matched_gene,
+                "summary": self._crispr_summary(rows),
             }
+
+            reported = fetched["reported"]
+            if reported is not None and reported != len(rows):
+                data["warning"] = (
+                    f"The API reported {reported} CRISPR knockout records for "
+                    f"{symbol} and returned {len(rows)}. The summary and the "
+                    "scores cover only the returned records."
+                )
+
+            matched = rows
+            if model_filter:
+                wanted = model_filter.lower()
+                matched = [
+                    r
+                    for r in rows
+                    if str(r["model_id"]).lower() == wanted
+                    or wanted in [str(n).lower() for n in r["model_names"]]
+                ]
+                if rows and not matched:
+                    return self._no_screen_for_model(model_filter, symbol, len(rows))
+
+            page = matched[offset : offset + limit]
+            has_more = offset + len(page) < len(matched)
+            if not rows:
+                note = (
+                    f"{symbol} is in the gene catalog and has no CRISPR knockout "
+                    "record. A gene that the screening libraries do not target "
+                    "has none. This is not a measurement, so it does not show "
+                    "that the gene is non-essential."
+                )
+            else:
+                note = (
+                    "One row per screen of a model, most dependent first. "
+                    "bf_scaled is the scaled Bayes factor: below 0 the knockout "
+                    "causes a significant loss of fitness in that model "
+                    "(loss_of_fitness true), 0 or above it does not. fc_clean_qn "
+                    "is the corrected log fold change of the guides: more "
+                    "negative is stronger depletion. These are Sanger-pipeline "
+                    "scores, not the Chronos gene effect of depmap.org, so the "
+                    "-0.5 Chronos threshold does not apply. A model screened by "
+                    "both Sanger and Broad has two rows."
+                )
+            data.update(
+                {
+                    "model_filter": model_filter or None,
+                    "scores": [
+                        {k: v for k, v in r.items() if k != "model_names"} for r in page
+                    ],
+                    "count": len(page),
+                    "total_scores": len(matched),
+                    "offset": offset,
+                    "limit": limit,
+                    "returned": len(page),
+                    "has_more": has_more,
+                    "next_offset": offset + len(page) if has_more else None,
+                    "note": note,
+                }
+            )
+            return {"status": "success", "data": data}
         except requests.exceptions.Timeout:
             return {
                 "status": "error",
@@ -506,6 +700,64 @@ class DepMapTool(BaseTool):
             return {"status": "error", "error": f"DepMap API request failed: {str(e)}"}
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
+
+    def _no_screen_for_model(
+        self, model_filter: str, symbol: str, screens: int
+    ) -> Dict[str, Any]:
+        """Explain a model filter that matches none of the gene's screens.
+
+        An unknown model and a real model without a screen would both give an
+        empty list. A model id is looked up, so the two get different answers.
+        """
+        hint = "DepMap_search_cell_lines finds the model_id of a cell line."
+        if re.fullmatch(r"SIDM\d+", model_filter, flags=re.IGNORECASE):
+            model_id = model_filter.upper()
+            response = requests.get(
+                f"{DEPMAP_BASE_URL}/models/{model_id}",
+                params={"fields[model]": "names,crispr_ko_available"},
+                timeout=self.timeout,
+            )
+            # An unknown model id answers HTTP 200 with {"data": null}.
+            model = None
+            if response.status_code != 404:
+                response.raise_for_status()
+                model = response.json().get("data")
+            if not isinstance(model, dict):
+                return {
+                    "status": "error",
+                    "error": f"DepMap has no model with the id {model_id}. {hint}",
+                }
+            attrs = model.get("attributes") or {}
+            names = attrs.get("names") or []
+            return {
+                "status": "success",
+                "data": {
+                    "gene_symbol": symbol,
+                    "model_filter": model_id,
+                    "scores": [],
+                    "count": 0,
+                    "total_scores": 0,
+                    "returned": 0,
+                    "has_more": False,
+                    "next_offset": None,
+                    "note": (
+                        f"Model {model_id}"
+                        + (f" ({names[0]})" if names else "")
+                        + f" has no CRISPR knockout record for {symbol}. "
+                        f"crispr_ko_available for this model is "
+                        f"{attrs.get('crispr_ko_available')}. {screens} screens "
+                        f"of other models have a score for {symbol}."
+                    ),
+                },
+            }
+        return {
+            "status": "error",
+            "error": (
+                f"No CRISPR knockout record of {symbol} is for a model named "
+                f"'{model_filter}'. The model was not screened, or this is not "
+                f"a DepMap model name. {hint}"
+            ),
+        }
 
     def _search_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """

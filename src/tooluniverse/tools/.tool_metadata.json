@@ -376,7 +376,7 @@
   "DegreesOfUnsaturation_calculate": "d7cdb8d984542b3721db8be1264eeaef",
   "DepMap_get_cell_line": "0b994185ebb12d94bb0205fe24528842",
   "DepMap_get_cell_lines": "49a272e52109275af0c45d416d5bc504",
-  "DepMap_get_gene_dependencies": "f893799df5387888afd08e6ff419c5c1",
+  "DepMap_get_gene_dependencies": "b131176561f9b26c3d8d107724476931",
   "DepMap_search_cell_lines": "8b58af3abf8c571ebe6fd819812569cd",
   "DepMap_search_genes": "827af7bc24bc0576dcc58af3020c0cd0",
   "Dfam_get_annotations": "c7d6866d9bf44b13bbe17776b65d87e5",
