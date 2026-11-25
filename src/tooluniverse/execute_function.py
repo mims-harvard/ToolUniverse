@@ -4118,6 +4118,49 @@ class ToolUniverse:
 
         return result
 
+    def _supported_run_kwargs(
+        self, tool_instance, stream_callback, use_cache, validate
+    ):
+        """Which optional parameters this tool's run() declares. Pure inspection.
+
+        Nothing in here can execute the tool, which is the whole point. The
+        real call used to sit inside the same `try` as `inspect.signature`,
+        under `except (ValueError, TypeError)`: a handler written for a
+        callable with no introspectable signature, but unable to tell that
+        apart from the tool's own body raising. So a tool whose run() raised
+        ValueError or TypeError was executed a second time, with use_cache,
+        validate and stream_callback dropped for the retry (#905). ValueError
+        covers json.JSONDecodeError, so a REST wrapper that let a response
+        parse error escape sent its request twice.
+
+        The retry's other stated purpose -- "tool doesn't accept extra params"
+        -- cannot arise once the keyword arguments are built from the
+        callable's own declared signature, as they are here. Measured across
+        the tree: 838 `def run` definitions, one of them decorated, with
+        `@no_type_check`, which does not wrap the function or change its
+        signature. An externally registered tool whose signature does lie about
+        itself now raises TypeError, which reaches the caller as an error
+        result, instead of being retried with its parameters silently removed.
+        """
+        kwargs = {}
+        try:
+            params = inspect.signature(tool_instance.run).parameters
+        except (ValueError, TypeError) as e:
+            # No introspectable signature: C-implemented, or decorated in a way
+            # that defeats inspect. This is the case the old handler was for.
+            self.logger.debug(
+                f"run() has no introspectable signature, passing arguments alone: {e}"
+            )
+            return kwargs
+
+        if stream_callback is not None and "stream_callback" in params:
+            kwargs["stream_callback"] = stream_callback
+        if "use_cache" in params:
+            kwargs["use_cache"] = use_cache
+        if "validate" in params:
+            kwargs["validate"] = validate
+        return kwargs
+
     def _execute_tool_with_stream(
         self, tool_instance, arguments, stream_callback, use_cache=False, validate=True
     ):
@@ -4138,40 +4181,18 @@ class ToolUniverse:
             ):
                 tool_arguments[stream_flag_key] = True
 
-        # Try to pass all available parameters to the tool
-        try:
-            signature = inspect.signature(tool_instance.run)
-            params = signature.parameters
+        kwargs = self._supported_run_kwargs(
+            tool_instance, stream_callback, use_cache, validate
+        )
 
-            # Build kwargs based on what the tool accepts
-            kwargs = {}
+        # One call, outside any ValueError/TypeError handler. Whatever the tool
+        # raises belongs to run_one_function's error classifier, not to a retry.
+        result = tool_instance.run(tool_arguments, **kwargs)
+        if inspect.iscoroutine(result):
+            import asyncio
 
-            # Always include arguments as first positional argument
-            if stream_callback is not None and "stream_callback" in params:
-                kwargs["stream_callback"] = stream_callback
-            if "use_cache" in params:
-                kwargs["use_cache"] = use_cache
-            if "validate" in params:
-                kwargs["validate"] = validate
-
-            # Call with all supported parameters
-            result = tool_instance.run(tool_arguments, **kwargs)
-            if inspect.iscoroutine(result):
-                import asyncio
-
-                result = asyncio.run(result)
-            return result, tool_arguments
-
-        except (ValueError, TypeError) as e:
-            # If inspection fails or tool doesn't accept extra params,
-            # fall back to simple execution with just arguments
-            self.logger.debug(f"Falling back to simple run() call: {e}")
-            result = tool_instance.run(tool_arguments)
-            if inspect.iscoroutine(result):
-                import asyncio
-
-                result = asyncio.run(result)
-            return result, tool_arguments
+            result = asyncio.run(result)
+        return result, tool_arguments
 
     async def _invoke_tool_async(self, tool_instance, tool_arguments, **kwargs):
         """Invoke tool.run, using await for async tools or a thread pool for sync tools."""
@@ -4207,27 +4228,13 @@ class ToolUniverse:
             ):
                 tool_arguments[stream_flag_key] = True
 
-        try:
-            signature = inspect.signature(tool_instance.run)
-            params = signature.parameters
+        kwargs = self._supported_run_kwargs(
+            tool_instance, stream_callback, use_cache, validate
+        )
 
-            kwargs = {}
-            if stream_callback is not None and "stream_callback" in params:
-                kwargs["stream_callback"] = stream_callback
-            if "use_cache" in params:
-                kwargs["use_cache"] = use_cache
-            if "validate" in params:
-                kwargs["validate"] = validate
-
-            result = await self._invoke_tool_async(
-                tool_instance, tool_arguments, **kwargs
-            )
-            return result, tool_arguments
-
-        except (ValueError, TypeError) as e:
-            self.logger.debug(f"Falling back to simple run() call: {e}")
-            result = await self._invoke_tool_async(tool_instance, tool_arguments)
-            return result, tool_arguments
+        # One call, for the reason in the sync twin.
+        result = await self._invoke_tool_async(tool_instance, tool_arguments, **kwargs)
+        return result, tool_arguments
 
     def toggle_hooks(self, enabled: bool):
         """
