@@ -40,7 +40,7 @@ Apply for: cell line selection by cancer type/gene, cell line profiling, gene de
 | `DepMap_search_cell_lines` | `query` (required) | Search by name, e.g., "A549", "MCF" |
 | `DepMap_get_cell_line` | `model_name` OR `model_id` | Name: "A549"; ID: "SIDM00001" |
 | `DepMap_get_cell_lines` | `tissue`, `cancer_type`, `page_size` | Filter by tissue (e.g., "Lung") |
-| `DepMap_get_gene_dependencies` | `gene_symbol` (required), `model_id` | Gene effect scores; negative = essential |
+| `DepMap_get_gene_dependencies` | `gene_symbol` (required), `model_id`, `limit`, `offset` | Per-model CRISPR knockout scores; `bf_scaled` < 0 = loss of fitness |
 | `DepMap_search_genes` | `query` (required) | Validate gene symbol in DepMap first |
 | `cellosaurus_search_cell_lines` | `q` (required), `size` | Solr syntax: `id:HeLa`, `ox:9606 AND char:cancer` |
 | `cellosaurus_get_cell_line_info` | `accession` (required, CVCL_ format) | Full cell line record |
@@ -126,15 +126,15 @@ Phase 5: Target Druggability & Recommendations
 
 **Goal**: Determine which genes are essential in candidate cell lines.
 
-**LIMITATION**: `DepMap_get_gene_dependencies` returns gene metadata (HGNC ID, Ensembl ID) but NOT per-cell-line CRISPR scores. Full Chronos scores require depmap.org download.
+**Scores**: `DepMap_get_gene_dependencies` returns one row per CRISPR knockout screen of a model (cell line or organoid; Sanger and Broad screens) with `bf_scaled` (Sanger scaled Bayes factor: below 0 = significant loss of fitness; not a Chronos score, so the -0.5 cut-off does not apply), plus a summary of how many screens show a loss of fitness. `model_id` (e.g. 'SIDM00903' or 'A549') keeps one model. For Broad Chronos gene effect by Ensembl ID, use `OpenTargets_get_target_depmap_essentiality`.
 
-**Available tools**: (1) `DepMap_search_genes(query="EGFR")` — validate gene exists. (2) `DepMap_get_gene_dependencies(gene_symbol="EGFR")` — metadata only. (3) **Alternatives**: cBioPortal CCLE for mutation data, PubMed for published screens, or direct user to depmap.org/portal.
+**Available tools**: (1) `DepMap_search_genes(query="EGFR")` — validate gene exists. (2) `DepMap_get_gene_dependencies(gene_symbol="EGFR")` — per-model knockout scores (`bf_scaled`). (3) **Alternatives**: cBioPortal CCLE for mutation data, PubMed for published screens, or direct user to depmap.org/portal.
 
 **Interpreting Chronos scores** (from DepMap portal): <-0.5 = essential; ~0 = not essential; ~-1.0 = strongly essential. Selective dependency (essential in some lineages only) indicates therapeutic window.
 
 **OUTPUT**: Gene validation + mutation status per cell line.
 
-**Per-cell-line Chronos scores** (what the API can't give you): use the bundled script `scripts/depmap_gene_dependency.py`. It pulls the current DepMap Public release (CRISPRGeneEffect.csv + Model.csv) once via the public download index, caches it, and answers the dependency question directly: NOTE (2026-09-21): DepMap's download index now answers with a bot-check page instead of the file list; the script reports that (exit 2) rather than bypassing it. Download `CRISPRGeneEffect.csv` and `Model.csv` from https://depmap.org/portal/download/all/ in a browser and put them in the cache directory (`$DEPMAP_CACHE_DIR`, default `<tmp>/depmap_cache`); cached files are used without contacting DepMap.
+**Per-cell-line Chronos scores** (the API gives Sanger Bayes factors, not Chronos): use the bundled script `scripts/depmap_gene_dependency.py`. It pulls the current DepMap Public release (CRISPRGeneEffect.csv + Model.csv) once via the public download index, caches it, and answers the dependency question directly: NOTE (2026-09-21): DepMap's download index now answers with a bot-check page instead of the file list; the script reports that (exit 2) rather than bypassing it. Download `CRISPRGeneEffect.csv` and `Model.csv` from https://depmap.org/portal/download/all/ in a browser and put them in the cache directory (`$DEPMAP_CACHE_DIR`, default `<tmp>/depmap_cache`); cached files are used without contacting DepMap.
 
 ```bash
 # Cell lines most dependent on a gene (optionally within a lineage)
@@ -172,7 +172,7 @@ Output: cell line, lineage, primary disease, Chronos score (most negative = most
 |-----------|--------|----------------|---------------------|----------------|
 | **Mutation match** | x3 | Exact mutation (e.g., KRAS G12D) | Same gene, different mutation | No mutation in gene of interest |
 | **Co-mutation simplicity** | x2 | Few co-mutations (cleaner background) | Moderate co-mutations | Complex background (3+ driver mutations) |
-| **Gene dependency** | x2 | DepMap score < -0.5 (essential) | Score -0.5 to -0.2 (moderately essential) | Score > -0.2 (not essential) |
+| **Gene dependency** | x2 | Chronos < -0.5, or `bf_scaled` < 0 in this line (loss of fitness) | Chronos -0.5 to -0.2 | Chronos > -0.2, or `bf_scaled` >= 0 (no loss of fitness) |
 | **Drug sensitivity data** | x1 | In GDSC + CCLE + PRISM (3+ datasets) | In 1-2 datasets | No drug response data |
 | **Practical factors** | x1 | Adherent, well-characterized, widely used | Suspension or less common | Hard to culture, contamination-prone |
 

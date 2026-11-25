@@ -232,7 +232,7 @@ Understand the target's role in biological networks and disease pathways.
 Assess existing functional validation data.
 
 **Key tools**:
-- `DepMap_get_gene_dependencies` - Essentiality (score < -0.5 = essential)
+- `DepMap_get_gene_dependencies` - Essentiality per cell line (`bf_scaled` < 0 = loss of fitness; not Chronos, so not the -0.5 cut-off)
 - `PubMed_search_articles` - Search for CRISPR/siRNA/knockout studies
 - `CTD_get_gene_diseases` - Gene-disease associations
 

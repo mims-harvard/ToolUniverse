@@ -444,7 +444,7 @@
             "string",
             "null"
           ],
-          "description": "Optional: keep the screens of one model. A model id (e.g. 'SIDM00903') or a model name (e.g. 'A549'), from DepMap_search_cell_lines. An unknown id or name returns an error."
+          "description": "Optional: keep the screens of one model. A model id (e.g. 'SIDM00903') or a model name (e.g. 'A549'; case and punctuation are ignored, so 'HCT116' finds HCT-116), from DepMap_search_cell_lines. An unknown id or name returns an error."
         },
         "limit": {
           "type": [
@@ -614,14 +614,14 @@
                       "number",
                       "null"
                     ],
-                    "description": "Bayes factor before scaling"
+                    "description": "Bayes factor before the per-screen 5% FDR scaling, with the same sign convention as bf_scaled (negative: depleted)"
                   },
                   "fc_clean_qn": {
                     "type": [
                       "number",
                       "null"
                     ],
-                    "description": "Corrected, quantile-normalised log fold change. More negative: stronger depletion."
+                    "description": "Corrected log fold change of the guides (CRISPRcleanR). More negative: stronger depletion."
                   },
                   "qc_pass": {
                     "type": [

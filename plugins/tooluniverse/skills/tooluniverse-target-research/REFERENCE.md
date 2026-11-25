@@ -176,13 +176,13 @@ CRISPR knockout essentiality data from cancer cell lines.
 
 | Tool | Parameters | Returns |
 |------|------------|---------|
-| `DepMap_get_gene_dependencies` | `gene_symbol` | Gene essentiality data |
+| `DepMap_get_gene_dependencies` | `gene_symbol`, `model_id` | Per-model CRISPR knockout scores (`bf_scaled`) |
 | `DepMap_get_cell_lines` | `tissue`, `cancer_type`, `page_size` | Cell line metadata |
 | `DepMap_search_cell_lines` | `query` | Search cell lines |
 | `DepMap_get_cell_line` | `model_id` OR `model_name` | Detailed cell line info |
 | Drug sensitivity (GDSC) | `drug` / `cell-line` / `target` | No TU tool — run the precision-oncology skill's `scripts/gdsc_drug_response.py` (GDSC bulk data, IC50/AUC) |
 
-**Effect Score Interpretation**:
+**Effect Score Interpretation** (Chronos gene effect, e.g. `OpenTargets_get_target_depmap_essentiality`; for `DepMap_get_gene_dependencies` read `bf_scaled` < 0 as loss of fitness):
 | Score | Meaning |
 |-------|---------|
 | < -1.0 | Strongly essential |
@@ -193,7 +193,7 @@ CRISPR knockout essentiality data from cancer cell lines.
 **Example**:
 ```python
 deps = tu.tools.DepMap_get_gene_dependencies(gene_symbol="KRAS")
-# Returns: Gene info, note about essentiality
+# Returns: summary (screens with a loss of fitness) and per-model bf_scaled scores
 
 cells = tu.tools.DepMap_get_cell_lines(cancer_type="Lung Cancer", page_size=10)
 # Returns: Cell line names, cancer types, MSI status

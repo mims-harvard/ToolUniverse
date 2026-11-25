@@ -31,6 +31,11 @@ _CRISPR_PAGE_SIZE = 2000
 _CRISPR_MAX_PAGES = 10
 
 
+def _model_key(name: Any) -> str:
+    """A model id or name without case and punctuation ('HCT-116' -> 'hct116')."""
+    return re.sub(r"[^0-9a-z]", "", str(name).lower())
+
+
 def _gene_symbol(item: Dict[str, Any]) -> str:
     """Uppercased gene symbol used as the sort key of the /genes catalog."""
     return item.get("attributes", {}).get("symbol", "").upper()
@@ -643,12 +648,13 @@ class DepMapTool(BaseTool):
 
             matched = rows
             if model_filter:
-                wanted = model_filter.lower()
+                # Case and punctuation are ignored: 'HCT116' finds 'HCT-116'.
+                wanted = _model_key(model_filter)
                 matched = [
                     r
                     for r in rows
-                    if str(r["model_id"]).lower() == wanted
-                    or wanted in [str(n).lower() for n in r["model_names"]]
+                    if _model_key(r["model_id"]) == wanted
+                    or wanted in [_model_key(n) for n in r["model_names"]]
                 ]
                 if rows and not matched:
                     return self._no_screen_for_model(model_filter, symbol, len(rows))

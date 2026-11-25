@@ -273,7 +273,7 @@ Cancer cell line dependency data from CRISPR knockout screens.
 deps = tu.tools.DepMap_get_gene_dependencies(
     gene_symbol="KRAS"
 )
-# Returns: gene info, note about effect scores
+# Returns: summary (screens with a loss of fitness) and per-model bf_scaled scores
 
 # Get lung cancer cell lines
 cells = tu.tools.DepMap_get_cell_lines(
@@ -284,7 +284,7 @@ cells = tu.tools.DepMap_get_cell_lines(
 # Returns: cell line names, cancer types, MSI status
 ```
 
-**Effect Score Interpretation**:
+**Effect Score Interpretation** (Chronos gene effect, e.g. `OpenTargets_get_target_depmap_essentiality`; for `DepMap_get_gene_dependencies` read `bf_scaled` < 0 as loss of fitness):
 | Score Range | Interpretation |
 |-------------|----------------|
 | < -1.0 | Strongly essential |

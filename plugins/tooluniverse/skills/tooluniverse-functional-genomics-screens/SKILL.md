@@ -42,14 +42,14 @@ Phase 6: Prioritized Report → ranked target list with multi-dimensional scorin
 ### Phase 1: Hit Validation
 
 **Tools**:
-- `DepMap_get_gene_dependencies(gene_symbol=...)` -- returns gene metadata only (NOT per-cell-line scores)
+- `DepMap_get_gene_dependencies(gene_symbol=..., model_id=...)` -- per-model CRISPR knockout scores, `bf_scaled` (Sanger scaled Bayes factor: below 0 = significant loss of fitness; not a Chronos score, so the -0.5 cut-off does not apply)
 - `DepMap_search_cell_lines(query=...)` -- cell line metadata
 - `gnomad_get_gene_constraints(gene_symbol=...)` -- pLI, LOEUF (may return "Service overloaded")
 - `UniProt_get_function_by_accession(accession=...)` -- function summary
 
 **Classification**: Pan-essential (>90% lines), Selectively essential (specific lineages), Context-specific (screen model only). Chronos < -0.5 = likely essential, < -1.0 = strongly essential.
 
-**DepMap per-cell-line Chronos scores**: `DepMap_get_gene_dependencies` returns metadata only. For the actual per-cell-line scores, use the bundled script in the cell-line-profiling skill — `tooluniverse-cell-line-profiling/scripts/depmap_gene_dependency.py` (downloads the current DepMap Public CRISPRGeneEffect.csv once, cached; queries by `gene` or `cell-line`):
+**DepMap per-cell-line Chronos scores**: `DepMap_get_gene_dependencies` returns Sanger Bayes factors, not Chronos. For Chronos scores, use the bundled script in the cell-line-profiling skill — `tooluniverse-cell-line-profiling/scripts/depmap_gene_dependency.py` (downloads the current DepMap Public CRISPRGeneEffect.csv once, cached; queries by `gene` or `cell-line`):
 
 ```bash
 python depmap_gene_dependency.py gene KRAS --lineage Lung --top 20   # most-dependent lines
