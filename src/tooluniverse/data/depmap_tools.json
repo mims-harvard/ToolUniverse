@@ -444,7 +444,7 @@
             "string",
             "null"
           ],
-          "description": "Optional: keep the screens of one model. A model id (e.g. 'SIDM00903') or a model name (e.g. 'A549'; case and punctuation are ignored, so 'HCT116' finds HCT-116), from DepMap_search_cell_lines. An unknown id or name returns an error."
+          "description": "Optional: keep the screens of one model. A model id (e.g. 'SIDM00903') or a model name (e.g. 'A549'; case is ignored), from DepMap_search_cell_lines. A name that matches only without punctuation, e.g. 'HCT116' for 'HCT-116', is not used: the error names the screened model so you can check it. An unknown id or name returns an error."
         },
         "limit": {
           "type": [

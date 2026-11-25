@@ -165,9 +165,7 @@ def test_paging_walks_the_sorted_scores(api):
     assert both == _run({"gene_symbol": "KRAS"})["data"]["scores"]
 
 
-@pytest.mark.parametrize(
-    "model", ["SIDM00903", "sidm00903", "A549", "nci-a549", "NCIA549", " a 549 "]
-)
+@pytest.mark.parametrize("model", ["SIDM00903", "sidm00903", "A549", "nci-a549", " a549 "])
 def test_model_id_is_applied_by_id_or_by_any_model_name(api, model):
     """model_id was read and dropped: every call returned the same answer."""
     api(KRAS_SCORES, _load("crispr_ko_KRAS_5_models.json"))
@@ -212,6 +210,37 @@ def test_a_real_model_without_a_screen_is_an_explained_empty_list(api):
     assert data["scores"] == []
     assert "SIDM01774 (PK-59) has no CRISPR knockout record for KRAS" in data["note"]
     assert "crispr_ko_available for this model is False" in data["note"]
+
+
+def test_a_match_by_another_name_of_the_model_is_said(api):
+    """'hA549' is one of the names of A549 (SIDM00903)."""
+    api(KRAS_SCORES, _load("crispr_ko_KRAS_5_models.json"))
+    data = _run({"gene_symbol": "KRAS", "model_id": "hA549"})["data"]
+    assert {r["model_id"] for r in data["scores"]} == {"SIDM00903"}
+    assert data["note"].startswith("model_id 'hA549' matched A549 (SIDM00903)")
+    plain = _run({"gene_symbol": "KRAS", "model_id": "A549"})["data"]
+    assert plain["note"].startswith("One row per screen")
+
+
+def test_a_name_shared_by_two_screened_models_is_an_error(api):
+    body = _load("crispr_ko_KRAS_5_models.json")
+    for item in body["included"]:
+        if item["type"] == "model" and item["id"] == "SIDM00136":
+            item["attributes"]["names"] = ["HT-29", "hA549"]
+    api(KRAS_SCORES, body)
+    result = _run({"gene_symbol": "KRAS", "model_id": "hA549"})
+    assert result["status"] == "error"
+    assert "A549 (SIDM00903)" in result["error"]
+    assert "HT-29 (SIDM00136)" in result["error"]
+
+
+def test_a_name_that_matches_only_without_punctuation_is_named_not_used(api):
+    """'TT' and 'T-T' are different cell lines: a loose match must not pick one."""
+    api(KRAS_SCORES, _load("crispr_ko_KRAS_5_models.json"))
+    result = _run({"gene_symbol": "KRAS", "model_id": "NCIA549"})
+    assert result["status"] == "error"
+    assert "'NCI-A549' (SIDM00903)" in result["error"]
+    assert "Check that it is the same cell line" in result["error"]
 
 
 def test_an_unknown_model_name_is_an_error(api):

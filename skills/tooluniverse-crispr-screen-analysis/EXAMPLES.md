@@ -71,7 +71,7 @@ We identified WEE1 as a hit in our CRISPR screen. Is this a good therapeutic tar
 5. Literature search for WEE1 + TP53 synthetic lethality
 
 **Expected Output**:
-- WEE1 essentiality score: -0.72 in TP53-mutant lines, -0.15 in TP53-WT lines (selective!)
+- WEE1: a larger share of TP53-mutant lines than TP53-WT lines with `bf_scaled` < 0 (selective!)
 - Pharos TDL: Tchem (clinical compound adavosertib available)
 - Clinical trials: 15 trials (Phase 2 in ovarian, lung, colorectal)
 - Evidence for WEE1/TP53 synthetic lethality: ★★★ (multiple papers, Phase 2 data)
@@ -145,11 +145,11 @@ My CRISPR screen hit multiple DNA repair genes (ATR, CHK1, WEE1, RAD51, BRCA2). 
 **Expected Output**:
 - **Pathway Enrichment**: "DNA Damage Response" (p < 1e-10), "Homologous Recombination Repair" (p < 1e-8)
 - **Network Analysis**: All genes in same functional module (STRING score >0.7)
-- **Essentiality Pattern**:
-  - ATR: -1.2 (strongly essential)
-  - CHK1: -0.9 (moderately essential)
-  - WEE1: -0.7 (context-dependent, TP53 synthetic lethal)
-  - RAD51: -0.4 (weakly essential in most lines)
+- **Essentiality Pattern** (`summary.loss_of_fitness_fraction`: share of screens with `bf_scaled` < 0):
+  - ATR: most screens (strongly essential)
+  - CHK1: most screens (strongly essential)
+  - WEE1: context-dependent (TP53 synthetic lethal)
+  - RAD51: varies by line
   - BRCA2: +0.1 (non-essential; HR-deficiency is therapeutic opportunity, not liability)
 
 **Key Insight**:

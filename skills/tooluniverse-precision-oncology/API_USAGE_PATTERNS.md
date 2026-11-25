@@ -176,7 +176,7 @@ def assess_target_essentiality(tu, gene_symbol, cancer_type=None):
             'gene': gene_symbol,
             'dependencies': dependencies.get('data', {}),
             'cell_lines': cell_lines.get('data', {}),
-            'interpretation': 'Negative scores = gene is essential for cell survival'
+            'interpretation': 'bf_scaled < 0 = loss of fitness in that model'
         }
     return dependencies
 

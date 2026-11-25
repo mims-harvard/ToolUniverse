@@ -32,7 +32,7 @@ _CRISPR_MAX_PAGES = 10
 
 
 def _model_key(name: Any) -> str:
-    """A model id or name without case and punctuation ('HCT-116' -> 'hct116')."""
+    """A model name without case and punctuation ('HCT-116' -> 'hct116')."""
     return re.sub(r"[^0-9a-z]", "", str(name).lower())
 
 
@@ -648,16 +648,26 @@ class DepMapTool(BaseTool):
 
             matched = rows
             if model_filter:
-                # Case and punctuation are ignored: 'HCT116' finds 'HCT-116'.
-                wanted = _model_key(model_filter)
+                wanted = model_filter.lower()
                 matched = [
                     r
                     for r in rows
-                    if _model_key(r["model_id"]) == wanted
-                    or wanted in [_model_key(n) for n in r["model_names"]]
+                    if str(r["model_id"]).lower() == wanted
+                    or wanted in [str(n).lower() for n in r["model_names"]]
                 ]
                 if rows and not matched:
-                    return self._no_screen_for_model(model_filter, symbol, len(rows))
+                    return self._no_screen_for_model(model_filter, symbol, rows)
+                by_id = {r["model_id"]: r["model_name"] for r in matched}
+                if len(by_id) > 1:
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"The model name '{model_filter}' belongs to more than "
+                            "one screened model: "
+                            + ", ".join(f"{n} ({i})" for i, n in sorted(by_id.items()))
+                            + ". Pass the model_id of the one you mean."
+                        ),
+                    }
 
             page = matched[offset : offset + limit]
             has_more = offset + len(page) < len(matched)
@@ -680,6 +690,18 @@ class DepMapTool(BaseTool):
                     "-0.5 Chronos threshold does not apply. A model screened by "
                     "both Sanger and Broad has two rows."
                 )
+            if matched and model_filter:
+                model_id, model_name = matched[0]["model_id"], matched[0]["model_name"]
+                if model_filter.lower() not in (
+                    str(model_id).lower(),
+                    str(model_name).lower(),
+                ):
+                    # e.g. 'MM1' is one of the other names of MONO-MAC-1.
+                    note = (
+                        f"model_id '{model_filter}' matched {model_name} "
+                        f"({model_id}) by one of its other names. Check that it "
+                        "is the cell line you mean. " + note
+                    )
             data.update(
                 {
                     "model_filter": model_filter or None,
@@ -708,7 +730,7 @@ class DepMapTool(BaseTool):
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _no_screen_for_model(
-        self, model_filter: str, symbol: str, screens: int
+        self, model_filter: str, symbol: str, rows: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
         """Explain a model filter that matches none of the gene's screens.
 
@@ -716,6 +738,7 @@ class DepMapTool(BaseTool):
         empty list. A model id is looked up, so the two get different answers.
         """
         hint = "DepMap_search_cell_lines finds the model_id of a cell line."
+        screens = len(rows)
         if re.fullmatch(r"SIDM\d+", model_filter, flags=re.IGNORECASE):
             model_id = model_filter.upper()
             response = requests.get(
@@ -756,12 +779,31 @@ class DepMapTool(BaseTool):
                     ),
                 },
             }
+        # A name that matches only without punctuation ('HCT116' for
+        # 'HCT-116') is named, not used: two models can share that key
+        # ('TT' and 'T-T' are different cell lines).
+        key = _model_key(model_filter)
+        similar = sorted(
+            {
+                (str(name), str(r["model_id"]))
+                for r in rows
+                for name in r["model_names"]
+                if _model_key(name) == key
+            }
+        )
+        suggestion = ""
+        if similar:
+            suggestion = (
+                " Screened models with a similar name: "
+                + ", ".join(f"'{name}' ({model_id})" for name, model_id in similar)
+                + ". Check that it is the same cell line, then pass its model_id."
+            )
         return {
             "status": "error",
             "error": (
                 f"No CRISPR knockout record of {symbol} is for a model named "
                 f"'{model_filter}'. The model was not screened, or this is not "
-                f"a DepMap model name. {hint}"
+                f"a DepMap model name.{suggestion} {hint}"
             ),
         }
 

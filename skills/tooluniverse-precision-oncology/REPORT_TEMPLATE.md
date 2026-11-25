@@ -52,8 +52,8 @@
 | KRAS | -0.82 | -0.91 (pancreatic) | Essential | Hard to target |
 | MYC | -0.95 | -0.93 | Pan-essential | Challenging target |
 
-*Effect score <-0.5 = strongly essential for cell survival*
-*Source: DepMap via `DepMap_get_gene_dependencies`*
+*Chronos gene effect <-0.5 = strongly essential for cell survival*
+*Source: DepMap Chronos via `OpenTargets_get_target_depmap_essentiality`. `DepMap_get_gene_dependencies` gives per-model Sanger `bf_scaled` instead (< 0 = loss of fitness; not on this scale).*
 
 ### Expression Validation (Human Protein Atlas)
 
