@@ -267,6 +267,21 @@ def test_list_motifs_min_instances_and_paging(http):
     assert page["metadata"]["has_more"] is False
 
 
+def test_list_motifs_keeps_groups_without_loops_by_default(http):
+    """Release 1.0 has 13 HL groups with no loop; none is dropped silently."""
+    http("motifs/release/hl/1.0/json", _text("motifs_hl_1.0_with_empty_group.json"))
+    every = _run("RNA3DHub_list_motifs", {"loop_type": "HL", "release": "1.0"})
+    assert every["status"] == "success"
+    assert every["metadata"]["matched_motifs"] == 2
+    empty = next(r for r in every["data"] if r["motif_id"] == "HL_00721.1")
+    assert empty["num_instances"] == 0 and empty["instance_annotations"] == {}
+    some = _run(
+        "RNA3DHub_list_motifs",
+        {"loop_type": "HL", "release": "1.0", "min_instances": 1},
+    )
+    assert [r["motif_id"] for r in some["data"]] == ["HL_00090.1"]
+
+
 def test_list_motifs_unknown_release_passes_the_message_not_the_trace(http):
     http("motifs/release/hl/9.99/json", _text("motifs_release_404.json"), 404)
     result = _run("RNA3DHub_list_motifs", {"loop_type": "HL", "release": "9.99"})
@@ -402,6 +417,10 @@ def test_model_keeps_the_loops_of_one_model(http):
     assert all(
         u.startswith("2KZL|1|") for row in result["data"] for u in row["unit_ids"]
     )
+
+    http("loops/download/4TNA", _text("loops_4TNA.csv"))
+    one_model = _run("RNA3DHub_get_structure_loops", {"pdb_id": "4TNA", "model": 2})
+    assert one_model["error"].endswith("Its loops are in model 1 only.")
 
     missing = _run("RNA3DHub_get_structure_loops", {"pdb_id": "2KZL", "model": 9})
     assert missing["status"] == "error"

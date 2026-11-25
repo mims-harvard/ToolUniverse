@@ -581,11 +581,14 @@ class RNA3DHubTool(BaseTool):
         models = sorted({loop["model"] for loop in loops if loop["model"] is not None})
         if model is not None:
             if model not in models:
+                if not models:
+                    where = "Its loops carry no model number."
+                elif len(models) == 1:
+                    where = f"Its loops are in model {models[0]} only."
+                else:
+                    where = f"Its loops are in the models {models[0]} to {models[-1]}."
                 raise _RNA3DHubError(
-                    f"{pdb_id} has no model {model} in RNA 3D Hub. Its loops are "
-                    f"in the models {models[0]} to {models[-1]}."
-                    if models
-                    else f"{pdb_id} has no model numbers in RNA 3D Hub"
+                    f"{pdb_id} has no model {model} in RNA 3D Hub. {where}"
                 )
             loops = [loop for loop in loops if loop["model"] == model]
         counts: Dict[str, int] = {}
