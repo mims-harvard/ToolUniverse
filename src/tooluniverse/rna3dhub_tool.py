@@ -21,7 +21,7 @@ Site: https://rna.bgsu.edu/rna3dhub (data licence CC BY 4.0). No key.
 
 The download routes answer some bad requests with HTTP 200 and a one-line
 text ("Invalid release id", "No loops found"), and return the
-representative set in a different row order on every request. The tools
+representative set in a row order that changes between requests. The tools
 turn the texts into errors or explained empty results and sort the rows.
 """
 
@@ -74,6 +74,12 @@ def _sequence(unit_ids: List[str]) -> str:
         component = fields[3] if len(fields) > 3 else "?"
         parts.append(component if len(component) == 1 else f"({component})")
     return "".join(parts)
+
+
+def _model(unit_ids: List[str]) -> Optional[int]:
+    """Model number of a loop, from its first unit id ('2KZL|3|A|C|27' -> 3)."""
+    fields = str(unit_ids[0]).split("|") if unit_ids else []
+    return int(fields[1]) if len(fields) > 1 and fields[1].isdigit() else None
 
 
 def _chains(unit_ids: List[str]) -> List[str]:
@@ -177,7 +183,7 @@ class RNA3DHubTool(BaseTool):
     # -- argument checks --------------------------------------------------
 
     @staticmethod
-    def _int(arguments: Dict[str, Any], name: str, default: int) -> int:
+    def _int(arguments: Dict[str, Any], name: str, default: Any) -> Any:
         value = arguments.get(name)
         if value is None or value == "":
             return default
@@ -191,16 +197,24 @@ class RNA3DHubTool(BaseTool):
             raise _RNA3DHubError(f"{name} must be an integer, not {value}")
         return number
 
-    def _page(
-        self, rows: List[Any], arguments: Dict[str, Any], default: int, maximum: int
-    ) -> Tuple[List[Any], Dict[str, Any]]:
-        """One page of ``rows`` and the paging fields for the metadata."""
+    def _paging(
+        self, arguments: Dict[str, Any], default: int, maximum: int
+    ) -> Tuple[int, int]:
+        """(limit, offset) from the arguments, checked before any request."""
         limit = self._int(arguments, "limit", default)
         offset = self._int(arguments, "offset", 0)
         if limit < 1 or limit > maximum:
             raise _RNA3DHubError(f"limit must be between 1 and {maximum}")
         if offset < 0:
             raise _RNA3DHubError("offset must be 0 or more")
+        return limit, offset
+
+    @staticmethod
+    def _page(
+        rows: List[Any], paging: Tuple[int, int]
+    ) -> Tuple[List[Any], Dict[str, Any]]:
+        """One page of ``rows`` and the paging fields for the metadata."""
+        limit, offset = paging
         page = rows[offset : offset + limit]
         has_more = offset + len(page) < len(rows)
         return page, {
@@ -301,7 +315,7 @@ class RNA3DHubTool(BaseTool):
                 f"RNA 3D Hub returned an empty representative set for release "
                 f"'{release}' at resolution {resolution}"
             )
-        # The server lists the rows in a new order on every request.
+        # The server changes the row order between requests.
         classes.sort(key=lambda c: c["class_id"])
         return classes
 
@@ -311,6 +325,7 @@ class RNA3DHubTool(BaseTool):
         resolution = self._resolution(arguments)
         pdb_id = self._pdb_id(arguments.get("pdb_id"), required=False)
         include_members = bool(arguments.get("include_members"))
+        paging_args = self._paging(arguments, default=50, maximum=500)
         classes = self._read_representative_set(release, resolution)
 
         rows: List[Dict[str, Any]] = []
@@ -334,16 +349,20 @@ class RNA3DHubTool(BaseTool):
                 row["members"] = item["members"]
             rows.append(row)
 
-        page, paging = self._page(rows, arguments, default=50, maximum=500)
+        if pdb_id and not rows and resolution == "all" and release == "current":
+            # No cutoff and the newest release: the Hub has no RNA chain of it.
+            raise _RNA3DHubError(self._unknown_entry(pdb_id))
+        page, paging = self._page(rows, paging_args)
         cutoff_text = (
             "any resolution" if resolution == "all" else f"{resolution} A or better"
         )
         if pdb_id and not rows:
             note = (
                 f"No equivalence class of release '{release}' at {cutoff_text} "
-                f"holds a chain of {pdb_id}. The entry can have no RNA, a "
-                "resolution worse than the cutoff, a release date after this "
-                "release, or a wrong id. resolution='all' removes the cutoff."
+                f"holds a chain of {pdb_id}. The entry can have a resolution "
+                "worse than the cutoff or a release date after this release. "
+                "resolution='all' with release='current' removes both limits "
+                "and returns an error for an id that the Hub does not hold."
             )
         elif pdb_id:
             note = (
@@ -374,7 +393,7 @@ class RNA3DHubTool(BaseTool):
 
     @staticmethod
     def _annotation_counts(annotations: Any) -> Dict[str, int]:
-        """{'GNRA': 249, ...}: how many loop instances carry each annotation."""
+        """{'GNRA': 247, ...}: how many loop instances carry each annotation."""
         counts: Dict[str, int] = {}
         values = annotations.values() if isinstance(annotations, dict) else []
         for text in values:
@@ -386,9 +405,10 @@ class RNA3DHubTool(BaseTool):
         """Motif groups of one loop type in a Motif Atlas release."""
         loop_type = self._loop_type(arguments.get("loop_type"), required=True)
         release = self._release(arguments)
-        min_instances = self._int(arguments, "min_instances", 1)
-        if min_instances < 1:
-            raise _RNA3DHubError("min_instances must be 1 or more")
+        min_instances = self._int(arguments, "min_instances", 0)
+        if min_instances < 0:
+            raise _RNA3DHubError("min_instances must be 0 or more")
+        paging_args = self._paging(arguments, default=50, maximum=500)
         query = str(arguments.get("query") or "").strip().lower()
         groups = self._get(f"motifs/release/{loop_type.lower()}/{release}/json").json()
         if not isinstance(groups, list):
@@ -422,7 +442,7 @@ class RNA3DHubTool(BaseTool):
                 }
             )
         rows.sort(key=lambda r: (-r["num_instances"], str(r["motif_id"])))
-        page, paging = self._page(rows, arguments, default=50, maximum=500)
+        page, paging = self._page(rows, paging_args)
         if rows:
             note = (
                 "Sorted by num_instances, largest group first. A group name such "
@@ -462,6 +482,7 @@ class RNA3DHubTool(BaseTool):
                 f"motif_id must look like 'HL_27656.2' (loop type, group number, "
                 f"version), not '{raw}'. RNA3DHub_list_motifs lists the ids."
             )
+        paging_args = self._paging(arguments, default=50, maximum=500)
         group = self._get(f"motif/view/{motif_id}/json").json()
         if not isinstance(group, dict) or "alignment" not in group:
             raise _RNA3DHubError(f"RNA 3D Hub returned no motif group for {motif_id}")
@@ -490,7 +511,7 @@ class RNA3DHubTool(BaseTool):
                     "unit_ids": unit_ids,
                 }
             )
-        page, paging = self._page(instances, arguments, default=50, maximum=500)
+        page, paging = self._page(instances, paging_args)
         loop_type = motif_id.split("_", 1)[0]
         data = {
             "motif_id": group.get("motif_id") or motif_id,
@@ -523,6 +544,10 @@ class RNA3DHubTool(BaseTool):
         """Hairpin, internal and junction loops annotated in one PDB entry."""
         pdb_id = self._pdb_id(arguments.get("pdb_id"), required=True)
         loop_type = self._loop_type(arguments.get("loop_type"), required=False)
+        model = self._int(arguments, "model", None)
+        if model is not None and model < 1:
+            raise _RNA3DHubError("model must be 1 or more")
+        paging_args = self._paging(arguments, default=100, maximum=500)
         text = self._get(f"loops/download/{pdb_id}").text
 
         loops: List[Dict[str, Any]] = []
@@ -540,6 +565,7 @@ class RNA3DHubTool(BaseTool):
                     {
                         "loop_id": row[0],
                         "loop_type": row[0].split("_", 1)[0],
+                        "model": _model(unit_ids),
                         "chains": _chains(unit_ids),
                         "nucleotide_count": len(unit_ids),
                         "sequence": _sequence(unit_ids),
@@ -551,6 +577,17 @@ class RNA3DHubTool(BaseTool):
             # and for an id that RNA 3D Hub does not hold. Tell them apart.
             return self._no_loops(pdb_id)
 
+        # A multi-model (NMR) entry has one row per loop per model.
+        models = sorted({loop["model"] for loop in loops if loop["model"] is not None})
+        if model is not None:
+            if model not in models:
+                raise _RNA3DHubError(
+                    f"{pdb_id} has no model {model} in RNA 3D Hub. Its loops are "
+                    f"in the models {models[0]} to {models[-1]}."
+                    if models
+                    else f"{pdb_id} has no model numbers in RNA 3D Hub"
+                )
+            loops = [loop for loop in loops if loop["model"] == model]
         counts: Dict[str, int] = {}
         for loop in loops:
             counts[loop["loop_type"]] = counts.get(loop["loop_type"], 0) + 1
@@ -558,7 +595,7 @@ class RNA3DHubTool(BaseTool):
         rows = [
             loop for loop in loops if not loop_type or loop["loop_type"] == loop_type
         ]
-        page, paging = self._page(rows, arguments, default=100, maximum=500)
+        page, paging = self._page(rows, paging_args)
         note = (
             "A modified residue is written in brackets in sequence, e.g. (H2U). "
             "A unit id reads PDB|model|chain|residue|number."
@@ -568,12 +605,22 @@ class RNA3DHubTool(BaseTool):
                 f"{pdb_id} has no {_LOOP_TYPES[loop_type]} ({loop_type}). "
                 "loop_type_counts shows the loop types it has."
             )
+        if model is None and len(models) > 1:
+            note = (
+                f"{pdb_id} has {len(models)} models (usual for an NMR entry), and "
+                "RNA 3D Hub lists each loop one time per model with its own "
+                "loop_id. total_loops and loop_type_counts count all "
+                f"{len(models)} models, so they are not the number of loops of "
+                "the molecule. Set model=1 to read one model. " + note
+            )
         return {
             "status": "success",
             "data": page,
             "metadata": self._metadata(
                 pdb_id=pdb_id,
                 loop_type=loop_type,
+                model=model,
+                model_count=len(models),
                 total_loops=len(loops),
                 loop_type_counts=dict(sorted(counts.items())),
                 matched_loops=len(rows),
@@ -581,6 +628,15 @@ class RNA3DHubTool(BaseTool):
                 **paging,
             ),
         }
+
+    @staticmethod
+    def _unknown_entry(pdb_id: str) -> str:
+        return (
+            f"RNA 3D Hub holds no RNA structure with the id {pdb_id}: no chain "
+            "of this entry is in the current representative set at any "
+            "resolution. The id can be wrong, the entry can have no RNA, or it "
+            "can be newer than the weekly release."
+        )
 
     def _no_loops(self, pdb_id: str) -> Dict[str, Any]:
         """Explain a 'No loops found' answer with the representative set."""
@@ -600,17 +656,14 @@ class RNA3DHubTool(BaseTool):
         )
         if not known:
             raise _RNA3DHubError(
-                f"RNA 3D Hub holds no RNA structure with the id {pdb_id}: it "
-                "answered 'No loops found', and no chain of this entry is in the "
-                "current representative set at any resolution. The id can be "
-                "wrong, the entry can have no RNA, or it can be newer than the "
-                "weekly release."
+                "The Hub answered 'No loops found'. " + self._unknown_entry(pdb_id)
             )
         return {
             "status": "success",
             "data": [],
             "metadata": self._metadata(
                 pdb_id=pdb_id,
+                model_count=0,
                 total_loops=0,
                 loop_type_counts={},
                 matched_loops=0,

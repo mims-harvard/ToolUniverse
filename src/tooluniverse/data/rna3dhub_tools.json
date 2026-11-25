@@ -2,7 +2,7 @@
   {
     "name": "RNA3DHub_get_representative_set",
     "type": "RNA3DHubTool",
-    "description": "Get the representative (non-redundant) set of RNA 3D structures from the BGSU RNA 3D Hub. Each week the Hub groups every RNA chain of the PDB into equivalence classes (same molecule from the same organism) and picks the best-modelled chain of each class as its representative. Use it to choose one good structure per RNA, or to find the class and the representative for a PDB entry (pdb_id filter). resolution is the cutoff in angstrom: a class lists only structures at that resolution or better. Chain ids read PDB|model|chain, e.g. '4TNA|1|A'; chains that form one unit are joined with '+', e.g. '5EBI|1|E+5EBI|1|F'. Rows are sorted by class_id (the server changes its row order on every request). Example: resolution='1.5', pdb_id='5EBI' gives class NR_1.5_06980.2 with representative 5EBI|1|E+5EBI|1|F. Data licence CC BY 4.0. No key.",
+    "description": "Get the representative (non-redundant) set of RNA 3D structures from the BGSU RNA 3D Hub. Each week the Hub groups every RNA chain of the PDB into equivalence classes (same molecule from the same organism) and picks the best-modelled chain of each class as its representative. Use it to choose one good structure per RNA, or to find the class and the representative for a PDB entry (pdb_id filter). resolution is the cutoff in angstrom: a class lists only structures at that resolution or better. Chain ids read PDB|model|chain, e.g. '4TNA|1|A'; chains that form one unit are joined with '+', e.g. '5EBI|1|E+5EBI|1|F'. Rows are sorted by class_id (the server changes its row order between requests). Example: resolution='1.5', pdb_id='5EBI' gives class NR_1.5_06980.2 with representative 5EBI|1|E+5EBI|1|F. A pdb_id with no class under a cutoff returns an empty list with a note; with resolution='all' and the current release it returns an error, because the Hub then holds no RNA chain of that entry. Data licence CC BY 4.0. No key.",
     "fields": {
       "operation": "get_representative_set"
     },
@@ -176,7 +176,7 @@
             "integer",
             "null"
           ],
-          "description": "Keep groups with at least this number of loops (default 1). Many groups have one loop."
+          "description": "Keep groups with at least this number of loops (default 0: no filter). Many groups have one loop."
         },
         "release": {
           "type": [
@@ -232,7 +232,7 @@
               },
               "instance_annotations": {
                 "type": "object",
-                "description": "Annotation text of the loops in the group -> number of loops with it, e.g. {'GNRA': 249}. Loops with no annotation are not counted.",
+                "description": "Annotation text of the loops in the group -> number of loops with it, e.g. {'GNRA': 247}. Loops with no annotation are not counted.",
                 "additionalProperties": {
                   "type": "integer"
                 }
@@ -461,7 +461,7 @@
   {
     "name": "RNA3DHub_get_structure_loops",
     "type": "RNA3DHubTool",
-    "description": "List the loops that the BGSU RNA 3D Hub annotates in one PDB structure: hairpin loops (HL), internal loops (IL) and multi-helix junction loops (J3 and higher). Each row has the loop_id, the loop type, the chains, the number of nucleotides, the sequence and the unit_ids. A unit id reads PDB|model|chain|residue|number, e.g. '4TNA|1|A|G|15'. A modified residue is written in brackets in sequence, e.g. (H2U). Optional loop_type keeps one type; metadata.loop_type_counts always counts all types. Example: pdb_id='4TNA' (yeast tRNA-Phe) gives 4 hairpin loops and the 4-way junction J4_4TNA_001. The Hub answers 'No loops found' both for an RNA with no loop and for an id it does not hold; the tool checks the representative set and returns an empty list with a note for the first case and an error for the second.",
+    "description": "List the loops that the BGSU RNA 3D Hub annotates in one PDB structure: hairpin loops (HL), internal loops (IL) and multi-helix junction loops (J3 and higher). Each row has the loop_id, the loop type, the chains, the number of nucleotides, the sequence and the unit_ids. A unit id reads PDB|model|chain|residue|number, e.g. '4TNA|1|A|G|15'. A modified residue is written in brackets in sequence, e.g. (H2U). Optional loop_type keeps one type; metadata.loop_type_counts always counts all types. Example: pdb_id='4TNA' (yeast tRNA-Phe) gives 4 hairpin loops and the 4-way junction J4_4TNA_001. A multi-model entry (NMR, e.g. 2KZL with 8 models) has one row per loop per model: each row has its model number, metadata.model_count gives the number of models, and model=1 keeps one model. The Hub answers 'No loops found' both for an RNA with no loop and for an id it does not hold; the tool checks the representative set and returns an empty list with a note for the first case and an error for the second.",
     "fields": {
       "operation": "get_structure_loops"
     },
@@ -491,6 +491,13 @@
             null
           ],
           "description": "Keep one loop type: 'HL' hairpin, 'IL' internal, 'J3' to 'J7' junctions. Omit for all loops."
+        },
+        "model": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Keep the loops of one model of a multi-model (NMR) entry, e.g. 1. Omit for all models. A model the entry does not have returns an error."
         },
         "limit": {
           "type": [
@@ -522,6 +529,13 @@
               },
               "loop_type": {
                 "type": "string"
+              },
+              "model": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Model number of the loop (1 for most X-ray and cryo-EM entries)"
               },
               "chains": {
                 "type": "array",
@@ -567,6 +581,10 @@
         "pdb_id": "1S72",
         "loop_type": "IL",
         "limit": 5
+      },
+      {
+        "pdb_id": "2KZL",
+        "model": 1
       }
     ]
   }

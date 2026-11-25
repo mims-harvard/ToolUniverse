@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def RNA3DHub_get_structure_loops(
     pdb_id: str,
     loop_type: Optional[str] = None,
+    model: Optional[int] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
     *,
@@ -27,6 +28,8 @@ def RNA3DHub_get_structure_loops(
         4-character PDB id of an RNA-containing structure, e.g. '4TNA' or '1S72'.
     loop_type : str
         Keep one loop type: 'HL' hairpin, 'IL' internal, 'J3' to 'J7' junctions. Omit...
+    model : int
+        Keep the loops of one model of a multi-model (NMR) entry, e.g. 1. Omit for al...
     limit : int
         Rows per page (default 100, maximum 500).
     offset : int
@@ -50,6 +53,7 @@ def RNA3DHub_get_structure_loops(
         for k, v in {
             "pdb_id": pdb_id,
             "loop_type": loop_type,
+            "model": model,
             "limit": limit,
             "offset": offset,
         }.items()

@@ -23,9 +23,11 @@ A chain id reads `PDB|model|chain` (`4TNA|1|A`) and a unit id adds the residue a
 
 Three habits of the server are handled:
 
-- The representative set comes back in a different row order on every request. The tool sorts by `class_id`, so `offset` paging is stable.
+- The row order of the representative set changes between requests. The tool sorts by `class_id`, so `offset` paging is stable.
 - An unknown release answers HTTP 200 with the text `Invalid release id`. The tool returns an error.
 - `No loops found` (HTTP 200) is the answer for an RNA with no loop and for an id that the Hub does not hold, such as a protein entry or a typo. The tool looks the id up in the current representative set: a known RNA gives an empty list with a note, and any other id gives an error.
+
+A multi-model entry (NMR) has one row per loop per model in the Hub: 2KZL has 8 models, so its 1 hairpin loop and 4 internal loops come back as 40 rows. Each row has its `model`, `metadata.model_count` gives the number of models, and the note says that the counts cover all models. `model=1` keeps one model.
 
 Most motif groups have no group name in the Atlas. The names (GNRA, T-loop, kink-turn) are annotations of the single loops, so `RNA3DHub_list_motifs` returns them as `instance_annotations` with a count, and `query` searches them.
 

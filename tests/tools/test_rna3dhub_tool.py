@@ -78,3 +78,19 @@ def test_quiet_failures_come_back_as_errors(tu):
     )
     assert protein["status"] == "error"
     assert "holds no RNA structure" in protein["error"]
+
+
+def test_nmr_entry_reports_its_models(tu):
+    """2KZL is an NMR entry: the Hub lists each loop one time per model."""
+    run = {"name": "RNA3DHub_get_structure_loops", "arguments": {"pdb_id": "2KZL"}}
+    every_model = tu.run(run)
+    models = every_model["metadata"]["model_count"]
+    assert models > 1 and "models" in every_model["metadata"]["note"]
+
+    run["arguments"]["model"] = 1
+    one = tu.run(run)
+    assert (
+        one["metadata"]["total_loops"] * models
+        == every_model["metadata"]["total_loops"]
+    )
+    assert {row["model"] for row in one["data"]} == {1}

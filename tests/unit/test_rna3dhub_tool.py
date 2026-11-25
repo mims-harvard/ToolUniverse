@@ -105,7 +105,7 @@ def test_representative_set_pages_through_the_classes(http):
 
 
 def test_representative_set_order_does_not_follow_the_server(http):
-    """The server shuffles the rows on every request; pages must not move."""
+    """The server changes the row order between requests; pages must not move."""
     lines = _text("nrlist_current_1.5A.csv").splitlines(keepends=True)
     http(NR_15, "".join(lines))
     first = _run("RNA3DHub_get_representative_set", {"resolution": "1.5"})
@@ -142,6 +142,20 @@ def test_representative_set_explains_a_pdb_entry_with_no_class(http):
     assert "No equivalence class" in note and "resolution='all'" in note
 
 
+def test_no_class_at_any_resolution_is_an_error(http):
+    """With no cutoff and the current release, the Hub does not hold the id."""
+    http(NR_ALL, _text("nrlist_current_all.csv"))
+    result = _run(
+        "RNA3DHub_get_representative_set", {"resolution": "all", "pdb_id": "1UBQ"}
+    )
+    assert result["status"] == "error"
+    assert "holds no RNA structure with the id 1UBQ" in result["error"]
+    known = _run(
+        "RNA3DHub_get_representative_set", {"resolution": "all", "pdb_id": "7DOL"}
+    )
+    assert [row["class_id"] for row in known["data"]] == ["NR_all_79034.1"]
+
+
 def test_invalid_release_is_an_error_not_a_one_row_set(http):
     """HTTP 200 with the text 'Invalid release id' parses as one CSV row."""
     http("nrlist/download/9.99/1.5A/csv", _text("nrlist_invalid_release.txt"))
@@ -159,9 +173,10 @@ def test_representative_set_rejects_a_body_that_is_not_the_csv(http):
     assert "unexpected representative set" in result["error"]
 
     http(NR_15, "")
-    assert _run("RNA3DHub_get_representative_set", {"resolution": "1.5"})[
-        "status"
-    ] == "error"
+    assert (
+        _run("RNA3DHub_get_representative_set", {"resolution": "1.5"})["status"]
+        == "error"
+    )
 
 
 @pytest.mark.parametrize(
@@ -178,12 +193,11 @@ def test_representative_set_rejects_a_body_that_is_not_the_csv(http):
         ({"offset": -1}, "offset must be 0 or more"),
     ],
 )
-def test_representative_set_bad_arguments_make_no_wrong_request(http, arguments, text):
-    http(NR_15, _text("nrlist_current_1.5A.csv"))
-    http("nrlist/download/current/4.0A/csv", _text("nrlist_current_1.5A.csv"))
+def test_representative_set_bad_arguments_make_no_request(http, arguments, text):
     result = _run("RNA3DHub_get_representative_set", arguments)
     assert result["status"] == "error"
     assert text in result["error"]
+    assert http.calls == []
 
 
 def test_resolution_forms_reach_the_same_route(http):
@@ -191,13 +205,18 @@ def test_resolution_forms_reach_the_same_route(http):
     http(NR_ALL, _text("nrlist_current_all.csv"))
     http("nrlist/download/current/4.0A/csv", _text("nrlist_current_1.5A.csv"))
     for value in ("1.5", "1.5A", 1.5, " 1.5 a "):
-        assert _run("RNA3DHub_get_representative_set", {"resolution": value})[
-            "status"
-        ] == "success"
-    assert _run("RNA3DHub_get_representative_set", {"resolution": "ALL"})["metadata"][
-        "total_classes"
-    ] == 3
-    assert _run("RNA3DHub_get_representative_set", {})["metadata"]["resolution"] == "4.0"
+        assert (
+            _run("RNA3DHub_get_representative_set", {"resolution": value})["status"]
+            == "success"
+        )
+    assert (
+        _run("RNA3DHub_get_representative_set", {"resolution": "ALL"})["metadata"][
+            "total_classes"
+        ]
+        == 3
+    )
+    default = _run("RNA3DHub_get_representative_set", {})
+    assert default["metadata"]["resolution"] == "4.0"
     assert http.calls == [NR_15] * 4 + [NR_ALL, "nrlist/download/current/4.0A/csv"]
 
 
@@ -239,6 +258,10 @@ def test_list_motifs_min_instances_and_paging(http):
     http(HL, _text("motifs_hl_current.json"))
     big = _run("RNA3DHub_list_motifs", {"loop_type": "HL", "min_instances": 5})
     assert big["metadata"]["matched_motifs"] == 4
+    assert (
+        _run("RNA3DHub_list_motifs", {"loop_type": "HL"})["metadata"]["matched_motifs"]
+        == 6
+    )
     page = _run("RNA3DHub_list_motifs", {"loop_type": "HL", "limit": 2, "offset": 4})
     assert page["metadata"]["returned"] == 2
     assert page["metadata"]["has_more"] is False
@@ -259,7 +282,8 @@ def test_list_motifs_unknown_release_passes_the_message_not_the_trace(http):
         ({}, "loop_type is required"),
         ({"loop_type": "J8"}, "loop_type must be one of"),
         ({"loop_type": "hairpin"}, "loop_type must be one of"),
-        ({"loop_type": "HL", "min_instances": 0}, "min_instances must be 1 or more"),
+        ({"loop_type": "HL", "min_instances": -1}, "min_instances must be 0 or more"),
+        ({"loop_type": "HL", "limit": 501}, "limit must be between 1 and 500"),
     ],
 )
 def test_list_motifs_bad_arguments(http, arguments, text):
@@ -333,13 +357,17 @@ def test_structure_loops_of_trna_phe(http):
     d_loop = result["data"][0]
     assert d_loop["sequence"] == "CAG(H2U)(H2U)GGGAG"
     assert d_loop["nucleotide_count"] == 10 == len(d_loop["unit_ids"])
-    assert d_loop["chains"] == ["A"]
+    assert d_loop["chains"] == ["A"] and d_loop["model"] == 1
+    assert result["metadata"]["model_count"] == 1
+    assert "models" not in result["metadata"]["note"]
     assert http.calls == ["loops/download/4TNA"]
 
 
 def test_structure_loops_filter_keeps_the_counts_of_all_types(http):
     http("loops/download/4TNA", _text("loops_4TNA.csv"))
-    junctions = _run("RNA3DHub_get_structure_loops", {"pdb_id": "4TNA", "loop_type": "J4"})
+    junctions = _run(
+        "RNA3DHub_get_structure_loops", {"pdb_id": "4TNA", "loop_type": "J4"}
+    )
     assert [row["loop_id"] for row in junctions["data"]] == ["J4_4TNA_001"]
     assert junctions["metadata"]["matched_loops"] == 1
     assert junctions["metadata"]["total_loops"] == 5
@@ -350,6 +378,38 @@ def test_structure_loops_filter_keeps_the_counts_of_all_types(http):
     assert internal["status"] == "success" and internal["data"] == []
     assert "4TNA has no internal loop" in internal["metadata"]["note"]
     assert internal["metadata"]["loop_type_counts"] == {"HL": 4, "J4": 1}
+
+
+def test_an_nmr_entry_says_that_its_loops_repeat_per_model(http):
+    """2KZL has 8 models: 40 rows for 1 hairpin loop and 4 internal loops."""
+    http("loops/download/2KZL", _text("loops_2KZL.csv"))
+    result = _run("RNA3DHub_get_structure_loops", {"pdb_id": "2KZL"})
+    meta = result["metadata"]
+    assert meta["model_count"] == 8
+    assert (meta["total_loops"], meta["loop_type_counts"]) == (40, {"HL": 8, "IL": 32})
+    assert "2KZL has 8 models" in meta["note"] and "model=1" in meta["note"]
+    assert [row["model"] for row in result["data"][:8]] == list(range(1, 9))
+
+
+def test_model_keeps_the_loops_of_one_model(http):
+    http("loops/download/2KZL", _text("loops_2KZL.csv"))
+    result = _run("RNA3DHub_get_structure_loops", {"pdb_id": "2KZL", "model": 1})
+    meta = result["metadata"]
+    assert (meta["total_loops"], meta["loop_type_counts"]) == (5, {"HL": 1, "IL": 4})
+    assert meta["model"] == 1 and meta["model_count"] == 8
+    assert "8 models" not in meta["note"]
+    assert {row["model"] for row in result["data"]} == {1}
+    assert all(
+        u.startswith("2KZL|1|") for row in result["data"] for u in row["unit_ids"]
+    )
+
+    missing = _run("RNA3DHub_get_structure_loops", {"pdb_id": "2KZL", "model": 9})
+    assert missing["status"] == "error"
+    assert "2KZL has no model 9" in missing["error"]
+    assert "models 1 to 8" in missing["error"]
+
+    bad = _run("RNA3DHub_get_structure_loops", {"pdb_id": "2KZL", "model": 0})
+    assert bad["status"] == "error" and "model must be 1 or more" in bad["error"]
 
 
 def test_no_loops_for_a_known_rna_is_an_explained_empty_list(http):
