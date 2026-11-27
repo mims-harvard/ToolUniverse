@@ -169,10 +169,12 @@ def evaluate_function_call(tool_definition, function_call):
         return True, "Function call is valid."
 
     # Check if all required parameters are present
-    required_params = [
+    schema_required = tool_definition["parameter"].get("required")
+    required_params = list(schema_required) if isinstance(schema_required, list) else []
+    required_params += [
         key
         for key, value in tool_definition["parameter"]["properties"].items()
-        if value.get("required", False)
+        if value.get("required", False) and key not in required_params
     ]
     missing_params = [
         param for param in required_params if param not in function_call["arguments"]
