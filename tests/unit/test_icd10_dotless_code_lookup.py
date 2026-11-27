@@ -48,6 +48,13 @@ def _response(code, name):
         ("E11.9", "E11.9"),
         ("I10", "I10"),
         ("E11", "E11"),
+        # strip() and upper() now run on every code, not only the dotless
+        # ones, so the dotted and three-character forms have to be pinned in
+        # the spellings a claims file actually carries them in.
+        ("e11.9", "E11.9"),
+        (" E11.9 ", "E11.9"),
+        ("i10", "I10"),
+        ("c4a0", "C4A.0"),
     ],
 )
 def test_code_is_sent_in_the_dotted_form(given, sent):
