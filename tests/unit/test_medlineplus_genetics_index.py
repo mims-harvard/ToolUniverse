@@ -59,12 +59,12 @@ def _tool():
     return M.MedlinePlusRESTTool(config)
 
 
-def _run(index_xml):
+def _run(index_xml, arguments=None):
     response = MagicMock()
     response.status_code = 200
     response.text = index_xml
     with patch.object(M.requests, "get", return_value=response):
-        return _tool().run({})
+        return _tool().run(dict(arguments or {}))
 
 
 def test_index_lists_every_page_with_its_title_and_section():
@@ -107,6 +107,52 @@ def test_an_index_without_pages_is_an_error():
     assert _run(empty) == {"error": "No genetics topics found"}
 
 
+def test_a_category_returns_one_section_and_says_what_it_left_out():
+    # The whole index is 2,965 pages and about 400 KB of JSON, so a caller
+    # after one section can ask for it -- but a short list has to state the
+    # size of the index it came from, or it reads like the whole thing.
+    result = _run(INDEX, {"category": "Conditions"})
+
+    assert [topic["name"] for topic in result["topics"]] == [
+        "Alport syndrome",
+        "Marfan syndrome",
+    ]
+    assert result["count"] == 2
+    assert result["category"] == "Conditions"
+    assert result["total"] == 4
+
+
+def test_the_category_is_the_section_id_not_its_title():
+    # The Handbook section is <topic id="Handbook"> with the title "Help Me
+    # Understand Genetics", so the two are not interchangeable.
+    result = _run(INDEX, {"category": "handbook"})
+
+    assert result["category"] == "Handbook"
+    assert [topic["name"] for topic in result["topics"]] == ["Cells and DNA"]
+
+
+def test_an_unknown_category_is_refused_not_ignored():
+    # Returning all 2,965 pages for a typo, or an empty list, would both read
+    # as an answer. Name the sections the index actually has instead.
+    result = _run(INDEX, {"category": "Genes "})
+    assert result["count"] == 1
+
+    result = _run(INDEX, {"category": "Proteins"})
+    assert "topics" not in result
+    assert result["error"] == (
+        "Unknown category 'Proteins'. The index has: Conditions, Genes, Handbook."
+    )
+
+
+def test_no_category_still_returns_the_whole_index():
+    result = _run(INDEX)
+
+    assert result["count"] == 4
+    # Nothing was filtered, so there is nothing to disclose.
+    assert "category" not in result
+    assert "total" not in result
+
+
 @pytest.mark.network
 def test_live_index_lists_condition_and_gene_pages():
     result = _tool().run({})
@@ -115,3 +161,13 @@ def test_live_index_lists_condition_and_gene_pages():
     assert {"Conditions", "Genes"} <= sections
     assert len(result["topics"]) > 2000
     assert all(topic["name"] and topic["url"] for topic in result["topics"])
+
+
+@pytest.mark.network
+def test_live_chromosomes_section_is_a_small_slice_of_the_index():
+    result = _tool().run({"category": "Chromosomes"})
+
+    assert result["category"] == "Chromosomes"
+    assert {topic["category"] for topic in result["topics"]} == {"Chromosomes"}
+    assert result["count"] == len(result["topics"])
+    assert result["count"] < result["total"]

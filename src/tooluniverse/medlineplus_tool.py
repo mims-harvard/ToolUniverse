@@ -665,11 +665,34 @@ class MedlinePlusRESTTool(BaseTool):
                                 "category": category,
                             }
                         )
-            return (
-                {"topics": topics, "count": len(topics)}
-                if topics
-                else {"error": "No genetics topics found"}
-            )
+            if not topics:
+                return {"error": "No genetics topics found"}
+
+            # The whole index is 2,965 pages and about 400 KB of JSON, which a
+            # caller after one section should not have to receive to read.
+            # An unknown name is refused rather than ignored, so a typo cannot
+            # look like an empty section.
+            sections = list(dict.fromkeys(row["category"] for row in topics))
+            wanted = str((arguments or {}).get("category", "") or "").strip()
+            if not wanted:
+                return {"topics": topics, "count": len(topics)}
+            match = next((s for s in sections if s.lower() == wanted.lower()), None)
+            if match is None:
+                return {
+                    "error": (
+                        f"Unknown category {wanted!r}. "
+                        f"The index has: {', '.join(sections)}."
+                    )
+                }
+            kept = [row for row in topics if row["category"] == match]
+            # total says what a filtered answer left out, so a short list is
+            # never mistaken for the whole index.
+            return {
+                "topics": kept,
+                "count": len(kept),
+                "category": match,
+                "total": len(topics),
+            }
 
         return {"raw_response": response}
 
