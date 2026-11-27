@@ -20,8 +20,13 @@ dependencies = [
     # openai / google-genai are NOT here on purpose: they are optional extras
     # (`tooluniverse[openai]`, `tooluniverse[gemini]`), both covered by [all].
     "pyyaml>=6.0.0",
-    "mcp[cli]>=1.29.0,<2.0.0",
-    "fastmcp>=3.4.5,<4.0.0",
+    # Both majors are supported: mcp_client_tool picks the streamable-HTTP
+    # transport by what the installed module offers, and dumps MCP results
+    # with by_alias=True so the wire spelling (isError, inputSchema) survives
+    # 2.0's rename of every field to snake_case. See
+    # tests/unit/test_mcp_client_supports_sdk_v1_and_v2.py.
+    "mcp[cli]>=1.29.0,<3.0.0",
+    "fastmcp>=3.4.5,<5.0.0",
     "xmltodict>=1.0.0",
     "lxml>=6.0.0",
     "huggingface_hub>=0.34.0",
