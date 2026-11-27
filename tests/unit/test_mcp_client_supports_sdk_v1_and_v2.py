@@ -26,6 +26,7 @@ they keep the same power whichever SDK version happens to be installed.
 import asyncio
 import types
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 import pytest
 
@@ -293,3 +294,40 @@ def test_the_transport_is_chosen_by_the_attribute_not_a_version_string():
         else "streamable_http_client"
     )
     assert callable(getattr(installed, name))
+
+
+# The shim itself has to name the old function to look for it; the two tests
+# that fake the 1.x module shape have to name it to fake it. Everything else
+# naming it is code that stops working on 2.0.
+_MAY_NAME_THE_REMOVED_FUNCTION = {
+    "src/tooluniverse/mcp_client_tool.py",
+    "tests/unit/test_mcp_client_supports_sdk_v1_and_v2.py",
+    "tests/unit/test_long_remote_calls.py",
+}
+
+
+def test_nothing_else_names_the_function_2_0_removed():
+    # Three integration tests patched it, a documented example and an example
+    # script imported it, and none of those is reached by running
+    # tests/unit -- the first CI run on this change went red on the
+    # integration ones, and only a grep finds the other two.
+    root = Path(__file__).resolve().parents[2]
+    offenders = []
+    for folder in ("src", "tests", "docs", "examples", "scripts"):
+        for path in sorted((root / folder).rglob("*")):
+            if not path.is_file() or path.suffix not in {".py", ".rst", ".md", ".txt"}:
+                continue
+            relative = path.relative_to(root).as_posix()
+            if relative in _MAY_NAME_THE_REMOVED_FUNCTION:
+                continue
+            try:
+                text = path.read_text(encoding="utf-8")
+            except (UnicodeDecodeError, OSError):  # pragma: no cover
+                continue
+            if "streamablehttp_client" in text:
+                offenders.append(relative)
+
+    assert offenders == [], (
+        "these name streamablehttp_client, which MCP SDK 2.0 removed: "
+        + ", ".join(offenders)
+    )
