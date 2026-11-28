@@ -114,12 +114,10 @@
                     "description": "One transcript consequence",
                     "additionalProperties": {
                       "type": [
-                        "string",
+                        "null",
                         "number",
-                        "boolean",
-                        "array",
                         "object",
-                        "null"
+                        "string"
                       ]
                     }
                   },
@@ -147,12 +145,9 @@
                   "description": "Chromosome, start, end and alleles",
                   "additionalProperties": {
                     "type": [
-                      "string",
+                      "null",
                       "number",
-                      "boolean",
-                      "array",
-                      "object",
-                      "null"
+                      "string"
                     ]
                   }
                 },
@@ -170,12 +165,10 @@
                     "description": "One summary",
                     "additionalProperties": {
                       "type": [
-                        "string",
+                        "null",
                         "number",
-                        "boolean",
-                        "array",
                         "object",
-                        "null"
+                        "string"
                       ]
                     }
                   }
@@ -188,21 +181,16 @@
                   "description": "Summarised consequence on the canonical transcript",
                   "additionalProperties": {
                     "type": [
-                      "string",
+                      "null",
                       "number",
-                      "boolean",
-                      "array",
                       "object",
-                      "null"
+                      "string"
                     ],
                     "additionalProperties": {
                       "type": [
-                        "string",
+                        "null",
                         "number",
-                        "boolean",
-                        "array",
-                        "object",
-                        "null"
+                        "string"
                       ],
                       "additionalProperties": {
                         "type": [
@@ -407,12 +395,9 @@
                       "description": "One hotspot record",
                       "additionalProperties": {
                         "type": [
-                          "string",
+                          "null",
                           "number",
-                          "boolean",
-                          "array",
-                          "object",
-                          "null"
+                          "string"
                         ]
                       }
                     }
@@ -439,12 +424,8 @@
                 "description": "One colocated variant",
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
-                    "array",
-                    "object",
-                    "null"
+                    "null",
+                    "string"
                   ]
                 }
               },
@@ -1138,12 +1119,10 @@
                     "description": "One transcript consequence",
                     "additionalProperties": {
                       "type": [
-                        "string",
+                        "null",
                         "number",
-                        "boolean",
-                        "array",
                         "object",
-                        "null"
+                        "string"
                       ]
                     }
                   },
@@ -1171,12 +1150,9 @@
                   "description": "Chromosome, start, end and alleles",
                   "additionalProperties": {
                     "type": [
-                      "string",
+                      "null",
                       "number",
-                      "boolean",
-                      "array",
-                      "object",
-                      "null"
+                      "string"
                     ]
                   }
                 },
@@ -1194,12 +1170,10 @@
                     "description": "One summary",
                     "additionalProperties": {
                       "type": [
-                        "string",
+                        "null",
                         "number",
-                        "boolean",
-                        "array",
                         "object",
-                        "null"
+                        "string"
                       ]
                     }
                   }
@@ -1212,21 +1186,16 @@
                   "description": "Summarised consequence on the canonical transcript",
                   "additionalProperties": {
                     "type": [
-                      "string",
+                      "null",
                       "number",
-                      "boolean",
-                      "array",
                       "object",
-                      "null"
+                      "string"
                     ],
                     "additionalProperties": {
                       "type": [
-                        "string",
+                        "null",
                         "number",
-                        "boolean",
-                        "array",
-                        "object",
-                        "null"
+                        "string"
                       ],
                       "additionalProperties": {
                         "type": [
@@ -1431,12 +1400,9 @@
                       "description": "One hotspot record",
                       "additionalProperties": {
                         "type": [
-                          "string",
+                          "null",
                           "number",
-                          "boolean",
-                          "array",
-                          "object",
-                          "null"
+                          "string"
                         ]
                       }
                     }
@@ -1463,12 +1429,8 @@
                 "description": "One colocated variant",
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
-                    "array",
-                    "object",
-                    "null"
+                    "null",
+                    "string"
                   ]
                 }
               },
@@ -1975,10 +1937,6 @@
                 ],
                 "items": {
                   "type": [
-                    "object",
-                    "null",
-                    "boolean",
-                    "array",
                     "object",
                     "null"
                   ],

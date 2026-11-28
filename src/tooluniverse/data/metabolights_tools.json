@@ -249,12 +249,9 @@
             "description": "One file with its name, type and size",
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
                 "boolean",
-                "array",
-                "object",
-                "null"
+                "null",
+                "string"
               ]
             }
           }

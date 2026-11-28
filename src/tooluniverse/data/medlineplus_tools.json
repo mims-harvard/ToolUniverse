@@ -585,39 +585,92 @@
   },
   {
     "name": "MedlinePlus_get_genetics_index",
-    "description": "Download index file (XML) of all genetics entries in MedlinePlus, get complete list in one call.",
+    "description": "Index of every page in MedlinePlus Genetics (2,965 pages: Conditions, Genes, Chromosomes, Handbook), with each page's title, URL and section. Pass category to get one section instead of all of them.",
     "parameter": {
       "type": "object",
-      "properties": {},
+      "properties": {
+        "category": {
+          "type": "string",
+          "enum": [
+            "Conditions",
+            "Genes",
+            "Chromosomes",
+            "Handbook"
+          ],
+          "description": "Return only this index section (matched case-insensitively). Omit it for all 2,965 pages, which is about 400 KB of JSON."
+        }
+      },
       "required": []
     },
     "fields": {
       "endpoint": "https://medlineplus.gov/download/TopicIndex.xml",
-      "input_description": "No input parameters needed, directly call to get complete genetics index.",
-      "output_description": "Returns XML index containing all genetics entries, data will be parsed into Python dictionary or OrderedDict, can be used for offline caching or batch processing."
+      "input_description": "Optional category to return one section of the index; omit it for the complete index.",
+      "output_description": "Returns one row per page with name, url and category, plus count. A filtered call also returns the category it applied and total, the size of the unfiltered index."
     },
     "type": "MedlinePlusRESTTool",
     "test_examples": [
-      {}
+      {},
+      {
+        "category": "Chromosomes"
+      }
     ],
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "topics": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "url": {
-                "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "topics": {
+              "type": "array",
+              "description": "The pages returned, one row each.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Page title, e.g. 'Alport syndrome' or 'FBN1: fibrillin 1'."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "MedlinePlus Genetics page URL."
+                  },
+                  "category": {
+                    "type": "string",
+                    "description": "Index section the page belongs to: Conditions, Genes, Chromosomes or Handbook."
+                  }
+                }
               }
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of pages in topics."
+            },
+            "category": {
+              "type": "string",
+              "description": "Present only when the caller asked for one section: the section these pages come from."
+            },
+            "total": {
+              "type": "integer",
+              "description": "Present only when a category was applied: how many pages the whole index holds, so a filtered answer states what it left out."
             }
-          }
+          },
+          "required": [
+            "topics",
+            "count"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Why no pages were returned: an empty index, or a category name the index does not have."
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     }
   }
 ]

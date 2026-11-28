@@ -413,12 +413,10 @@
           "description": "Wrapper metadata about the request",
           "additionalProperties": {
             "type": [
-              "string",
-              "number",
               "boolean",
-              "array",
-              "object",
-              "null"
+              "null",
+              "number",
+              "string"
             ]
           }
         },
@@ -431,12 +429,10 @@
           "description": "The query as the wrapper sent it",
           "additionalProperties": {
             "type": [
-              "string",
-              "number",
               "boolean",
-              "array",
-              "object",
-              "null"
+              "null",
+              "number",
+              "string"
             ]
           }
         },
@@ -689,12 +685,8 @@
                       ],
                       "additionalProperties": {
                         "type": [
-                          "string",
-                          "number",
-                          "boolean",
-                          "array",
-                          "object",
-                          "null"
+                          "null",
+                          "string"
                         ],
                         "additionalProperties": {
                           "type": [
@@ -995,21 +987,15 @@
                       ],
                       "additionalProperties": {
                         "type": [
-                          "string",
-                          "number",
-                          "boolean",
                           "array",
+                          "null",
                           "object",
-                          "null"
+                          "string"
                         ],
                         "additionalProperties": {
                           "type": [
-                            "string",
-                            "number",
-                            "boolean",
-                            "array",
-                            "object",
-                            "null"
+                            "null",
+                            "string"
                           ]
                         }
                       }
@@ -1335,12 +1321,10 @@
           "description": "Wrapper metadata about the request",
           "additionalProperties": {
             "type": [
-              "string",
-              "number",
               "boolean",
-              "array",
-              "object",
-              "null"
+              "null",
+              "number",
+              "string"
             ]
           }
         },
@@ -1353,12 +1337,10 @@
           "description": "The query as the wrapper sent it",
           "additionalProperties": {
             "type": [
-              "string",
-              "number",
               "boolean",
-              "array",
-              "object",
-              "null"
+              "null",
+              "number",
+              "string"
             ]
           }
         },

@@ -757,12 +757,9 @@
                   "description": "One diagnosis",
                   "additionalProperties": {
                     "type": [
-                      "string",
+                      "null",
                       "number",
-                      "boolean",
-                      "array",
-                      "object",
-                      "null"
+                      "string"
                     ]
                   }
                 }
@@ -816,12 +813,10 @@
             },
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
-                "boolean",
                 "array",
-                "object",
-                "null"
+                "null",
+                "number",
+                "string"
               ]
             }
           },

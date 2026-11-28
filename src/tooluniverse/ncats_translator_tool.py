@@ -17,7 +17,7 @@ that fans a query out to all reasoners: the ARS is asynchronous and a full
 aggregation can take several minutes, while Aragorn alone answers common
 one-hop queries in seconds to tens of seconds.
 
-APIs: https://aragorn.transltr.io/aragorn/query
+APIs: https://shepherd.transltr.io/aragorn/query
       https://name-resolution-sri.renci.org/lookup
 No authentication required.
 """
@@ -29,7 +29,9 @@ import requests
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
-ARAGORN_URL = "https://aragorn.transltr.io/aragorn/query"
+# Aragorn now runs on Translator's Shepherd platform. The old production host,
+# aragorn.transltr.io, answers every path with an nginx 404.
+ARAGORN_URL = "https://shepherd.transltr.io/aragorn/query"
 NAME_RESOLUTION_URL = "https://name-resolution-sri.renci.org/lookup"
 
 

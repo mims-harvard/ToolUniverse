@@ -1679,7 +1679,16 @@ def cmd_test(args: argparse.Namespace) -> None:
         # itself (top-level {"type": "array"}, e.g. CORE_search_papers), so the
         # whole result is the payload there. Reaching here with a list also
         # means it is non-empty and not an error payload.
-        if not failures and (is_success_envelope or isinstance(result, list)):
+        # Any result that reaches here with no failures is a healthy one: None,
+        # an empty dict or list, and an error payload each added a failure above.
+        # The condition used to be `is_success_envelope or isinstance(result,
+        # list)`, which skipped validation for every shape that is neither the
+        # {"status", "data"} envelope nor a bare list -- so the 61 AgenticTool and
+        # ComposeTool declarations were never checked by this command. Those tools
+        # answer with the model's text or with {"success", "result", "metadata"},
+        # which carries `success`, not `status`. Their schemas are detailed, with
+        # oneOf branches and $defs per tool; none of it was ever validated.
+        if not failures:
             return_schema = (
                 tool_def.get("return_schema") if isinstance(tool_def, dict) else None
             )

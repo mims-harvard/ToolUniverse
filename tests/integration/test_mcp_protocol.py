@@ -191,7 +191,7 @@ class TestMCPProtocol:
     @pytest.mark.asyncio
     async def test_mcp_client_tool_connection(self):
         """Test MCPClientTool can connect and list tools"""
-        # Mock the streamablehttp_client and ClientSession
+        # Mock the streamable-HTTP transport and ClientSession
         mock_session = AsyncMock()
         mock_session.initialize = AsyncMock()
         mock_session.list_tools = AsyncMock(return_value={
@@ -212,8 +212,8 @@ class TestMCPProtocol:
         mock_read_stream = AsyncMock()
         mock_write_stream = AsyncMock()
         
-        with patch('tooluniverse.mcp_client_tool.streamablehttp_client') as mock_client:
-            mock_client.return_value.__aenter__.return_value = (mock_read_stream, mock_write_stream, None)
+        with patch('tooluniverse.mcp_client_tool._open_streamable_http') as mock_client:
+            mock_client.return_value.__aenter__.return_value = (mock_read_stream, mock_write_stream)
             
             with patch('tooluniverse.mcp_client_tool.ClientSession') as mock_session_class:
                 mock_session_class.return_value.__aenter__.return_value = mock_session
@@ -235,7 +235,7 @@ class TestMCPProtocol:
     @pytest.mark.asyncio
     async def test_mcp_client_tool_execution(self):
         """Test MCPClientTool can execute tools"""
-        # Mock the streamablehttp_client and ClientSession
+        # Mock the streamable-HTTP transport and ClientSession
         mock_session = AsyncMock()
         mock_session.initialize = AsyncMock()
         mock_session.call_tool = AsyncMock(return_value={
@@ -250,8 +250,8 @@ class TestMCPProtocol:
         mock_read_stream = AsyncMock()
         mock_write_stream = AsyncMock()
         
-        with patch('tooluniverse.mcp_client_tool.streamablehttp_client') as mock_client:
-            mock_client.return_value.__aenter__.return_value = (mock_read_stream, mock_write_stream, None)
+        with patch('tooluniverse.mcp_client_tool._open_streamable_http') as mock_client:
+            mock_client.return_value.__aenter__.return_value = (mock_read_stream, mock_write_stream)
             
             with patch('tooluniverse.mcp_client_tool.ClientSession') as mock_session_class:
                 mock_session_class.return_value.__aenter__.return_value = mock_session

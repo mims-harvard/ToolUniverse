@@ -361,12 +361,8 @@
                           "description": "Cross-references for the transcript, keyed by database",
                           "additionalProperties": {
                             "type": [
-                              "string",
-                              "number",
-                              "boolean",
-                              "array",
-                              "object",
-                              "null"
+                              "null",
+                              "string"
                             ]
                           }
                         },
@@ -530,12 +526,10 @@
             "description": "Per-variant block. Inner key is the normalized g.HGVS.",
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
-                "boolean",
                 "array",
+                "null",
                 "object",
-                "null"
+                "string"
               ],
               "properties": {
                 "g_hgvs": {
@@ -646,12 +640,10 @@
               },
               "additionalProperties": {
                 "type": [
-                  "string",
-                  "number",
-                  "boolean",
                   "array",
+                  "null",
                   "object",
-                  "null"
+                  "string"
                 ],
                 "additionalProperties": {
                   "type": [
@@ -664,21 +656,16 @@
                   ],
                   "additionalProperties": {
                     "type": [
-                      "string",
-                      "number",
-                      "boolean",
-                      "array",
+                      "null",
                       "object",
-                      "null"
+                      "string"
                     ],
                     "additionalProperties": {
                       "type": [
-                        "string",
-                        "number",
                         "boolean",
-                        "array",
+                        "null",
                         "object",
-                        "null"
+                        "string"
                       ],
                       "additionalProperties": {
                         "type": [

@@ -18,7 +18,7 @@ def iDigBio_summary_facets(
     phylum: Optional[str] = None,
     class_: Optional[str] = None,
     order: Optional[str] = None,
-    top_fields: Optional[str | list[Any]] = None,
+    top_fields: Optional[str | list[str]] = None,
     count: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -33,23 +33,23 @@ def iDigBio_summary_facets(
     scientificname : str
         Full scientific name, e.g. 'Puma concolor'.
     genus : str
-        Genus, e.g. 'Puma'.
+        Genus, e.g. 'Puma'. GBIF has no occurrence filter for this rank, so the name ...
     family : str
-        Family name.
+        Family name. GBIF has no occurrence filter for this rank, so the name is firs...
     country : str
-        Country, e.g. 'United States'.
+        Country, as an ISO 3166-1 name or code -- 'United States', 'USA' or 'US' all ...
     stateprovince : str
         State/province.
     recordedby : str
         Collector name.
     phylum : str
-        Phylum.
+        Phylum. GBIF has no occurrence filter for this rank, so the name is first res...
     class_ : str
-        Class.
+        Class. GBIF has no occurrence filter for this rank, so the name is first reso...
     order : str
-        Order.
-    top_fields : str | list[Any]
-        Darwin Core field(s) to break down counts by, e.g. 'country', 'institutioncod...
+        Order. GBIF has no occurrence filter for this rank, so the name is first reso...
+    top_fields : str | list[str]
+        Field(s) to break the matching set down by, comma-separated. One or more of: ...
     count : int
         Number of top values to return per facet field (default 10, max 100).
     stream_callback : Callable, optional

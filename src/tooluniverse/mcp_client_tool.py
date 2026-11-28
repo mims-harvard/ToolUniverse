@@ -9,13 +9,16 @@ import json
 import asyncio
 import copy
 import hashlib
+import importlib
+import inspect
 import re
 import websockets
+from contextlib import asynccontextmanager
 from typing import Dict, List, Any, Optional
 from urllib.parse import urljoin
 import warnings
 from mcp.client.session import ClientSession
-from mcp.client.streamable_http import streamablehttp_client
+from mcp.client import streamable_http as _streamable_http
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 from .logging_config import get_logger
@@ -28,6 +31,118 @@ from .mcp_contract_compat import (
 import os
 
 logger = get_logger(__name__)
+
+
+# The MCP Python SDK renamed this transport: streamablehttp_client -- keyword
+# arguments for headers / timeout / sse_read_timeout / httpx_client_factory --
+# was deprecated in 1.x in favour of streamable_http_client, which takes one
+# pre-built client and nothing else, and removed in 2.0.
+#
+# 1.30 ships BOTH, so the presence of the new name says nothing about which
+# generation is installed. Prefer the old one wherever it still exists: that
+# keeps the path this package already takes on every supported 1.x exactly as
+# it is, and leaves the new path for the only case that needs it, 2.0, where
+# the old name is gone. Measured, 1.30's streamable_http_client still yields a
+# 3-tuple and does not accept max_sse_event_size at all.
+_SDK_HAS_LEGACY_TRANSPORT = hasattr(_streamable_http, "streamablehttp_client")
+
+
+def _sdk_http_utils():
+    """The SDK's own httpx helper module, or None once it moves."""
+    try:
+        from mcp.shared import _httpx_utils
+
+        return _httpx_utils
+    except ImportError:  # pragma: no cover - private, could move in any release
+        return None
+
+
+# streamablehttp_client applied these itself. A bare httpx2.AsyncClient falls
+# back to a flat 5 second timeout instead, shorter than almost any real tool
+# call, so on the 2.0 path both halves have to be stated. Read them from the
+# SDK rather than copying the numbers, so they stay the SDK's own defaults.
+_DEFAULT_CONNECT_TIMEOUT = float(
+    getattr(_sdk_http_utils(), "MCP_DEFAULT_TIMEOUT", 30.0)
+)
+_DEFAULT_SSE_READ_TIMEOUT = float(
+    getattr(_sdk_http_utils(), "MCP_DEFAULT_SSE_READ_TIMEOUT", 300.0)
+)
+
+
+def _httpx_module():
+    """The HTTP library the installed SDK itself speaks.
+
+    Taken from the SDK's own module, not guessed from an import name. httpx
+    and httpx2 types are not interchangeable and the mismatch is silent:
+    httpx.Timeout(httpx2.Timeout(30, read=960)) does not raise, it nests,
+    leaving .read holding a Timeout object and the real read limit never
+    applied. Measured. Both libraries are installed side by side in practice
+    -- anything depending on either pulls it in -- so the presence of a name
+    is not evidence of which one this transport will type check against.
+    """
+    utils = _sdk_http_utils()
+    for name in ("httpx2", "httpx"):
+        module = getattr(utils, name, None)
+        if module is not None:
+            return module
+    return importlib.import_module(
+        "httpx" if _SDK_HAS_LEGACY_TRANSPORT else "httpx2"
+    )  # pragma: no cover - the SDK's module is where these come from
+
+
+def _http_timeout(timeout=None, sse_read_timeout=None):
+    """The connect/read split, expressed for whichever library is installed."""
+    return _httpx_module().Timeout(
+        _DEFAULT_CONNECT_TIMEOUT if timeout is None else timeout,
+        read=(
+            _DEFAULT_SSE_READ_TIMEOUT if sse_read_timeout is None else sse_read_timeout
+        ),
+    )
+
+
+def _accepted_kwargs(func):
+    """Which keyword arguments this build of the transport actually takes."""
+    try:
+        return set(inspect.signature(func).parameters)
+    except (TypeError, ValueError):  # pragma: no cover - not introspectable
+        return set()
+
+
+@asynccontextmanager
+async def _open_streamable_http(
+    endpoint, headers=None, timeout=None, sse_read_timeout=None, client_factory=None
+):
+    """Yield (read_stream, write_stream) from either generation of the SDK."""
+    legacy = getattr(_streamable_http, "streamablehttp_client", None)
+    if legacy is not None:
+        kwargs = {"headers": headers or None, "httpx_client_factory": client_factory}
+        if timeout is not None:
+            kwargs["timeout"] = timeout
+        if sse_read_timeout is not None:
+            kwargs["sse_read_timeout"] = sse_read_timeout
+        async with legacy(endpoint, **kwargs) as streams:
+            # 1.x yields a third element, the get_session_id callback, which
+            # nothing here uses and 2.0 removed.
+            yield streams[0], streams[1]
+        return
+
+    modern = _streamable_http.streamable_http_client
+    extra = {}
+    if "max_sse_event_size" in _accepted_kwargs(modern):
+        # 2.0 added a 1 MiB ceiling on a single SSE event, which is a ceiling
+        # on one tool result: 1.x had none, and these tools return results
+        # well past it (a MedlinePlus index is 411 KB, a structure prediction
+        # far more). None restores the old behaviour, so the upgrade itself
+        # adds no new way to fail. Choosing a real bound is a separate change
+        # and needs a measurement of what results weigh, not a number here.
+        extra["max_sse_event_size"] = None
+    http_client = client_factory(
+        headers=headers or None,
+        timeout=_http_timeout(timeout, sse_read_timeout),
+    )
+    async with http_client:
+        async with modern(endpoint, http_client=http_client, **extra) as streams:
+            yield streams[0], streams[1]
 
 
 def _unwrap_mcp_tool_result(result: Any) -> Any:
@@ -197,13 +312,13 @@ class BaseMCPClient:
         group, so the status never reaches the caller: measured, a borrower saw "unhandled
         errors in a TaskGroup (1 sub-exception)" and was told the machine was offline.
         """
-        try:
-            from mcp.shared._httpx_utils import create_mcp_http_client
-        except ImportError:  # pragma: no cover - moved in a later mcp release
-            import httpx
+        utils = _sdk_http_utils()
+        create_mcp_http_client = getattr(utils, "create_mcp_http_client", None)
+        if create_mcp_http_client is None:  # pragma: no cover - private module
+            _httpx = _httpx_module()
 
             def create_mcp_http_client(headers=None, timeout=None, auth=None):
-                return httpx.AsyncClient(
+                return _httpx.AsyncClient(
                     headers=headers, timeout=timeout, auth=auth, follow_redirects=True
                 )
 
@@ -242,21 +357,16 @@ class BaseMCPClient:
             # failed at 300 with "Cancelled via cancel scope ...; reason: deadline exceeded"
             # although the platform allowed it. Everything else keeps the default, so a wedged
             # server cannot hold a load for this long.
-            long_read = (
-                {"sse_read_timeout": REMOTE_CALL_READ_TIMEOUT}
-                if method == "tools/call"
-                else {}
-            )
-            async with streamablehttp_client(
+            long_read = REMOTE_CALL_READ_TIMEOUT if method == "tools/call" else None
+            async with _open_streamable_http(
                 endpoint,
-                headers=headers or None,
+                headers=headers,
                 timeout=self.timeout,
-                httpx_client_factory=self._recording_client_factory(),
-                **long_read,
+                sse_read_timeout=long_read,
+                client_factory=self._recording_client_factory(),
             ) as (
                 read_stream,
                 write_stream,
-                _,
             ):
                 async with ClientSession(read_stream, write_stream) as session:
                     await session.initialize()
@@ -287,7 +397,19 @@ class BaseMCPClient:
                         raise ValueError(f"Unsupported MCP method: {method}")
 
                     if hasattr(result, "model_dump"):
-                        return result.model_dump(mode="json")
+                        # by_alias is what keeps the wire spelling. SDK 1.x
+                        # named the fields isError / structuredContent /
+                        # inputSchema, so a plain model_dump happened to emit
+                        # them; 2.0 renamed every field to snake_case and left
+                        # camelCase only on the aliases. Everything downstream
+                        # reads the wire spelling, and reads it with .get():
+                        # _unwrap_mcp_tool_result, MCPProxyTool's
+                        # _normalize_result, the inputSchema the auto loader
+                        # builds its parameters from, and the pinned contract
+                        # comparison in mcp_contract_compat. Without this a
+                        # failed call arrives with no isError key at all and
+                        # is handed back as a success.
+                        return result.model_dump(mode="json", by_alias=True)
                     return result
 
         elif self.transport == "websocket":

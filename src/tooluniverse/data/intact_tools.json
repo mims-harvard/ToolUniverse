@@ -889,12 +889,8 @@
                         ],
                         "additionalProperties": {
                           "type": [
-                            "string",
-                            "number",
-                            "boolean",
-                            "array",
-                            "object",
-                            "null"
+                            "null",
+                            "string"
                           ]
                         }
                       }
@@ -970,12 +966,8 @@
                       "description": "Features on other participants this one binds to. IntAct nests these recursively, so the deeper levels are declared open",
                       "items": {
                         "type": [
-                          "string",
-                          "number",
-                          "boolean",
-                          "array",
-                          "object",
-                          "null"
+                          "null",
+                          "string"
                         ],
                         "additionalProperties": {
                           "type": [
@@ -1047,12 +1039,9 @@
                   ],
                   "additionalProperties": {
                     "type": [
-                      "string",
-                      "number",
-                      "boolean",
                       "array",
-                      "object",
-                      "null"
+                      "null",
+                      "string"
                     ]
                   }
                 },
@@ -1228,12 +1217,9 @@
                   },
                   "additionalProperties": {
                     "type": [
-                      "string",
-                      "number",
-                      "boolean",
                       "array",
-                      "object",
-                      "null"
+                      "null",
+                      "string"
                     ]
                   }
                 },

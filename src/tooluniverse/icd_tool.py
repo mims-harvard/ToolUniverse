@@ -7,6 +7,7 @@ Requires ICD_CLIENT_ID / ICD_CLIENT_SECRET, as environment variables or as
 request credentials.
 """
 
+import re
 import time
 from urllib.parse import quote as url_quote
 
@@ -18,6 +19,23 @@ from .tool_registry import register_tool
 
 ICD_API_BASE = "https://id.who.int/icd"
 ICD_API_AUTH = "https://icdaccessmanagement.who.int/connect/token"
+
+# A full ICD-10-CM code without its dot: a three-character category followed
+# by one to four more characters, e.g. E119, J449, S72001A.
+_DOTLESS_ICD10CM = re.compile(r"[A-Z][0-9][0-9A-Z][0-9A-Z]{1,4}")
+
+
+def _dotted_icd10cm(code: str) -> str:
+    """Return an ICD-10-CM code in the dotted form NLM indexes.
+
+    Claims files, HL7 v2 messages and OMOP source values often carry codes
+    without the dot ("E119" for E11.9), and NLM Clinical Tables matches only
+    the dotted form, so a dotless code came back as zero matches.
+    """
+    code = code.strip().upper()
+    if _DOTLESS_ICD10CM.fullmatch(code):
+        return f"{code[:3]}.{code[3:]}"
+    return code
 
 
 @register_tool("ICDTool")
@@ -208,7 +226,7 @@ class ICD10Tool(BaseTool):
 
         # Replace {code} placeholder
         if "{code}" in endpoint:
-            code = arguments.get("code", "")
+            code = _dotted_icd10cm(str(arguments.get("code", "")))
             endpoint = endpoint.replace("{code}", code)
 
         return f"{self.base_url}{endpoint}"

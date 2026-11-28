@@ -59,46 +59,75 @@ def test_idigbio_search_requires_a_field():
     assert out["status"] == "error"
 
 
-def test_idigbio_search_builds_rq_and_curates():
-    body = {"itemCount": 130353, "items": [
-        {"uuid": "abc", "indexTerms": {"scientificname": "quercus alba", "family": "Fagaceae",
-                                       "genus": "quercus", "country": "united states"},
-         "data": {"dwc:recordedBy": "J. Smith", "dwc:occurrenceID": "occ:1"}}]}
+def test_idigbio_search_builds_a_gbif_query_and_curates():
+    """The retired iDigBio API is reached through GBIF's iDigBio network now.
+
+    `genus` is not a GBIF occurrence filter -- GBIF would ignore it and answer
+    with the whole network -- so it arrives as a taxonKey, and `country` arrives
+    as the ISO code GBIF filters on rather than the name iDigBio accepted.
+    """
+    match = {"usageKey": 2877951, "canonicalName": "Quercus", "rank": "GENUS",
+             "matchType": "EXACT", "familyKey": 4689}
+    countries = [{"iso2": "US", "iso3": "USA", "title": "United States",
+                  "enumName": "UNITED_STATES"}]
+    body = {"count": 130353, "results": [
+        {"key": 11, "scientificName": "Quercus alba L.", "family": "Fagaceae",
+         "genus": "Quercus", "country": "United States of America",
+         "recordedBy": "J. Smith", "occurrenceID": "occ:1"}]}
     captured = {}
 
     def fake_get(url, params=None, **kw):
+        if url.endswith("/enumeration/country"):
+            return _resp(200, countries)
+        if url.endswith("/species/match"):
+            return _resp(200, match)
         captured["params"] = params
         return _resp(200, body)
 
-    with patch("tooluniverse.idigbio_tool.requests.get", side_effect=fake_get):
+    import tooluniverse.idigbio_tool as mod
+
+    with patch("tooluniverse.idigbio_tool.requests.get", side_effect=fake_get), \
+            patch.object(mod, "_countries_cache", None):
         out = iDigBioSearchTool(_cfg("iDigBio_search_records", "iDigBioSearchTool")).run(
             {"genus": "Quercus", "country": "United States", "limit": 5})
     assert out["status"] == "success"
-    assert '"genus": "Quercus"' in captured["params"]["rq"]
-    assert '"country": "United States"' in captured["params"]["rq"]
+    assert captured["params"]["taxonKey"] == 2877951
+    assert "genus" not in captured["params"]
+    assert captured["params"]["country"] == "US"
+    assert captured["params"]["networkKey"] == mod.IDIGBIO_NETWORK_KEY
     rec = out["data"][0]
-    assert rec["scientific_name"] == "quercus alba"
+    assert rec["scientific_name"] == "Quercus alba L."
     assert rec["recorded_by"] == "J. Smith"
     assert out["metadata"]["total_available"] == 130353
 
 
-def test_idigbio_get_requires_uuid():
+def test_idigbio_get_requires_an_occurrence_key():
     out = iDigBioRecordTool(_cfg("iDigBio_get_record", "iDigBioRecordTool")).run({})
     assert out["status"] == "error"
 
 
-def test_idigbio_get_includes_full_data():
-    body = {"uuid": "abc", "indexTerms": {"genus": "quercus"},
-            "data": {"dwc:scientificName": "Quercus alba", "dwc:country": "United States"}}
+def test_idigbio_get_includes_the_full_upstream_record():
+    body = {"key": 6158969750, "scientificName": "Quercus alba L.",
+            "country": "United States of America", "genus": "Quercus"}
     with patch("tooluniverse.idigbio_tool.requests.get", return_value=_resp(200, body)):
-        out = iDigBioRecordTool(_cfg("iDigBio_get_record", "iDigBioRecordTool")).run({"uuid": "abc"})
+        out = iDigBioRecordTool(_cfg("iDigBio_get_record", "iDigBioRecordTool")).run(
+            {"occurrence_key": "6158969750"})
     assert out["status"] == "success"
-    assert out["data"]["uuid"] == "abc"
-    assert out["data"]["data"]["dwc:scientificName"] == "Quercus alba"
+    assert out["data"]["gbif_id"] == 6158969750
+    assert out["data"]["data"]["scientificName"] == "Quercus alba L."
+
+
+def test_idigbio_get_refuses_a_legacy_uuid():
+    """Those ids existed only in the retired API; GBIF resolves none of them."""
+    out = iDigBioRecordTool(_cfg("iDigBio_get_record", "iDigBioRecordTool")).run(
+        {"occurrence_key": "b659bd7f-7fa7-434b-80e7-2be10d1c4e80"})
+    assert out["status"] == "error"
+    assert "legacy iDigBio record UUID" in out["error"]
 
 
 def test_idigbio_get_404_empty():
     with patch("tooluniverse.idigbio_tool.requests.get", return_value=_resp(404)):
-        out = iDigBioRecordTool(_cfg("iDigBio_get_record", "iDigBioRecordTool")).run({"uuid": "missing"})
+        out = iDigBioRecordTool(_cfg("iDigBio_get_record", "iDigBioRecordTool")).run(
+            {"occurrence_key": "999999999"})
     assert out["status"] == "success"
     assert out["data"] == {}

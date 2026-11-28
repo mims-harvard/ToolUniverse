@@ -640,19 +640,59 @@ class MedlinePlusRESTTool(BaseTool):
             }
 
         elif tool_name == "MedlinePlus_get_genetics_index":
-            topics = response.get("genetics_home_reference_topic_list", {}).get(
-                "topic", []
-            )
-            return (
-                {
-                    "topics": [
-                        {"name": t.get("name", ""), "url": t.get("url", "")}
-                        for t in topics
-                    ]
+            # The index nests its pages one level down: four section topics
+            # (Conditions, Genes, Chromosomes, Handbook) each hold their pages
+            # under <topics><topic>, and a page's name is its <title>. Reading
+            # only the top level returned the 4 sections with an empty name.
+            def as_list(node):
+                if node is None:
+                    return []
+                return node if isinstance(node, list) else [node]
+
+            index = response.get("genetics_home_reference_topic_list") or {}
+            topics = []
+            for section in as_list(index.get("topic")):
+                if not isinstance(section, dict):
+                    continue
+                category = section.get("@id") or section.get("title") or ""
+                pages = (section.get("topics") or {}).get("topic")
+                for page in as_list(pages):
+                    if isinstance(page, dict):
+                        topics.append(
+                            {
+                                "name": page.get("title") or "",
+                                "url": page.get("url") or "",
+                                "category": category,
+                            }
+                        )
+            if not topics:
+                return {"error": "No genetics topics found"}
+
+            # The whole index is 2,965 pages and about 400 KB of JSON, which a
+            # caller after one section should not have to receive to read.
+            # An unknown name is refused rather than ignored, so a typo cannot
+            # look like an empty section.
+            sections = list(dict.fromkeys(row["category"] for row in topics))
+            wanted = str((arguments or {}).get("category", "") or "").strip()
+            if not wanted:
+                return {"topics": topics, "count": len(topics)}
+            match = next((s for s in sections if s.lower() == wanted.lower()), None)
+            if match is None:
+                return {
+                    "error": (
+                        f"Unknown category {wanted!r}. "
+                        f"The index has: {', '.join(sections)}."
+                    )
                 }
-                if topics
-                else {"error": "No genetics topics found"}
-            )
+            kept = [row for row in topics if row["category"] == match]
+            # total says what a filtered answer left out, so a short list is
+            # never mistaken for the whole index.
+            return {
+                "topics": kept,
+                "count": len(kept),
+                "category": match,
+                "total": len(topics),
+            }
 
         return {"raw_response": response}
 

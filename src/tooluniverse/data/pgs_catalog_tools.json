@@ -228,12 +228,9 @@
                 },
                 "additionalProperties": {
                   "type": [
-                    "string",
+                    "null",
                     "number",
-                    "boolean",
-                    "array",
-                    "object",
-                    "null"
+                    "string"
                   ]
                 }
               },
@@ -677,12 +674,9 @@
                   "description": "One metric with its value, interval and unit",
                   "additionalProperties": {
                     "type": [
-                      "string",
+                      "null",
                       "number",
-                      "boolean",
-                      "array",
-                      "object",
-                      "null"
+                      "string"
                     ]
                   }
                 }
@@ -701,12 +695,9 @@
                   "description": "One metric with its value, interval and unit",
                   "additionalProperties": {
                     "type": [
-                      "string",
+                      "null",
                       "number",
-                      "boolean",
-                      "array",
-                      "object",
-                      "null"
+                      "string"
                     ]
                   }
                 }

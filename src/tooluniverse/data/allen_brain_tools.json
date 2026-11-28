@@ -521,12 +521,9 @@
               },
               "additionalProperties": {
                 "type": [
-                  "string",
+                  "null",
                   "number",
-                  "boolean",
-                  "array",
-                  "object",
-                  "null"
+                  "string"
                 ]
               }
             },

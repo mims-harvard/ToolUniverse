@@ -24,6 +24,55 @@ def _with_api_key(params):
     return params
 
 
+def _upstream_message(resp):
+    """The upstream's own explanation, if its body carries one."""
+    try:
+        body = resp.json()
+    except ValueError:
+        return ""
+    if not isinstance(body, dict):
+        return ""
+    for key in ("message", "error", "detail"):
+        value = body.get(key)
+        if isinstance(value, str) and value.strip():
+            text = " ".join(value.split())
+            # Cut at a sentence end rather than mid-word, so the quote reads as
+            # a quote. The whole body stays in `detail`.
+            if len(text) > 300:
+                cut = text.rfind(". ", 0, 300)
+                text = text[: cut + 1] if cut > 120 else text[:300].rstrip() + "..."
+            return text
+    return ""
+
+
+def _upstream_error(resp, final_url):
+    """Say what the upstream said, in the field a caller reads.
+
+    This used to return `error` = "OpenAlex API error" with the status code, the
+    body and the URL beside it. Everything needed was present and the one field
+    an agent reads carried none of it: a 429 whose body says the budget resets at
+    midnight UTC reads exactly like a malformed query. OpenAlex's 429 explains
+    that an unkeyed request draws on a free daily budget shared by every caller
+    on the network's IP address, and OPENALEX_API_KEY is already an optional
+    credential here, so the refusal names it.
+    """
+    message = f"OpenAlex API error: HTTP {resp.status_code}"
+    upstream = _upstream_message(resp)
+    if upstream:
+        message = f"{message} -- {upstream}"
+    if resp.status_code == 429 and not get_credential("OPENALEX_API_KEY"):
+        # The one thing the upstream cannot tell a caller: where this project
+        # reads the key from. Its own message already explains the budget.
+        message = f"{message} Here the key is read from OPENALEX_API_KEY."
+    return {
+        "status": "error",
+        "error": redact_url_secrets(message),
+        "url": final_url,
+        "status_code": resp.status_code,
+        "detail": redact_url_secrets((resp.text or "")[:500]),
+    }
+
+
 @register_tool("OpenAlexTool")
 class OpenAlexTool(BaseTool):
     """
@@ -545,13 +594,7 @@ class OpenAlexRESTTool(BaseTool):
             final_url = redact_url_secrets(getattr(resp, "url", None) or url)
 
             if resp.status_code != 200:
-                return {
-                    "status": "error",
-                    "error": "OpenAlex API error",
-                    "url": final_url,
-                    "status_code": resp.status_code,
-                    "detail": redact_url_secrets((resp.text or "")[:500]),
-                }
+                return _upstream_error(resp, final_url)
 
             data = resp.json()
             result = {"status": "success", "data": data, "url": final_url}
