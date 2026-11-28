@@ -235,12 +235,15 @@ Python MCP Client Examples
 .. code-block:: python
 
    from mcp.client.session import ClientSession
-   from mcp.client.streamable_http import streamablehttp_client
+   from mcp.client.streamable_http import streamable_http_client
    import asyncio
 
    async def connect_via_http():
-       # Connect to HTTP MCP server
-       async with streamablehttp_client("http://localhost:8000/mcp") as (read, write, get_session_id):
+       # Connect to HTTP MCP server. On mcp 1.x this yields a third element,
+       # the get_session_id callback, which 2.0 removed; index the streams
+       # rather than unpacking if you support both.
+       async with streamable_http_client("http://localhost:8000/mcp") as streams:
+           read, write = streams[0], streams[1]
            async with ClientSession(read, write) as session:
                await session.initialize()
 

@@ -134,24 +134,30 @@ async def test_resolved_auth_header_is_passed_to_streamable_http(
     mock_write_stream = AsyncMock()
 
     with (
-        patch("tooluniverse.mcp_client_tool.streamablehttp_client") as mock_stream,
+        patch("tooluniverse.mcp_client_tool._open_streamable_http") as mock_stream,
         patch("tooluniverse.mcp_client_tool.ClientSession") as mock_session_class,
     ):
         mock_stream.return_value.__aenter__.return_value = (
             mock_read_stream,
             mock_write_stream,
-            None,
         )
         mock_session_class.return_value.__aenter__.return_value = mock_session
 
         assert await client.list_tools() == []
 
+    # _open_streamable_http is the one seam both generations of the MCP SDK go
+    # through -- 1.x keyword arguments, 2.x pre-built client -- so asserting
+    # the header here holds on either. See
+    # tests/unit/test_mcp_client_supports_sdk_v1_and_v2.py.
     mock_stream.assert_called_once_with(
         "https://example.test/mcp",
         headers={"X-GI-Key": "secret-value"},
         timeout=600,
+        # tools/list keeps the library's own read timeout; only tools/call
+        # asks for the long one.
+        sse_read_timeout=None,
         # Records the last HTTP error so a refusal's status reaches the caller.
-        httpx_client_factory=ANY,
+        client_factory=ANY,
     )
 
 

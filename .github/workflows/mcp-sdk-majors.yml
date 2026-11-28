@@ -1,0 +1,65 @@
+# A claim that two majors of a dependency both work rots unless something
+# checks it. This installs the newest `mcp` and `fastmcp` over the resolved
+# environment and runs the MCP-facing tests against them; the ordinary Test
+# Suite already covers the pinned pair.
+#
+# Path-filtered rather than manual-only: a tier nobody triggers stops telling
+# you anything (#834 era, tests/tools and tests/examples went stale for weeks
+# and were hiding six real failures). It runs when the files that make the
+# claim change, and not otherwise, because the CI budget is not free.
+name: MCP SDK majors
+
+on:
+  pull_request:
+    paths:
+      - pyproject.toml
+      - src/tooluniverse/mcp_client_tool.py
+      - src/tooluniverse/mcp_contract_compat.py
+      - src/tooluniverse/mcp_schema_adapter.py
+      - src/tooluniverse/smcp.py
+      - .github/workflows/mcp-sdk-majors.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  newest-majors:
+    name: Newest mcp and fastmcp
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+          # Take whatever the widened caps now allow, so this job fails when a
+          # new major breaks us rather than when someone remembers to look.
+          pip install --upgrade 'mcp[cli]' fastmcp
+
+      - name: Which versions are under test?
+        run: |
+          python - <<'PY'
+          import importlib.metadata as md
+          for name in ("mcp", "mcp-types", "fastmcp", "fastmcp-slim", "httpx", "httpx2"):
+              try:
+                  print(f"{name:14s} {md.version(name)}")
+              except md.PackageNotFoundError:
+                  print(f"{name:14s} not installed")
+          PY
+
+      - name: The transport and the wire spelling
+        run: |
+          pytest tests/unit/test_mcp_client_supports_sdk_v1_and_v2.py \
+                 tests/unit/test_long_remote_calls.py \
+                 tests/unit/test_mcp_contract_hardening.py \
+                 tests/unit/test_mcp_contract_lockfile.py \
+                 tests/unit/test_mcp_compatible_drift.py \
+                 tests/unit/test_mcp_loader_declares_its_interface.py \
+                 -v --no-cov

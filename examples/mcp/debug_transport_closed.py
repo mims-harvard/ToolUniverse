@@ -33,7 +33,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 try:
     from mcp import ClientSession, StdioServerParameters
     from mcp.client.stdio import stdio_client
-    from mcp.client.streamable_http import streamablehttp_client
+    from mcp.client.streamable_http import streamable_http_client
 except ImportError:
     print("❌ MCP 库未安装: pip install mcp")
     sys.exit(1)
@@ -358,8 +358,11 @@ class TransportClosedDebugger:
         ]
         
         try:
-            async with streamablehttp_client("http://localhost:7001") as (read, write):
-                async with ClientSession(read, write) as session:
+            # mcp 1.x yields a third element, get_session_id, which 2.0
+            # removed -- so index rather than unpack. Unpacking two names
+            # from the 1.x three-tuple raised before this was indexed.
+            async with streamable_http_client("http://localhost:7001") as streams:
+                async with ClientSession(streams[0], streams[1]) as session:
                     await session.initialize()
                     
                     for i, test_case in enumerate(test_cases):
