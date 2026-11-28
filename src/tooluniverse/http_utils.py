@@ -223,6 +223,66 @@ def bot_challenge(resp: Any) -> Optional[str]:
     )
 
 
+# How long the caller actually waited, and how many times the wrapper tried.
+#
+# Measured on 2026-11-28 against MassBank, whose REST host accepts the
+# connection and never answers: `MassBank_search_by_formula` took 92.5 s to
+# return `MassBank_search_by_formula API error: ... Read timed out. (read
+# timeout=30)`. Three attempts of 30 s each, and the only number in the message
+# was 30. A caller reading it has no way to know the retry already happened, so
+# the reasonable next move -- try again -- spends another 92 s on a host that is
+# down, and the reported timeout is off by 3x for any budget built on it.
+#
+# requests' own exception text comes from `args[0]`, so the note is appended
+# there: the exception class, `.request`, `.response` and every `except
+# requests.exceptions.Timeout` in the tree keep working unchanged.
+def _attempt_note(attempts: int, elapsed: float) -> str:
+    tries = "attempt" if attempts == 1 else "attempts"
+    return f"{attempts} {tries} over {elapsed:.1f}s"
+
+
+def _disclose_attempts(
+    exc: BaseException, attempts: int, elapsed: float
+) -> BaseException:
+    note = _attempt_note(attempts, elapsed)
+    exc.tooluniverse_attempts = attempts
+    exc.tooluniverse_elapsed_seconds = round(elapsed, 1)
+    if attempts <= 1:
+        return exc
+    text = str(exc) or exc.__class__.__name__
+    if "attempts over" not in text:
+        exc.args = (f"{text} ({note})",) + tuple(exc.args[1:])
+    return exc
+
+
+def _record_attempts(resp: Any, attempts: int, elapsed: float) -> Any:
+    """Leave the count on the response so a caller can disclose it too.
+
+    A retried status is the other half of the same silence: a 429 or 503 that
+    was already retried three times reaches the caller as a bare status code,
+    and "retry later" is poor advice when the wrapper has just done it.
+    Response objects are plain, but a caller may hand in a stub, so a refused
+    assignment is not worth failing a successful request over.
+    """
+    try:
+        resp.tooluniverse_attempts = attempts
+        resp.tooluniverse_elapsed_seconds = round(elapsed, 1)
+    except (AttributeError, TypeError):
+        pass
+    return resp
+
+
+def attempts_note(obj: Any) -> str:
+    """ "after N attempts over Ts" for a response or exception, else ""."""
+    attempts = getattr(obj, "tooluniverse_attempts", None)
+    elapsed = getattr(obj, "tooluniverse_elapsed_seconds", None)
+    if not isinstance(attempts, int) or attempts <= 1:
+        return ""
+    if not isinstance(elapsed, (int, float)):
+        return ""
+    return f"after {_attempt_note(attempts, float(elapsed))}"
+
+
 def request_with_retry(
     session: Union[requests.Session, Any],
     method: str,
@@ -251,11 +311,18 @@ def request_with_retry(
 
     Does NOT call ``raise_for_status()``; callers decide how to handle non-2xx.
     Defaults: 3 attempts, 0.5 s initial backoff, Retry-After capped at 30 s.
+
+    When more than one attempt was made, how many and how long they took is
+    appended to the final exception's message and set on the returned response
+    as ``tooluniverse_attempts`` / ``tooluniverse_elapsed_seconds``, so a
+    refusal can say what the caller actually waited for. See
+    :func:`attempts_note`.
     """
     m = (method or "GET").upper()
     attempts = max(1, int(max_attempts))
     retry_status_set = set(retry_statuses)
     last_exc: Optional[BaseException] = None
+    started = time.monotonic()
 
     for attempt in range(attempts):
         try:
@@ -289,16 +356,16 @@ def request_with_retry(
                     _jittered_sleep(backoff_seconds, attempt)
                 continue
 
-            return resp
+            return _record_attempts(resp, attempt + 1, time.monotonic() - started)
 
         except requests.exceptions.RequestException as e:
             last_exc = e
             if attempt < attempts - 1:
                 _jittered_sleep(backoff_seconds, attempt)
                 continue
-            raise
+            raise _disclose_attempts(e, attempt + 1, time.monotonic() - started)
 
     # Should be unreachable, but keep a clear failure mode.
     if last_exc:
-        raise last_exc
+        raise _disclose_attempts(last_exc, attempts, time.monotonic() - started)
     raise RuntimeError("request_with_retry failed unexpectedly without an exception")
