@@ -16,6 +16,7 @@ from datetime import date
 from typing import Any, Dict, Optional, Callable
 from .base_tool import BaseTool
 from .http_utils import (
+    attempts_note,
     bot_challenge,
     cloudflare_challenge,
     redact_url_secrets,
@@ -2136,6 +2137,15 @@ class BaseRESTTool(BaseTool):
                     reason = _upstream_reason(response)
                     if reason:
                         error = f"{error}: {redact_url_secrets(reason)}"
+                # A 429, 503 or 504 that reaches here was retried first, with
+                # the service's own Retry-After honoured. Saying so is the
+                # difference between "wait and try again" being the caller's
+                # next step and being a step the wrapper has already taken --
+                # and it is the only place the caller can learn how long the
+                # call really cost.
+                waited = attempts_note(response)
+                if waited:
+                    error = f"{error} ({waited})"
                 alternatives = (self.tool_config.get("fields") or {}).get(
                     "unreachable_alternatives"
                 )
