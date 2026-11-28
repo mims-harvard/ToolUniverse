@@ -1,0 +1,591 @@
+[
+  {
+    "name": "RNA3DHub_get_representative_set",
+    "type": "RNA3DHubTool",
+    "description": "Get the representative (non-redundant) set of RNA 3D structures from the BGSU RNA 3D Hub. Each week the Hub groups every RNA chain of the PDB into equivalence classes (same molecule from the same organism) and picks the best-modelled chain of each class as its representative. Use it to choose one good structure per RNA, or to find the class and the representative for a PDB entry (pdb_id filter). resolution is the cutoff in angstrom: a class lists only structures at that resolution or better. Chain ids read PDB|model|chain, e.g. '4TNA|1|A'; chains that form one unit are joined with '+', e.g. '5EBI|1|E+5EBI|1|F'. Rows are sorted by class_id (the server changes its row order between requests). Example: resolution='1.5', pdb_id='5EBI' gives class NR_1.5_06980.2 with representative 5EBI|1|E+5EBI|1|F. A pdb_id with no class under a cutoff returns an empty list with a note; with resolution='all' and the current release it returns an error, because the Hub then holds no RNA chain of that entry. Data licence CC BY 4.0. No key.",
+    "fields": {
+      "operation": "get_representative_set"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "resolution": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "1.5",
+            "2.0",
+            "2.5",
+            "3.0",
+            "3.5",
+            "4.0",
+            "20.0",
+            "all",
+            null
+          ],
+          "description": "Resolution cutoff in angstrom: '1.5', '2.0', '2.5', '3.0', '3.5', '4.0' (default), '20.0', or 'all' for no cutoff (includes NMR structures)."
+        },
+        "release": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Representative-set release id, e.g. '4.66'. Default 'current' (a new release comes out each week). An unknown id returns an error."
+        },
+        "pdb_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Keep only the classes that hold a chain of this PDB entry, e.g. '4TNA'. Each row then has matched_members."
+        },
+        "include_members": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Add the full member list of each class (default false; a ribosomal RNA class can have several hundred members). member_count is always returned."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Rows per page (default 50, maximum 500)."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Rows to skip (default 0). Continue with metadata.next_offset while metadata.has_more is true."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Equivalence classes, sorted by class_id",
+          "items": {
+            "type": "object",
+            "properties": {
+              "class_id": {
+                "type": "string",
+                "description": "Equivalence class id, e.g. 'NR_4.0_94467.9' (cutoff, class number, version)"
+              },
+              "representative": {
+                "type": "string",
+                "description": "Representative chain or chain group of the class, e.g. '4TNA|1|A'"
+              },
+              "representative_pdb_id": {
+                "type": "string",
+                "description": "PDB id of the representative"
+              },
+              "member_count": {
+                "type": "integer",
+                "description": "Number of chains or chain groups in the class, the representative included"
+              },
+              "matched_members": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Members from the pdb_id entry (only with pdb_id)"
+              },
+              "members": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "All members, representative first (only with include_members=true)"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "resolution": "1.5",
+        "limit": 5
+      },
+      {
+        "resolution": "4.0",
+        "pdb_id": "4TNA"
+      },
+      {
+        "resolution": "2.0",
+        "include_members": true,
+        "limit": 3,
+        "offset": 3
+      }
+    ]
+  },
+  {
+    "name": "RNA3DHub_list_motifs",
+    "type": "RNA3DHubTool",
+    "description": "List the motif groups of the BGSU RNA 3D Motif Atlas for one loop type. The Atlas takes the hairpin loops (HL), internal loops (IL) and 3- to 7-way junction loops (J3 to J7) of the representative RNA structures and clusters them by 3D geometry, so each group is one recurrent 3D motif, e.g. GNRA tetraloop, T-loop, kink-turn, sarcin-ricin. Each row has the motif_id, the number of loops in the group, the base-pair signature (Leontis-Westhof classes such as cWW, tSH) and instance_annotations: the annotation texts of its loops with their counts. Optional query matches the motif id, the group name and the loop annotations, e.g. 'GNRA' or 'kink-turn'. Sorted by num_instances, largest group first. Pass a motif_id to RNA3DHub_get_motif to read the loops. Data licence CC BY 4.0. No key.",
+    "fields": {
+      "operation": "list_motifs"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "loop_type"
+      ],
+      "properties": {
+        "loop_type": {
+          "type": "string",
+          "enum": [
+            "HL",
+            "IL",
+            "J3",
+            "J4",
+            "J5",
+            "J6",
+            "J7"
+          ],
+          "description": "Loop type: 'HL' hairpin loop, 'IL' internal loop, 'J3' to 'J7' 3-way to 7-way junction."
+        },
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Text to find in the motif id, group name or loop annotations, e.g. 'GNRA', 'T-loop', 'kink'. Not case-sensitive. Omit to list all groups."
+        },
+        "min_instances": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Keep groups with at least this number of loops (default 0: no filter). Many groups have one loop."
+        },
+        "release": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Motif Atlas release id, e.g. '4.16'. Default 'current'. An unknown id returns an error."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Rows per page (default 50, maximum 500)."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Rows to skip (default 0). Continue with metadata.next_offset while metadata.has_more is true."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Motif groups, largest first",
+          "items": {
+            "type": "object",
+            "properties": {
+              "motif_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Motif group id, e.g. 'HL_27656.2' (loop type, group number, version)"
+              },
+              "common_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Group name, null when the Atlas gives none"
+              },
+              "annotation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Group annotation, null when the Atlas gives none"
+              },
+              "instance_annotations": {
+                "type": "object",
+                "description": "Annotation text of the loops in the group -> number of loops with it, e.g. {'GNRA': 247}. Loops with no annotation are not counted.",
+                "additionalProperties": {
+                  "type": "integer"
+                }
+              },
+              "bp_signature": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Base-pair signature of the motif, e.g. 'cWW-tSH-R-R-R'"
+              },
+              "num_instances": {
+                "type": "integer",
+                "description": "Number of loops in the group"
+              },
+              "num_nucleotides": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of aligned nucleotide positions"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "loop_type": "HL",
+        "query": "GNRA",
+        "limit": 5
+      },
+      {
+        "loop_type": "IL",
+        "query": "kink-turn",
+        "min_instances": 3
+      },
+      {
+        "loop_type": "J3",
+        "limit": 3
+      }
+    ]
+  },
+  {
+    "name": "RNA3DHub_get_motif",
+    "type": "RNA3DHubTool",
+    "description": "Get one motif group of the BGSU RNA 3D Motif Atlas with its loop instances. Each instance is one loop in one PDB structure: loop_id, pdb_id, annotation, chains, sequence and unit_ids. The unit_ids of all instances are aligned: position N is the same 3D position of the motif in every instance, so you can compare which nucleotide sits at each position. A unit id reads PDB|model|chain|residue|number, e.g. '4TNA|1|A|G|15'. A modified residue is written in brackets in sequence, e.g. (PSU). For an internal loop or a junction, chainbreak lists the positions after which the loop moves to its next strand. Example: motif_id='IL_03350.3' gives 3 loops annotated 'Reverse kink-turn related' from 4PHY, 5CNR and 4P97. An unknown motif_id returns the error 'This motif id is invalid'. Find ids with RNA3DHub_list_motifs.",
+    "fields": {
+      "operation": "get_motif"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "motif_id"
+      ],
+      "properties": {
+        "motif_id": {
+          "type": "string",
+          "description": "Motif group id with its version, e.g. 'HL_27656.2' or 'IL_03350.3'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Loop instances per page (default 50, maximum 500)."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Loop instances to skip (default 0). Continue with metadata.next_offset while metadata.has_more is true."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Motif group",
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
+          "properties": {
+            "motif_id": {
+              "type": "string"
+            },
+            "loop_type": {
+              "type": "string",
+              "description": "HL, IL or J3 to J7"
+            },
+            "common_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "annotation": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "instance_annotations": {
+              "type": "object",
+              "description": "Annotation text -> number of loops with it, over all instances",
+              "additionalProperties": {
+                "type": "integer"
+              }
+            },
+            "bp_signature": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Base-pair signature, e.g. 'cWW-tWH-cWW-L-L-cWW-L-L-L'"
+            },
+            "num_instances": {
+              "type": "integer",
+              "description": "Number of loops in the group (all pages)"
+            },
+            "num_nucleotides": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of aligned positions"
+            },
+            "chainbreak": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "integer"
+                ]
+              },
+              "description": "Positions after which the loop moves to its next strand (empty for a hairpin)"
+            },
+            "instances": {
+              "type": "array",
+              "description": "Loops of this page",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "loop_id": {
+                    "type": "string",
+                    "description": "Loop id, e.g. 'IL_4PHY_005'"
+                  },
+                  "pdb_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "annotation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Annotation of this loop, e.g. 'GNRA'"
+                  },
+                  "chains": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "sequence": {
+                    "type": "string",
+                    "description": "Residues in alignment order"
+                  },
+                  "unit_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Unit ids in alignment order"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "motif_id": "IL_03350.3"
+      },
+      {
+        "motif_id": "HL_27656.2",
+        "limit": 2
+      }
+    ]
+  },
+  {
+    "name": "RNA3DHub_get_structure_loops",
+    "type": "RNA3DHubTool",
+    "description": "List the loops that the BGSU RNA 3D Hub annotates in one PDB structure: hairpin loops (HL), internal loops (IL) and multi-helix junction loops (J3 and higher). Each row has the loop_id, the loop type, the chains, the number of nucleotides, the sequence and the unit_ids. A unit id reads PDB|model|chain|residue|number, e.g. '4TNA|1|A|G|15'. A modified residue is written in brackets in sequence, e.g. (H2U). Optional loop_type keeps one type; metadata.loop_type_counts always counts all types. Example: pdb_id='4TNA' (yeast tRNA-Phe) gives 4 hairpin loops and the 4-way junction J4_4TNA_001. A multi-model entry (NMR, e.g. 2KZL with 8 models) has one row per loop per model: each row has its model number, metadata.model_count gives the number of models, and model=1 keeps one model. The Hub answers 'No loops found' both for an RNA with no loop and for an id it does not hold; the tool checks the representative set and returns an empty list with a note for the first case and an error for the second.",
+    "fields": {
+      "operation": "get_structure_loops"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "pdb_id"
+      ],
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "4-character PDB id of an RNA-containing structure, e.g. '4TNA' or '1S72'."
+        },
+        "loop_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "HL",
+            "IL",
+            "J3",
+            "J4",
+            "J5",
+            "J6",
+            "J7",
+            null
+          ],
+          "description": "Keep one loop type: 'HL' hairpin, 'IL' internal, 'J3' to 'J7' junctions. Omit for all loops."
+        },
+        "model": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Keep the loops of one model of a multi-model (NMR) entry, e.g. 1. Omit for all models. A model the entry does not have returns an error."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Rows per page (default 100, maximum 500)."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Rows to skip (default 0). Continue with metadata.next_offset while metadata.has_more is true."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Loops, sorted by loop_id",
+          "items": {
+            "type": "object",
+            "properties": {
+              "loop_id": {
+                "type": "string",
+                "description": "Loop id, e.g. 'HL_4TNA_001' (loop type, PDB id, number)"
+              },
+              "loop_type": {
+                "type": "string"
+              },
+              "model": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Model number of the loop (1 for most X-ray and cryo-EM entries)"
+              },
+              "chains": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "nucleotide_count": {
+                "type": "integer"
+              },
+              "sequence": {
+                "type": "string"
+              },
+              "unit_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "4TNA"
+      },
+      {
+        "pdb_id": "1S72",
+        "loop_type": "IL",
+        "limit": 5
+      },
+      {
+        "pdb_id": "2KZL",
+        "model": 1
+      }
+    ]
+  }
+]

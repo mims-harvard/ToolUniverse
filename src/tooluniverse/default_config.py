@@ -676,6 +676,8 @@ default_tool_files = {
     ),
     # PubMLST - MLST/cgMLST schemes, sequence-type profiles and sequence typing
     "pubmlst": os.path.join(current_dir, "data", "pubmlst_tools.json"),
+    # BGSU RNA 3D Hub - representative RNA 3D structure sets and the RNA 3D Motif Atlas
+    "rna3dhub": os.path.join(current_dir, "data", "rna3dhub_tools.json"),
     # Orphadata - Orphanet rare disease cross-references, epidemiology, phenotypes
     "orphadata": os.path.join(current_dir, "data", "orphadata_tools.json"),
     # SCXA - EBI Single Cell Expression Atlas (scRNA-seq experiments, gene expression)

@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2900 scientific tools.
+Type-safe Python interface to 2904 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -2367,6 +2367,10 @@ from .RGD_get_strain_annotations import RGD_get_strain_annotations
 from .RGD_resolve_symbol_or_region import RGD_resolve_symbol_or_region
 from .RGD_search_genes import RGD_search_genes
 from .RGD_search_strains import RGD_search_strains
+from .RNA3DHub_get_motif import RNA3DHub_get_motif
+from .RNA3DHub_get_representative_set import RNA3DHub_get_representative_set
+from .RNA3DHub_get_structure_loops import RNA3DHub_get_structure_loops
+from .RNA3DHub_list_motifs import RNA3DHub_list_motifs
 from .RNAcentral_get_by_accession import RNAcentral_get_by_accession
 from .RNAcentral_get_genome_locations import RNAcentral_get_genome_locations
 from .RNAcentral_get_region_ncRNAs import RNAcentral_get_region_ncRNAs
@@ -5383,6 +5387,10 @@ __all__ = [
     "RGD_resolve_symbol_or_region",
     "RGD_search_genes",
     "RGD_search_strains",
+    "RNA3DHub_get_motif",
+    "RNA3DHub_get_representative_set",
+    "RNA3DHub_get_structure_loops",
+    "RNA3DHub_list_motifs",
     "RNAcentral_get_by_accession",
     "RNAcentral_get_genome_locations",
     "RNAcentral_get_region_ncRNAs",
