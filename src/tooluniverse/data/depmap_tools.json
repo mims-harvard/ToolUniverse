@@ -431,7 +431,7 @@
   },
   {
     "name": "DepMap_get_gene_dependencies",
-    "description": "Get gene dependency information from CRISPR knockout screens. Returns gene IDs and annotations. Negative gene effect scores indicate essentiality (cell death upon knockout).",
+    "description": "Get the CRISPR knockout fitness scores of a gene across cancer cell lines and organoids from DepMap at Sanger (Cell Model Passports). Returns one row per screen of a model: model id, name, tissue, cancer type, the source of the screen (Sanger Project Score or Broad), and the scores bf_scaled (scaled Bayes factor) and fc_clean_qn (corrected log fold change). bf_scaled below 0 means the knockout causes a significant loss of fitness in that model (loss_of_fitness true); more negative is a stronger dependency. Rows are sorted most dependent first. summary counts the screens and how many show a loss of fitness, in total and per source, e.g. KRAS: 578 of 1,269 screens on 2026-11-25. Optional model_id keeps one model (a model id such as 'SIDM00903' or a model name such as 'A549'). These are Sanger-pipeline scores, not the Chronos gene effect of depmap.org, so the Chronos threshold of -0.5 does not apply; for Broad Chronos scores by Ensembl gene id use OpenTargets_get_target_depmap_essentiality. A gene with no knockout record returns an empty scores list with a note, not an error.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -440,8 +440,25 @@
           "description": "Gene symbol (e.g., 'EGFR', 'KRAS', 'TP53')"
         },
         "model_id": {
-          "type": "string",
-          "description": "Optional: Filter by specific cell line"
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional: keep the screens of one model. A model id (e.g. 'SIDM00903') or a model name (e.g. 'A549'; case is ignored), from DepMap_search_cell_lines. A name that matches only without punctuation, e.g. 'HCT116' for 'HCT-116', is not used: the error names the screened model so you can check it. An unknown id or name returns an error."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Rows per page (default 50, maximum 500)."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Rows to skip (default 0). Continue with next_offset while has_more is true."
         }
       },
       "required": [
@@ -454,10 +471,16 @@
     "type": "DepMapTool",
     "test_examples": [
       {
-        "gene_symbol": "EGFR"
+        "gene_symbol": "KRAS",
+        "limit": 5
       },
       {
-        "gene_symbol": "KRAS"
+        "gene_symbol": "KRAS",
+        "model_id": "A549"
+      },
+      {
+        "gene_symbol": "TP53",
+        "model_id": "SIDM00136"
       }
     ],
     "return_schema": {
@@ -476,9 +499,6 @@
             "gene_symbol": {
               "type": "string"
             },
-            "genes": {
-              "type": "array"
-            },
             "matched_gene": {
               "description": "The gene record this query resolved to, with its symbol, ids and whether the match was exact. The query 'TP53' can resolve to more than one gene and this says which one was used."
             },
@@ -487,7 +507,173 @@
                 "string",
                 "null"
               ],
-              "description": "What the dependency scores mean: negative is essential, zero is no effect. The sign convention, without which the numbers can be read backwards."
+              "description": "What the scores mean: bf_scaled below 0 is a significant loss of fitness. The sign convention, without which the numbers can be read backwards."
+            },
+            "summary": {
+              "type": "object",
+              "description": "Counts over every CRISPR knockout screen of the gene, before the model_id filter",
+              "properties": {
+                "screens": {
+                  "type": "integer",
+                  "description": "Number of screen records"
+                },
+                "loss_of_fitness_screens": {
+                  "type": "integer",
+                  "description": "Screens with bf_scaled below 0"
+                },
+                "loss_of_fitness_fraction": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "loss_of_fitness_screens / screens"
+                },
+                "models": {
+                  "type": "integer",
+                  "description": "Distinct models screened"
+                },
+                "by_source": {
+                  "type": "object",
+                  "description": "The same counts per source, e.g. 'Sanger', 'Broad'",
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "screens": {
+                        "type": "integer"
+                      },
+                      "loss_of_fitness_screens": {
+                        "type": "integer",
+                        "description": "Screens with bf_scaled below 0"
+                      },
+                      "loss_of_fitness_fraction": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "scores": {
+              "type": "array",
+              "description": "One row per screen of a model, most dependent first (this page)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "model_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Model id, e.g. 'SIDM00903'"
+                  },
+                  "model_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "First name of the model, e.g. 'A549'"
+                  },
+                  "model_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'Cell Line' or 'Organoid'"
+                  },
+                  "tissue": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cancer_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who ran the screen: 'Sanger' or 'Broad'"
+                  },
+                  "bf_scaled": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Scaled Bayes factor. Below 0: significant loss of fitness."
+                  },
+                  "bf": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Bayes factor before the per-screen 5% FDR scaling, with the same sign convention as bf_scaled (negative: depleted)"
+                  },
+                  "fc_clean_qn": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Corrected log fold change of the guides (CRISPRcleanR). More negative: stronger depletion."
+                  },
+                  "qc_pass": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "loss_of_fitness": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "true when bf_scaled is below 0"
+                  }
+                }
+              }
+            },
+            "model_filter": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The model_id argument, when given"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "total_scores": {
+              "type": "integer",
+              "description": "Rows that match (all pages)"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "warning": {
+              "type": "string",
+              "description": "Present when the gene symbol had no exact match, or when the API returned fewer records than it reported"
             }
           }
         },

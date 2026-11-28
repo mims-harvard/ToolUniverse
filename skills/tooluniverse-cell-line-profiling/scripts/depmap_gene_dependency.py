@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Query DepMap CRISPR (Chronos) gene-dependency scores per cancer cell line.
 
-ToolUniverse's `DepMap_get_gene_dependencies` returns gene *metadata*, not the
-per-cell-line Chronos scores. Those live in a bulk file (CRISPRGeneEffect.csv),
-not a REST API. This helper downloads the current DepMap Public release once
+ToolUniverse's `DepMap_get_gene_dependencies` returns the Sanger pipeline's
+per-model Bayes factors (`bf_scaled`), not Chronos scores. The Chronos scores
+live in a bulk file (CRISPRGeneEffect.csv), not a REST API. This helper downloads the current DepMap Public release once
 (cached) via the public download index and answers the dependency questions a
 functional-genomics / cell-line workflow needs.
 

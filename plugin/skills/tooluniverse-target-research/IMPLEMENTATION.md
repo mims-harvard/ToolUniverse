@@ -491,8 +491,8 @@ def assess_target_essentiality(tu, ids):
         return {
             'gene': gene_symbol,
             'data': deps.get('data', {}),
-            'interpretation': 'Negative scores indicate gene is essential for cell survival',
-            'note': 'Score < -0.5 is strongly essential, < -1.0 is extremely essential'
+            'interpretation': 'bf_scaled < 0: knockout causes a significant loss of fitness in that model',
+            'note': 'Sanger Bayes factors, not Chronos: the -0.5 Chronos cut-off does not apply'
         }
     return None
 ```
