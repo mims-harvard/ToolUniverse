@@ -153,12 +153,11 @@
           "description": "The RNAcentral record",
           "additionalProperties": {
             "type": [
-              "string",
-              "number",
-              "boolean",
               "array",
-              "object",
-              "null"
+              "boolean",
+              "null",
+              "number",
+              "string"
             ],
             "additionalProperties": {
               "type": [

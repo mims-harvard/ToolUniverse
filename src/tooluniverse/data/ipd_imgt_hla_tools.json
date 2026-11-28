@@ -197,12 +197,9 @@
                 "type": "object",
                 "additionalProperties": {
                   "type": [
-                    "string",
+                    "null",
                     "number",
-                    "boolean",
-                    "array",
-                    "object",
-                    "null"
+                    "string"
                   ]
                 }
               }
@@ -217,12 +214,8 @@
                 "type": "object",
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
-                    "array",
-                    "object",
-                    "null"
+                    "null",
+                    "string"
                   ]
                 }
               }
@@ -267,12 +260,8 @@
                 "type": "object",
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
-                    "array",
-                    "object",
-                    "null"
+                    "null",
+                    "string"
                   ]
                 }
               }
@@ -324,12 +313,8 @@
                 ],
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
-                    "array",
-                    "object",
-                    "null"
+                    "null",
+                    "string"
                   ],
                   "additionalProperties": {
                     "type": [
@@ -361,21 +346,14 @@
                 ],
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
-                    "array",
+                    "null",
                     "object",
-                    "null"
+                    "string"
                   ],
                   "additionalProperties": {
                     "type": [
-                      "string",
-                      "number",
-                      "boolean",
-                      "array",
-                      "object",
-                      "null"
+                      "null",
+                      "string"
                     ]
                   }
                 }
@@ -399,12 +377,10 @@
                     "type": "object",
                     "additionalProperties": {
                       "type": [
-                        "string",
-                        "number",
                         "boolean",
-                        "array",
-                        "object",
-                        "null"
+                        "null",
+                        "number",
+                        "string"
                       ]
                     }
                   }
@@ -420,12 +396,10 @@
                     "type": "object",
                     "additionalProperties": {
                       "type": [
-                        "string",
-                        "number",
                         "boolean",
-                        "array",
-                        "object",
-                        "null"
+                        "null",
+                        "number",
+                        "string"
                       ]
                     }
                   }
@@ -441,12 +415,9 @@
                     "type": "object",
                     "additionalProperties": {
                       "type": [
-                        "string",
+                        "null",
                         "number",
-                        "boolean",
-                        "array",
-                        "object",
-                        "null"
+                        "string"
                       ]
                     }
                   }
@@ -463,12 +434,9 @@
                 "type": "object",
                 "additionalProperties": {
                   "type": [
-                    "string",
+                    "null",
                     "number",
-                    "boolean",
-                    "array",
-                    "object",
-                    "null"
+                    "string"
                   ]
                 }
               }
@@ -719,21 +687,14 @@
                   "description": "WMDA's DNA-to-serology relationship for the allele",
                   "additionalProperties": {
                     "type": [
-                      "string",
-                      "number",
-                      "boolean",
-                      "array",
+                      "null",
                       "object",
-                      "null"
+                      "string"
                     ],
                     "additionalProperties": {
                       "type": [
-                        "string",
-                        "number",
-                        "boolean",
-                        "array",
-                        "object",
-                        "null"
+                        "null",
+                        "string"
                       ],
                       "additionalProperties": {
                         "type": [
@@ -760,21 +721,14 @@
                 ],
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
-                    "array",
+                    "null",
                     "object",
-                    "null"
+                    "string"
                   ],
                   "additionalProperties": {
                     "type": [
-                      "string",
-                      "number",
-                      "boolean",
-                      "array",
-                      "object",
-                      "null"
+                      "null",
+                      "string"
                     ]
                   }
                 }

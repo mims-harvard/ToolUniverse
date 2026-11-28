@@ -154,12 +154,8 @@
                 "description": "One cross-reference",
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
-                    "array",
-                    "object",
-                    "null"
+                    "null",
+                    "string"
                   ]
                 }
               }

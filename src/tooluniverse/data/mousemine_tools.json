@@ -148,12 +148,8 @@
                     "description": "The matched record's fields, keyed by MouseMine field name",
                     "additionalProperties": {
                       "type": [
-                        "string",
-                        "number",
-                        "boolean",
-                        "array",
-                        "object",
-                        "null"
+                        "null",
+                        "string"
                       ]
                     }
                   }

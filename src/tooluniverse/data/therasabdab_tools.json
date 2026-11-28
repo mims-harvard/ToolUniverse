@@ -166,12 +166,8 @@
               "description": "Counts by antibody format, keyed by format name",
               "additionalProperties": {
                 "type": [
-                  "string",
-                  "number",
-                  "boolean",
-                  "array",
-                  "object",
-                  "null"
+                  "null",
+                  "number"
                 ]
               }
             },
@@ -183,12 +179,8 @@
               "description": "Counts by highest clinical phase reached, keyed by phase",
               "additionalProperties": {
                 "type": [
-                  "string",
-                  "number",
-                  "boolean",
-                  "array",
-                  "object",
-                  "null"
+                  "null",
+                  "number"
                 ]
               }
             },
@@ -206,12 +198,8 @@
                 "description": "One sampled therapeutic",
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
-                    "array",
-                    "object",
-                    "null"
+                    "null",
+                    "string"
                   ]
                 }
               }
@@ -230,12 +218,8 @@
                 "description": "One therapeutic with its name, format, target and highest clinical phase",
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
-                    "array",
-                    "object",
-                    "null"
+                    "null",
+                    "string"
                   ]
                 }
               }
