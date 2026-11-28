@@ -1,7 +1,7 @@
 """
 MedlinePlus_get_genetics_index
 
-Download index file (XML) of all genetics entries in MedlinePlus, get complete list in one call.
+Index of every page in MedlinePlus Genetics (2,965 pages: Conditions, Genes, Chromosomes, Handboo...
 """
 
 from typing import Any, Optional, Callable
@@ -9,17 +9,19 @@ from ._shared_client import get_shared_client
 
 
 def MedlinePlus_get_genetics_index(
+    category: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Download index file (XML) of all genetics entries in MedlinePlus, get complete list in one call.
+    Index of every page in MedlinePlus Genetics (2,965 pages: Conditions, Genes, Chromosomes, Handboo...
 
     Parameters
     ----------
-    No parameters
+    category : str
+        Return only this index section (matched case-insensitively). Omit it for all ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,7 +36,7 @@ def MedlinePlus_get_genetics_index(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {}.items() if v is not None}
+    _args = {k: v for k, v in {"category": category}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "MedlinePlus_get_genetics_index",
