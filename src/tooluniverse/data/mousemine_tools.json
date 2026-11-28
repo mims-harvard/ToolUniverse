@@ -110,41 +110,13 @@
               "additionalProperties": {
                 "type": [
                   "object",
-                  "null",
-                  "boolean",
-                  "array",
-                  "object",
                   "null"
                 ],
                 "additionalProperties": {
                   "type": [
                     "integer",
-                    "null",
-                    "boolean",
-                    "array",
-                    "object",
                     "null"
                   ],
-                  "additionalProperties": {
-                    "type": [
-                      "string",
-                      "number",
-                      "boolean",
-                      "array",
-                      "object",
-                      "null"
-                    ],
-                    "additionalProperties": {
-                      "type": [
-                        "string",
-                        "number",
-                        "boolean",
-                        "array",
-                        "object",
-                        "null"
-                      ]
-                    }
-                  },
                   "description": "How many results carry that value"
                 },
                 "description": "Counts for one facet, keyed by value"
@@ -221,7 +193,10 @@
           "type": "object",
           "properties": {
             "error": {
-              "type": "string"
+              "type": [
+                "null",
+                "string"
+              ]
             }
           },
           "required": [
