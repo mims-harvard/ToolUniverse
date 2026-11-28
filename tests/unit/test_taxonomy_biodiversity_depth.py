@@ -203,28 +203,53 @@ class TestWoRMSEnrichment(unittest.TestCase):
 # iDigBio — iDigBioSearchTool summary + media modes
 # ---------------------------------------------------------------------------
 
-_IDIGBIO_COUNT = {"itemCount": 2771}
-_IDIGBIO_TOP = {
-    "country": {
-        "united states": {"itemCount": 4095},
-        "mexico": {"itemCount": 264},
-    },
-    "itemCount": 5798,
-}
-_IDIGBIO_MEDIA = {
-    "itemCount": 171,
-    "items": [
+# iDigBio's own search API was retired (HTTP 410 on every path), so these tools
+# read the same holdings through GBIF's occurrence API restricted to GBIF's
+# iDigBio network. GBIF answers the count and the facets in ONE request where
+# iDigBio needed two, and names a facet after its own field in SCREAMING_SNAKE.
+_IDIGBIO_NETWORK = "68e8e67a-43e6-44a3-8817-dc0e6b70f973"
+
+_GBIF_COUNT_ONLY = {"count": 2771, "results": []}
+
+_GBIF_COUNT_AND_FACETS = {
+    "count": 2771,
+    "results": [],
+    "facets": [
         {
-            "uuid": "baf0318e-b07f-4859-b46e-1579042ca381",
-            "data": {
-                "dcterms:type": "StillImage",
-                "dcterms:format": "image/jpeg",
-                "ac:providerManagedID": "urn:uuid:3f64f854",
-                "dc:creator": "Rose Arnold",
-                "xmpRights:Owner": "UWSP-Mammals",
-                "xmpRights:UsageTerms": "CC BY-NC-SA",
-                "ac:accessURI": "https://media01.example/img.jpg",
-            },
+            "field": "COUNTRY",
+            "counts": [
+                {"name": "US", "count": 4095},
+                {"name": "MX", "count": 264},
+            ],
+        }
+    ],
+}
+
+_GBIF_TAXON_MATCH = {
+    "usageKey": 2435098,
+    "canonicalName": "Puma",
+    "rank": "GENUS",
+    "matchType": "EXACT",
+    "familyKey": 9703,
+    "family": "Felidae",
+}
+
+_GBIF_MEDIA = {
+    "count": 171,
+    "results": [
+        {
+            "key": 6184395323,
+            "scientificName": "Puma concolor (Linnaeus, 1771)",
+            "media": [
+                {
+                    "type": "StillImage",
+                    "format": "image/jpeg",
+                    "creator": "Rose Arnold",
+                    "rightsHolder": "UWSP-Mammals",
+                    "license": "CC BY-NC-SA",
+                    "identifier": "https://media01.example/img.jpg",
+                }
+            ],
         }
     ],
 }
@@ -236,36 +261,40 @@ def _idigbio_tool(tool_name: str):
     return iDigBioSearchTool(_load_config("idigbio_tools.json", tool_name))
 
 
+def _gbif_urls(mock):
+    return [call.args[0] if call.args else call.kwargs["url"] for call in mock.call_args_list]
+
+
 class TestiDigBioSummary(unittest.TestCase):
     def test_summary_with_top_fields_returns_count_and_facets(self):
-        """With top_fields set, both the count and top-facet endpoints are queried."""
+        """One occurrence request carries both, and the facet comes back under our name."""
         tool = _idigbio_tool("iDigBio_summary_facets")
         with patch("tooluniverse.idigbio_tool.requests.get") as get:
-            # First call -> count endpoint, second -> top endpoint.
+            # genus has to be resolved to a taxonKey first; then one search.
             get.side_effect = [
-                _fake_response(_IDIGBIO_COUNT),
-                _fake_response(_IDIGBIO_TOP),
+                _fake_response(_GBIF_TAXON_MATCH),
+                _fake_response(_GBIF_COUNT_AND_FACETS),
             ]
             result = tool.run({"genus": "puma", "top_fields": "country", "count": 5})
         self.assertEqual(result["status"], "success")
         self.assertEqual(result["data"]["itemCount"], 2771)
-        self.assertIn("country", result["data"]["facets"])
+        self.assertEqual(result["data"]["facets"]["country"], {"US": 4095, "MX": 264})
         self.assertEqual(
-            result["data"]["facets"]["country"]["united states"]["itemCount"], 4095
+            sum("/occurrence/search" in url for url in _gbif_urls(get)), 1
         )
-        self.assertEqual(get.call_count, 2)
 
     def test_summary_count_only_when_no_top_fields(self):
-        """Without top_fields only the count endpoint is hit; facets stay empty."""
+        """Without top_fields no facet is asked for; the count still comes back."""
         tool = _idigbio_tool("iDigBio_summary_facets")
         with patch("tooluniverse.idigbio_tool.requests.get") as get:
-            get.return_value = _fake_response(_IDIGBIO_COUNT)
+            get.return_value = _fake_response(_GBIF_COUNT_ONLY)
             result = tool.run({"scientificname": "puma concolor"})
         self.assertEqual(result["status"], "success")
         self.assertEqual(result["data"]["itemCount"], 2771)
         self.assertEqual(result["data"]["facets"], {})
-        # Only the count endpoint is hit when no top_fields requested.
-        self.assertEqual(get.call_count, 1)
+        params = get.call_args.kwargs["params"]
+        self.assertNotIn("facet", params)
+        self.assertEqual(params["networkKey"], _IDIGBIO_NETWORK)
 
     def test_summary_requires_a_query_field(self):
         """An empty query yields an error envelope."""
@@ -274,7 +303,7 @@ class TestiDigBioSummary(unittest.TestCase):
         self.assertEqual(result["status"], "error")
 
     def test_summary_network_error_is_error_envelope(self):
-        """A request exception on the count call surfaces as an error envelope."""
+        """A request exception surfaces as an error envelope."""
         tool = _idigbio_tool("iDigBio_summary_facets")
         import requests as _requests
 
@@ -282,16 +311,16 @@ class TestiDigBioSummary(unittest.TestCase):
             "tooluniverse.idigbio_tool.requests.get",
             side_effect=_requests.exceptions.RequestException("down"),
         ):
-            result = tool.run({"genus": "puma"})
+            result = tool.run({"scientificname": "puma concolor"})
         self.assertEqual(result["status"], "error")
 
 
 class TestiDigBioMedia(unittest.TestCase):
     def test_media_parses_image_record_fields(self):
-        """Media records expose type, creator, usage terms, and access URI."""
+        """Media rows expose type, creator, usage terms and access URI."""
         tool = _idigbio_tool("iDigBio_search_media")
         with patch("tooluniverse.idigbio_tool.requests.get") as get:
-            get.return_value = _fake_response(_IDIGBIO_MEDIA)
+            get.return_value = _fake_response(_GBIF_MEDIA)
             result = tool.run({"scientificname": "puma concolor", "limit": 2})
         self.assertEqual(result["status"], "success")
         self.assertEqual(result["metadata"]["total_available"], 171)
@@ -300,6 +329,9 @@ class TestiDigBioMedia(unittest.TestCase):
         self.assertEqual(rec["usage_terms"], "CC BY-NC-SA")
         self.assertEqual(rec["creator"], "Rose Arnold")
         self.assertEqual(rec["access_uri"], "https://media01.example/img.jpg")
+        self.assertEqual(rec["gbif_id"], 6184395323)
+        # Only records that carry an image are wanted.
+        self.assertEqual(get.call_args.kwargs["params"]["mediaType"], "StillImage")
 
     def test_media_requires_a_query_field(self):
         """An empty media query yields an error envelope."""
@@ -308,7 +340,7 @@ class TestiDigBioMedia(unittest.TestCase):
         self.assertEqual(result["status"], "error")
 
     def test_media_timeout_is_error_envelope(self):
-        """A timeout on the media call surfaces as an error envelope."""
+        """A timeout surfaces as an error envelope."""
         tool = _idigbio_tool("iDigBio_search_media")
         import requests as _requests
 
@@ -316,9 +348,10 @@ class TestiDigBioMedia(unittest.TestCase):
             "tooluniverse.idigbio_tool.requests.get",
             side_effect=_requests.exceptions.Timeout(),
         ):
-            result = tool.run({"genus": "Quercus"})
+            result = tool.run({"scientificname": "puma concolor"})
         self.assertEqual(result["status"], "error")
         self.assertIn("timed out", result["error"])
+
 
 
 # ---------------------------------------------------------------------------

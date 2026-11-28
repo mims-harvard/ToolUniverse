@@ -62,8 +62,8 @@ When a question involves identifying or comparing species:
 | `GBIF_get_taxon_synonyms` | Alternative / historical scientific names for an accepted taxonKey |
 | `GBIF_get_vernacular_names` | Common names (with language code) for a taxonKey; optional `language` filter |
 | `GBIF_parse_name` | Parse messy/authored name strings into canonical name + genus/epithet/author/year |
-| `iDigBio_search_records` | Search 130M+ digitized museum/herbarium specimen records (Darwin Core) by `genus`/`scientificname`/locality — use to complement GBIF with physical-specimen provenance |
-| `iDigBio_get_record` | Full Darwin Core detail for one specimen by `uuid` (from `iDigBio_search_records`) |
+| `iDigBio_search_records` | Search digitized museum/herbarium specimen records (Darwin Core) by `genus`/`scientificname`/locality. Reads iDigBio's holdings through GBIF's iDigBio network, since iDigBio's own API was retired; `country` takes an ISO 3166-1 name or code |
+| `iDigBio_get_record` | Full detail for one specimen by `occurrence_key` — the `gbif_id` that `iDigBio_search_records` returns. The old iDigBio record UUIDs were retired with the API and cannot be resolved |
 | `WoRMS_search_species` | Marine species taxonomy |
 | `BOLDSystems_search_by_taxon` / `_search_by_bin` / `_get_record` | DNA barcode-based species identification (COI barcoding); BIN clusters group specimens by barcode similarity, useful for cryptic-species questions GBIF's name-based search can't resolve |
 | `ensembl_get_taxonomy` | Taxonomic classification |
