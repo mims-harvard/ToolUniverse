@@ -114,12 +114,9 @@
                   "description": "The parsed query stack NCBI actually ran, which is what explains an unexpected result count",
                   "items": {
                     "type": [
-                      "string",
-                      "number",
-                      "boolean",
-                      "array",
+                      "null",
                       "object",
-                      "null"
+                      "string"
                     ]
                   }
                 }
@@ -382,12 +379,10 @@
             ],
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
-                "boolean",
                 "array",
-                "object",
-                "null"
+                "null",
+                "number",
+                "string"
               ],
               "additionalProperties": {
                 "type": [

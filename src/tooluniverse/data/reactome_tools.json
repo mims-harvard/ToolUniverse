@@ -450,12 +450,9 @@
             },
             "additionalProperties": {
               "type": [
-                "string",
+                "null",
                 "number",
-                "boolean",
-                "array",
-                "object",
-                "null"
+                "string"
               ],
               "items": {
                 "type": [
@@ -512,12 +509,9 @@
             },
             "additionalProperties": {
               "type": [
-                "string",
+                "null",
                 "number",
-                "boolean",
-                "array",
-                "object",
-                "null"
+                "string"
               ],
               "items": {
                 "type": [
@@ -778,12 +772,8 @@
                 "description": "Event name or names",
                 "items": {
                   "type": [
-                    "string",
-                    "object",
-                    "integer",
-                    "number",
-                    "boolean",
-                    "null"
+                    "null",
+                    "string"
                   ],
                   "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                 }
@@ -832,21 +822,17 @@
             "description": "A Reactome object reference",
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
-                "boolean",
                 "array",
-                "object",
-                "null"
+                "boolean",
+                "null",
+                "number",
+                "string"
               ],
               "items": {
                 "type": [
-                  "string",
-                  "object",
                   "integer",
-                  "number",
-                  "boolean",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
               }
@@ -974,12 +960,8 @@
                 "description": "Event name or names",
                 "items": {
                   "type": [
-                    "string",
-                    "object",
-                    "integer",
-                    "number",
-                    "boolean",
-                    "null"
+                    "null",
+                    "string"
                   ],
                   "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                 }
@@ -1018,21 +1000,17 @@
             "description": "A Reactome object reference",
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
-                "boolean",
                 "array",
-                "object",
-                "null"
+                "boolean",
+                "null",
+                "number",
+                "string"
               ],
               "items": {
                 "type": [
-                  "string",
-                  "object",
                   "integer",
-                  "number",
-                  "boolean",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
               }
@@ -1152,12 +1130,9 @@
             },
             "additionalProperties": {
               "type": [
-                "string",
+                "null",
                 "number",
-                "boolean",
-                "array",
-                "object",
-                "null"
+                "string"
               ],
               "items": {
                 "type": [
@@ -1214,21 +1189,15 @@
             },
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
-                "boolean",
                 "array",
-                "object",
-                "null"
+                "null",
+                "number",
+                "string"
               ],
               "items": {
                 "type": [
-                  "string",
-                  "object",
-                  "integer",
-                  "number",
-                  "boolean",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
               }
@@ -1335,12 +1304,8 @@
               "description": "All names for the event; displayName is the preferred one.",
               "items": {
                 "type": [
-                  "string",
-                  "object",
-                  "integer",
-                  "number",
-                  "boolean",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
               }
@@ -1931,12 +1896,9 @@
             },
             "additionalProperties": {
               "type": [
-                "string",
+                "null",
                 "number",
-                "boolean",
-                "array",
-                "object",
-                "null"
+                "string"
               ],
               "items": {
                 "type": [
@@ -2092,12 +2054,9 @@
             },
             "additionalProperties": {
               "type": [
-                "string",
+                "null",
                 "number",
-                "boolean",
-                "array",
-                "object",
-                "null"
+                "string"
               ],
               "items": {
                 "type": [
@@ -2154,12 +2113,9 @@
             },
             "additionalProperties": {
               "type": [
-                "string",
+                "null",
                 "number",
-                "boolean",
-                "array",
-                "object",
-                "null"
+                "string"
               ],
               "items": {
                 "type": [
@@ -2328,21 +2284,15 @@
             },
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
-                "boolean",
                 "array",
-                "object",
-                "null"
+                "null",
+                "number",
+                "string"
               ],
               "items": {
                 "type": [
-                  "string",
-                  "object",
-                  "integer",
-                  "number",
-                  "boolean",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
               }
@@ -2390,21 +2340,17 @@
             },
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
-                "boolean",
                 "array",
-                "object",
-                "null"
+                "boolean",
+                "null",
+                "number",
+                "string"
               ],
               "items": {
                 "type": [
-                  "string",
-                  "object",
                   "integer",
-                  "number",
-                  "boolean",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
               }
@@ -2452,21 +2398,17 @@
             },
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
-                "boolean",
                 "array",
-                "object",
-                "null"
+                "boolean",
+                "null",
+                "number",
+                "string"
               ],
               "items": {
                 "type": [
-                  "string",
-                  "object",
                   "integer",
-                  "number",
-                  "boolean",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
               }
@@ -2528,12 +2470,9 @@
             },
             "additionalProperties": {
               "type": [
-                "string",
+                "null",
                 "number",
-                "boolean",
-                "array",
-                "object",
-                "null"
+                "string"
               ],
               "items": {
                 "type": [
@@ -2820,11 +2759,7 @@
                   "type": "array",
                   "items": {
                     "type": [
-                      "string",
-                      "object",
                       "integer",
-                      "number",
-                      "boolean",
                       "null"
                     ],
                     "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
@@ -2843,12 +2778,8 @@
                   "type": "array",
                   "items": {
                     "type": [
-                      "string",
-                      "object",
-                      "integer",
-                      "number",
-                      "boolean",
-                      "null"
+                      "null",
+                      "string"
                     ],
                     "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                   }
@@ -3081,12 +3012,8 @@
               "description": "All names for the event; displayName is the preferred one.",
               "items": {
                 "type": [
-                  "string",
-                  "object",
-                  "integer",
-                  "number",
-                  "boolean",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
               }
@@ -3653,12 +3580,8 @@
             "description": "Keywords from the source database",
             "items": {
               "type": [
-                "string",
-                "object",
-                "integer",
-                "number",
-                "boolean",
-                "null"
+                "null",
+                "string"
               ],
               "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
             }
@@ -4051,12 +3974,8 @@
                   "type": "array",
                   "items": {
                     "type": [
-                      "string",
-                      "object",
-                      "integer",
-                      "number",
-                      "boolean",
-                      "null"
+                      "null",
+                      "object"
                     ],
                     "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                   }

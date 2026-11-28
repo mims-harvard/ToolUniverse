@@ -483,12 +483,8 @@
                   "description": "Other chains in the modelled complex",
                   "items": {
                     "type": [
-                      "string",
-                      "number",
-                      "boolean",
-                      "array",
-                      "object",
-                      "null"
+                      "null",
+                      "object"
                     ]
                   }
                 }

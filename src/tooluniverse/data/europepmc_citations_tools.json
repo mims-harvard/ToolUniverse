@@ -58,12 +58,9 @@
               "description": "The request Europe PMC echoes back",
               "additionalProperties": {
                 "type": [
-                  "string",
+                  "null",
                   "number",
-                  "boolean",
-                  "array",
-                  "object",
-                  "null"
+                  "string"
                 ],
                 "additionalProperties": {
                   "type": [
@@ -207,12 +204,9 @@
                     },
                     "additionalProperties": {
                       "type": [
-                        "string",
+                        "null",
                         "number",
-                        "boolean",
-                        "array",
-                        "object",
-                        "null"
+                        "string"
                       ]
                     }
                   },
@@ -315,12 +309,9 @@
               "description": "The request Europe PMC echoes back",
               "additionalProperties": {
                 "type": [
-                  "string",
+                  "null",
                   "number",
-                  "boolean",
-                  "array",
-                  "object",
-                  "null"
+                  "string"
                 ]
               }
             },
@@ -454,12 +445,9 @@
                     },
                     "additionalProperties": {
                       "type": [
-                        "string",
+                        "null",
                         "number",
-                        "boolean",
-                        "array",
-                        "object",
-                        "null"
+                        "string"
                       ]
                     }
                   },

@@ -130,30 +130,23 @@
           "description": "The reconstructed density map: dimensions, cell, contour levels, data type and file",
           "additionalProperties": {
             "type": [
-              "string",
+              "null",
               "number",
-              "boolean",
-              "array",
               "object",
-              "null"
+              "string"
             ],
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
-                "boolean",
                 "array",
+                "null",
+                "number",
                 "object",
-                "null"
+                "string"
               ],
               "additionalProperties": {
                 "type": [
-                  "string",
-                  "number",
-                  "boolean",
-                  "array",
-                  "object",
-                  "null"
+                  "null",
+                  "string"
                 ],
                 "items": {
                   "type": [
@@ -239,12 +232,8 @@
               },
               "items": {
                 "type": [
-                  "string",
-                  "object",
-                  "integer",
-                  "number",
-                  "boolean",
-                  "null"
+                  "null",
+                  "object"
                 ],
                 "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
               }
@@ -395,21 +384,15 @@
                 ],
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
                     "array",
-                    "object",
-                    "null"
+                    "boolean",
+                    "null",
+                    "string"
                   ],
                   "items": {
                     "type": [
-                      "string",
-                      "object",
-                      "integer",
-                      "number",
-                      "boolean",
-                      "null"
+                      "null",
+                      "object"
                     ],
                     "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
                   }
@@ -459,21 +442,16 @@
           "description": "Deposition record: authors, title, keywords, key dates, status and processing site",
           "additionalProperties": {
             "type": [
-              "string",
-              "number",
-              "boolean",
-              "array",
+              "null",
               "object",
-              "null"
+              "string"
             ],
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
-                "boolean",
                 "array",
+                "null",
                 "object",
-                "null"
+                "string"
               ],
               "additionalProperties": {
                 "type": [
@@ -498,12 +476,8 @@
               },
               "items": {
                 "type": [
-                  "string",
-                  "object",
-                  "integer",
-                  "number",
-                  "boolean",
-                  "null"
+                  "null",
+                  "object"
                 ],
                 "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
               }

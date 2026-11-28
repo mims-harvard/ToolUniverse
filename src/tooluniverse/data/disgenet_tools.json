@@ -1016,12 +1016,10 @@
                 "description": "One gene association",
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
                     "array",
-                    "object",
-                    "null"
+                    "null",
+                    "number",
+                    "string"
                   ]
                 }
               }

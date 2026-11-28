@@ -334,30 +334,23 @@
           "description": "The person block: name, other names, biography, emails, addresses and keywords",
           "additionalProperties": {
             "type": [
-              "string",
-              "number",
-              "boolean",
-              "array",
+              "null",
               "object",
-              "null"
+              "string"
             ],
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
-                "boolean",
                 "array",
+                "null",
+                "number",
                 "object",
-                "null"
+                "string"
               ],
               "additionalProperties": {
                 "type": [
-                  "string",
+                  "null",
                   "number",
-                  "boolean",
-                  "array",
-                  "object",
-                  "null"
+                  "string"
                 ]
               }
             }
@@ -371,21 +364,17 @@
           "description": "Summary of works, employments, fundings and the rest",
           "additionalProperties": {
             "type": [
-              "string",
-              "number",
-              "boolean",
-              "array",
+              "null",
               "object",
-              "null"
+              "string"
             ],
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
-                "boolean",
                 "array",
+                "null",
+                "number",
                 "object",
-                "null"
+                "string"
               ],
               "additionalProperties": {
                 "type": [
@@ -1098,21 +1087,13 @@
                 "description": "Start date, as ORCID's year/month/day parts rather than one string",
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
-                    "array",
-                    "object",
-                    "null"
+                    "null",
+                    "object"
                   ],
                   "additionalProperties": {
                     "type": [
-                      "string",
-                      "number",
-                      "boolean",
-                      "array",
-                      "object",
-                      "null"
+                      "null",
+                      "string"
                     ],
                     "additionalProperties": {
                       "type": [
@@ -1184,12 +1165,9 @@
                   "description": "One identifier with its type, value and relationship",
                   "additionalProperties": {
                     "type": [
-                      "string",
-                      "number",
-                      "boolean",
-                      "array",
+                      "null",
                       "object",
-                      "null"
+                      "string"
                     ]
                   }
                 }
@@ -1349,12 +1327,8 @@
                 "description": "When the review was completed, as ORCID's year/month/day parts",
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
-                    "array",
-                    "object",
-                    "null"
+                    "null",
+                    "object"
                   ],
                   "additionalProperties": {
                     "type": [
@@ -1414,12 +1388,9 @@
                   "description": "One identifier with its type, value and relationship",
                   "additionalProperties": {
                     "type": [
-                      "string",
-                      "number",
-                      "boolean",
-                      "array",
+                      "null",
                       "object",
-                      "null"
+                      "string"
                     ]
                   }
                 },

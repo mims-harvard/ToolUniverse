@@ -217,12 +217,10 @@
                     "description": "The comment's structured detail, whose shape depends on the comment type",
                     "additionalProperties": {
                       "type": [
-                        "string",
-                        "number",
-                        "boolean",
                         "array",
+                        "null",
                         "object",
-                        "null"
+                        "string"
                       ],
                       "additionalProperties": {
                         "type": [
@@ -304,12 +302,8 @@
                       "description": "One evidence record",
                       "additionalProperties": {
                         "type": [
-                          "string",
-                          "number",
-                          "boolean",
-                          "array",
-                          "object",
-                          "null"
+                          "null",
+                          "string"
                         ]
                       }
                     }
@@ -322,12 +316,9 @@
                     "description": "For a variant feature, the sequence it changes to",
                     "additionalProperties": {
                       "type": [
-                        "string",
-                        "number",
-                        "boolean",
                         "array",
-                        "object",
-                        "null"
+                        "null",
+                        "string"
                       ],
                       "additionalProperties": {
                         "type": [
@@ -358,12 +349,8 @@
               "description": "Publications beyond the ones UniProt lists as primary",
               "items": {
                 "type": [
-                  "string",
-                  "number",
-                  "boolean",
-                  "array",
-                  "object",
-                  "null"
+                  "null",
+                  "object"
                 ]
               }
             },
@@ -381,12 +368,10 @@
                 "description": "One reference",
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
                     "array",
-                    "object",
-                    "null"
+                    "null",
+                    "number",
+                    "object"
                   ]
                 }
               }

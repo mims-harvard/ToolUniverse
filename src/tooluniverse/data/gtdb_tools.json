@@ -628,12 +628,8 @@
               "description": "Assembly statistics: contig count, N50, GC content and the rest",
               "additionalProperties": {
                 "type": [
-                  "string",
-                  "number",
-                  "boolean",
-                  "array",
-                  "object",
-                  "null"
+                  "null",
+                  "number"
                 ],
                 "additionalProperties": {
                   "type": [
@@ -655,12 +651,9 @@
               "description": "Gene-level statistics including CheckM completeness and contamination - the two numbers that say whether a genome is usable",
               "additionalProperties": {
                 "type": [
-                  "string",
+                  "null",
                   "number",
-                  "boolean",
-                  "array",
-                  "object",
-                  "null"
+                  "string"
                 ],
                 "additionalProperties": {
                   "type": [
@@ -682,12 +675,9 @@
               "description": "NCBI assembly metadata for the genome, including its GenBank and RefSeq accessions",
               "additionalProperties": {
                 "type": [
-                  "string",
+                  "null",
                   "number",
-                  "boolean",
-                  "array",
-                  "object",
-                  "null"
+                  "string"
                 ],
                 "additionalProperties": {
                   "type": [

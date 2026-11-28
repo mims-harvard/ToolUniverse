@@ -335,12 +335,11 @@
             "description": "One term with its id and label",
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
-                "boolean",
                 "array",
+                "null",
+                "number",
                 "object",
-                "null"
+                "string"
               ]
             }
           }
@@ -430,12 +429,11 @@
             "description": "One entity with its id, category, name and taxon",
             "additionalProperties": {
               "type": [
-                "string",
-                "number",
-                "boolean",
                 "array",
+                "null",
+                "number",
                 "object",
-                "null"
+                "string"
               ]
             }
           }

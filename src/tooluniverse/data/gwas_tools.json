@@ -178,21 +178,13 @@
                 "description": "HAL links for navigating the API",
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
-                    "array",
-                    "object",
-                    "null"
+                    "null",
+                    "object"
                   ],
                   "additionalProperties": {
                     "type": [
-                      "string",
-                      "number",
-                      "boolean",
-                      "array",
-                      "object",
-                      "null"
+                      "null",
+                      "string"
                     ],
                     "additionalProperties": {
                       "type": [
@@ -1137,21 +1129,13 @@
                 "description": "HAL links for navigating the API",
                 "additionalProperties": {
                   "type": [
-                    "string",
-                    "number",
-                    "boolean",
-                    "array",
-                    "object",
-                    "null"
+                    "null",
+                    "object"
                   ],
                   "additionalProperties": {
                     "type": [
-                      "string",
-                      "number",
-                      "boolean",
-                      "array",
-                      "object",
-                      "null"
+                      "null",
+                      "string"
                     ],
                     "additionalProperties": {
                       "type": [
@@ -1243,12 +1227,8 @@
                   "type": "object",
                   "additionalProperties": {
                     "type": [
-                      "string",
-                      "number",
-                      "boolean",
-                      "array",
-                      "object",
-                      "null"
+                      "null",
+                      "string"
                     ]
                   }
                 }

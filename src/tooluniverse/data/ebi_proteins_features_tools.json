@@ -227,12 +227,9 @@
                       "type": "object",
                       "additionalProperties": {
                         "type": [
-                          "string",
-                          "number",
-                          "boolean",
-                          "array",
+                          "null",
                           "object",
-                          "null"
+                          "string"
                         ]
                       }
                     }
