@@ -1,7 +1,7 @@
 """
 iDigBio_get_record
 
-Retrieve a single iDigBio biodiversity specimen record by its UUID. Returns the curated summary p...
+Retrieve a single iDigBio biodiversity specimen record by its GBIF occurrence key. Returns the cu...
 """
 
 from typing import Any, Optional, Callable
@@ -9,19 +9,19 @@ from ._shared_client import get_shared_client
 
 
 def iDigBio_get_record(
-    uuid: str,
+    occurrence_key: str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve a single iDigBio biodiversity specimen record by its UUID. Returns the curated summary p...
+    Retrieve a single iDigBio biodiversity specimen record by its GBIF occurrence key. Returns the cu...
 
     Parameters
     ----------
-    uuid : str
-        iDigBio record UUID (from iDigBio_search_records).
+    occurrence_key : str
+        GBIF occurrence key of the record, a number such as '6158969750'. iDigBio_sea...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +36,9 @@ def iDigBio_get_record(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"uuid": uuid}.items() if v is not None}
+    _args = {
+        k: v for k, v in {"occurrence_key": occurrence_key}.items() if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "iDigBio_get_record",

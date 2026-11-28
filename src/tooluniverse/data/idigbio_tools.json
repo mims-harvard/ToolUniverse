@@ -1,7 +1,7 @@
 [
   {
     "name": "iDigBio_search_records",
-    "description": "Search iDigBio digitized biodiversity specimen records by taxon and/or locality with exact offset pagination. Metadata reports the exact total, current offset, has_more and next_offset; continue until has_more is false. Returns taxon, collector, locality and catalog identifiers. No API key required.",
+    "description": "Search iDigBio digitized biodiversity specimen records by taxon and/or locality with exact offset pagination. Metadata reports the exact total, current offset, has_more and next_offset; continue until has_more is false. Returns taxon, collector, locality and catalog identifiers. No API key required. Served by the GBIF occurrence API restricted to GBIF's iDigBio network (the data behind idigbio.gbif.us); iDigBio's own search API was retired and answers HTTP 410.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -17,21 +17,21 @@
             "string",
             "null"
           ],
-          "description": "Genus, e.g. 'Quercus'."
+          "description": "Genus, e.g. 'Quercus'. GBIF has no occurrence filter for this rank, so the name is first resolved to a GBIF taxonKey. Only an exact match at this rank is used -- a name GBIF cannot place is refused rather than silently widened to a higher rank. Case does not matter."
         },
         "family": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Family name."
+          "description": "Family name. GBIF has no occurrence filter for this rank, so the name is first resolved to a GBIF taxonKey. Only an exact match at this rank is used -- a name GBIF cannot place is refused rather than silently widened to a higher rank. Case does not matter."
         },
         "country": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Country, e.g. 'United States'."
+          "description": "Country, as an ISO 3166-1 name or code -- 'United States', 'USA' or 'US' all work. A spelling GBIF does not recognise is refused: GBIF itself answers an unknown country with zero records and no error."
         },
         "stateprovince": {
           "type": [
@@ -66,21 +66,21 @@
             "string",
             "null"
           ],
-          "description": "Phylum."
+          "description": "Phylum. GBIF has no occurrence filter for this rank, so the name is first resolved to a GBIF taxonKey. Only an exact match at this rank is used -- a name GBIF cannot place is refused rather than silently widened to a higher rank. Case does not matter."
         },
         "class": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Class."
+          "description": "Class. GBIF has no occurrence filter for this rank, so the name is first resolved to a GBIF taxonKey. Only an exact match at this rank is used -- a name GBIF cannot place is refused rather than silently widened to a higher rank. Case does not matter."
         },
         "order": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Order."
+          "description": "Order. GBIF has no occurrence filter for this rank, so the name is first resolved to a GBIF taxonKey. Only an exact match at this rank is used -- a name GBIF cannot place is refused rather than silently widened to a higher rank. Case does not matter."
         },
         "limit": {
           "type": "integer",
@@ -125,12 +125,12 @@
           "items": {
             "type": "object",
             "properties": {
-              "uuid": {
+              "gbif_id": {
                 "type": [
-                  "string",
+                  "integer",
                   "null"
                 ],
-                "description": "iDigBio's identifier for the record."
+                "description": "GBIF's occurrence key for the record, e.g. 6158969750. Pass it to iDigBio_get_record. The legacy iDigBio record UUID no longer exists: it lived only in the retired search.idigbio.org API."
               },
               "occurrence_id": {
                 "type": [
@@ -158,7 +158,7 @@
                   "string",
                   "null"
                 ],
-                "description": "The determination, LOWER-CASED by iDigBio's indexing -- 'quercus macrocarpa michx.' -- so it will not match a properly capitalised name in a string comparison. The original capitalisation is in data['dwc:scientificName']."
+                "description": "The determination as GBIF records it, properly capitalised and with the authorship -- 'Quercus fusiformis Small'. iDigBio's own index lower-cased this field; GBIF does not, so a string comparison against a capitalised name now works."
               },
               "family": {
                 "type": [
@@ -193,7 +193,7 @@
                   "string",
                   "null"
                 ],
-                "description": "Country, lower-cased."
+                "description": "Country as GBIF spells it in a record, which is the full title -- 'United States of America'. Note this differs from the ISO code the country filter takes."
               },
               "state_province": {
                 "type": [
@@ -208,6 +208,13 @@
                   "null"
                 ],
                 "description": "County, lower-cased."
+              },
+              "dataset_key": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "GBIF datasetKey of the collection that published the record, e.g. 'cd096ec0-a8a0-4c65-92cc-48b00fb934ce'."
               }
             }
           }
@@ -228,17 +235,17 @@
   },
   {
     "name": "iDigBio_get_record",
-    "description": "Retrieve a single iDigBio biodiversity specimen record by its UUID. Returns the curated summary plus the full Darwin Core data record (all collection/locality/taxonomy fields). No API key required.",
+    "description": "Retrieve a single iDigBio biodiversity specimen record by its GBIF occurrence key. Returns the curated summary plus the full upstream record (all collection/locality/taxonomy fields). No API key required. Served by the GBIF occurrence API restricted to GBIF's iDigBio network (the data behind idigbio.gbif.us); iDigBio's own search API was retired and answers HTTP 410.",
     "parameter": {
       "type": "object",
       "properties": {
-        "uuid": {
+        "occurrence_key": {
           "type": "string",
-          "description": "iDigBio record UUID (from iDigBio_search_records)."
+          "description": "GBIF occurrence key of the record, a number such as '6158969750'. iDigBio_search_records returns one as gbif_id. A legacy iDigBio record UUID is refused with that explanation: those ids existed only in the retired search.idigbio.org API and GBIF cannot resolve them."
         }
       },
       "required": [
-        "uuid"
+        "occurrence_key"
       ]
     },
     "fields": {
@@ -247,13 +254,13 @@
     "type": "iDigBioRecordTool",
     "test_examples": [
       {
-        "uuid": "b659bd7f-7fa7-434b-80e7-2be10d1c4e80"
+        "occurrence_key": "6158969750"
       },
       {
-        "uuid": "25e65e9a-8ca8-4477-8802-001fb51e459f"
+        "occurrence_key": "5233165307"
       },
       {
-        "uuid": "9d0283aa-e6be-4b7e-a810-1ad0ec8df79a"
+        "occurrence_key": "5995018302"
       }
     ],
     "return_schema": {
@@ -266,12 +273,12 @@
           },
           "type": "object",
           "properties": {
-            "uuid": {
+            "gbif_id": {
               "type": [
-                "string",
+                "integer",
                 "null"
               ],
-              "description": "iDigBio's identifier for the record."
+              "description": "GBIF's occurrence key for the record, e.g. 6158969750. Pass it to iDigBio_get_record. The legacy iDigBio record UUID no longer exists: it lived only in the retired search.idigbio.org API."
             },
             "occurrence_id": {
               "type": [
@@ -299,7 +306,7 @@
                 "string",
                 "null"
               ],
-              "description": "The determination, LOWER-CASED by iDigBio's indexing -- 'quercus macrocarpa michx.' -- so it will not match a properly capitalised name in a string comparison. The original capitalisation is in data['dwc:scientificName']."
+              "description": "The determination as GBIF records it, properly capitalised and with the authorship -- 'Quercus fusiformis Small'. iDigBio's own index lower-cased this field; GBIF does not, so a string comparison against a capitalised name now works."
             },
             "family": {
               "type": [
@@ -334,7 +341,7 @@
                 "string",
                 "null"
               ],
-              "description": "Country, lower-cased."
+              "description": "Country as GBIF spells it in a record, which is the full title -- 'United States of America'. Note this differs from the ISO code the country filter takes."
             },
             "state_province": {
               "type": [
@@ -355,28 +362,14 @@
                 "object",
                 "null"
               ],
-              "description": "The provider's ORIGINAL record, keyed by Darwin Core and Dublin Core term -- 'dwc:scientificName', 'dwc:decimalLatitude', 'dwc:coordinateUncertaintyInMeters', 'dcterms:license'. Which terms are present depends on what the provider published, so read it as a map rather than expecting fixed names. This is where the un-normalised values live, including the coordinate uncertainty and the licence, neither of which has a flattened field above.",
-              "additionalProperties": {
-                "type": [
-                  "string",
-                  "number",
-                  "boolean",
-                  "array",
-                  "object",
-                  "null"
-                ],
-                "items": {
-                  "type": [
-                    "string",
-                    "object",
-                    "integer",
-                    "number",
-                    "boolean",
-                    "null"
-                  ],
-                  "description": "One entry. This upstream returns such a list as scalars in some replies and as full records in others, so an element can be either."
-                }
-              }
+              "description": "The full GBIF occurrence record, verbatim: every field GBIF holds for it, including the interpreted Darwin Core terms, the taxonomy keys, coordinates, and `networkKeys`. GBIF's field names are camelCase ('scientificName', 'catalogNumber'), not iDigBio's 'dwc:'-prefixed keys."
+            },
+            "dataset_key": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GBIF datasetKey of the collection that published the record, e.g. 'cd096ec0-a8a0-4c65-92cc-48b00fb934ce'."
             }
           }
         },
@@ -396,7 +389,7 @@
   },
   {
     "name": "iDigBio_summary_facets",
-    "description": "Get aggregate specimen statistics from iDigBio for a Darwin Core query: the exact total record count plus top-value facet breakdowns (e.g. specimens per country, institution, or collector). Unlike iDigBio_search_records (which only paginates raw records, max 100), this returns counts over the entire matching set, enabling distribution/abundance statistics without full pagination. Filter with scientificname, genus, family, country, etc.; set top_fields to the field(s) to break down by. No API key required.",
+    "description": "Get aggregate specimen statistics from iDigBio for a Darwin Core query: the exact total record count plus top-value facet breakdowns (e.g. specimens per country, institution, or collector). Unlike iDigBio_search_records (which only paginates raw records, max 100), this returns counts over the entire matching set, enabling distribution/abundance statistics without full pagination. Filter with scientificname, genus, family, country, etc.; set top_fields to the field(s) to break down by. No API key required. Served by the GBIF occurrence API restricted to GBIF's iDigBio network (the data behind idigbio.gbif.us); iDigBio's own search API was retired and answers HTTP 410.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -412,21 +405,21 @@
             "string",
             "null"
           ],
-          "description": "Genus, e.g. 'Puma'."
+          "description": "Genus, e.g. 'Puma'. GBIF has no occurrence filter for this rank, so the name is first resolved to a GBIF taxonKey. Only an exact match at this rank is used -- a name GBIF cannot place is refused rather than silently widened to a higher rank. Case does not matter."
         },
         "family": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Family name."
+          "description": "Family name. GBIF has no occurrence filter for this rank, so the name is first resolved to a GBIF taxonKey. Only an exact match at this rank is used -- a name GBIF cannot place is refused rather than silently widened to a higher rank. Case does not matter."
         },
         "country": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Country, e.g. 'United States'."
+          "description": "Country, as an ISO 3166-1 name or code -- 'United States', 'USA' or 'US' all work. A spelling GBIF does not recognise is refused: GBIF itself answers an unknown country with zero records and no error."
         },
         "stateprovince": {
           "type": [
@@ -447,21 +440,21 @@
             "string",
             "null"
           ],
-          "description": "Phylum."
+          "description": "Phylum. GBIF has no occurrence filter for this rank, so the name is first resolved to a GBIF taxonKey. Only an exact match at this rank is used -- a name GBIF cannot place is refused rather than silently widened to a higher rank. Case does not matter."
         },
         "class": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Class."
+          "description": "Class. GBIF has no occurrence filter for this rank, so the name is first resolved to a GBIF taxonKey. Only an exact match at this rank is used -- a name GBIF cannot place is refused rather than silently widened to a higher rank. Case does not matter."
         },
         "order": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Order."
+          "description": "Order. GBIF has no occurrence filter for this rank, so the name is first resolved to a GBIF taxonKey. Only an exact match at this rank is used -- a name GBIF cannot place is refused rather than silently widened to a higher rank. Case does not matter."
         },
         "top_fields": {
           "type": [
@@ -469,7 +462,11 @@
             "array",
             "null"
           ],
-          "description": "Darwin Core field(s) to break down counts by, e.g. 'country', 'institutioncode', or 'recordedby'. Comma-separate multiple fields. If omitted, only the total count is returned."
+          "description": "Field(s) to break the matching set down by, comma-separated. One or more of: basisofrecord, catalognumber, class, collectioncode, country, datasetkey, family, genus, institutioncode, order, phylum, recordedby, scientificname, stateprovince, year. A name not in that list is refused -- GBIF answers an unknown facet with an empty list rather than an error, so asking for one would look like 'no data'. The taxon facets are returned keyed by GBIF taxon key, not by name.",
+          "items": {
+            "type": "string",
+            "description": "One facet name."
+          }
         },
         "count": {
           "type": [
@@ -510,10 +507,21 @@
               "type": [
                 "integer",
                 "null"
-              ]
+              ],
+              "description": "Exact number of records matching the query across the whole set, not just the page."
             },
             "facets": {
-              "type": "object"
+              "type": "object",
+              "description": "One entry per requested top_field, keyed by the name asked for. Each value maps a facet value to its record count. The taxon facets (genus, family, order, class, phylum) are keyed by GBIF taxon key because that is what GBIF facets on; country is keyed by ISO code.",
+              "additionalProperties": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              }
             }
           },
           "required": [
@@ -536,7 +544,7 @@
   },
   {
     "name": "iDigBio_search_media",
-    "description": "Search the iDigBio specimen MEDIA index (photographs and scans) with exact offset pagination. Metadata reports the exact total, current offset, has_more and next_offset; continue until has_more is false. Returns media type, identifiers, creator, rights and access URIs. No API key required.",
+    "description": "Search the iDigBio specimen MEDIA index (photographs and scans) with exact offset pagination. Metadata reports the exact total, current offset, has_more and next_offset; continue until has_more is false. Returns media type, identifiers, creator, rights and access URIs. No API key required. Served by the GBIF occurrence API restricted to GBIF's iDigBio network (the data behind idigbio.gbif.us); iDigBio's own search API was retired and answers HTTP 410.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -552,21 +560,21 @@
             "string",
             "null"
           ],
-          "description": "Genus, e.g. 'Puma'."
+          "description": "Genus, e.g. 'Puma'. GBIF has no occurrence filter for this rank, so the name is first resolved to a GBIF taxonKey. Only an exact match at this rank is used -- a name GBIF cannot place is refused rather than silently widened to a higher rank. Case does not matter."
         },
         "family": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Family name."
+          "description": "Family name. GBIF has no occurrence filter for this rank, so the name is first resolved to a GBIF taxonKey. Only an exact match at this rank is used -- a name GBIF cannot place is refused rather than silently widened to a higher rank. Case does not matter."
         },
         "country": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Country, e.g. 'United States'."
+          "description": "Country, as an ISO 3166-1 name or code -- 'United States', 'USA' or 'US' all work. A spelling GBIF does not recognise is refused: GBIF itself answers an unknown country with zero records and no error."
         },
         "stateprovince": {
           "type": [
@@ -601,21 +609,21 @@
             "string",
             "null"
           ],
-          "description": "Phylum."
+          "description": "Phylum. GBIF has no occurrence filter for this rank, so the name is first resolved to a GBIF taxonKey. Only an exact match at this rank is used -- a name GBIF cannot place is refused rather than silently widened to a higher rank. Case does not matter."
         },
         "class": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Class."
+          "description": "Class. GBIF has no occurrence filter for this rank, so the name is first resolved to a GBIF taxonKey. Only an exact match at this rank is used -- a name GBIF cannot place is refused rather than silently widened to a higher rank. Case does not matter."
         },
         "order": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Order."
+          "description": "Order. GBIF has no occurrence filter for this rank, so the name is first resolved to a GBIF taxonKey. Only an exact match at this rank is used -- a name GBIF cannot place is refused rather than silently widened to a higher rank. Case does not matter."
         },
         "limit": {
           "type": "integer",
@@ -660,63 +668,82 @@
           "items": {
             "type": "object",
             "properties": {
-              "uuid": {
+              "gbif_id": {
                 "type": [
-                  "string",
+                  "integer",
                   "null"
-                ]
+                ],
+                "description": "GBIF's occurrence key for the record, e.g. 6158969750. Pass it to iDigBio_get_record. The legacy iDigBio record UUID no longer exists: it lived only in the retired search.idigbio.org API."
               },
               "type": {
                 "type": [
                   "string",
                   "null"
-                ]
+                ],
+                "description": "Media type as GBIF classifies it, e.g. 'StillImage'."
               },
               "format": {
                 "type": [
                   "string",
                   "null"
-                ]
-              },
-              "provider_managed_id": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                ],
+                "description": "MIME type of the media file, e.g. 'image/jpeg'."
               },
               "creator": {
                 "type": [
                   "string",
                   "null"
-                ]
+                ],
+                "description": "Who made the image, when the publisher recorded it. Frequently null."
               },
               "rights_owner": {
                 "type": [
                   "string",
                   "null"
-                ]
+                ],
+                "description": "Rights holder, usually the publishing collection, e.g. 'Fort Lewis College Herbarium (FLD-FLD)'."
               },
               "usage_terms": {
                 "type": [
                   "string",
                   "null"
-                ]
+                ],
+                "description": "Licence URL, e.g. 'http://creativecommons.org/licenses/by-nc/4.0/'. iDigBio returned free text here; GBIF returns the URL."
               },
               "access_uri": {
                 "type": [
                   "string",
                   "null"
-                ]
+                ],
+                "description": "Direct URL of the image file."
               },
-              "records": {
+              "title": {
                 "type": [
-                  "array",
+                  "string",
                   "null"
                 ],
-                "items": {
-                  "type": "string"
-                },
-                "description": "UUIDs of the specimen records the media item belongs to, e.g. ['cc61b8d3-ebce-4516-9257-33cd2132e02f']. The link from an image back to the specimen it depicts, without which the media row stands alone."
+                "description": "Caption GBIF holds for the image, often the determination. Frequently null."
+              },
+              "publisher": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Publisher GBIF attributes the media to. Frequently null."
+              },
+              "media_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many media entries the occurrence carries. The other fields describe the FIRST one; the rest are in the record itself."
+              },
+              "scientific_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The determination as GBIF records it, properly capitalised and with the authorship -- 'Quercus fusiformis Small'. iDigBio's own index lower-cased this field; GBIF does not, so a string comparison against a capitalised name now works."
               }
             }
           }

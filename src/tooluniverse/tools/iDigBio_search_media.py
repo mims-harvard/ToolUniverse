@@ -35,11 +35,11 @@ def iDigBio_search_media(
     scientificname : str
         Full scientific name, e.g. 'Puma concolor'.
     genus : str
-        Genus, e.g. 'Puma'.
+        Genus, e.g. 'Puma'. GBIF has no occurrence filter for this rank, so the name ...
     family : str
-        Family name.
+        Family name. GBIF has no occurrence filter for this rank, so the name is firs...
     country : str
-        Country, e.g. 'United States'.
+        Country, as an ISO 3166-1 name or code -- 'United States', 'USA' or 'US' all ...
     stateprovince : str
         State/province.
     recordedby : str
@@ -49,11 +49,11 @@ def iDigBio_search_media(
     collectioncode : str
         Collection code.
     phylum : str
-        Phylum.
+        Phylum. GBIF has no occurrence filter for this rank, so the name is first res...
     class_ : str
-        Class.
+        Class. GBIF has no occurrence filter for this rank, so the name is first reso...
     order : str
-        Order.
+        Order. GBIF has no occurrence filter for this rank, so the name is first reso...
     limit : int
         Media records per page (1-100).
     offset : int
